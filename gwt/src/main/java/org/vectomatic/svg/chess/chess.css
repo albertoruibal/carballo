@@ -1,0 +1,27 @@
+/** Add css rules here for your application. */
+
+.whiteSquare {
+  fill: #adbede;
+}
+.blackSquare {
+  fill: #8c9ece;
+}
+.blueSquare {
+  fill: url(#blue);
+}
+.greenSquare {
+  fill: url(#green);
+}
+.yellowSquare {
+  fill: url(#yellow);
+}
+.redSquare {
+  fill: url(#red);
+}
+.text {
+  font-size: large;
+}
+.categoryLabel {
+  font-weight: bold;
+  font-size: large;
+}

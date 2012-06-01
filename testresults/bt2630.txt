@@ -1,0 +1,1643 @@
+DEBUG FileBook - Using opening book /book_small.bin
+DEBUG SearchEngine - Thu May 31 23:50:53 CEST 2012
+DEBUG BitboardAttacks - Generating attack tables...
+DEBUG BitboardAttacks - Generated attack tables in 765ms
+DEBUG SearchEngine - Creating Evaluator
+DEBUG SearchEngine - Creating TT
+DEBUG MultiprobeTranspositionTable - Created Multiprobe transposition table, size = 4194304 entries 64MB
+DEBUG SearchEngine - Config [aggressiveFutility=true, aggressiveFutilityMargin=200, aspirationWindow=true, aspirationWindowSizes=[10, 25, 150, 400, 550, 1025], book=com.alonsoruibal.chess.book.FileBook@aeffdf, contemptFactor=90, evalKingSafety=100, evalMobility=100, evalPassedPawns=100, evalPawnStructure=100, evaluator=experimental, extensionsCheck=2, extensionsMateThreat=1, extensionsPawnPush=1, extensionsPassedPawn=1, extensionsRecapture=2, extensionsSingular=2, singularExtensionMargin=50, futility=true, futilityMargin=100, iid=true, lmr=true, nullMove=true, nullMoveMargin=200, staticNullMove=true, razoring=true, razoringMargin=900, transpositionTableSize=64, useBook=true]
+DEBUG EpdTest - Test = rq2r1k1/5pp1/p7/4bNP1/1p2P2P/5Q2/PP4K1/5R1R w - - bm Nxg7; id "test 1";
+DEBUG EpdTest - Lets see if Nxg7 are found
+DEBUG SearchEngine - Board
+r q . . r . k . 8
+. . . . . p p . 7
+p . . . . . . . 6
+. . . . b N P . 5
+. p . . P . . P 4
+. . . . . Q . . 3
+P P . . . . K . 2
+. . . . . R . R 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 170 nodes 176 time 344 nps 510 pv f3b3 
+DEBUG SearchEngine - depth 2 score cp 136 nodes 1044 time 529 nps 1969 pv f3b3 b8b7 
+DEBUG SearchEngine - depth 3 score cp 131 nodes 4335 time 799 nps 5418 pv f1f2 b8b6 f3b3 
+DEBUG SearchEngine - depth 4 score cp 111 nodes 14603 time 1522 nps 9588 pv f1f2 b8b6 f3b3 e8e6 
+DEBUG SearchEngine - depth 5 score cp 115 nodes 27593 time 2265 nps 12176 pv f1f2 b8b7 h1d1 a8d8 f2d2 
+DEBUG SearchEngine - depth 6 score cp 119 nodes 50536 time 2536 nps 19919 pv f1f2 b8b7 h1d1 a8d8 f2d2 d8d2 
+DEBUG SearchEngine - depth 7 score cp 117 nodes 110415 time 3007 nps 36707 pv f1f2 b8b7 h1d1 a8c8 f2d2 b7c6 b2b3 
+DEBUG SearchEngine - depth 8 score cp 110 nodes 314754 time 3941 nps 79846 pv f1f2 b8b7 h1d1 a8d8 f2d2 d8d2 d1d2 b7c6 b2b3 
+DEBUG SearchEngine - depth 9 score cp 112 nodes 564320 time 5197 nps 108564 pv f1f2 b8b7 h1d1 a8d8 f2d2 d8d2 d1d2 a6a5 b2b3 b7b6 
+DEBUG SearchEngine - depth 10 score cp 129 nodes 1219488 time 8272 nps 147405 pv f1f2 b8c7 f3b3 c7b7 b3d5 b7d5 e4d5 a8d8 h1d1 e8e6 a2a4 
+DEBUG SearchEngine - depth 11 score cp 241 nodes 2430413 time 14393 nps 168849 pv f5g7 e8f8 g7f5 a8a7 f5h6 g8g7 f1f2 b8b5 h6f5 g7g8 f3b3 a7d7 h1c1 d7d1 
+DEBUG SearchEngine - depth 12 score cp 241 nodes 2752195 time 15784 nps 174355 pv f5g7 e8f8 g7f5 a8a7 f5h6 g8g7 h6f5 g7g8 
+DEBUG SearchEngine - depth 13 score cp 241 nodes 3550254 time 19371 nps 183267 pv f5g7 e8f8 g7f5 a8a7 f5h6 g8g7 h6f5 g7g8 
+DEBUG SearchEngine - depth 14 score cp 241 nodes 5069129 time 26296 nps 192764 pv f5g7 e8f8 g7f5 a8a7 f5h6 g8g7 h6f5 g7g8 
+DEBUG SearchEngine - depth 15 score cp 246 nodes 10743604 time 52106 nps 206183 pv f5g7 e8f8 g7f5 b8c7 f5h6 g8g7 h6f5 g7h8 f3h5 h8g8 f1f2 a8d8 h1d1 d8d1 h5d1 a6a5 d1d5 g8h8 
+DEBUG SearchEngine - depth 16 score cp 253 nodes 24851951 time 121656 nps 204278 pv f5g7 e8f8 g7f5 b8c7 f5h6 g8g7 h6f5 g7g8 
+DEBUG SearchEngine - depth 17 score cp 253 nodes 60815239 time 303988 nps 200057 pv f5g7 e8f8 g7f5 b8c7 f5h6 g8g7 h6f5 g7g8 
+DEBUG SearchEngine - depth 18 score cp 250 nodes 126144013 time 649770 nps 194136 pv f5g7 e8f8 g7f5 b8c7 f5h6 g8g7 h6f5 g7h8 f1f2 a8d8 f3h5 h8g8 h1d1 d8d1 h5d1 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2537 0.0014395023164440637%
+DEBUG SearchEngine - Positions QS      = 78934918 44.78793744947663%
+DEBUG SearchEngine - Positions Null    = 97304012 55.21062304820693%
+DEBUG SearchEngine - PV Cut            = 706 37%
+DEBUG SearchEngine - PV All            = 1174
+DEBUG SearchEngine - Null Cut          = 16172092 74%
+DEBUG SearchEngine - Null All          = 5572926
+DEBUG SearchEngine - Asp Win      Hits = 64.28571428571429%
+DEBUG SearchEngine - TT Eval      Hits = 23746115 21.5007120073072%
+DEBUG SearchEngine - TT PV        Hits = 1236 7.013193553349925E-4%
+DEBUG SearchEngine - TT LB        Hits = 176239254 0.5717727334456375%
+DEBUG SearchEngine - TT UB        Hits = 4246688 2.4096152835508486%
+DEBUG SearchEngine - Futility     Hits = 1549218
+DEBUG SearchEngine - Agg.Futility Hits = 1022896
+DEBUG SearchEngine - Null Move    Hits = 1459474 73.10847547453731%
+DEBUG SearchEngine - Razoring     Hits = 1021215 82.7791566895957%
+DEBUG SearchEngine - S.Extensions Hits = 1734 26.16173808086904%
+DEBUG EpdTest - Best move found in 14393Ms :D Nf5xg7
+DEBUG EpdTest - Status: 1 positions solved of 1 in 14393Ms (lctPoints=25)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 6k1/2b2p1p/ppP3p1/4p3/PP1B4/5PP1/7P/7K w - - bm Bxb6; id "test 2";
+DEBUG EpdTest - Lets see if Bxb6 are found
+DEBUG SearchEngine - Board
+. . . . . . k . 8
+. . b . . p . p 7
+p p P . . . p . 6
+. . . . p . . . 5
+P P . B . . . . 4
+. . . . . P P . 3
+. . . . . . . P 2
+. . . . . . . K 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 72 nodes 90 time 289 nps 310 pv d4e3 
+DEBUG SearchEngine - depth 2 score cp 70 nodes 195 time 290 nps 670 pv d4e3 h7h5 
+DEBUG SearchEngine - depth 3 score cp 55 nodes 859 time 307 nps 2788 pv d4e3 a6a5 b4a5 
+DEBUG SearchEngine - depth 4 score cp 70 nodes 2151 time 316 nps 6785 pv d4c3 b6b5 a4b5 a6b5 h1g2 
+DEBUG SearchEngine - depth 5 score cp 77 nodes 5718 time 337 nps 16917 pv d4e3 h7h5 h1g2 a6a5 b4a5 
+DEBUG SearchEngine - depth 6 score cp 77 nodes 8588 time 382 nps 22422 pv d4e3 h7h5 h1g2 a6a5 b4a5 b6a5 
+DEBUG SearchEngine - depth 7 score cp 79 nodes 20643 time 544 nps 37877 pv d4g1 a6a5 b4a5 b6a5 h1g2 g8g7 h2h4 
+DEBUG SearchEngine - depth 8 score cp 71 nodes 43822 time 774 nps 56544 pv d4g1 a6a5 b4a5 b6a5 h1g2 f7f5 h2h4 g8f7 
+DEBUG SearchEngine - depth 9 score cp 67 nodes 93336 time 1042 nps 89488 pv d4g1 a6a5 b4a5 b6a5 h1g2 f7f5 g3g4 g8f7 h2h4 
+DEBUG SearchEngine - depth 10 score cp 67 nodes 161800 time 1368 nps 118188 pv d4e3 a6a5 b4a5 b6a5 h1g2 f7f5 g3g4 c7d8 g2f2 g8f7 
+DEBUG SearchEngine - depth 11 score cp 58 nodes 330759 time 2042 nps 161898 pv d4e3 a6a5 b4a5 b6a5 f3f4 e5e4 h1g2 f7f5 e3d4 g8f7 h2h4 
+DEBUG SearchEngine - depth 12 score cp 54 nodes 787508 time 3714 nps 211980 pv d4e3 g8f8 e3g5 f7f5 h1g2 h7h5 g2f2 f8f7 h2h4 a6a5 b4b5 f7e6 
+DEBUG SearchEngine - depth 13 score cp 51 nodes 1207714 time 5351 nps 225656 pv d4e3 g8f8 e3g5 f7f5 h1g2 h7h5 h2h4 a6a5 b4b5 f8f7 g2f2 f7e6 f2e3 
+DEBUG SearchEngine - depth 14 score cp 45 nodes 2195862 time 8875 nps 247393 pv d4e3 g8f8 e3g5 f7f5 h1g2 h7h5 h2h4 f8f7 f3f4 e5e4 g2f2 a6a5 b4a5 b6a5 
+DEBUG SearchEngine - depth 15 score cp 44 nodes 3806697 time 14678 nps 259329 pv d4e3 g8f8 h1g2 f7f5 b4b5 a6b5 a4b5 f8e7 g2f2 f5f4 e3d2 h7h5 g3g4 h5g4 f3g4 g6g5 f2f3 
+DEBUG SearchEngine - depth 16 score cp 41 nodes 7054809 time 26348 nps 267744 pv d4e3 g8f8 h1g2 f7f5 b4b5 a6b5 a4b5 f8e7 g2f2 f5f4 e3d2 h7h5 g3f4 e5f4 h2h4 c7e5 f2e2 e7e6 
+DEBUG SearchEngine - depth 17 score cp 504 nodes 12995448 time 48145 nps 269917 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q b5b4 a8c6 c7d8 c6b5 h7h5 b5b4 d8f6 h1g2 
+DEBUG SearchEngine - depth 18 score cp 525 nodes 14745681 time 54378 nps 271164 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 g6g5 h1g2 f7f5 b5b7 g7g6 
+DEBUG SearchEngine - depth 19 score cp 533 nodes 16112295 time 59147 nps 272406 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 g6g5 h1g2 h7h6 b5b7 g7f6 b7c6 
+DEBUG SearchEngine - depth 20 score cp 534 nodes 23926774 time 89590 nps 267066 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 h7h6 b5b7 g6g5 h1g2 g7g6 h2h4 f7f6 
+DEBUG SearchEngine - depth 21 score cp 547 nodes 37892525 time 142612 nps 265701 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 h7h6 h1g2 g6g5 b5d7 g7g6 d7c6 f7f6 h2h4 
+DEBUG SearchEngine - depth 22 score cp 547 nodes 131232865 time 516278 nps 254189 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b8 c6c7 b8c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 h7h6 h1g2 g6g5 b5d7 g7g6 g3g4 f7f6 
+DEBUG SearchEngine - depth 23 score cp 556 nodes 159255272 time 620019 nps 256855 pv d4b6 c7b6 a4a5 b6c7 b4b5 a6b5 a5a6 c7b6 c6c7 b6c7 a6a7 g8g7 a7a8q c7b6 a8d5 b6d4 d5b5 g6g5 f3f4 g5f4 g3f4 f7f6 h1g2 h7h6 f4e5 f6e5 h2h4 h6h5 g2f3 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 6099 0.002636798354561736%
+DEBUG SearchEngine - Positions QS      = 81401517 35.19255387513186%
+DEBUG SearchEngine - Positions Null    = 149895623 64.80480932651358%
+DEBUG SearchEngine - PV Cut            = 2207 34%
+DEBUG SearchEngine - PV All            = 4167
+DEBUG SearchEngine - Null Cut          = 43503526 70%
+DEBUG SearchEngine - Null All          = 18170141
+DEBUG SearchEngine - Asp Win      Hits = 65.07936507936508%
+DEBUG SearchEngine - TT Eval      Hits = 70899762 28.510850823907642%
+DEBUG SearchEngine - TT PV        Hits = 9503 0.00233181091166438%
+DEBUG SearchEngine - TT LB        Hits = 407537333 1.5019966281224106%
+DEBUG SearchEngine - TT UB        Hits = 19528213 4.791760513385899%
+DEBUG SearchEngine - Futility     Hits = 4760528
+DEBUG SearchEngine - Agg.Futility Hits = 3675656
+DEBUG SearchEngine - Null Move    Hits = 5176718 76.10295760700568%
+DEBUG SearchEngine - Razoring     Hits = 2799583 90.8839848954289%
+DEBUG SearchEngine - S.Extensions Hits = 13740 44.79655712050078%
+DEBUG EpdTest - Best move found in 48145Ms :D Bd4xb6
+DEBUG EpdTest - Status: 2 positions solved of 2 in 62538Ms (lctPoints=45)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 5r1k/p1q2pp1/1pb4p/n3R1NQ/7P/3B1P2/2P3P1/7K w - - bm Re6; id "test 3";
+DEBUG EpdTest - Lets see if Re6 are found
+DEBUG SearchEngine - Board
+. . . . . r . k 8
+p . q . . p p . 7
+. p b . . . . p 6
+n . . . R . N Q 5
+. . . . . . . P 4
+. . . B . P . . 3
+. . P . . . P . 2
+. . . . . . . K 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 32 nodes 108 time 198 nps 542 pv h1g1 
+DEBUG SearchEngine - depth 2 score cp 17 nodes 704 time 203 nps 3450 pv h1g1 f7f6 
+DEBUG SearchEngine - depth 3 score cp -3 nodes 5974 time 235 nps 25313 pv c2c3 c7d6 d3c2 
+DEBUG SearchEngine - depth 4 score cp -3 nodes 14666 time 324 nps 45126 pv g5h7 f8e8 h7g5 h8g8 
+DEBUG SearchEngine - depth 5 score cp -21 nodes 49055 time 599 nps 81758 pv e5e1 c6b7 h1g1 a5c4 d3c4 
+DEBUG SearchEngine - depth 6 score cp -6 nodes 155380 time 1180 nps 131566 pv e5e2 h8g8 d3h7 g8h8 h7d3 
+DEBUG SearchEngine - depth 7 score cp -8 nodes 234655 time 1607 nps 145929 pv e5e2 a7a6 d3a6 h8g8 g5e4 c6e4 f3e4 
+DEBUG SearchEngine - depth 8 score cp -21 nodes 812566 time 4702 nps 172776 pv f3f4 h8g8 d3h7 g8h8 h7d3 
+DEBUG SearchEngine - depth 9 score cp -18 nodes 976700 time 5541 nps 176236 pv f3f4 h8g8 d3h7 g8h8 h7d3 
+DEBUG SearchEngine - depth 10 score cp 96 nodes 3063176 time 16418 nps 186562 pv e5e6 h8g8 e6h6 g7h6 h5h6 f7f5 h6f8 g8f8 g5e6 f8e7 e6c7 
+DEBUG SearchEngine - depth 11 score cp 102 nodes 4076705 time 21811 nps 186901 pv e5e6 h8g8 d3h7 g8h8 h7d3 
+DEBUG SearchEngine - depth 12 score cp 925 nodes 4920601 time 25964 nps 189508 pv e5e6 h8g8 d3h7 g8h8 e6h6 g7g6 h7g6 h8g7 g6f7 c7f7 h6h7 g7f6 h7f7 f8f7 
+DEBUG SearchEngine - depth 13 score cp 925 nodes 5296689 time 27675 nps 191382 pv e5e6 h8g8 d3h7 g8h8 e6h6 g7g6 h7g6 h8g7 g6f7 c7f7 h6h7 g7f6 h7f7 f8f7 h5f7 
+DEBUG SearchEngine - depth 14 score cp 946 nodes 6487080 time 32987 nps 196649 pv e5e6 h8g8 d3h7 g8h8 e6h6 g7g6 h7g6 h8g7 g6f7 c7f7 h6h7 g7f6 g5f7 f8g8 h5e5 f6g6 
+DEBUG SearchEngine - depth 15 score cp 994 nodes 29764200 time 151286 nps 196739 pv e5e6 h8g8 d3h7 g8h8 e6h6 g7g6 h7g6 h8g7 g6f7 c7f7 g5f7 f8a8 h6h7 g7f8 h5h6 f8e8 f7e5 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2341 0.001300679235698879%
+DEBUG SearchEngine - Positions QS      = 68629330 38.1310313929629%
+DEBUG SearchEngine - Positions Null    = 111351213 61.8676679278014%
+DEBUG SearchEngine - PV Cut            = 2928 35%
+DEBUG SearchEngine - PV All            = 5226
+DEBUG SearchEngine - Null Cut          = 64444294 70%
+DEBUG SearchEngine - Null All          = 27169909
+DEBUG SearchEngine - Asp Win      Hits = 54.36893203883495%
+DEBUG SearchEngine - TT Eval      Hits = 93504995 25.809447655018822%
+DEBUG SearchEngine - TT PV        Hits = 10028 0.0017068444599008315%
+DEBUG SearchEngine - TT LB        Hits = 587516920 1.2856026342186027%
+DEBUG SearchEngine - TT UB        Hits = 24281082 4.132831102123833%
+DEBUG SearchEngine - Futility     Hits = 7151429
+DEBUG SearchEngine - Agg.Futility Hits = 5369423
+DEBUG SearchEngine - Null Move    Hits = 7593395 74.15767349409792%
+DEBUG SearchEngine - Razoring     Hits = 5383955 88.79899509836666%
+DEBUG SearchEngine - S.Extensions Hits = 16135 44.10639112131649%
+DEBUG EpdTest - Best move found in 16418Ms :D Re5-e6
+DEBUG EpdTest - Status: 3 positions solved of 3 in 78956Ms (lctPoints=70)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 5r1k/1P4pp/3P1p2/4p3/1P5P/3q2P1/Q2b2K1/B3R3 w - - bm Qf7; id "test 4";
+DEBUG EpdTest - Lets see if Qf7 are found
+DEBUG SearchEngine - Board
+. . . . . r . k 8
+. P . . . . p p 7
+. . . P . p . . 6
+. . . . p . . . 5
+. P . . . . . P 4
+. . . q . . P . 3
+Q . . b . . K . 2
+B . . . R . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 148 nodes 875 time 8 nps 97222 pv e1b1 
+DEBUG SearchEngine - depth 2 score cp 131 nodes 2469 time 16 nps 145235 pv a2a7 d3b5 
+DEBUG SearchEngine - depth 3 score cp 159 nodes 6246 time 35 nps 173500 pv e1b1 d3d6 b4b5 
+DEBUG SearchEngine - depth 4 score cp 117 nodes 15208 time 72 nps 208328 pv e1b1 d3d6 b4b5 f8b8 
+DEBUG SearchEngine - depth 5 score cp 50 nodes 52729 time 292 nps 179962 pv e1b1 d3e4 g2g1 d2e3 g1h2 e4b7 
+DEBUG SearchEngine - depth 6 score cp 102 nodes 84896 time 432 nps 196064 pv a2b1 d3d6 e1d1 d6d5 g2h3 f8b8 
+DEBUG SearchEngine - depth 7 score cp 59 nodes 230498 time 1069 nps 215418 pv a2a7 d3d6 e1d1 d6b4 g2h3 d2h6 a1c3 
+DEBUG SearchEngine - depth 8 score cp 69 nodes 336456 time 1592 nps 211209 pv a2a7 d3d6 e1d1 d6b4 g2g1 d2e1 a7e3 e1g3 
+DEBUG SearchEngine - depth 9 score cp 81 nodes 1051047 time 5212 nps 201620 pv e1b1 d3d6 b4b5 e5e4 a2c2 e4e3 c2c6 d6b8 c6d7 f8d8 
+DEBUG SearchEngine - depth 10 score cp 68 nodes 1944923 time 9116 nps 213329 pv a2a7 d3d6 e1d1 d6b4 g2g1 d2e1 a7e3 e1g3 e3g3 b4b6 
+DEBUG SearchEngine - depth 11 score cp 62 nodes 2768768 time 12961 nps 213606 pv a2a7 d3d6 e1d1 d6b4 g2g1 d2e1 a7e3 e1g3 e3g3 b4b7 g3d3 
+DEBUG SearchEngine - depth 12 score cp 71 nodes 8565528 time 41632 nps 205738 pv e1b1 d3d6 b4b5 e5e4 a2c2 e4e3 c2c6 d6b8 g2f3 f8e8 a1d4 h7h5 f3g2 
+DEBUG SearchEngine - depth 13 score cp 88 nodes 29312140 time 147566 nps 198636 pv e1b1 d3d6 a2a7 f8e8 b4b5 e5e4 a1d4 e4e3 d4c5 d6d5 g2h3 d5e5 c5d4 e5f5 h3h2 
+DEBUG SearchEngine - depth 14 score cp 86 nodes 56351347 time 286573 nps 196638 pv e1b1 d3d6 a2a7 f8e8 b4b5 e5e4 a1d4 e4e3 d4c5 d6d5 g2h3 d5g8 g3g4 e3e2 c5d6 d2e3 b5b6 
+DEBUG SearchEngine - depth 15 score cp 78 nodes 125054750 time 640387 nps 195279 pv e1b1 d3d6 a2a7 e5e4 a7c5 d6b8 a1d4 e4e3 c5f8 b8f8 d4a7 e3e2 b7b8q f8b8 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 6539 0.003716913522530996%
+DEBUG SearchEngine - Positions QS      = 81555318 46.35786271731389%
+DEBUG SearchEngine - Positions Null    = 94363678 53.638420369163576%
+DEBUG SearchEngine - PV Cut            = 4613 36%
+DEBUG SearchEngine - PV All            = 8073
+DEBUG SearchEngine - Null Cut          = 80201484 70%
+DEBUG SearchEngine - Null All          = 33261658
+DEBUG SearchEngine - Asp Win      Hits = 50.0%
+DEBUG SearchEngine - TT Eval      Hits = 124605404 26.236083687708636%
+DEBUG SearchEngine - TT PV        Hits = 13902 0.0018209671160020694%
+DEBUG SearchEngine - TT LB        Hits = 763440475 1.240536271017069%
+DEBUG SearchEngine - TT UB        Hits = 29501932 3.864339521689625%
+DEBUG SearchEngine - Futility     Hits = 9954693
+DEBUG SearchEngine - Agg.Futility Hits = 7413081
+DEBUG SearchEngine - Null Move    Hits = 9021228 73.4199722995342%
+DEBUG SearchEngine - Razoring     Hits = 6278322 86.92403148986213%
+DEBUG SearchEngine - S.Extensions Hits = 17917 42.78175740210124%
+DEBUG EpdTest - Best move not found :( Re1-b1 != Qf7
+DEBUG EpdTest - Status: 3 positions solved of 4 in 978956Ms (lctPoints=70)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 3B4/8/2B5/1K6/8/8/3p4/3k4 w - - bm Ka6; id "test 5";
+DEBUG EpdTest - Lets see if Ka6 are found
+DEBUG SearchEngine - Board
+. . . B . . . . 8
+. . . . . . . . 7
+. . B . . . . . 6
+. K . . . . . . 5
+. . . . . . . . 4
+. . . . . . . . 3
+. . . p . . . . 2
+. . . k . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 447 nodes 54 time 3 nps 13500 pv d8g5 
+DEBUG SearchEngine - depth 2 score cp 440 nodes 137 time 4 nps 27400 pv d8g5 d1e2 
+DEBUG SearchEngine - depth 3 score cp 427 nodes 2952 time 9 nps 295200 pv c6f3 d1c2 f3e4 c2b3 
+DEBUG SearchEngine - depth 4 score cp 442 nodes 7024 time 25 nps 270153 pv c6f3 d1c2 f3e4 c2b3 e4f3 
+DEBUG SearchEngine - depth 5 score cp 429 nodes 15315 time 53 nps 283611 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 6 score cp 429 nodes 24652 time 85 nps 286651 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 7 score cp 429 nodes 40446 time 133 nps 301835 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 8 score cp 429 nodes 61771 time 237 nps 259542 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 9 score cp 429 nodes 97661 time 348 nps 279830 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 10 score cp 429 nodes 167958 time 546 nps 307053 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 11 score cp 429 nodes 244876 time 745 nps 328252 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 12 score cp 429 nodes 378422 time 1096 nps 344960 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 13 score cp 429 nodes 590895 time 1601 nps 368848 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 14 score cp 429 nodes 933804 time 2398 nps 389247 pv c6f3 d1c2 f3e4 c2b3 e4f3 b3c2 
+DEBUG SearchEngine - depth 15 score cp 441 nodes 2108761 time 5056 nps 416998 pv b5c5 d1e2 c6b5 e2f2 b5a4 f2e2 a4b5 
+DEBUG SearchEngine - depth 16 score cp 441 nodes 2890304 time 6783 nps 426047 pv b5c5 d1e2 c6b5 e2f2 b5a4 f2e2 a4b5 
+DEBUG SearchEngine - depth 17 score cp 441 nodes 4235072 time 9801 nps 432062 pv b5c5 d1e2 c6b5 e2f2 b5a4 f2e2 a4b5 
+DEBUG SearchEngine - depth 18 score cp 441 nodes 5993425 time 13489 nps 444286 pv b5c5 d1e2 c6b5 e2f2 b5a4 f2e2 a4b5 
+DEBUG SearchEngine - depth 19 score cp 471 nodes 10062371 time 22068 nps 455950 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 a6b6 d1c1 b4a3 c1c2 b5a4 c2d3 a4d1 d3e3 a3b2 
+DEBUG SearchEngine - depth 20 score cp 483 nodes 15961614 time 33859 nps 471400 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 b5a4 d1e2 a4e8 e2d1 
+DEBUG SearchEngine - depth 21 score cp 483 nodes 25742200 time 53394 nps 482108 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 b5d3 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1d1 b6c6 d1c1 b4a3 c1d1 c6b6 
+DEBUG SearchEngine - depth 22 score cp 488 nodes 44096934 time 89080 nps 495020 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 b5d3 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1d1 b4c5 d1e1 c5b4 
+DEBUG SearchEngine - depth 23 score cp 489 nodes 73770592 time 147143 nps 501349 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 b4d6 d1e1 d6g3 e1d1 a6a5 d1c2 b5a4 c2c3 a4d1 c3d3 a5b6 d3e4 d1c2 e4f3 
+DEBUG SearchEngine - depth 24 score cp 502 nodes 122067860 time 241270 nps 505936 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6b5 d1e1 a3b4 e1d1 b4d6 d1e1 d6g3 e1d1 g3f4 d1e1 f4g3 
+DEBUG SearchEngine - depth 25 score cp 506 nodes 209029511 time 407252 nps 513266 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 a3b4 
+DEBUG SearchEngine - depth 26 score cp 708 nodes 233930890 time 462570 nps 505718 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1e2 c6b5 e2d1 b6b7 d1c1 b4a3 c1d1 
+DEBUG SearchEngine - depth 27 score cp 723 nodes 253420219 time 506313 nps 500519 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1e2 c6d7 e2d1 b6c5 d1e2 d7g4 e2f2 b4d2 
+DEBUG SearchEngine - depth 28 score cp 733 nodes 279807340 time 568298 nps 492359 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1f1 b4d2 f1f2 
+DEBUG SearchEngine - depth 29 score cp 734 nodes 318138870 time 655828 nps 485094 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 a6b6 d1e1 a3b4 e1e2 c6d7 e2d3 d7f5 d3e3 f5g4 e3d3 
+DEBUG SearchEngine - depth 30 score cp 750 nodes 388277676 time 816787 nps 475371 pv b5a6 d1e1 d8a5 e1d1 a5b4 d1c1 b4a3 c1d1 c6e8 d1e1 a3b4 e1e2 a6b5 e2d1 b5c4 d1e2 e8h5 e2e3 h5d1 e3e4 b4d2 e4e5 d2c3 e5e4 c3d4 e4f5 c4d3 f5g6 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 16930 0.0039913535259059486%
+DEBUG SearchEngine - Positions QS      = 29166151 6.876102754338766%
+DEBUG SearchEngine - Positions Null    = 394983806 93.11990589213532%
+DEBUG SearchEngine - PV Cut            = 9890 40%
+DEBUG SearchEngine - PV All            = 14656
+DEBUG SearchEngine - Null Cut          = 131606246 70%
+DEBUG SearchEngine - Null All          = 55189630
+DEBUG SearchEngine - Asp Win      Hits = 53.1578947368421%
+DEBUG SearchEngine - TT Eval      Hits = 207987832 32.96870731724286%
+DEBUG SearchEngine - TT PV        Hits = 36756 0.0030961193668945343%
+DEBUG SearchEngine - TT LB        Hits = 1187163531 5.081586438995825%
+DEBUG SearchEngine - TT UB        Hits = 237084601 19.970677569609407%
+DEBUG SearchEngine - Futility     Hits = 12013922
+DEBUG SearchEngine - Agg.Futility Hits = 9123591
+DEBUG SearchEngine - Null Move    Hits = 31713750 80.4879760969587%
+DEBUG SearchEngine - Razoring     Hits = 7321041 86.65418250563528%
+DEBUG SearchEngine - S.Extensions Hits = 278985 40.55999057910859%
+DEBUG EpdTest - Best move found in 22068Ms :D Kb5-a6
+DEBUG EpdTest - Status: 4 positions solved of 5 in 1001024Ms (lctPoints=95)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 1k1r4/1pp4p/2n5/P6R/2R1p1r1/2P2p2/1PP2B1P/4K3 b - - bm e3; id "test 6";
+DEBUG EpdTest - Lets see if e3 are found
+DEBUG SearchEngine - Board
+. k . r . . . . 8
+. p p . . . . p 7
+. . n . . . . . 6
+P . . . . . . R 5
+. . R . p . r . 4
+. . P . . p . . 3
+. P P . . B . P 2
+. . . . K . . . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 110 nodes 172 time 5 nps 28666 pv d8d7 
+DEBUG SearchEngine - depth 2 score cp 89 nodes 529 time 6 nps 75571 pv d8d7 h5b5 
+DEBUG SearchEngine - depth 3 score cp 75 nodes 3851 time 19 nps 192550 pv d8d7 b2b4 b8c8 
+DEBUG SearchEngine - depth 4 score cp 47 nodes 12267 time 53 nps 227166 pv d8d7 h5f5 h7h5 f5h5 
+DEBUG SearchEngine - depth 5 score cp 27 nodes 33106 time 145 nps 226753 pv d8e8 h5h7 g4g2 b2b4 e4e3 
+DEBUG SearchEngine - depth 6 score cp 36 nodes 58663 time 261 nps 223904 pv h7h6 h5b5 d8d6 a5a6 b7b6 b2b4 
+DEBUG SearchEngine - depth 7 score cp 34 nodes 82103 time 362 nps 226179 pv h7h6 h5b5 g4g5 b5g5 h6g5 c4e4 c6a5 e4e7 
+DEBUG SearchEngine - depth 8 score cp 35 nodes 253575 time 1114 nps 227421 pv d8e8 a5a6 g4g6 h5b5 b7b6 b5d5 b8a7 c4a4 
+DEBUG SearchEngine - depth 9 score cp 205 nodes 349311 time 1578 nps 221222 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1c4 e1e8 b8a7 h5h7 
+DEBUG SearchEngine - depth 10 score cp 231 nodes 405782 time 1838 nps 220653 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1c4 h5f5 c4g4 f5f8 b8a7 
+DEBUG SearchEngine - depth 11 score cp 333 nodes 561965 time 2508 nps 223979 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 e1e8 b8a7 h5f5 g2g1 d1d2 g1h2 
+DEBUG SearchEngine - depth 12 score cp 333 nodes 721266 time 3202 nps 225184 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 e1e8 b8a7 h5f5 g2g1 d1d2 g1h2 d2d3 
+DEBUG SearchEngine - depth 13 score cp 353 nodes 978902 time 4243 nps 230655 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 e1e4 g2g1 d1d2 g1h2 d2e3 h2e2 
+DEBUG SearchEngine - depth 14 score cp 353 nodes 1326306 time 5805 nps 228437 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 e1e4 g2g1 d1d2 g1h2 d2e3 h2e2 e3f4 
+DEBUG SearchEngine - depth 15 score cp 353 nodes 2304052 time 9845 nps 234008 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 d1c1 f3f2 e1d1 c6e7 f5f8 e7g6 f8f7 g6e5 f7f8 g2h2 
+DEBUG SearchEngine - depth 16 score cp 353 nodes 3559411 time 15173 nps 234573 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 d1c1 f3f2 e1d1 c6e7 f5f8 e7g6 f8f7 g6e5 f7f8 g2h2 
+DEBUG SearchEngine - depth 17 score cp 353 nodes 6025546 time 25292 nps 238229 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 d1c1 f3f2 e1d1 c6e7 f5f8 e7g6 f8f7 g6e5 f7f8 g2h2 
+DEBUG SearchEngine - depth 18 score cp 356 nodes 15126139 time 63311 nps 238914 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 d1c1 f3f2 e1d1 c6e7 f5f7 e7g6 f7f5 g2h2 d1f1 g6f4 f5f7 
+DEBUG SearchEngine - depth 19 score cp 372 nodes 30765768 time 130855 nps 235111 pv e4e3 c4g4 d8d1 e1d1 e3e2 d1d2 e2e1q 
+DEBUG SearchEngine - depth 20 score cp 355 nodes 142134850 time 630564 nps 225408 pv e4e3 c4g4 d8d1 e1d1 e3f2 g4e4 f2f1q e4e1 f1g2 h5f5 b8a7 d1c1 f3f2 e1d1 c6e5 f5e5 f2f1q d1f1 g2f1 c1d2 f1f4 e5e3 f4h2 d2d3 h7h5 b2b4 h5h4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 3833 0.0018748650224359664%
+DEBUG SearchEngine - Positions QS      = 78038802 38.171724566294266%
+DEBUG SearchEngine - Positions Null    = 126398749 61.8264005686833%
+DEBUG SearchEngine - PV Cut            = 10963 39%
+DEBUG SearchEngine - PV All            = 16508
+DEBUG SearchEngine - Null Cut          = 153949454 70%
+DEBUG SearchEngine - Null All          = 65850944
+DEBUG SearchEngine - Asp Win      Hits = 50.84033613445378%
+DEBUG SearchEngine - TT Eval      Hits = 243727795 32.34753497860864%
+DEBUG SearchEngine - TT PV        Hits = 38822 0.002789736010914512%
+DEBUG SearchEngine - TT LB        Hits = 1391601207 4.558550443970692%
+DEBUG SearchEngine - TT UB        Hits = 246009248 17.678142758322572%
+DEBUG SearchEngine - Futility     Hits = 14572354
+DEBUG SearchEngine - Agg.Futility Hits = 11162235
+DEBUG SearchEngine - Null Move    Hits = 34552478 80.18747252383585%
+DEBUG SearchEngine - Razoring     Hits = 8601873 87.43329580618918%
+DEBUG SearchEngine - S.Extensions Hits = 284293 40.24458779778968%
+DEBUG EpdTest - Best move found in 1578Ms :D e4-e3
+DEBUG EpdTest - Status: 5 positions solved of 6 in 1002602Ms (lctPoints=125)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 6k1/p3q2p/1nr3pB/8/3Q1P2/6P1/PP5P/3R2K1 b - - bm Rd6; id "test 7";
+DEBUG EpdTest - Lets see if Rd6 are found
+DEBUG SearchEngine - Board
+. . . . . . k . 8
+p . . . q . . p 7
+. n r . . . p B 6
+. . . . . . . . 5
+. . . Q . P . . 4
+. . . . . . P . 3
+P P . . . . . P 2
+. . . R . . K . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -223 nodes 135 time 5 nps 22500 pv c6c2 
+DEBUG SearchEngine - depth 2 score cp -218 nodes 438 time 7 nps 54750 pv c6c2 h2h4 
+DEBUG SearchEngine - depth 3 score cp -221 nodes 2393 time 15 nps 149562 pv c6c2 h2h4 e7c5 
+DEBUG SearchEngine - depth 4 score cp -232 nodes 11324 time 101 nps 111019 pv e7c5 d4c5 c6c5 d1d8 g8f7 
+DEBUG SearchEngine - depth 5 score cp -240 nodes 21627 time 190 nps 113230 pv a7a5 h2h4 e7c5 d4c5 c6c5 b2b3 
+DEBUG SearchEngine - depth 6 score cp -224 nodes 59495 time 433 nps 137085 pv e7c5 d4c5 c6c5 b2b3 c5c2 a2a4 a7a5 
+DEBUG SearchEngine - depth 7 score cp -227 nodes 109814 time 680 nps 161254 pv c6c4 d4f2 e7c5 f2c5 c4c5 b2b3 c5c2 a2a4 a7a5 h2h4 
+DEBUG SearchEngine - depth 8 score cp -227 nodes 136987 time 794 nps 172310 pv c6c4 d4f2 e7c5 f2c5 c4c5 b2b3 c5c2 a2a4 a7a5 h2h4 c2d2 
+DEBUG SearchEngine - depth 9 score cp -227 nodes 204537 time 1142 nps 178947 pv c6c4 d4f2 e7c5 f2c5 c4c5 b2b3 c5c2 a2a4 a7a5 h2h4 c2d2 d1d2 
+DEBUG SearchEngine - depth 10 score cp -221 nodes 390173 time 1911 nps 204065 pv c6c4 d4f2 e7c5 f2c5 c4c5 d1d2 c5d5 d2d5 b6d5 h2h4 g8f7 g1f2 
+DEBUG SearchEngine - depth 11 score cp -231 nodes 1608430 time 7314 nps 219881 pv c6c7 h6g5 e7c5 d4c5 c7c5 d1d2 g8g7 b2b4 c5c1 g1g2 h7h6 g5h4 
+DEBUG SearchEngine - depth 12 score cp -230 nodes 2181854 time 9615 nps 226898 pv c6c7 h6g5 e7c5 d4c5 c7c5 g5f6 c5c2 f6c3 g8f7 h2h4 a7a5 g3g4 h7h5 
+DEBUG SearchEngine - depth 13 score cp -90 nodes 3820295 time 16642 nps 229543 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 14 score cp -90 nodes 3925018 time 17053 nps 230152 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 15 score cp -90 nodes 4116959 time 17754 nps 231876 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 16 score cp -90 nodes 4444279 time 18936 nps 234687 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 17 score cp -90 nodes 4917006 time 20605 nps 238620 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 18 score cp -90 nodes 5745843 time 23627 nps 243179 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 19 score cp -90 nodes 7106239 time 28411 nps 250114 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 20 score cp -90 nodes 9362291 time 36350 nps 257552 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 21 score cp -90 nodes 12381380 time 46840 nps 264327 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 22 score cp -90 nodes 19906922 time 76006 nps 261909 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 23 score cp -90 nodes 45608764 time 183355 nps 248744 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - depth 24 score cp -90 nodes 120067936 time 489524 nps 245274 pv c6d6 d4d6 e7e3 g1g2 e3e2 g2g1 e2e3 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 994 4.5381898722029297E-4%
+DEBUG SearchEngine - Positions QS      = 74527947 34.02635556051074%
+DEBUG SearchEngine - Positions Null    = 144501119 65.97319062050204%
+DEBUG SearchEngine - PV Cut            = 11163 39%
+DEBUG SearchEngine - PV All            = 17016
+DEBUG SearchEngine - Null Cut          = 175385238 70%
+DEBUG SearchEngine - Null All          = 74977961
+DEBUG SearchEngine - Asp Win      Hits = 54.1044776119403%
+DEBUG SearchEngine - TT Eval      Hits = 291160373 32.68325895205535%
+DEBUG SearchEngine - TT PV        Hits = 40635 0.002522937631912587%
+DEBUG SearchEngine - TT LB        Hits = 1610622454 4.204992723887606%
+DEBUG SearchEngine - TT UB        Hits = 256787854 15.943392156384279%
+DEBUG SearchEngine - Futility     Hits = 16921098
+DEBUG SearchEngine - Agg.Futility Hits = 12776111
+DEBUG SearchEngine - Null Move    Hits = 40094447 80.74588069998612%
+DEBUG SearchEngine - Razoring     Hits = 10556317 87.75380692198468%
+DEBUG SearchEngine - S.Extensions Hits = 295233 39.2274178568439%
+DEBUG EpdTest - Best move found in 16642Ms :D Rc6-d6
+DEBUG EpdTest - Status: 6 positions solved of 7 in 1019244Ms (lctPoints=150)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2krr3/1p4pp/p1bRpp1n/2p5/P1B1PP2/8/1PP3PP/R1K3B1 w - - bm Rxc6+; id "test 8";
+DEBUG EpdTest - Lets see if Rxc6+ are found
+DEBUG SearchEngine - Board
+. . k r r . . . 8
+. p . . . . p p 7
+p . b R p p . n 6
+. . p . . . . . 5
+P . B . P P . . 4
+. . . . . . . . 3
+. P P . . . P P 2
+R . K . . . B . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 161 nodes 161 time 6 nps 23000 pv d6d8 
+DEBUG SearchEngine - depth 2 score cp 161 nodes 318 time 7 nps 39750 pv d6d8 c8d8 
+DEBUG SearchEngine - depth 3 score cp 225 nodes 703 time 9 nps 70300 pv c4e6 c8c7 d6d8 
+DEBUG SearchEngine - depth 4 score cp 129 nodes 3381 time 22 nps 147000 pv c4e6 c8b8 g1c5 c6e4 
+DEBUG SearchEngine - depth 5 score cp 107 nodes 9731 time 50 nps 190803 pv c4e6 c8c7 d6d8 e8d8 g1c5 c6e4 
+DEBUG SearchEngine - depth 6 score cp 102 nodes 18658 time 107 nps 172759 pv c4e6 c8c7 d6d8 e8d8 g1c5 c6e4 g2g4 
+DEBUG SearchEngine - depth 7 score cp 61 nodes 86495 time 424 nps 203517 pv d6e6 c8d7 e6e8 d8e8 c4d3 c6e4 g1c5 
+DEBUG SearchEngine - depth 8 score cp 33 nodes 227367 time 1014 nps 224006 pv d6d8 c8d8 c4d3 f6f5 g1c5 f5e4 d3e2 h6f5 c1d2 
+DEBUG SearchEngine - depth 9 score cp 38 nodes 391889 time 1813 nps 216035 pv d6e6 c8d7 e6e8 d8e8 g1c5 e8e4 b2b3 e4f4 c1b2 
+DEBUG SearchEngine - depth 10 score cp 26 nodes 987364 time 4409 nps 223892 pv d6e6 c8d7 e6e8 d8e8 g1c5 e8e4 b2b3 e4f4 g2g3 f4f5 
+DEBUG SearchEngine - depth 11 score cp 22 nodes 1747211 time 7785 nps 224404 pv d6e6 c8c7 g1c5 e8e6 c4e6 d8e8 e6b3 e8e4 c1d2 e4f4 g2g3 f4f5 
+DEBUG SearchEngine - depth 12 score cp 34 nodes 4504410 time 19967 nps 225581 pv d6c6 b7c6 c4a6 c8d7 g1c5 f6f5 e4e5 g7g5 a1a3 g5f4 a3h3 h6f7 h3h7 
+DEBUG SearchEngine - depth 13 score cp 39 nodes 5363685 time 24041 nps 223096 pv d6c6 b7c6 c4a6 c8d7 g1c5 e6e5 f4f5 h6f7 a4a5 f7d6 a6d3 d6b7 c5b6 d8a8 
+DEBUG SearchEngine - depth 14 score cp 23 nodes 14129515 time 64676 nps 218462 pv d6c6 b7c6 c4a6 c8c7 g1c5 e6e5 f4f5 g7g6 f5g6 h7g6 b2b4 h6f7 a4a5 d8a8 c5b6 c7b8 a6e2 f7d6 
+DEBUG SearchEngine - depth 15 score cp 23 nodes 18294959 time 84782 nps 215785 pv d6c6 b7c6 c4a6 c8c7 g1c5 e6e5 f4f5 g7g6 f5g6 h7g6 b2b4 h6f7 a4a5 d8a8 c5b6 c7b8 a6e2 f7d6 
+DEBUG SearchEngine - depth 16 score cp 33 nodes 33351337 time 157859 nps 211271 pv d6c6 b7c6 c4a6 c8c7 g1c5 e6e5 f4f5 g7g6 f5g6 d8a8 a6c4 h7g6 a4a5 f6f5 a5a6 f5e4 a6a7 h6g4 h2h4 
+DEBUG SearchEngine - depth 17 score cp 31 nodes 56918008 time 267380 nps 212872 pv d6c6 b7c6 c4a6 c8c7 g1c5 e6e5 f4f5 g7g6 f5g6 d8a8 a6c4 h7g6 a4a5 f6f5 e4f5 g6f5 a5a6 e5e4 a6a7 e4e3 c4e2 h6g4 
+DEBUG SearchEngine - depth 18 score cp 40 nodes 173576531 time 803773 nps 215951 pv d6c6 b7c6 g1c5 e6e5 f4f5 g7g6 f5g6 h7g6 c4a6 c8d7 a4a5 e8h8 a1a3 h6f7 a3d3 d7e8 h2h3 f6f5 e4f5 g6f5 d3d8 e8d8 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 3570 0.0018320718056373188%
+DEBUG SearchEngine - Positions QS      = 83128534 42.6603482872166%
+DEBUG SearchEngine - Positions Null    = 111729254 57.33781964097776%
+DEBUG SearchEngine - PV Cut            = 12104 39%
+DEBUG SearchEngine - PV All            = 18692
+DEBUG SearchEngine - Null Cut          = 193787597 70%
+DEBUG SearchEngine - Null All          = 80351411
+DEBUG SearchEngine - Asp Win      Hits = 53.61842105263158%
+DEBUG SearchEngine - TT Eval      Hits = 314450376 31.123539990867833%
+DEBUG SearchEngine - TT PV        Hits = 42645 0.002361971042608325%
+DEBUG SearchEngine - TT LB        Hits = 1805483608 3.8077536508988343%
+DEBUG SearchEngine - TT UB        Hits = 262826858 14.557144514379884%
+DEBUG SearchEngine - Futility     Hits = 18468929
+DEBUG SearchEngine - Agg.Futility Hits = 13674702
+DEBUG SearchEngine - Null Move    Hits = 41187415 80.27423939136341%
+DEBUG SearchEngine - Razoring     Hits = 10614115 87.53991583920872%
+DEBUG SearchEngine - S.Extensions Hits = 296073 39.15770846338599%
+DEBUG EpdTest - Best move found in 19967Ms :D Rd6xc6
+DEBUG EpdTest - Status: 7 positions solved of 8 in 1039211Ms (lctPoints=175)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = r5k1/pp2p1bp/6p1/n1p1P3/2qP1NP1/2PQB3/P5PP/R4K2 b - - bm g5; id "test 9";
+DEBUG EpdTest - Lets see if g5 are found
+DEBUG SearchEngine - Board
+r . . . . . k . 8
+p p . . p . b p 7
+. . . . . . p . 6
+n . p . P . . . 5
+. . q P . N P . 4
+. . P Q B . . . 3
+P . . . . . P P 2
+R . . . . K . . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -43 nodes 179 time 4 nps 35800 pv a8f8 
+DEBUG SearchEngine - depth 2 score cp -74 nodes 1522 time 10 nps 138363 pv g6g5 d3c4 
+DEBUG SearchEngine - depth 3 score cp -46 nodes 3668 time 22 nps 159478 pv c5d4 c3d4 a8f8 
+DEBUG SearchEngine - depth 4 score cp -47 nodes 6872 time 37 nps 180842 pv g6g5 d3c4 a5c4 f4d5 a8f8 f1g1 
+DEBUG SearchEngine - depth 5 score cp -61 nodes 26695 time 126 nps 210196 pv g6g5 d3c4 a5c4 f4d5 a8f8 f1g1 c5d4 
+DEBUG SearchEngine - depth 6 score cp -61 nodes 41671 time 211 nps 196561 pv g6g5 d3c4 a5c4 f4d5 a8f8 f1g1 c5d4 c3d4 
+DEBUG SearchEngine - depth 7 score cp -69 nodes 141313 time 755 nps 186921 pv b7b5 f1g1 g6g5 d3c4 a5c4 f4d5 c5d4 
+DEBUG SearchEngine - depth 8 score cp -74 nodes 333837 time 1676 nps 199067 pv b7b5 f1e2 c5d4 c3d4 a8f8 d3c4 a5c4 f4e6 c4e3 
+DEBUG SearchEngine - depth 9 score cp -72 nodes 942774 time 4315 nps 218436 pv g7h6 f1e2 h6f4 d3c4 a5c4 e3f4 c5d4 c3d4 a8d8 a1d1 b7b5 
+DEBUG SearchEngine - depth 10 score cp -85 nodes 1766877 time 7857 nps 224850 pv g7h6 f1e2 h6f4 d3c4 a5c4 e3f4 c5d4 c3d4 a8d8 a1d1 b7b5 f4g5 
+DEBUG SearchEngine - depth 11 score cp -82 nodes 2457927 time 10744 nps 228750 pv g7h6 f1e2 h6f4 d3c4 a5c4 e3f4 c5d4 c3d4 a8d8 a1d1 b7b5 f4g5 d8d7 
+DEBUG SearchEngine - depth 12 score cp -83 nodes 4153345 time 18129 nps 229086 pv g7h6 f1e2 h6f4 d3c4 a5c4 e3f4 c5d4 c3d4 a8d8 a1d1 b7b5 f4g5 d8d7 h2h4 
+DEBUG SearchEngine - depth 13 score cp -44 nodes 6338634 time 27372 nps 231565 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 g7f8 a1b1 h7h6 g5c1 f8e7 b1b7 a8d8 b7c7 
+DEBUG SearchEngine - depth 14 score cp -44 nodes 7610248 time 32784 nps 232125 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 g7f8 a1b1 h7h6 g5c1 f8e7 b1b7 a8d8 b7c7 
+DEBUG SearchEngine - depth 15 score cp -43 nodes 9655543 time 41145 nps 234665 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 g7f8 a1b1 h7h6 g5c1 f8e7 b1b7 a8g8 h2h3 c5d4 
+DEBUG SearchEngine - depth 16 score cp 99 nodes 12881848 time 54885 nps 234701 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 h7h6 g5h4 g7f8 e7c6 b7c6 f1e2 c5d4 a1f1 f7g8 c3d4 a8b8 f1f7 
+DEBUG SearchEngine - depth 17 score cp 99 nodes 17430708 time 74851 nps 232868 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 h7h6 g5h4 g7f8 e7c6 b7c6 f1e2 c5d4 a1f1 f7g8 c3d4 a8b8 f1f7 
+DEBUG SearchEngine - depth 18 score cp 85 nodes 34974514 time 151515 nps 230830 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 h7h6 g5h4 g7f8 e7c6 b7c6 f1e2 c5d4 c3d4 a8b8 a1f1 f7g7 e2d3 b8b4 
+DEBUG SearchEngine - depth 19 score cp 90 nodes 61970314 time 275183 nps 225195 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 h7h6 g5h4 g7f8 e7c6 b7c6 f1e2 c5d4 c3d4 a8b8 a1f1 f7g7 h4f6 g7g6 e2d3 b8b4 
+DEBUG SearchEngine - depth 20 score cp 90 nodes 133964497 time 612702 nps 218645 pv g6g5 d3c4 a5c4 f4d5 e7e6 d5e7 g8f7 e3g5 h7h6 g5h4 g7f8 e7c6 b7c6 f1e2 c5d4 c3d4 a8b8 a1f1 f7g7 h4f6 g7g6 e2d3 b8b4 h2h4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 1498 7.627242426457586E-4%
+DEBUG SearchEngine - Positions QS      = 82100449 41.80240506301851%
+DEBUG SearchEngine - Positions Null    = 114299310 58.19683221273884%
+DEBUG SearchEngine - PV Cut            = 12437 38%
+DEBUG SearchEngine - PV All            = 19470
+DEBUG SearchEngine - Null Cut          = 210682762 70%
+DEBUG SearchEngine - Null All          = 86871840
+DEBUG SearchEngine - Asp Win      Hits = 53.982300884955755%
+DEBUG SearchEngine - TT Eval      Hits = 347351204 30.535986130966247%
+DEBUG SearchEngine - TT PV        Hits = 43335 0.0021647111040700097%
+DEBUG SearchEngine - TT LB        Hits = 2001883758 3.526490972209586%
+DEBUG SearchEngine - TT UB        Hits = 268628692 13.418795718107825%
+DEBUG SearchEngine - Futility     Hits = 20369021
+DEBUG SearchEngine - Agg.Futility Hits = 14822636
+DEBUG SearchEngine - Null Move    Hits = 43932861 80.13878666979467%
+DEBUG SearchEngine - Razoring     Hits = 11216843 87.46793206991076%
+DEBUG SearchEngine - S.Extensions Hits = 297856 38.99858725438979%
+DEBUG EpdTest - Best move found in 27372Ms :D g6-g5
+DEBUG EpdTest - Status: 8 positions solved of 9 in 1066583Ms (lctPoints=200)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2r3k1/1qr1b1p1/p2pPn2/nppPp3/8/1PP1B2P/P1BQ1P2/5KRR w - - bm Rxg7+; id "test 10";
+DEBUG EpdTest - Lets see if Rxg7+ are found
+DEBUG SearchEngine - Board
+. . r . . . k . 8
+. q r . b . p . 7
+p . . p P n . . 6
+n p p P p . . . 5
+. . . . . . . . 4
+. P P . B . . P 3
+P . B Q . P . . 2
+. . . . . K R R 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -175 nodes 91 time 4 nps 18200 pv c3c4 
+DEBUG SearchEngine - depth 2 score cp -136 nodes 570 time 14 nps 38000 pv c3c4 b7b6 
+DEBUG SearchEngine - depth 3 score cp -149 nodes 5274 time 34 nps 150685 pv c3c4 b7b6 c2d3 
+DEBUG SearchEngine - depth 4 score cp -156 nodes 10567 time 99 nps 105670 pv c3c4 b7b6 c2d3 g8h8 
+DEBUG SearchEngine - depth 5 score cp -158 nodes 17103 time 172 nps 98861 pv c3c4 b7b6 e3h6 b5c4 g1g7 
+DEBUG SearchEngine - depth 6 score cp -155 nodes 29417 time 270 nps 108549 pv c3c4 b7b6 e3h6 e7f8 c2d3 e5e4 
+DEBUG SearchEngine - depth 7 score cp -160 nodes 130660 time 855 nps 152640 pv c3c4 b7b6 e3h6 e7f8 c2d3 e5e4 d3e2 
+DEBUG SearchEngine - depth 8 score cp -152 nodes 242577 time 1630 nps 148729 pv c3c4 b7b6 e3h6 e7f8 c4b5 a6b5 h6e3 c7e7 b3b4 
+DEBUG SearchEngine - depth 9 score cp -158 nodes 562101 time 3530 nps 159190 pv c3c4 b7b6 e3h6 e7f8 d2e1 c7e7 h6d2 a5b7 d2e3 
+DEBUG SearchEngine - depth 10 score cp -122 nodes 1620861 time 9496 nps 170670 pv c3c4 b7b6 e3h6 e7d8 d2g5 f6d5 e6e7 c7e7 c4d5 e7f7 g5h5 
+DEBUG SearchEngine - depth 11 score cp -117 nodes 2156548 time 12430 nps 173481 pv c3c4 a5c4 b3c4 b5c4 e3h6 e7f8 f2f4 e5f4 h6f4 b7d5 d2d5 f6d5 g1g4 
+DEBUG SearchEngine - depth 12 score cp 393 nodes 5340699 time 31967 nps 167063 pv g1g7 g8g7 e3h6 g7h8 h6g7 h8g7 h1g1 f6g4 g1g4 e7g5 d2g5 g7h8 g4h4 c7h7 h4h7 b7h7 
+DEBUG SearchEngine - depth 13 score cp 393 nodes 6617555 time 39625 nps 167000 pv g1g7 g8g7 e3h6 g7h8 h6g7 h8g7 h1g1 f6g4 g1g4 e7g5 d2g5 g7h8 g4h4 c7h7 h4h7 b7h7 c2h7 
+DEBUG SearchEngine - depth 14 score cp 495 nodes 8871338 time 52372 nps 169387 pv g1g7 g8g7 e3h6 g7h8 h6g7 h8g7 h1g1 f6g4 g1g4 e7g5 d2g5 g7h8 g4h4 c7h7 h4h7 b7h7 c2h7 h8h7 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 1094 7.615921159761385E-4%
+DEBUG SearchEngine - Positions QS      = 62771301 43.698471618980896%
+DEBUG SearchEngine - Positions Null    = 80874050 56.30076678890313%
+DEBUG SearchEngine - PV Cut            = 12792 39%
+DEBUG SearchEngine - PV All            = 19985
+DEBUG SearchEngine - Null Cut          = 225559277 70%
+DEBUG SearchEngine - Null All          = 93599388
+DEBUG SearchEngine - Asp Win      Hits = 52.53333333333333%
+DEBUG SearchEngine - TT Eval      Hits = 362268073 29.432529565134026%
+DEBUG SearchEngine - TT PV        Hits = 43505 0.0020277042493335095%
+DEBUG SearchEngine - TT LB        Hits = 2145529853 3.3167898316817315%
+DEBUG SearchEngine - TT UB        Hits = 270893399 12.625944058584022%
+DEBUG SearchEngine - Futility     Hits = 22363224
+DEBUG SearchEngine - Agg.Futility Hits = 16669389
+DEBUG SearchEngine - Null Move    Hits = 44547189 79.49539491860496%
+DEBUG SearchEngine - Razoring     Hits = 12208153 85.6681169762144%
+DEBUG SearchEngine - S.Extensions Hits = 298030 38.99747327044643%
+DEBUG EpdTest - Best move found in 31967Ms :D Rg1xg7
+DEBUG EpdTest - Status: 9 positions solved of 10 in 1098550Ms (lctPoints=220)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 1br3k1/p4p2/2p1r3/3p1b2/3Bn1p1/1P2P1Pq/P3Q1BP/2R1NRK1 b - - bm Qxh2+; id "test 11";
+DEBUG EpdTest - Lets see if Qxh2+ are found
+DEBUG SearchEngine - Board
+. b r . . . k . 8
+p . . . . p . . 7
+. . p . r . . . 6
+. . . p . b . . 5
+. . . B n . p . 4
+. P . . P . P q 3
+P . . . Q . B P 2
+. . R . N R K . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 29 nodes 119 time 5 nps 19833 pv h3h5 
+DEBUG SearchEngine - depth 2 score cp -10 nodes 722 time 8 nps 80222 pv h3h5 e1d3 
+DEBUG SearchEngine - depth 3 score cp -2 nodes 1687 time 15 nps 105437 pv h3h5 e1d3 a7a5 
+DEBUG SearchEngine - depth 4 score cp -33 nodes 6445 time 37 nps 169605 pv h3h5 g2e4 f5e4 e1d3 
+DEBUG SearchEngine - depth 5 score cp -25 nodes 15227 time 84 nps 179141 pv h3h5 e1d3 a7a5 g2e4 f5e4 
+DEBUG SearchEngine - depth 6 score cp -24 nodes 31053 time 222 nps 139251 pv h3h5 g2e4 f5e4 e1d3 e4f3 e2d2 
+DEBUG SearchEngine - depth 7 score cp -24 nodes 65178 time 458 nps 142000 pv h3h5 e1d3 a7a5 a2a4 c8e8 g2e4 f5e4 
+DEBUG SearchEngine - depth 8 score cp -14 nodes 151348 time 968 nps 156189 pv h3h5 e1d3 a7a5 g2e4 f5e4 a2a4 c8e8 d3f4 
+DEBUG SearchEngine - depth 9 score cp 126 nodes 420297 time 2408 nps 174469 pv h3h2 g1h2 e4g3 e2a6 g3e2 d4e5 e6h6 g2h3 b8e5 h2h1 h6h3 
+DEBUG SearchEngine - depth 10 score cp 232 nodes 481808 time 2753 nps 174948 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 
+DEBUG SearchEngine - depth 11 score cp 228 nodes 535438 time 3018 nps 177356 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 d5e4 a2a4 
+DEBUG SearchEngine - depth 12 score cp 255 nodes 693387 time 3718 nps 186444 pv h3h2 g1h2 e4g3 e2b5 g3e2 b5b8 e6h6 g2h3 h6h3 h2g2 c8b8 f1f5 e2c1 f5g5 g8f8 
+DEBUG SearchEngine - depth 13 score cp 255 nodes 844263 time 4400 nps 191834 pv h3h2 g1h2 e4g3 e2b5 g3e2 b5b8 e6h6 g2h3 h6h3 h2g2 c8b8 f1f5 e2c1 f5g5 g8h7 
+DEBUG SearchEngine - depth 14 score cp 255 nodes 1158471 time 5761 nps 201053 pv h3h2 g1h2 e4g3 e2b5 g3e2 b5b8 e6h6 g2h3 h6h3 h2g2 c8b8 f1f5 e2c1 f5g5 g8h7 g5g4 
+DEBUG SearchEngine - depth 15 score cp 247 nodes 3190122 time 14519 nps 219705 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 d5e4 f2c2 c8d7 c2c5 f7f6 c5d5 d7e8 
+DEBUG SearchEngine - depth 16 score cp 247 nodes 3723358 time 16898 nps 220330 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 d5e4 f2c2 c8d7 c2c5 f7f6 c5d5 d7e8 
+DEBUG SearchEngine - depth 17 score cp 250 nodes 5519783 time 24419 nps 226035 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 d5e4 f2c2 c8d7 c2c5 f7f5 c5d5 h6h7 b3b4 
+DEBUG SearchEngine - depth 18 score cp 249 nodes 9144026 time 39469 nps 231670 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f2 g3e4 g2e4 d5e4 f2c2 c8d7 c2c5 f7f5 c5d5 h6h7 b3b4 g4g3 a2a3 
+DEBUG SearchEngine - depth 19 score cp 236 nodes 35598898 time 162949 nps 218465 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f6 h6h5 e1d3 g3e2 g1f1 e2g3 f1g1 
+DEBUG SearchEngine - depth 20 score cp 236 nodes 42827017 time 200711 nps 213375 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f6 h6h5 e1d3 g3e2 g1f1 e2g3 f1g1 
+DEBUG SearchEngine - depth 21 score cp 233 nodes 95239348 time 454989 nps 209321 pv h3h2 g1h2 e4g3 e2b5 e6h6 h2g1 c6b5 c1c8 f5c8 f1f6 h6f6 d4f6 g3e4 g2e4 d5e4 e1c2 g8h7 f6c3 a7a6 a2a4 g4g3 a4b5 a6b5 g1g2 f7f5 c2d4 f5f4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 5453 0.0028951299258441645%
+DEBUG SearchEngine - Positions QS      = 69042253 36.65620627324483%
+DEBUG SearchEngine - Positions Null    = 119303081 63.34089859682933%
+DEBUG SearchEngine - PV Cut            = 14174 38%
+DEBUG SearchEngine - PV All            = 22775
+DEBUG SearchEngine - Null Cut          = 241158793 70%
+DEBUG SearchEngine - Null All          = 100790437
+DEBUG SearchEngine - Asp Win      Hits = 52.53012048192771%
+DEBUG SearchEngine - TT Eval      Hits = 397112611 29.241803983663164%
+DEBUG SearchEngine - TT PV        Hits = 46482 0.0019916211714926368%
+DEBUG SearchEngine - TT LB        Hits = 2333877580 3.1377517667400534%
+DEBUG SearchEngine - TT UB        Hits = 275720254 11.813826756071755%
+DEBUG SearchEngine - Futility     Hits = 24699648
+DEBUG SearchEngine - Agg.Futility Hits = 18328807
+DEBUG SearchEngine - Null Move    Hits = 48471061 79.94825793392394%
+DEBUG SearchEngine - Razoring     Hits = 13047221 85.05986327935912%
+DEBUG SearchEngine - S.Extensions Hits = 299853 38.529432928490294%
+DEBUG EpdTest - Best move found in 2408Ms :D Qh3xh2
+DEBUG EpdTest - Status: 10 positions solved of 11 in 1100958Ms (lctPoints=250)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 8/pp3k2/2p1qp2/2P5/5P2/1R2p1rp/PP2R3/4K2Q b - - bm Qe4; id "test 12";
+DEBUG EpdTest - Lets see if Qe4 are found
+DEBUG SearchEngine - Board
+. . . . . . . . 8
+p p . . . k . . 7
+. . p . q p . . 6
+. . P . . . . . 5
+. . . . . P . . 4
+. R . . p . r p 3
+P P . . R . . . 2
+. . . . K . . Q 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -217 nodes 298 time 5 nps 49666 pv e6e7 
+DEBUG SearchEngine - depth 2 score cp -218 nodes 647 time 6 nps 92428 pv e6e7 a2a4 
+DEBUG SearchEngine - depth 3 score cp -220 nodes 1850 time 12 nps 142307 pv e6e7 h1h2 g3f3 
+DEBUG SearchEngine - depth 4 score cp -221 nodes 3896 time 21 nps 177090 pv e6e7 h1h2 g3f3 a2a4 
+DEBUG SearchEngine - depth 5 score cp -246 nodes 14337 time 75 nps 188644 pv e6e7 h1h2 g3f3 h2g1 e7c5 
+DEBUG SearchEngine - depth 6 score cp -241 nodes 29085 time 149 nps 193900 pv e6e7 h1h2 g3f3 h2g1 e7c5 b3b7 
+DEBUG SearchEngine - depth 7 score cp -173 nodes 83423 time 428 nps 194459 pv b7b5 c5b6 e6g4 e1f1 g4f4 f1e1 a7b6 b3b6 f7g8 
+DEBUG SearchEngine - depth 8 score cp -180 nodes 172933 time 852 nps 202735 pv b7b5 c5b6 e6g4 e1f1 g4f4 f1e1 a7b6 b3b6 f4f3 h1f3 
+DEBUG SearchEngine - depth 9 score cp -110 nodes 428415 time 2047 nps 209187 pv b7b5 b3a3 e6f5 a3a7 f7g6 e2h2 f5b1 e1e2 b1b2 e2e1 
+DEBUG SearchEngine - depth 10 score cp -110 nodes 793548 time 3893 nps 203787 pv b7b5 b3a3 e6f5 a3a7 f7g6 e2h2 f5b1 e1e2 b1c2 e2e1 c2b1 
+DEBUG SearchEngine - depth 11 score cp 291 nodes 2350232 time 10879 nps 216013 pv e6f5 b3b7 f7g6 e2e3 g3e3 e1d2 f5f4 d2d1 f4d4 d1c1 e3e2 a2a3 d4c5 c1b1 
+DEBUG SearchEngine - depth 12 score cp 464 nodes 3524234 time 16202 nps 217505 pv e6e4 b3b7 f7g8 b7b8 g8g7 b8b7 g7h6 b7h7 e4h7 e2h2 h7b1 e1e2 b1b2 e2f1 g3g1 h1g1 b2c1 f1e2 
+DEBUG SearchEngine - depth 13 score cp 464 nodes 4437495 time 20497 nps 216484 pv e6e4 b3b7 f7g8 b7b8 g8g7 b8b7 g7h6 b7h7 e4h7 e2h2 h7b1 e1e2 b1b2 e2f1 g3g1 h1g1 b2c1 f1e2 
+DEBUG SearchEngine - depth 14 score cp 565 nodes 7481949 time 34051 nps 219721 pv e6e4 b3b7 f7f8 b7b8 f8g7 b8b7 g7h6 b7h7 e4h7 f4f5 h7f5 e2h2 f5b1 e1e2 b1b2 e2f1 g3g1 h1g1 b2c1 f1e2 
+DEBUG SearchEngine - depth 15 score cp 1091 nodes 24021682 time 109295 nps 219785 pv e6e4 b3b7 f7g8 b7b8 g8g7 b8b7 g7h8 b7b8 h8g7 
+DEBUG SearchEngine - depth 16 score cp 1091 nodes 32405254 time 147425 nps 219806 pv e6e4 b3b7 f7g8 b7b8 g8g7 b8b7 g7h8 b7b8 h8g7 
+DEBUG SearchEngine - depth 17 score cp 1226 nodes 190184268 time 856890 nps 221946 pv e6e4 b3b7 f7f8 b7b8 f8g7 b8b7 g7h6 b7h7 e4h7 f4f5 h7f5 e2e3 g3e3 e1d2 f5f2 d2d1 f2b2 a2a4 b2b1 d1d2 b1h1 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 4171 0.002085807228975792%
+DEBUG SearchEngine - Positions QS      = 77209777 38.61057564473959%
+DEBUG SearchEngine - Positions Null    = 122756593 61.38733854803143%
+DEBUG SearchEngine - PV Cut            = 15123 38%
+DEBUG SearchEngine - PV All            = 24504
+DEBUG SearchEngine - Null Cut          = 265537704 70%
+DEBUG SearchEngine - Null All          = 110797734
+DEBUG SearchEngine - Asp Win      Hits = 51.53508771929825%
+DEBUG SearchEngine - TT Eval      Hits = 426503618 28.90129151335709%
+DEBUG SearchEngine - TT PV        Hits = 47776 0.0018855177389825398%
+DEBUG SearchEngine - TT LB        Hits = 2533839858 2.980539506534197%
+DEBUG SearchEngine - TT UB        Hits = 283453169 11.186704167789596%
+DEBUG SearchEngine - Futility     Hits = 27351485
+DEBUG SearchEngine - Agg.Futility Hits = 20594879
+DEBUG SearchEngine - Null Move    Hits = 50774034 79.67891993534045%
+DEBUG SearchEngine - Razoring     Hits = 15442021 86.02022313644504%
+DEBUG SearchEngine - S.Extensions Hits = 304378 38.33553320973722%
+DEBUG EpdTest - Best move found in 16202Ms :D Qe6-e4
+DEBUG EpdTest - Status: 11 positions solved of 12 in 1117160Ms (lctPoints=275)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2bq3k/2p4p/p2p4/7P/1nBPPQP1/r1p5/8/1K1R2R1 b - - bm Be6; id "test 13";
+DEBUG EpdTest - Lets see if Be6 are found
+DEBUG SearchEngine - Board
+. . b q . . . k 8
+. . p . . . . p 7
+p . . p . . . . 6
+. . . . . . . P 5
+. n B P P Q P . 4
+r . p . . . . . 3
+. . . . . . . . 2
+. K . R . . R . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 261 nodes 235 time 5 nps 39166 pv c3c2 b1b2 
+DEBUG SearchEngine - depth 2 score cp 261 nodes 563 time 7 nps 70375 pv c3c2 b1b2 c2d1q g1d1 a6a5 
+DEBUG SearchEngine - depth 3 score cp 243 nodes 1676 time 11 nps 139666 pv c3c2 b1b2 c2d1r g1d1 a3h3 d1f1 
+DEBUG SearchEngine - depth 4 score cp 241 nodes 2974 time 18 nps 156526 pv c3c2 b1b2 c2d1r g1d1 a3h3 d1f1 c8d7 
+DEBUG SearchEngine - depth 5 score cp 243 nodes 6698 time 39 nps 167450 pv c3c2 b1b2 c2d1r g1d1 a3h3 d1f1 c8d7 f4d2 
+DEBUG SearchEngine - depth 6 score cp 237 nodes 19186 time 113 nps 168298 pv c3c2 b1b2 c2d1r g1d1 a3h3 d1f1 c8d7 f1f3 h3h1 
+DEBUG SearchEngine - depth 7 score cp 250 nodes 55668 time 330 nps 168181 pv c3c2 b1b2 c2d1r g1d1 a3h3 h5h6 c8d7 d1f1 b4d3 c4d3 
+DEBUG SearchEngine - depth 8 score cp 174 nodes 273119 time 1330 nps 205198 pv c3c2 b1b2 c2d1r g1d1 a3a5 h5h6 a5g5 d1f1 d6d5 f4f8 g5g8 f8b4 
+DEBUG SearchEngine - depth 9 score cp 174 nodes 326668 time 1621 nps 201398 pv c3c2 b1b2 c2d1r g1d1 a3a5 h5h6 a5g5 d1f1 d6d5 f4f8 g5g8 f8b4 
+DEBUG SearchEngine - depth 10 score cp 101 nodes 1488782 time 6650 nps 223843 pv c3c2 b1b2 c2d1r g1d1 a3h3 h5h6 c8e6 c4e6 b4d3 d1d3 h3d3 f4f2 a6a5 b2c2 d3h3 
+DEBUG SearchEngine - depth 11 score cp 101 nodes 2433671 time 11297 nps 215407 pv c3c2 b1b2 c2d1r g1d1 a3h3 h5h6 c8e6 c4e6 b4d3 d1d3 h3d3 f4f2 a6a5 b2c2 d3h3 
+DEBUG SearchEngine - depth 12 score cp 86 nodes 6067252 time 27432 nps 221166 pv c8e6 c4e6 c3c2 b1b2 c2d1q g1d1 b4d3 d1d3 
+DEBUG SearchEngine - depth 13 score cp 75 nodes 13002801 time 58732 nps 221388 pv c8e6 c4e6 c3c2 b1b2 c2d1r g1d1 b4d3 d1d3 a3d3 e4e5 a6a5 b2c2 d3h3 e6b3 h3h4 e5e6 c7c5 c2b2 
+DEBUG SearchEngine - depth 14 score cp 161 nodes 21941901 time 100947 nps 217358 pv c8e6 f4c1 c3c2 b1b2 c2d1q g1d1 b4a2 c1d2 e6c4 b2a3 d8e7 d1e1 d6d5 a3b2 d5e4 h5h6 c7c6 
+DEBUG SearchEngine - depth 15 score cp 75 nodes 86443843 time 418147 nps 206730 pv c8e6 c4e6 c3c2 b1c1 c2d1q g1d1 b4d3 d1d3 a3d3 e4e5 a6a5 c1c2 d3h3 e6b3 h3h4 e5e6 c7c5 c2b2 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 8364 0.004558295349264558%
+DEBUG SearchEngine - Positions QS      = 70866084 38.62129855545091%
+DEBUG SearchEngine - Positions Null    = 112615198 61.37414314919982%
+DEBUG SearchEngine - PV Cut            = 16931 37%
+DEBUG SearchEngine - PV All            = 28070
+DEBUG SearchEngine - Null Cut          = 284388348 70%
+DEBUG SearchEngine - Null All          = 118002125
+DEBUG SearchEngine - Asp Win      Hits = 50.91649694501018%
+DEBUG SearchEngine - TT Eval      Hits = 456695398 28.67711698968672%
+DEBUG SearchEngine - TT PV        Hits = 50472 0.0018574127014549082%
+DEBUG SearchEngine - TT LB        Hits = 2717328247 2.865598923721047%
+DEBUG SearchEngine - TT UB        Hits = 287806242 10.591515482818297%
+DEBUG SearchEngine - Futility     Hits = 29735569
+DEBUG SearchEngine - Agg.Futility Hits = 22372207
+DEBUG SearchEngine - Null Move    Hits = 53421507 79.54416463897059%
+DEBUG SearchEngine - Razoring     Hits = 17253691 86.05609008369596%
+DEBUG SearchEngine - S.Extensions Hits = 307543 38.07125199149799%
+DEBUG EpdTest - Best move found in 27432Ms :D Bc8-e6
+DEBUG EpdTest - Status: 12 positions solved of 13 in 1144592Ms (lctPoints=300)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 3r1rk1/1p3pnp/p3pBp1/1qPpP3/1P1P2R1/P2Q3R/6PP/6K1 w - - bm Rxh7; id "test 14";
+DEBUG EpdTest - Lets see if Rxh7 are found
+DEBUG SearchEngine - Board
+. . . r . r k . 8
+. p . . . p n p 7
+p . . . p B p . 6
+. q P p P . . . 5
+. P . P . . R . 4
+P . . Q . . . R 3
+. . . . . . P P 2
+. . . . . . K . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 376 nodes 126 time 6 nps 18000 pv d3b5 
+DEBUG SearchEngine - depth 2 score cp 376 nodes 264 time 7 nps 33000 pv d3b5 a6b5 f6g7 
+DEBUG SearchEngine - depth 3 score cp 217 nodes 1150 time 11 nps 95833 pv d3b5 a6b5 f6d8 f8d8 
+DEBUG SearchEngine - depth 4 score cp 312 nodes 1464 time 13 nps 104571 pv d3b5 a6b5 f6d8 f8d8 h3h7 
+DEBUG SearchEngine - depth 5 score cp 259 nodes 6729 time 35 nps 186916 pv d3b5 a6b5 f6d8 f8d8 h3h6 g8h8 
+DEBUG SearchEngine - depth 6 score cp 262 nodes 10505 time 76 nps 136428 pv d3b5 a6b5 f6d8 f8d8 h3h6 g8h8 g4f4 
+DEBUG SearchEngine - depth 7 score cp 188 nodes 52660 time 347 nps 151321 pv d3b5 a6b5 f6d8 f8d8 h3f3 h7h5 g4g5 g7f5 
+DEBUG SearchEngine - depth 8 score cp 190 nodes 130229 time 757 nps 171806 pv d3d2 g7f5 f6d8 f8d8 g2g3 h7h6 h3h5 g8f8 
+DEBUG SearchEngine - depth 9 score cp 190 nodes 211649 time 1208 nps 175061 pv d3d2 g7f5 f6d8 f8d8 g1f2 g8h8 f2g1 h7h5 g4f4 
+DEBUG SearchEngine - depth 10 score cp 198 nodes 413311 time 2286 nps 180721 pv d3d2 g7f5 f6d8 f8d8 d2g5 d8e8 g5d2 h7h6 h3f3 g6g5 
+DEBUG SearchEngine - depth 11 score cp 190 nodes 1063604 time 5660 nps 187882 pv d3d2 g7f5 f6d8 f8d8 g4f4 h7h5 g2g4 h5g4 f4g4 d8c8 g1g2 b5c4 
+DEBUG SearchEngine - depth 12 score mate 7 nodes 4751047 time 27343 nps 173750 pv h3h7 g8h7 g4h4 h7g8 d3d2 g7h5 d2h6 b5f1 g1f1 h5g3 h2g3 b7b6 h6h7 
+DEBUG SearchEngine - Positions PV      = 1422 0.02993024484918798%
+DEBUG SearchEngine - Positions QS      = 1666664 35.07993080262098%
+DEBUG SearchEngine - Positions Null    = 3082961 64.89013895252984%
+DEBUG SearchEngine - PV Cut            = 17225 37%
+DEBUG SearchEngine - PV All            = 28683
+DEBUG SearchEngine - Null Cut          = 285198972 70%
+DEBUG SearchEngine - Null All          = 118256465
+DEBUG SearchEngine - Asp Win      Hits = 49.904761904761905%
+DEBUG SearchEngine - TT Eval      Hits = 457296511 28.66324173352602%
+DEBUG SearchEngine - TT PV        Hits = 50871 0.0018689278244839655%
+DEBUG SearchEngine - TT LB        Hits = 2721934969 2.8625381534601977%
+DEBUG SearchEngine - TT UB        Hits = 288055243 10.58273787877553%
+DEBUG SearchEngine - Futility     Hits = 29828531
+DEBUG SearchEngine - Agg.Futility Hits = 22445709
+DEBUG SearchEngine - Null Move    Hits = 53447511 79.533315460693%
+DEBUG SearchEngine - Razoring     Hits = 17266919 86.05285365449251%
+DEBUG SearchEngine - S.Extensions Hits = 307584 38.07283975526159%
+DEBUG EpdTest - Best move found in 27343Ms :D Rh3xh7
+DEBUG EpdTest - Status: 13 positions solved of 14 in 1171935Ms (lctPoints=325)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2b1q3/p7/1p1p2kb/nPpN3p/P1P1P2P/6P1/5R1K/5Q2 w - - bm e5; id "test 15";
+DEBUG EpdTest - Lets see if e5 are found
+DEBUG SearchEngine - Board
+. . b . q . . . 8
+p . . . . . . . 7
+. p . p . . k b 6
+n P p N . . . p 5
+P . P . P . . P 4
+. . . . . . P . 3
+. . . . . R . K 2
+. . . . . Q . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 143 nodes 210 time 6 nps 30000 pv f2f6 
+DEBUG SearchEngine - depth 2 score cp 148 nodes 349 time 7 nps 43625 pv f2f6 g6h7 
+DEBUG SearchEngine - depth 3 score cp 159 nodes 1252 time 13 nps 89428 pv f2f6 g6h7 f6f7 h7h8 
+DEBUG SearchEngine - depth 4 score cp 159 nodes 2268 time 18 nps 119368 pv f2f6 g6h7 f6f7 h7h8 f1f6 
+DEBUG SearchEngine - depth 5 score cp 186 nodes 4511 time 29 nps 150366 pv f2f6 g6g7 f6d6 h6d2 d5b6 
+DEBUG SearchEngine - depth 6 score cp 130 nodes 33819 time 229 nps 147039 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8g4 
+DEBUG SearchEngine - depth 7 score cp 137 nodes 60621 time 411 nps 147138 pv f2f6 g6g7 f6d6 e8e5 f1f6 e5f6 d6f6 h6d2 
+DEBUG SearchEngine - depth 8 score cp 117 nodes 180457 time 967 nps 186422 pv f2f6 g6g7 f6d6 e8e5 f1f6 e5f6 d6f6 h6d2 f6f8 
+DEBUG SearchEngine - depth 9 score cp 139 nodes 352331 time 1858 nps 189527 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 
+DEBUG SearchEngine - depth 10 score cp 144 nodes 525041 time 2666 nps 196865 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 d5f4 
+DEBUG SearchEngine - depth 11 score cp 144 nodes 866397 time 4252 nps 203714 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 d5f4 e6c4 
+DEBUG SearchEngine - depth 12 score cp 144 nodes 1431828 time 6807 nps 210315 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 d5f4 e6c4 e7a7 
+DEBUG SearchEngine - depth 13 score cp 139 nodes 2597582 time 11956 nps 217243 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 d5f4 e5b2 h2g1 b2b1 g1h2 
+DEBUG SearchEngine - depth 14 score cp 139 nodes 5156753 time 23608 nps 218423 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 f1f8 g7h7 f8e7 h6g7 d5f4 e5b2 h2g1 b2b1 g1h2 b1c2 h2g1 
+DEBUG SearchEngine - depth 15 score cp 174 nodes 8588848 time 38643 nps 222255 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 d8a8 e6d5 e4d5 e5e7 f1d3 e7b7 d3c3 g7g6 a8g8 g6f7 g8d8 b7c7 c3g7 
+DEBUG SearchEngine - depth 16 score cp 174 nodes 16444640 time 75305 nps 218370 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 d8a8 e6d5 e4d5 e5e7 f1d3 e7b7 d3c3 g7g6 c3d3 g6f6 d3f3 f6g7 f3c3 
+DEBUG SearchEngine - depth 17 score cp 210 nodes 40399029 time 190730 nps 211811 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 d8a8 e6d5 e4d5 a5b7 h2h3 b7d6 a8a7 g7h8 f1d3 d6e4 d3f3 e4d6 f3d3 
+DEBUG SearchEngine - depth 18 score cp 261 nodes 104452326 time 512203 nps 203927 pv f2f6 g6g7 f6d6 e8e5 d6d8 c8e6 d8a8 g7g6 a8a7 e5b2 h2h1 b2c1 d5e7 g6g7 e7d5 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 3033 0.0016498818433282863%
+DEBUG SearchEngine - Positions QS      = 77223171 42.007618765953005%
+DEBUG SearchEngine - Positions Null    = 106605142 57.99073135220367%
+DEBUG SearchEngine - PV Cut            = 17975 37%
+DEBUG SearchEngine - PV All            = 30104
+DEBUG SearchEngine - Null Cut          = 303165310 70%
+DEBUG SearchEngine - Null All          = 124979193
+DEBUG SearchEngine - Asp Win      Hits = 49.91087344028521%
+DEBUG SearchEngine - TT Eval      Hits = 485714552 28.36861057206947%
+DEBUG SearchEngine - TT PV        Hits = 52232 0.0017975318349583288%
+DEBUG SearchEngine - TT LB        Hits = 2905762167 2.7384310699506744%
+DEBUG SearchEngine - TT UB        Hits = 292927278 10.08091031422669%
+DEBUG SearchEngine - Futility     Hits = 32054744
+DEBUG SearchEngine - Agg.Futility Hits = 24015472
+DEBUG SearchEngine - Null Move    Hits = 55696309 79.46319978707588%
+DEBUG SearchEngine - Razoring     Hits = 19010154 85.97936647605272%
+DEBUG SearchEngine - S.Extensions Hits = 311303 37.7936170316089%
+DEBUG EpdTest - Best move not found :( Rf2-f6 != e5
+DEBUG EpdTest - Status: 13 positions solved of 15 in 2071935Ms (lctPoints=325)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2krr3/pppb1ppp/3b4/3q4/3P3n/2P2N1P/PP2B1P1/R1BQ1RK1 b - - bm Nxg2; id "test 16";
+DEBUG EpdTest - Lets see if Nxg2 are found
+DEBUG SearchEngine - Board
+. . k r r . . . 8
+p p p b . p p p 7
+. . . b . . . . 6
+. . . q . . . . 5
+. . . P . . . n 4
+. . P . . N . P 3
+P P . . B . P . 2
+R . B Q . R K . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 23 nodes 201 time 5 nps 33500 pv d7b5 
+DEBUG SearchEngine - depth 2 score cp 13 nodes 688 time 9 nps 68800 pv h4f3 e2f3 
+DEBUG SearchEngine - depth 3 score cp 35 nodes 3710 time 26 nps 137407 pv h4f5 c3c4 d5e4 
+DEBUG SearchEngine - depth 4 score cp 20 nodes 11701 time 66 nps 174641 pv h4f5 b2b4 f7f6 a2a4 
+DEBUG SearchEngine - depth 5 score cp 16 nodes 27525 time 216 nps 126843 pv h4f5 b2b3 f7f6 e2c4 d5e4 
+DEBUG SearchEngine - depth 6 score cp 20 nodes 52908 time 384 nps 137423 pv h4f5 b2b3 b7b5 e2d3 c8b8 a2a4 
+DEBUG SearchEngine - depth 7 score cp 3 nodes 162039 time 934 nps 173303 pv h4f5 b2b3 f7f6 e2c4 d5c6 f1e1 c8b8 
+DEBUG SearchEngine - depth 8 score cp -7 nodes 295884 time 1659 nps 178243 pv h4f5 b2b3 f7f6 e2c4 d5a5 b3b4 a5b6 f1f2 
+DEBUG SearchEngine - depth 9 score cp -6 nodes 514408 time 2769 nps 185706 pv h4f5 e2d3 f7f6 d1b3 c7c6 c1d2 b7b5 a1e1 a7a5 
+DEBUG SearchEngine - depth 10 score cp -5 nodes 939143 time 5017 nps 187154 pv h4f5 e2d3 f7f6 d1b3 c7c6 c1d2 b7b5 a1e1 a7a5 b3d5 
+DEBUG SearchEngine - depth 11 score cp -5 nodes 1506269 time 7724 nps 194986 pv h4f5 e2d3 f7f6 d1b3 c7c6 c1d2 b7b5 a1e1 h7h5 b3d5 c6d5 b2b4 
+DEBUG SearchEngine - depth 12 score cp 1 nodes 2851677 time 14218 nps 200553 pv h4f5 e2d3 f7f6 d1b3 d5b3 a2b3 a7a6 g2g4 f5g3 f1f2 h7h6 a1a5 g3e4 
+DEBUG SearchEngine - depth 13 score cp 5 nodes 5165969 time 25115 nps 205684 pv h4f5 e2d3 f7f6 d1b3 d5b3 a2b3 a7a6 g2g4 f5g3 f1f2 h7h5 g4h5 d7h3 h5h6 
+DEBUG SearchEngine - depth 14 score cp 14 nodes 9692496 time 48214 nps 201026 pv h4f5 e2d3 f7f6 d1b3 d5c6 a2a4 c8b8 c1d2 h7h5 b3b5 c6f3 f1f3 d7b5 a4b5 
+DEBUG SearchEngine - depth 15 score cp 9 nodes 22268050 time 114299 nps 194821 pv h4f5 e2d3 f7f6 d1b3 d5c6 a2a4 f5g3 f1f2 h7h5 c1d2 c6b6 b3c2 c8b8 b2b4 a7a5 
+DEBUG SearchEngine - depth 16 score cp 2 nodes 79150897 time 431536 nps 183416 pv h4f5 e2d3 f7f6 d1b3 d5b3 a2b3 a7a6 c1d2 h7h5 b3b4 c8b8 h3h4 g7g6 d3f5 d7f5 a1e1 e8e7 
+DEBUG SearchEngine - depth 17 score cp 4 nodes 126592773 time 696492 nps 181757 pv h4f5 e2d3 f7f6 d1b3 d5b3 a2b3 a7a6 c1d2 h7h5 b3b4 d6g3 b2b3 f5e3 f1b1 d7f5 d3f5 e3f5 a1a5 g7g6 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 4643 0.002858136086034587%
+DEBUG SearchEngine - Positions QS      = 69136862 42.559241903380006%
+DEBUG SearchEngine - Positions Null    = 93307023 57.43789996053396%
+DEBUG SearchEngine - PV Cut            = 19130 37%
+DEBUG SearchEngine - PV All            = 32270
+DEBUG SearchEngine - Null Cut          = 316803471 71%
+DEBUG SearchEngine - Null All          = 128721226
+DEBUG SearchEngine - Asp Win      Hits = 50.59625212947189%
+DEBUG SearchEngine - TT Eval      Hits = 508305599 27.94759331186941%
+DEBUG SearchEngine - TT PV        Hits = 54177 0.0017657525826477352%
+DEBUG SearchEngine - TT LB        Hits = 3068210152 2.621617947113813%
+DEBUG SearchEngine - TT UB        Hits = 296543635 9.665036627517162%
+DEBUG SearchEngine - Futility     Hits = 33377154
+DEBUG SearchEngine - Agg.Futility Hits = 24947407
+DEBUG SearchEngine - Null Move    Hits = 57390804 79.47220339724716%
+DEBUG SearchEngine - Razoring     Hits = 19803331 85.6142863961203%
+DEBUG SearchEngine - S.Extensions Hits = 311686 37.67153586389776%
+DEBUG EpdTest - Best move not found :( Nh4-f5 != Nxg2
+DEBUG EpdTest - Status: 13 positions solved of 16 in 2971935Ms (lctPoints=325)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 4r1k1/p1qr1p2/2pb1Bp1/1p5p/3P1n1R/3B1P2/PP3PK1/2Q4R w - - bm Qxf4; id "test 17";
+DEBUG EpdTest - Lets see if Qxf4 are found
+DEBUG SearchEngine - Board
+. . . . r . k . 8
+p . q r . p . . 7
+. . p b . B p . 6
+. p . . . . . p 5
+. . . P . n . R 4
+. . . B . P . . 3
+P P . . . P K . 2
+. . Q . . . . R 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -345 nodes 95 time 3 nps 23750 pv h4f4 
+DEBUG SearchEngine - depth 2 score cp -345 nodes 195 time 4 nps 39000 pv h4f4 d6f4 
+DEBUG SearchEngine - depth 3 score cp -335 nodes 505 time 5 nps 84166 pv h4f4 d6f4 c1c5 
+DEBUG SearchEngine - depth 4 score cp -343 nodes 817 time 6 nps 116714 pv h4f4 d6f4 c1c5 c7d6 
+DEBUG SearchEngine - depth 5 score cp -359 nodes 3251 time 18 nps 171105 pv h4f4 d6f4 c1c5 d7d5 c5b4 
+DEBUG SearchEngine - depth 6 score cp -362 nodes 5561 time 27 nps 198607 pv h4f4 d6f4 c1c5 d7d5 c5b4 a7a5 
+DEBUG SearchEngine - depth 7 score cp -383 nodes 19793 time 95 nps 206177 pv h4f4 d6f4 c1c5 d7d5 c5b4 a7a5 b4c3 
+DEBUG SearchEngine - depth 8 score cp -337 nodes 79100 time 431 nps 183101 pv h4f4 d6f4 h1e1 d7e7 e1e7 e8e7 c1c5 e7e6 f6g5 
+DEBUG SearchEngine - depth 9 score cp -338 nodes 106197 time 585 nps 181223 pv h4f4 d6f4 h1e1 d7e7 e1e7 e8e7 c1c5 e7e6 f6g5 a7a5 
+DEBUG SearchEngine - depth 10 score cp 235 nodes 783187 time 4401 nps 177916 pv c1f4 d6e7 f4c7 d7c7 h1e1 a7a5 h4e4 g8f8 a2a4 b5a4 d3c4 
+DEBUG SearchEngine - depth 11 score mate 6 nodes 3336423 time 18627 nps 179107 pv c1f4 d6e7 h4h5 e7f6 f4f6 g6h5 h1h5 c7h2 h5h2 d7d8 h2h8 
+DEBUG SearchEngine - Positions PV      = 1237 0.03707563459429455%
+DEBUG SearchEngine - Positions QS      = 1286017 38.544782840784876%
+DEBUG SearchEngine - Positions Null    = 2049169 61.41814152462083%
+DEBUG SearchEngine - PV Cut            = 19280 37%
+DEBUG SearchEngine - PV All            = 32743
+DEBUG SearchEngine - Null Cut          = 317254546 71%
+DEBUG SearchEngine - Null All          = 128870274
+DEBUG SearchEngine - Asp Win      Hits = 49.91896272285251%
+DEBUG SearchEngine - TT Eval      Hits = 508816222 27.943730526279875%
+DEBUG SearchEngine - TT PV        Hits = 54443 0.0017725209696730303%
+DEBUG SearchEngine - TT LB        Hits = 3071501039 2.6199707562592818%
+DEBUG SearchEngine - TT UB        Hits = 296731662 9.660802917931228%
+DEBUG SearchEngine - Futility     Hits = 33417662
+DEBUG SearchEngine - Agg.Futility Hits = 24984146
+DEBUG SearchEngine - Null Move    Hits = 57404232 79.45739857522902%
+DEBUG SearchEngine - Razoring     Hits = 19816510 85.60743839336911%
+DEBUG SearchEngine - S.Extensions Hits = 311694 37.67200192412517%
+DEBUG EpdTest - Best move found in 4401Ms :D Qc1xf4
+DEBUG EpdTest - Status: 14 positions solved of 17 in 2976336Ms (lctPoints=355)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 8/4p3/8/3P3p/P2pK3/6P1/7b/3k4 w - - bm d6; id "test 18";
+DEBUG EpdTest - Lets see if d6 are found
+DEBUG SearchEngine - Board
+. . . . . . . . 8
+. . . . p . . . 7
+. . . . . . . . 6
+. . . P . . . p 5
+P . . p K . . . 4
+. . . . . . P . 3
+. . . . . . . b 2
+. . . k . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -280 nodes 45 time 4 nps 9000 pv a4a5 
+DEBUG SearchEngine - depth 2 score cp -294 nodes 177 time 4 nps 35400 pv a4a5 h2g1 
+DEBUG SearchEngine - depth 3 score cp -280 nodes 616 time 6 nps 88000 pv a4a5 h2g3 e4d4 
+DEBUG SearchEngine - depth 4 score cp -261 nodes 2946 time 13 nps 210428 pv a4a5 h2g3 a5a6 g3b8 e4d4 
+DEBUG SearchEngine - depth 5 score cp -270 nodes 5985 time 24 nps 239400 pv a4a5 h2g3 a5a6 g3b8 e4d4 h5h4 
+DEBUG SearchEngine - depth 6 score cp -288 nodes 10060 time 37 nps 264736 pv a4a5 h2g3 a5a6 g3b8 e4d4 h5h4 d4e4 
+DEBUG SearchEngine - depth 7 score cp -340 nodes 28086 time 97 nps 286591 pv a4a5 h2g3 a5a6 g3b8 e4d4 h5h4 d5d6 e7d6 d4e4 
+DEBUG SearchEngine - depth 8 score cp -350 nodes 63933 time 227 nps 280407 pv e4d4 h2g3 d4e3 h5h4 e3f3 g3e5 f3e4 e5d6 
+DEBUG SearchEngine - depth 9 score cp -358 nodes 116488 time 423 nps 274735 pv e4d4 h2g3 d4e4 d1e2 e4f5 h5h4 f5g4 e2e3 a4a5 g3c7 
+DEBUG SearchEngine - depth 10 score cp -372 nodes 242156 time 838 nps 288624 pv e4d4 h2g3 d4e4 h5h4 e4f3 g3e1 f3g4 d1e2 a4a5 e1a5 g4h4 
+DEBUG SearchEngine - depth 11 score cp -372 nodes 422727 time 1454 nps 290534 pv e4d4 h2g3 d4e4 h5h4 e4f3 g3e1 f3g4 d1e2 a4a5 e1a5 g4h4 a5c7 
+DEBUG SearchEngine - depth 12 score cp -90 nodes 2263814 time 7630 nps 296660 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 13 score cp -90 nodes 2571691 time 8649 nps 297305 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 14 score cp -90 nodes 3147973 time 10452 nps 301154 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 15 score cp -90 nodes 4234869 time 13813 nps 306563 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 16 score cp -90 nodes 6274183 time 20233 nps 310081 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 17 score cp -90 nodes 9392608 time 29757 nps 315633 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 18 score cp -90 nodes 13046234 time 41125 nps 317225 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 19 score cp -90 nodes 25480741 time 80211 nps 317667 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 
+DEBUG SearchEngine - depth 20 score cp -90 nodes 42330353 time 133812 nps 316339 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 
+DEBUG SearchEngine - depth 21 score cp -90 nodes 52413754 time 164180 nps 319243 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 b8a7 
+DEBUG SearchEngine - depth 22 score cp -90 nodes 69735734 time 216164 nps 322604 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 a6a7 
+DEBUG SearchEngine - depth 23 score cp -90 nodes 98599852 time 302535 nps 325911 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 
+DEBUG SearchEngine - depth 24 score cp -90 nodes 182529004 time 545728 nps 334468 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 g3b8 d3d4 
+DEBUG SearchEngine - depth 25 score cp -90 nodes 293090254 time 878125 nps 333767 pv d5d6 e7d6 e4d3 h2g3 a4a5 d6d5 a5a6 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2085 6.92462427578186E-4%
+DEBUG SearchEngine - Positions QS      = 95484064 31.711811392072363%
+DEBUG SearchEngine - Positions Null    = 205613220 68.28749614550006%
+DEBUG SearchEngine - PV Cut            = 19759 36%
+DEBUG SearchEngine - PV All            = 33932
+DEBUG SearchEngine - Null Cut          = 351364917 70%
+DEBUG SearchEngine - Null All          = 143544970
+DEBUG SearchEngine - Asp Win      Hits = 50.76219512195122%
+DEBUG SearchEngine - TT Eval      Hits = 581435930 29.371109473012137%
+DEBUG SearchEngine - TT PV        Hits = 55345 0.0016410664525419647%
+DEBUG SearchEngine - TT LB        Hits = 3372502065 2.7131191689870766%
+DEBUG SearchEngine - TT UB        Hits = 341698190 10.131889719094954%
+DEBUG SearchEngine - Futility     Hits = 36457349
+DEBUG SearchEngine - Agg.Futility Hits = 27485533
+DEBUG SearchEngine - Null Move    Hits = 63174595 79.63730160746103%
+DEBUG SearchEngine - Razoring     Hits = 22231678 86.62805053942446%
+DEBUG SearchEngine - S.Extensions Hits = 340430 37.35234287394586%
+DEBUG EpdTest - Best move found in 7630Ms :D d5-d6
+DEBUG EpdTest - Status: 15 positions solved of 18 in 2983966Ms (lctPoints=385)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 3r2k1/pp4B1/6pp/PP1Np2n/2Pp1p2/3P2Pq/3QPPbP/R4RK1 b - - bm f3; id "test 19";
+DEBUG EpdTest - Lets see if f3 are found
+DEBUG SearchEngine - Board
+. . . r . . k . 8
+p p . . . . B . 7
+. . . . . . p p 6
+P P . N p . . n 5
+. . P p . p . . 4
+. . . P . . P q 3
+. . . Q P P b P 2
+R . . . . R K . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -307 nodes 210 time 5 nps 35000 pv h5g7 
+DEBUG SearchEngine - depth 2 score cp -209 nodes 917 time 8 nps 101888 pv g8g7 g3f4 
+DEBUG SearchEngine - depth 3 score cp -209 nodes 1329 time 10 nps 120818 pv g8g7 g3f4 g2d5 
+DEBUG SearchEngine - depth 4 score cp -209 nodes 2685 time 16 nps 157941 pv g8g7 f1c1 f4g3 f2g3 g2d5 
+DEBUG SearchEngine - depth 5 score cp -154 nodes 8950 time 48 nps 182653 pv g2f1 a1f1 g8g7 d2b4 h3e6 
+DEBUG SearchEngine - depth 6 score cp -156 nodes 13934 time 101 nps 136607 pv g2f1 a1f1 g8g7 d2b4 h3e6 e2e4 
+DEBUG SearchEngine - depth 7 score cp -170 nodes 36455 time 281 nps 129273 pv g2f1 a1f1 g8g7 d2b4 d8d7 b5b6 a7b6 
+DEBUG SearchEngine - depth 8 score cp -170 nodes 165746 time 1180 nps 140343 pv g2f1 a1f1 g8g7 d2b4 d8d7 b5b6 a7b6 a5b6 
+DEBUG SearchEngine - depth 9 score cp -154 nodes 606503 time 3753 nps 161561 pv g2f1 a1f1 g8g7 d2b4 d8d7 f1d1 h3e6 b5b6 a7b6 
+DEBUG SearchEngine - depth 10 score cp -168 nodes 831754 time 4786 nps 173752 pv g2f1 a1f1 g8g7 d2b4 d8d7 b4c5 h3g4 f2f3 g4g5 g3g4 
+DEBUG SearchEngine - depth 11 score cp -119 nodes 11132605 time 63168 nps 176235 pv f4f3 d5f6 h5f6 d2h6 h3h6 g7h6 g2f1 g1f1 f6g4 h6g5 g4h2 f1g1 
+DEBUG SearchEngine - depth 12 score cp -175 nodes 18708953 time 104219 nps 179514 pv g2f1 a1f1 g8g7 d2b4 h3e6 b4c5 a7a6 g3f4 h5f4 d5f4 e5f4 c5c7 d8d7 
+DEBUG SearchEngine - depth 13 score cp -63 nodes 80519915 time 477030 nps 168793 pv f4f3 e2f3 g2f3 d5e3 h5g7 d2b2 d4e3 f2e3 h3h5 a5a6 b7b6 b2f2 e5e4 d3d4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2982 0.001984879610461985%
+DEBUG SearchEngine - Positions QS      = 67095339 44.66001688066225%
+DEBUG SearchEngine - Positions Null    = 83137491 55.33799823972729%
+DEBUG SearchEngine - PV Cut            = 20333 36%
+DEBUG SearchEngine - PV All            = 35265
+DEBUG SearchEngine - Null Cut          = 366729637 71%
+DEBUG SearchEngine - Null All          = 149647920
+DEBUG SearchEngine - Asp Win      Hits = 50.2906976744186%
+DEBUG SearchEngine - TT Eval      Hits = 603617140 29.045044940936066%
+DEBUG SearchEngine - TT PV        Hits = 56120 0.0015930792513256951%
+DEBUG SearchEngine - TT LB        Hits = 3522737488 2.626743244854582%
+DEBUG SearchEngine - TT UB        Hits = 345555446 9.809287441290033%
+DEBUG SearchEngine - Futility     Hits = 38558988
+DEBUG SearchEngine - Agg.Futility Hits = 28844875
+DEBUG SearchEngine - Null Move    Hits = 63807434 79.01353510097967%
+DEBUG SearchEngine - Razoring     Hits = 23077704 86.02198602257124%
+DEBUG SearchEngine - S.Extensions Hits = 341025 37.36621465261829%
+DEBUG EpdTest - Best move found in 477030Ms :D f4-f3
+DEBUG EpdTest - Status: 16 positions solved of 19 in 3460996Ms (lctPoints=390)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = r4rk1/5p2/1n4pQ/2p5/p5P1/P4N2/1qb1BP1P/R3R1K1 w - - bm Ra2; id "test 20";
+DEBUG EpdTest - Lets see if Ra2 are found
+DEBUG SearchEngine - Board
+r . . . . r k . 8
+. . . . . p . . 7
+. n . . . . p Q 6
+. . p . . . . . 5
+p . . . . . P . 4
+P . . . . N . . 3
+. q b . B P . P 2
+R . . . R . K . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 57 nodes 108 time 4 nps 21600 pv a1c1 
+DEBUG SearchEngine - depth 2 score cp 35 nodes 697 time 7 nps 87125 pv a1c1 f8e8 
+DEBUG SearchEngine - depth 3 score cp 57 nodes 4099 time 22 nps 178217 pv f3g5 b2g7 h6h3 
+DEBUG SearchEngine - depth 4 score cp 66 nodes 8480 time 47 nps 176666 pv f3g5 b2g7 h6g7 g8g7 e2f3 
+DEBUG SearchEngine - depth 5 score cp 90 nodes 12469 time 67 nps 183367 pv f3g5 b2h8 h6h8 g8h8 e2f3 
+DEBUG SearchEngine - depth 6 score cp 176 nodes 16265 time 83 nps 193630 pv f3g5 b2g7 h6g7 g8g7 a1c1 c2b3 c1c5 
+DEBUG SearchEngine - depth 7 score cp 159 nodes 25746 time 130 nps 196534 pv f3g5 b2g7 h6g7 g8g7 a1c1 c2b3 c1c5 f8e8 
+DEBUG SearchEngine - depth 8 score cp 144 nodes 48953 time 259 nps 188280 pv f3g5 b2g7 h6g7 g8g7 a1c1 c2b3 c1c5 f8c8 c5e5 
+DEBUG SearchEngine - depth 9 score cp 143 nodes 86615 time 472 nps 183118 pv f3g5 b2g7 h6g7 g8g7 a1c1 c2b3 c1c5 f8c8 g5e4 c8c5 
+DEBUG SearchEngine - depth 10 score cp 128 nodes 269169 time 1351 nps 199089 pv f3g5 b2g7 h6g7 g8g7 a1c1 c2b3 c1c5 f8c8 c5c1 c8c1 e1c1 a8d8 
+DEBUG SearchEngine - depth 11 score cp 252 nodes 839233 time 4264 nps 196772 pv a1a2 b2a2 f3g5 f8e8 h6h7 g8f8 h7h8 f8e7 e2b5 a2e6 e1e6 f7e6 b5e8 a8e8 h8e5 
+DEBUG SearchEngine - depth 12 score cp 252 nodes 971936 time 4839 nps 200813 pv a1a2 b2a2 f3g5 f8e8 h6h7 g8f8 h7h8 f8e7 e2b5 a2e6 e1e6 f7e6 b5e8 a8e8 h8e5 
+DEBUG SearchEngine - depth 13 score cp 252 nodes 1189719 time 5721 nps 207920 pv a1a2 b2a2 f3g5 f8e8 h6h7 g8f8 h7h8 f8e7 e2b5 a2e6 e1e6 f7e6 b5e8 a8e8 h8e5 
+DEBUG SearchEngine - depth 14 score cp 383 nodes 2113535 time 10189 nps 207412 pv a1a2 b2a2 f3g5 f8e8 h6h7 g8f8 h7h8 f8e7 e2b5 e7d6 h8f6 e8e6 f6f4 d6e7 f4f7 e7d8 f7f8 
+DEBUG SearchEngine - depth 15 score cp 383 nodes 3779801 time 18538 nps 203883 pv a1a2 b2a2 f3g5 f8e8 h6h7 g8f8 h7h8 f8e7 e2b5 e7d6 h8f6 e8e6 f6f4 d6e7 f4f7 e7d8 f7f8 d8c7 
+DEBUG SearchEngine - depth 16 score cp 421 nodes 24274599 time 114417 nps 212157 pv a1a2 b2g7 h6g7 g8g7 a2c2 a8c8 e1b1 b6d5 b1b7 d5f4 e2c4 c8b8 c2b2 b8d8 b2d2 d8b8 d2d7 b8b7 d7b7 g7f6 h2h4 f4e6 
+DEBUG SearchEngine - depth 17 score cp 433 nodes 65188660 time 321145 nps 202987 pv a1a2 b2g7 h6g7 g8g7 a2c2 a8c8 e1c1 c8e8 e2b5 e8e4 h2h3 e4f4 f3g5 c5c4 b5c4 g7h6 g5f7 f4f7 c4f7 
+DEBUG SearchEngine - depth 18 score cp 431 nodes 94506897 time 463374 nps 203953 pv a1a2 b2g7 h6g7 g8g7 a2c2 f8c8 e1c1 a8a5 c1b1 c8c6 e2b5 c6c7 f3e5 g7f6 e5c4 b6c4 c2c4 g6g5 b5a4 
+DEBUG SearchEngine - depth 19 score cp 436 nodes 157166064 time 773928 nps 203075 pv a1a2 b2g7 h6g7 g8g7 a2c2 f8c8 e1c1 a8a5 c1b1 c8c6 e2b5 c6c7 f3d2 g7f8 d2e4 c5c4 h2h3 f7f5 e4d6 f5g4 h3g4 c4c3 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 6782 0.0036611614016957787%
+DEBUG SearchEngine - Positions QS      = 84175570 45.440924188991616%
+DEBUG SearchEngine - Positions Null    = 101059413 54.55541464960669%
+DEBUG SearchEngine - PV Cut            = 22000 36%
+DEBUG SearchEngine - PV All            = 38466
+DEBUG SearchEngine - Null Cut          = 383735059 71%
+DEBUG SearchEngine - Null All          = 154742430
+DEBUG SearchEngine - Asp Win      Hits = 50.48409405255878%
+DEBUG SearchEngine - TT Eval      Hits = 629129164 28.662738262768148%
+DEBUG SearchEngine - TT PV        Hits = 60315 0.001626628286772054%
+DEBUG SearchEngine - TT LB        Hits = 3707976831 2.5280461360034856%
+DEBUG SearchEngine - TT UB        Hits = 351138306 9.469808523730768%
+DEBUG SearchEngine - Futility     Hits = 39999350
+DEBUG SearchEngine - Agg.Futility Hits = 29872484
+DEBUG SearchEngine - Null Move    Hits = 65397417 78.88826483474608%
+DEBUG SearchEngine - Razoring     Hits = 24127277 86.0069782238763%
+DEBUG SearchEngine - S.Extensions Hits = 342638 37.30412335778264%
+DEBUG EpdTest - Best move found in 4264Ms :D Ra1-a2
+DEBUG EpdTest - Status: 17 positions solved of 20 in 3465260Ms (lctPoints=420)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = k7/8/PP1b2P1/K2Pn2P/4R3/8/6np/8 w - - bm Re1; id "test 21";
+DEBUG EpdTest - Lets see if Re1 are found
+DEBUG SearchEngine - Board
+k . . . . . . . 8
+. . . . . . . . 7
+P P . b . . P . 6
+K . . P n . . P 5
+. . . . R . . . 4
+. . . . . . . . 3
+. . . . . . n p 2
+. . . . . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 102 nodes 141 time 5 nps 23500 pv b6b7 a8b8 
+DEBUG SearchEngine - depth 2 score cp 163 nodes 1098 time 10 nps 99818 pv g6g7 h2h1q g7g8q d6b8 b6b7 a8a7 
+DEBUG SearchEngine - depth 3 score cp 143 nodes 3184 time 20 nps 151619 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 
+DEBUG SearchEngine - depth 4 score cp 138 nodes 4962 time 28 nps 171103 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b4 
+DEBUG SearchEngine - depth 5 score cp 138 nodes 12394 time 65 nps 187787 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b4 a1b2 b4c4 
+DEBUG SearchEngine - depth 6 score cp 138 nodes 22423 time 116 nps 191649 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b4 a1b2 b4c4 b2e5 
+DEBUG SearchEngine - depth 7 score cp 138 nodes 49174 time 260 nps 188406 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b4 a1b2 b4c4 b2e5 g8g2 
+DEBUG SearchEngine - depth 8 score cp 138 nodes 143099 time 827 nps 172824 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c4 b2c2 c4d4 c2b2 d4c4 
+DEBUG SearchEngine - depth 9 score cp 138 nodes 293262 time 1564 nps 187387 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c4 b2c2 c4d4 c2b2 d4c4 
+DEBUG SearchEngine - depth 10 score cp 138 nodes 841053 time 4328 nps 194283 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c4 b2c2 c4d4 c2b2 d4c4 
+DEBUG SearchEngine - depth 11 score cp 138 nodes 1844793 time 9205 nps 200390 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c4 b2c2 c4d4 c2b2 d4c4 
+DEBUG SearchEngine - depth 12 score cp 138 nodes 3799014 time 18317 nps 207392 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c5 b2c2 c5d4 c2b2 d4c4 g2e3 e5e3 b2b3 c4c5 b3e3 c5c6 e3e8 c6c5 e8g8 b6b7 a8a7 
+DEBUG SearchEngine - depth 13 score cp 138 nodes 9717602 time 45885 nps 211777 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c5 b2c2 c5d4 c2b2 d4c5 
+DEBUG SearchEngine - depth 14 score cp 138 nodes 19509900 time 93188 nps 209358 pv g6g7 h2h1q g7g8q d6b8 e4e5 h1a1 a5b5 a1b2 b5c5 b2c2 c5d4 c2b2 d4c5 
+DEBUG SearchEngine - depth 15 score cp 170 nodes 49577385 time 224785 nps 220553 pv e4e1 g2e1 g6g7 e5c4 a5b5 h2h1q g7g8q d6b8 a6a7 h1h2 a7b8q h2b8 g8b8 a8b8 
+DEBUG SearchEngine - depth 16 score cp 170 nodes 94798130 time 421739 nps 224778 pv e4e1 g2e1 g6g7 e5c4 a5b5 h2h1q g7g8q d6b8 a6a7 h1h2 a7b8q h2b8 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 1354 6.550371607806127E-4%
+DEBUG SearchEngine - Positions QS      = 78994576 38.21594001485106%
+DEBUG SearchEngine - Positions Null    = 127709900 61.78340494798816%
+DEBUG SearchEngine - PV Cut            = 22406 36%
+DEBUG SearchEngine - PV All            = 39153
+DEBUG SearchEngine - Null Cut          = 408247122 71%
+DEBUG SearchEngine - Null All          = 166490430
+DEBUG SearchEngine - Asp Win      Hits = 50.93582887700535%
+DEBUG SearchEngine - TT Eval      Hits = 662901364 28.61366017012007%
+DEBUG SearchEngine - TT PV        Hits = 61409 0.0015686944334416559%
+DEBUG SearchEngine - TT LB        Hits = 3914656589 2.4722691965356454%
+DEBUG SearchEngine - TT UB        Hits = 359373646 9.180208731714117%
+DEBUG SearchEngine - Futility     Hits = 42905285
+DEBUG SearchEngine - Agg.Futility Hits = 32312498
+DEBUG SearchEngine - Null Move    Hits = 67963185 78.32462963440592%
+DEBUG SearchEngine - Razoring     Hits = 25733697 86.26515742319515%
+DEBUG SearchEngine - S.Extensions Hits = 350121 37.26653929462856%
+DEBUG EpdTest - Best move found in 224785Ms :D Re4-e1
+DEBUG EpdTest - Status: 18 positions solved of 21 in 3690045Ms (lctPoints=430)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = rnb1k2r/pp2qppp/3p1n2/2pp2B1/1bP5/2N1P3/PP2NPPP/R2QKB1R w KQkq - bm a3; id "test 22";
+DEBUG EpdTest - Lets see if a3 are found
+DEBUG SearchEngine - Board
+r n b . k . . r 8
+p p . . q p p p 7
+. . . p . n . . 6
+. . p p . . B . 5
+. b P . . . . . 4
+. . N . P . . . 3
+P P . . N P P P 2
+R . . Q K B . R 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 71 nodes 182 time 4 nps 36400 pv g5f6 
+DEBUG SearchEngine - depth 2 score cp 12 nodes 496 time 6 nps 70857 pv g5f6 e7f6 
+DEBUG SearchEngine - depth 3 score cp 12 nodes 889 time 8 nps 98777 pv g5f6 e7f6 d1d5 
+DEBUG SearchEngine - depth 4 score cp -16 nodes 4255 time 24 nps 170200 pv g5f6 e7f6 d1d5 b8c6 
+DEBUG SearchEngine - depth 5 score cp 43 nodes 6466 time 35 nps 179611 pv g5f6 e7f6 d1d5 b8c6 e1c1 
+DEBUG SearchEngine - depth 6 score cp 8 nodes 26195 time 131 nps 198446 pv g5f6 e7f6 d1d5 b4c3 e2c3 b8c6 
+DEBUG SearchEngine - depth 7 score cp 34 nodes 49324 time 248 nps 198088 pv g5f6 e7f6 d1d5 b8c6 e1c1 f6f2 d5e4 
+DEBUG SearchEngine - depth 8 score cp 18 nodes 100662 time 539 nps 186411 pv g5f6 e7f6 d1d5 b8c6 e1c1 b4c3 e2c3 f6f2 
+DEBUG SearchEngine - depth 9 score cp 18 nodes 163212 time 877 nps 185890 pv g5f6 e7f6 d1d5 b8c6 e1c1 b4c3 e2c3 f6f2 d5e4 
+DEBUG SearchEngine - depth 10 score cp 10 nodes 363757 time 1969 nps 184648 pv g5f6 e7f6 d1d5 e8g8 a1d1 f8d8 a2a3 b4c3 e2c3 b8c6 
+DEBUG SearchEngine - depth 11 score cp 23 nodes 632903 time 3264 nps 193844 pv g5f6 e7f6 d1d5 e8g8 a1d1 f8d8 a2a3 b4c3 e2c3 b8c6 g2g4 
+DEBUG SearchEngine - depth 12 score cp 5 nodes 2578134 time 13594 nps 189638 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 e8g8 e1g1 b8c6 b2b4 c6e5 
+DEBUG SearchEngine - depth 13 score cp 5 nodes 3370940 time 17563 nps 191923 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 e8g8 e1g1 b8c6 b2b4 c6e5 
+DEBUG SearchEngine - depth 14 score cp 19 nodes 7226030 time 37482 nps 192781 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 b8c6 d1f3 f6f5 e1g1 c6e5 c4b5 c8d7 f3e2 
+DEBUG SearchEngine - depth 15 score cp 19 nodes 10215886 time 53211 nps 191984 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 b8c6 d1f3 f6f5 e1g1 c6e5 c4b5 c8d7 f3e2 
+DEBUG SearchEngine - depth 16 score cp 18 nodes 26166102 time 143645 nps 182156 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 b8c6 e1g1 c8e6 d1h5 e8g8 c4d3 h7h6 a1d1 
+DEBUG SearchEngine - depth 17 score cp 15 nodes 80658537 time 455229 nps 177181 pv a2a3 b4c3 e2c3 d5c4 c3b5 c8e6 d1d6 b8a6 d6f4 e8g8 e1c1 h7h6 g5f6 e7f6 f4f6 g7f6 b5d6 e6g4 
+DEBUG SearchEngine - depth 18 score cp 33 nodes 156051011 time 885836 nps 176162 pv a2a3 b4c3 e2c3 d5c4 c3d5 e7d8 g5f6 g7f6 f1c4 b8c6 d1h5 c6e5 c4b5 c8d7 b5d7 e8d7 e1g1 d7c6 a1d1 c6b5 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 1947 0.0012270547536031829%
+DEBUG SearchEngine - Positions QS      = 72384017 45.61846540562075%
+DEBUG SearchEngine - Positions Null    = 86286662 54.38030753962565%
+DEBUG SearchEngine - PV Cut            = 22988 36%
+DEBUG SearchEngine - PV All            = 40066
+DEBUG SearchEngine - Null Cut          = 421754748 71%
+DEBUG SearchEngine - Null All          = 169864473
+DEBUG SearchEngine - Asp Win      Hits = 50.82802547770701%
+DEBUG SearchEngine - TT Eval      Hits = 680313985 28.123505399785376%
+DEBUG SearchEngine - TT PV        Hits = 61964 0.0015212126874811138%
+DEBUG SearchEngine - TT LB        Hits = 4073329161 2.388253444661896%
+DEBUG SearchEngine - TT UB        Hits = 362359359 8.895901722586077%
+DEBUG SearchEngine - Futility     Hits = 44005738
+DEBUG SearchEngine - Agg.Futility Hits = 33004286
+DEBUG SearchEngine - Null Move    Hits = 68925693 78.16713192984491%
+DEBUG SearchEngine - Razoring     Hits = 26168986 85.93667512208603%
+DEBUG SearchEngine - S.Extensions Hits = 350401 37.23748392650294%
+DEBUG EpdTest - Best move found in 13594Ms :D a2-a3
+DEBUG EpdTest - Status: 19 positions solved of 22 in 3703639Ms (lctPoints=455)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 8/7p/8/p4p2/5K2/Bpk3P1/4P2P/8 w - - bm g4; id "test 23";
+DEBUG EpdTest - Lets see if g4 are found
+DEBUG SearchEngine - Board
+. . . . . . . . 8
+. . . . . . . p 7
+. . . . . . . . 6
+p . . . . p . . 5
+. . . . . K . . 4
+B p k . . . P . 3
+. . . . P . . P 2
+. . . . . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 240 nodes 45 time 4 nps 9000 pv f4f5 
+DEBUG SearchEngine - depth 2 score cp 167 nodes 1130 time 7 nps 141250 pv e2e4 f5e4 
+DEBUG SearchEngine - depth 3 score cp 149 nodes 4018 time 18 nps 211473 pv h2h4 b3b2 a3b2 c3b2 
+DEBUG SearchEngine - depth 4 score cp 149 nodes 8853 time 32 nps 268272 pv f4f5 b3b2 a3b2 c3b2 h2h4 
+DEBUG SearchEngine - depth 5 score cp 126 nodes 18319 time 65 nps 277560 pv f4f5 b3b2 a3b2 c3b2 h2h4 a5a4 g3g4 
+DEBUG SearchEngine - depth 6 score cp 127 nodes 31278 time 109 nps 284345 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 
+DEBUG SearchEngine - depth 7 score cp 125 nodes 53281 time 191 nps 277505 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 
+DEBUG SearchEngine - depth 8 score cp 122 nodes 94957 time 331 nps 286015 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1b1 f5f6 b1c2 
+DEBUG SearchEngine - depth 9 score cp 115 nodes 211640 time 694 nps 304517 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5f6 c1d2 e8b5 
+DEBUG SearchEngine - depth 10 score cp 115 nodes 385653 time 1264 nps 304864 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5f6 c1d2 e8b5 
+DEBUG SearchEngine - depth 11 score cp 105 nodes 782803 time 2452 nps 319120 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5g4 c1c4 g4h3 c4f1 h3g4 f1c4 
+DEBUG SearchEngine - depth 12 score cp 105 nodes 1176024 time 3667 nps 320617 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5g4 c1c4 g4h3 c4f1 h3g4 f1c4 
+DEBUG SearchEngine - depth 13 score cp 106 nodes 2011379 time 6147 nps 327159 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h5 c1d1 g3g4 d1d5 h5h4 d5d4 h4g3 
+DEBUG SearchEngine - depth 14 score cp 106 nodes 3497477 time 10435 nps 335135 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h5 c1d1 g3g4 d1d5 h5h4 d5d4 e8e2 b2c3 h4g3 d4d3 
+DEBUG SearchEngine - depth 15 score cp 109 nodes 6502719 time 19302 nps 336876 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h5 c1c5 h5h4 c5f2 e8b5 b2c3 h4h3 f2d2 b5b7 
+DEBUG SearchEngine - depth 16 score cp 111 nodes 11805859 time 34425 nps 342934 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h5 c1c5 h5h4 c5f2 e8b5 b2c3 h2h3 h7h6 h4g4 f2d4 
+DEBUG SearchEngine - depth 17 score cp 121 nodes 20391249 time 59357 nps 343529 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h4 c1c4 g3g4 c4f4 e8e2 b2c3 h4h3 h7h6 e2e6 c3d4 e6c6 
+DEBUG SearchEngine - depth 18 score cp 120 nodes 37313127 time 109288 nps 341417 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h4 c1c4 g3g4 c4f4 e8b5 b2c3 b5c6 c3b4 c6b7 b4a5 h4h3 h7h6 b7c6 
+DEBUG SearchEngine - depth 19 score cp 120 nodes 73300781 time 216412 nps 338707 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h4 c1c4 g3g4 c4f4 e8b5 b2c3 b5c6 c3b4 c6b7 b4c5 b7e7 c5d5 e7b7 d5c5 
+DEBUG SearchEngine - depth 20 score cp 127 nodes 155085554 time 468350 nps 331131 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h4 c1c4 g3g4 c4f4 e8b5 b2c3 h2h3 f4h6 h4g3 h6e3 g3g2 e3e4 g2g3 
+DEBUG SearchEngine - depth 21 score cp 127 nodes 291675997 time 860096 nps 339119 pv f4f5 b3b2 a3b2 c3b2 e2e4 a5a4 e4e5 a4a3 e5e6 a3a2 e6e7 a2a1q e7e8q a1f1 f5g5 f1c1 g5h4 c1c4 g3g4 c4f4 e8b5 b2c3 h2h3 f4h6 h4g3 h6e3 g3g2 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2598 8.500392354618858E-4%
+DEBUG SearchEngine - Positions QS      = 102792291 33.632594477681174%
+DEBUG SearchEngine - Positions Null    = 202838062 66.36655548308336%
+DEBUG SearchEngine - PV Cut            = 23585 36%
+DEBUG SearchEngine - PV All            = 41391
+DEBUG SearchEngine - Null Cut          = 458664031 71%
+DEBUG SearchEngine - Null All          = 183904959
+DEBUG SearchEngine - Asp Win      Hits = 51.470588235294116%
+DEBUG SearchEngine - TT Eval      Hits = 750532313 29.124846881691383%
+DEBUG SearchEngine - TT PV        Hits = 65814 0.0015029664963933176%
+DEBUG SearchEngine - TT LB        Hits = 4378939927 2.446493484403537%
+DEBUG SearchEngine - TT UB        Hits = 411807095 9.404264544960952%
+DEBUG SearchEngine - Futility     Hits = 46055440
+DEBUG SearchEngine - Agg.Futility Hits = 34965655
+DEBUG SearchEngine - Null Move    Hits = 73659443 78.6163089859046%
+DEBUG SearchEngine - Razoring     Hits = 29439638 87.12881455173272%
+DEBUG SearchEngine - S.Extensions Hits = 356228 36.75993172807631%
+DEBUG EpdTest - Best move not found :( Kf4xf5 != g4
+DEBUG EpdTest - Status: 19 positions solved of 23 in 4603639Ms (lctPoints=455)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = R7/3p3p/8/3P2P1/3k4/1p5p/1P1NKP1P/7q w - - bm g6; id "test 24";
+DEBUG EpdTest - Lets see if g6 are found
+DEBUG SearchEngine - Board
+R . . . . . . . 8
+. . . p . . . p 7
+. . . . . . . . 6
+. . . P . . P . 5
+. . . k . . . . 4
+. p . . . . . p 3
+. P . N K P . P 2
+. . . . . . . q 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 47 nodes 63 time 5 nps 10500 pv d2b3 
+DEBUG SearchEngine - depth 2 score cp 47 nodes 227 time 6 nps 32428 pv d2b3 d4d5 
+DEBUG SearchEngine - depth 3 score cp 51 nodes 1646 time 14 nps 109733 pv d2b3 d4d5 a8a5 d5d6 
+DEBUG SearchEngine - depth 4 score cp 45 nodes 4833 time 27 nps 172607 pv a8a5 d4e5 d2f3 e5e4 
+DEBUG SearchEngine - depth 5 score cp 19 nodes 20024 time 76 nps 260051 pv a8a5 h1g2 d2b3 d4e5 a5a7 
+DEBUG SearchEngine - depth 6 score cp -31 nodes 64450 time 271 nps 236948 pv a8a5 d4e5 d5d6 e5d6 d2c4 d6e7 a5e5 
+DEBUG SearchEngine - depth 7 score cp -16 nodes 88376 time 376 nps 234419 pv a8a5 d4e5 d2f3 e5e4 a5a4 e4d5 a4a7 d5e4 a7d7 h1f3 
+DEBUG SearchEngine - depth 8 score cp 3 nodes 144910 time 610 nps 237168 pv a8a5 d4e5 a5b5 e5f4 b5b4 f4g5 d2f3 g5f5 b4b3 
+DEBUG SearchEngine - depth 9 score cp -8 nodes 338411 time 1307 nps 258724 pv d2f3 d4d5 a8a3 h1b1 a3b3 b1e4 e2d2 e4f4 b3e3 d5c5 
+DEBUG SearchEngine - depth 10 score cp 1 nodes 560762 time 2182 nps 256876 pv a8a1 h1g2 a1d1 d4d5 d2f3 d5e6 e2e3 d7d5 d1d3 e6d6 d3b3 
+DEBUG SearchEngine - depth 11 score cp 2 nodes 836923 time 3229 nps 259109 pv a8a1 h1g2 a1d1 d4d5 d2f3 d5c6 e2e3 d7d6 d1d3 g2g4 d3c3 c6d5 
+DEBUG SearchEngine - depth 12 score cp 25 nodes 1192837 time 4500 nps 265015 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4h4 d7d6 h4h7 g2g4 h7h4 g4e6 e2d2 e6f5 
+DEBUG SearchEngine - depth 13 score cp 18 nodes 1848284 time 6950 nps 265901 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4h4 d7d6 h4h7 g2g4 h7h4 g4e6 e2d2 e6f5 d2e3 f5f3 e3f3 d5e6 
+DEBUG SearchEngine - depth 14 score cp 21 nodes 2891286 time 10858 nps 266257 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4h4 d7d6 h4h7 g2g4 h7h4 g4e6 e2d2 e6f5 d2e3 f5c2 
+DEBUG SearchEngine - depth 15 score cp 19 nodes 4618738 time 17018 nps 271387 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4h4 d7d6 h4h7 g2g4 h7h4 g4e6 e2d2 e6f5 d2e3 f5h7 h4h7 
+DEBUG SearchEngine - depth 16 score cp 5 nodes 37536600 time 146581 nps 256079 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4d4 d5c6 d4c4 c6d6 c4c3 g2g4 c3b3 g4c4 b3d3 d6c5 e2d2 c4f4 
+DEBUG SearchEngine - depth 17 score cp 1 nodes 98850423 time 402591 nps 245534 pv a8a1 h1g2 d2f3 d4e4 a1a4 e4d5 a4d4 d5c6 d4c4 c6d6 c4d4 d6c7 d4c4 c7d6 
+DEBUG SearchEngine - depth 18 score cp 203 nodes 179926376 time 730428 nps 246329 pv g5g6 h7g6 a8a1 h1g2 a1g1 d4d5 d2f3 d5e4 g1g2 h3g2 f3g1 d7d5 f2f3 e4e5 e2f2 d5d4 f2g2 d4d3 g2f2 e5d4 f3f4 
+DEBUG SearchEngine - depth 19 score cp 197 nodes 186431959 time 756909 nps 246306 pv g5g6 h7g6 a8a1 h1g2 a1g1 d4d5 d2f3 d5e4 g1g2 h3g2 f3g1 d7d5 f2f3 e4e5 e2f2 d5d4 f2g2 d4d3 g2f2 e5d4 f3f4 d3d2 g1f3 
+DEBUG SearchEngine - depth 20 score cp 227 nodes 203299957 time 819182 nps 248174 pv g5g6 h7g6 a8a1 h1g2 a1g1 d4d5 g1g2 h3g2 d2f3 g6g5 f3g1 d5c4 e2f3 c4d3 f3g2 d3c2 g1f3 c2b2 f3g5 b2c3 g5e4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 10708 0.004786703906221729%
+DEBUG SearchEngine - Positions QS      = 89701727 40.09858115668054%
+DEBUG SearchEngine - Positions Null    = 133990560 59.89663213941324%
+DEBUG SearchEngine - PV Cut            = 25557 35%
+DEBUG SearchEngine - PV All            = 46545
+DEBUG SearchEngine - Null Cut          = 482351730 71%
+DEBUG SearchEngine - Null All          = 193384003
+DEBUG SearchEngine - Asp Win      Hits = 51.34189031505251%
+DEBUG SearchEngine - TT Eval      Hits = 790473163 29.1613907874021%
+DEBUG SearchEngine - TT PV        Hits = 79446 0.0017260979271752205%
+DEBUG SearchEngine - TT LB        Hits = 4602635734 2.4047682544673%
+DEBUG SearchEngine - TT UB        Hits = 422160332 9.172143015391624%
+DEBUG SearchEngine - Futility     Hits = 48742905
+DEBUG SearchEngine - Agg.Futility Hits = 37001295
+DEBUG SearchEngine - Null Move    Hits = 76489495 78.59346484603311%
+DEBUG SearchEngine - Razoring     Hits = 30713273 87.33982733809268%
+DEBUG SearchEngine - S.Extensions Hits = 362002 36.429010615677065%
+DEBUG EpdTest - Best move found in 730428Ms :D g5-g6
+DEBUG EpdTest - Status: 20 positions solved of 24 in 5334067Ms (lctPoints=455)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 8/8/3k1p2/p2BnP2/4PN2/1P2K1p1/8/5b2 b - - bm Nd3; id "test 25";
+DEBUG EpdTest - Lets see if Nd3 are found
+DEBUG SearchEngine - Board
+. . . . . . . . 8
+. . . . . . . . 7
+. . . k . p . . 6
+p . . B n P . . 5
+. . . . P N . . 4
+. P . . K . p . 3
+. . . . . . . . 2
+. . . . . b . . 1
+a b c d e f g h  blacks move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 109 nodes 254 time 4 nps 50800 pv g3g2 e3f2 
+DEBUG SearchEngine - depth 2 score cp 89 nodes 646 time 5 nps 107666 pv g3g2 e3f2 e5g4 
+DEBUG SearchEngine - depth 3 score cp 89 nodes 1928 time 10 nps 175272 pv g3g2 e3f2 e5g4 f2g1 
+DEBUG SearchEngine - depth 4 score cp 74 nodes 4705 time 21 nps 213863 pv g3g2 e3f2 e5g4 f2g1 g4e3 
+DEBUG SearchEngine - depth 5 score cp 108 nodes 17821 time 70 nps 251000 pv d6c5 d5e6 c5b5 f4d5 g3g2 e3f2 
+DEBUG SearchEngine - depth 6 score cp 95 nodes 31626 time 127 nps 247078 pv d6c5 f4e6 c5b4 e6f4 g3g2 e3f2 e5g4 f2g1 
+DEBUG SearchEngine - depth 7 score cp 106 nodes 61620 time 234 nps 262212 pv d6c5 d5e6 c5d6 e6d5 
+DEBUG SearchEngine - depth 8 score cp 112 nodes 94092 time 365 nps 257081 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 g3g2 e3f2 e5g4 f2g1 
+DEBUG SearchEngine - depth 9 score cp 112 nodes 129041 time 490 nps 262812 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 10 score cp 112 nodes 205074 time 786 nps 260576 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 11 score cp 112 nodes 284824 time 1083 nps 262752 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 12 score cp 112 nodes 436353 time 1625 nps 268359 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 13 score cp 112 nodes 663857 time 2419 nps 274321 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 14 score cp 112 nodes 997449 time 3604 nps 276684 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 15 score cp 112 nodes 1620356 time 5769 nps 280824 pv d6c5 d5e6 c5c6 e6d5 c6b6 d5e6 b6c6 
+DEBUG SearchEngine - depth 16 score cp 120 nodes 4302018 time 14964 nps 287471 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e4 e5e4 g3g4 e4e5 g4f3 e5f5 f3e3 f5g4 e3e4 f6f5 e4e3 f5f4 e3e2 f4f3 e2f2 g4f4 
+DEBUG SearchEngine - depth 17 score cp 139 nodes 8260948 time 27943 nps 295625 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e4 e5e4 g3g4 e4e5 g4f3 e5f5 f3e3 f5g4 e3e2 g4h3 e2f2 f6f5 f2f1 
+DEBUG SearchEngine - depth 18 score cp 144 nodes 10421695 time 35255 nps 295600 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e4 e5e4 g3g4 e4e5 g4f3 e5f5 f3e3 f5g4 e3e2 f6f5 e2f1 
+DEBUG SearchEngine - depth 19 score cp 135 nodes 15886600 time 54876 nps 289494 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e4 e5e4 g3g4 e4e5 g4f3 
+DEBUG SearchEngine - depth 20 score cp 147 nodes 61665923 time 211424 nps 291668 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e6 e4f5 e6c4 e5e4 g3g2 e4f4 g2f1 f4e5 f1g1 
+DEBUG SearchEngine - depth 21 score cp 153 nodes 92383621 time 314338 nps 293898 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e6 e4f5 e6c4 f5c2 c4f7 f6f5 g3f2 f5f4 f7c4 c2e4 
+DEBUG SearchEngine - depth 22 score cp 155 nodes 191080407 time 638602 nps 299216 pv e5d3 f4d3 f1d3 e3f3 d6e5 f3g3 d3e4 d5e6 e4f5 e6c4 f5c2 c4f7 f6f5 g3f2 f5f4 f7c4 c2e4 c4e2 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2589 9.604338392054725E-4%
+DEBUG SearchEngine - Positions QS      = 101075527 37.49569580777381%
+DEBUG SearchEngine - Positions Null    = 168487563 62.50334375838699%
+DEBUG SearchEngine - PV Cut            = 26190 35%
+DEBUG SearchEngine - PV All            = 47876
+DEBUG SearchEngine - Null Cut          = 513544975 71%
+DEBUG SearchEngine - Null All          = 205669886
+DEBUG SearchEngine - Asp Win      Hits = 51.851851851851855%
+DEBUG SearchEngine - TT Eval      Hits = 846592602 29.62152317338197%
+DEBUG SearchEngine - TT PV        Hits = 85149 0.0017476775725633249%
+DEBUG SearchEngine - TT LB        Hits = 4872122944 2.3970988692685995%
+DEBUG SearchEngine - TT UB        Hits = 445062021 9.13486843652195%
+DEBUG SearchEngine - Futility     Hits = 51514221
+DEBUG SearchEngine - Agg.Futility Hits = 39108520
+DEBUG SearchEngine - Null Move    Hits = 79760263 78.40861144705329%
+DEBUG SearchEngine - Razoring     Hits = 32766971 87.8304100418872%
+DEBUG SearchEngine - S.Extensions Hits = 372277 36.20723528084467%
+DEBUG EpdTest - Best move found in 14964Ms :D Ne5-d3
+DEBUG EpdTest - Status: 21 positions solved of 25 in 5349031Ms (lctPoints=480)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2r3k1/pbr1q2p/1p2pnp1/3p4/3P1P2/1P1BR3/PB1Q2PP/5RK1 w - - bm f5; id "test 26";
+DEBUG EpdTest - Lets see if f5 are found
+DEBUG SearchEngine - Board
+. . r . . . k . 8
+p b r . q . . p 7
+. p . . p n p . 6
+. . . p . . . . 5
+. . . P . P . . 4
+. P . B R . . . 3
+P B . Q . . P P 2
+. . . . . R K . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -4 nodes 114 time 5 nps 19000 pv a2a4 
+DEBUG SearchEngine - depth 2 score cp -49 nodes 1219 time 9 nps 121900 pv e3e5 f6e4 
+DEBUG SearchEngine - depth 3 score cp 36 nodes 7311 time 37 nps 192394 pv f4f5 g6f5 d3f5 f6e4 
+DEBUG SearchEngine - depth 4 score cp 36 nodes 13306 time 67 nps 195676 pv f4f5 g6f5 d3f5 f6e4 f5e4 
+DEBUG SearchEngine - depth 5 score cp 40 nodes 24359 time 148 nps 163483 pv f4f5 f6e4 d3e4 d5e4 f5f6 e7d6 
+DEBUG SearchEngine - depth 6 score cp 39 nodes 40916 time 308 nps 132414 pv f4f5 f6e4 d3e4 d5e4 f5f6 e7d6 a2a4 
+DEBUG SearchEngine - depth 7 score cp 34 nodes 72626 time 518 nps 139934 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 a2a4 
+DEBUG SearchEngine - depth 8 score cp 27 nodes 153937 time 910 nps 168975 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 g3h3 h7g8 
+DEBUG SearchEngine - depth 9 score cp 29 nodes 268477 time 1447 nps 185412 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 g3h3 h7g8 h3g3 
+DEBUG SearchEngine - depth 10 score cp 35 nodes 499597 time 2495 nps 200159 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 g3h3 h7g8 h3g3 
+DEBUG SearchEngine - depth 11 score cp 35 nodes 887699 time 4203 nps 211155 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 g3h3 h7g8 h3g3 
+DEBUG SearchEngine - depth 12 score cp 55 nodes 1880934 time 8641 nps 217650 pv f4f5 f6e4 d3e4 d5e4 f5g6 h7g6 e3g3 g8h7 g3h3 h7g8 d2h6 e7g7 h6g7 c7g7 d4d5 
+DEBUG SearchEngine - depth 13 score cp 105 nodes 5736647 time 27624 nps 207661 pv f4f5 f6e4 d3e4 d5e4 f5g6 b7d5 g6h7 e7h7 e3g3 c7g7 d2f4 g7g3 f4g3 g8h8 g3e5 h7g7 
+DEBUG SearchEngine - depth 14 score cp 128 nodes 12008765 time 59572 nps 201580 pv f4f5 f6e4 d3e4 d5e4 f5g6 c8f8 g6h7 g8h7 e3h3 h7g8 h3g3 g8h7 f1f8 e7f8 d2g5 c7g7 g5h5 h7g8 a2a4 
+DEBUG SearchEngine - depth 15 score cp 128 nodes 15840654 time 79250 nps 199879 pv f4f5 f6e4 d3e4 d5e4 f5g6 c8f8 g6h7 g8h7 e3h3 h7g8 h3g3 g8h7 f1f8 e7f8 d2g5 c7g7 g5h5 h7g8 a2a4 
+DEBUG SearchEngine - depth 16 score cp 20 nodes 45002937 time 228946 nps 196564 pv f4f5 f6e4 d3e4 d5e4 f5f6 e7f7 f1f2 c7c2 d2e1 a7a5 a2a4 h7h5 h2h4 b7d5 e3g3 g8h8 f2c2 
+DEBUG SearchEngine - depth 17 score cp 19 nodes 76084684 time 391671 nps 194256 pv f4f5 f6e4 d3e4 d5e4 f5f6 e7f7 f1f2 c7c2 d2e1 a7a5 e3e2 c2e2 e1e2 h7h6 h2h4 g6g5 h4g5 h6g5 e2g4 
+DEBUG SearchEngine - depth 18 score cp 22 nodes 122945799 time 635133 nps 193574 pv f4f5 f6e4 d3e4 d5e4 f5f6 e7f7 f1f2 c7c2 d2e1 a7a5 h2h4 h7h5 e3e2 c2e2 e1e2 b7d5 f2f1 g8h7 e2e3 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 6552 0.0037666671572378877%
+DEBUG SearchEngine - Positions QS      = 75080415 43.162840862681755%
+DEBUG SearchEngine - Positions Null    = 98859913 56.83339247016101%
+DEBUG SearchEngine - PV Cut            = 27361 35%
+DEBUG SearchEngine - PV All            = 50699
+DEBUG SearchEngine - Null Cut          = 527957499 71%
+DEBUG SearchEngine - Null All          = 210015949
+DEBUG SearchEngine - Asp Win      Hits = 52.17391304347826%
+DEBUG SearchEngine - TT Eval      Hits = 870236148 29.321985609082194%
+DEBUG SearchEngine - TT PV        Hits = 88714 0.0017580812423158769%
+DEBUG SearchEngine - TT LB        Hits = 5046069423 2.3327058177891424%
+DEBUG SearchEngine - TT UB        Hits = 449989129 8.917616688921246%
+DEBUG SearchEngine - Futility     Hits = 52854774
+DEBUG SearchEngine - Agg.Futility Hits = 39947170
+DEBUG SearchEngine - Null Move    Hits = 81186663 78.35632367361897%
+DEBUG SearchEngine - Razoring     Hits = 33286594 87.58278228899671%
+DEBUG SearchEngine - S.Extensions Hits = 372689 36.17296760060449%
+DEBUG EpdTest - Best move found in 37Ms :D f4-f5
+DEBUG EpdTest - Status: 22 positions solved of 26 in 5349068Ms (lctPoints=510)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 3r2k1/p2r2p1/1p1B2Pp/4PQ1P/2b1p3/P3P3/7K/8 w - - bm e6; id "test 27";
+DEBUG EpdTest - Lets see if e6 are found
+DEBUG SearchEngine - Board
+. . . r . . k . 8
+p . . r . . p . 7
+. p . B . . P p 6
+. . . . P Q . P 5
+. . b . p . . . 4
+P . . . P . . . 3
+. . . . . . . K 2
+. . . . . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 30 nodes 70 time 8 nps 7777 pv f5e4 
+DEBUG SearchEngine - depth 2 score cp 27 nodes 233 time 9 nps 23300 pv f5e4 c4e6 
+DEBUG SearchEngine - depth 3 score cp 27 nodes 1040 time 15 nps 65000 pv f5e4 c4e6 h2g3 
+DEBUG SearchEngine - depth 4 score cp 13 nodes 3516 time 24 nps 140640 pv f5e4 b6b5 e4f5 a7a5 
+DEBUG SearchEngine - depth 5 score cp 13 nodes 8700 time 42 nps 202325 pv f5e4 c4e6 e4c6 d8e8 h2g3 
+DEBUG SearchEngine - depth 6 score cp 33 nodes 18475 time 81 nps 225304 pv f5e4 d8c8 e4f5 c4b5 f5e6 g8h8 
+DEBUG SearchEngine - depth 7 score cp 33 nodes 27991 time 124 nps 223928 pv f5e4 d8c8 e4f5 c4b5 f5e6 g8h8 h2g3 
+DEBUG SearchEngine - depth 8 score cp 29 nodes 57368 time 273 nps 209372 pv f5e4 d8c8 e4f5 c4b5 f5e6 g8h8 h2g3 a7a5 
+DEBUG SearchEngine - depth 9 score cp 24 nodes 149670 time 736 nps 203080 pv f5e4 d8c8 e4f5 d7d8 h2g3 b6b5 e3e4 a7a5 f5f2 
+DEBUG SearchEngine - depth 10 score cp 21 nodes 217361 time 1083 nps 200517 pv f5e4 d8c8 e4f5 d7d8 h2g3 b6b5 e3e4 a7a5 f5f2 d8e8 
+DEBUG SearchEngine - depth 11 score cp 11 nodes 387511 time 1770 nps 218809 pv f5e4 d8c8 e4f5 d7d8 h2g3 b6b5 e3e4 a7a5 f5g4 c8c6 g4f3 
+DEBUG SearchEngine - depth 12 score cp 130 nodes 1322026 time 5415 nps 244096 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7e8q d8e8 f7e8 c4g8 e8b5 d2d3 g3f4 d3a3 
+DEBUG SearchEngine - depth 13 score cp 147 nodes 1575019 time 6455 nps 243962 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a7d4 c4d3 g3g4 d3e2 g4h4 e2f3 d4e5 
+DEBUG SearchEngine - depth 14 score cp 147 nodes 1912234 time 7885 nps 242484 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a7d4 c4d3 g3g4 d3e2 g4h4 e2f3 d4e5 
+DEBUG SearchEngine - depth 15 score cp 139 nodes 2927318 time 12094 nps 242027 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a7d4 f8f3 g3h4 c4e6 d4d8 e6g8 d8d4 g8e6 
+DEBUG SearchEngine - depth 16 score cp 139 nodes 3569497 time 14577 nps 244855 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a7d4 f8f3 g3h4 c4e6 d4d8 e6g8 d8d4 g8e6 
+DEBUG SearchEngine - depth 17 score cp 149 nodes 6474719 time 26432 nps 244948 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 c4g8 a7e7 d8d3 g3f4 d3d5 f4g4 
+DEBUG SearchEngine - depth 18 score cp 149 nodes 11832764 time 47768 nps 247708 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8d3 g3g4 c4g8 a7c5 g8e6 g4f4 d3d5 c5e7 e6g8 f4g4 
+DEBUG SearchEngine - depth 19 score cp 149 nodes 17548686 time 71299 nps 246124 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8d3 g3g4 c4g8 a7c5 g8e6 g4f4 d3d5 c5e7 e6g8 f4g4 
+DEBUG SearchEngine - depth 20 score cp 149 nodes 46744439 time 188505 nps 247973 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8d3 g3g4 c4g8 a7c5 g8e6 g4f4 d3d5 c5e7 e6g8 
+DEBUG SearchEngine - depth 21 score cp 164 nodes 94192519 time 382165 nps 246470 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a3a4 b5a4 a7a4 c4d5 a4d7 f8f3 g3h4 d5g8 d7d4 g8e6 
+DEBUG SearchEngine - depth 22 score cp 167 nodes 169634375 time 709996 nps 238922 pv e5e6 d7d6 f5f7 g8h8 e6e7 d6d2 h2g3 b6b5 e7d8r d2d8 f7a7 d8f8 a3a4 b5a4 a7a4 c4d5 a4d7 f8f3 g3h4 d5g8 d7d4 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 5633 0.002567197722027431%
+DEBUG SearchEngine - Positions QS      = 77965704 35.53228789367388%
+DEBUG SearchEngine - Positions Null    = 141450796 64.46514490860409%
+DEBUG SearchEngine - PV Cut            = 28747 35%
+DEBUG SearchEngine - PV All            = 53284
+DEBUG SearchEngine - Null Cut          = 552013034 71%
+DEBUG SearchEngine - Null All          = 221416037
+DEBUG SearchEngine - Asp Win      Hits = 52.56544502617801%
+DEBUG SearchEngine - TT Eval      Hits = 915359186 29.55771678856399%
+DEBUG SearchEngine - TT PV        Hits = 98811 0.001876578187043038%
+DEBUG SearchEngine - TT LB        Hits = 5265488040 2.335131901657496%
+DEBUG SearchEngine - TT UB        Hits = 466249871 8.8548272725732%
+DEBUG SearchEngine - Futility     Hits = 55389689
+DEBUG SearchEngine - Agg.Futility Hits = 41813183
+DEBUG SearchEngine - Null Move    Hits = 85359970 78.15213031648913%
+DEBUG SearchEngine - Razoring     Hits = 34314655 87.59823916451347%
+DEBUG SearchEngine - S.Extensions Hits = 384249 36.292429431465926%
+DEBUG EpdTest - Best move found in 5415Ms :D e5-e6
+DEBUG EpdTest - Status: 23 positions solved of 27 in 5354483Ms (lctPoints=540)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = rnb1k1nr/p2p1ppp/3B4/1p1N1N1P/4P1P1/3P1Q2/PqP5/R4Kb1 w kq - bm e5; id "test 28";
+DEBUG EpdTest - Lets see if e5 are found
+DEBUG SearchEngine - Board
+r n b . k . n r 8
+p . . p . p p p 7
+. . . B . . . . 6
+. p . N . N . P 5
+. . . . P . P . 4
+. . . P . Q . . 3
+P q P . . . . . 2
+R . . . . K b . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -566 nodes 200 time 4 nps 40000 pv a1d1 
+DEBUG SearchEngine - depth 2 score cp -475 nodes 869 time 8 nps 96555 pv a1d1 b8a6 
+DEBUG SearchEngine - depth 3 score cp -471 nodes 2073 time 13 nps 148071 pv a1e1 b8a6 f5g7 
+DEBUG SearchEngine - depth 4 score cp -471 nodes 3002 time 18 nps 158000 pv a1e1 b8a6 f5g7 b2g7 
+DEBUG SearchEngine - depth 5 score cp -342 nodes 11010 time 64 nps 169384 pv a1e1 b8a6 f1g1 g7g6 f5h4 
+DEBUG SearchEngine - depth 6 score cp -342 nodes 17307 time 99 nps 173070 pv a1e1 b8a6 f1g1 g7g6 f5h4 b2c2 
+DEBUG SearchEngine - depth 7 score cp -309 nodes 63383 time 357 nps 177047 pv a1d1 b8a6 f1g1 g7g6 h5g6 h7g6 f5e3 
+DEBUG SearchEngine - depth 8 score cp -213 nodes 146430 time 865 nps 169087 pv d5c7 e8d8 a1d1 b2c2 c7a8 g1h2 f5d4 c2a2 
+DEBUG SearchEngine - depth 9 score cp -246 nodes 309445 time 1687 nps 183320 pv d5c7 e8d8 a1e1 g1h2 c7a8 b2c2 f5d4 c2a2 d4b5 g8f6 
+DEBUG SearchEngine - depth 10 score cp -246 nodes 629222 time 3728 nps 168737 pv d5c7 e8d8 a1e1 g1h2 c7a8 b2c2 f5d4 c2a2 d4b5 g8f6 
+DEBUG SearchEngine - depth 11 score cp -220 nodes 2764214 time 17115 nps 161498 pv d5c7 e8d8 a1e1 g1h2 c7a8 b2c2 e4e5 b8a6 f5g7 a6c5 d6c7 d8e7 
+DEBUG SearchEngine - depth 12 score cp -200 nodes 3942982 time 23254 nps 169554 pv d5c7 e8d8 a1e1 c8b7 c7a8 b7a8 f1g1 b8c6 d6f8 g7g6 f8g7 c6e5 
+DEBUG SearchEngine - depth 13 score cp -210 nodes 10602933 time 61463 nps 172506 pv d5c7 e8d8 a1e1 g7g6 c7a8 b8a6 f1g1 g6f5 e4f5 b2d4 f3e3 d4g4 d6g3 a6c7 
+DEBUG SearchEngine - depth 14 score cp -178 nodes 68021616 time 407846 nps 166782 pv d5c7 e8d8 a1e1 g1c5 c7a8 b8a6 f3f4 c5d6 f5d6 g8h6 g4g5 b2c2 g5h6 c2d3 f1g1 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 2136 0.001416413087168873%
+DEBUG SearchEngine - Positions QS      = 67722530 44.90780795327089%
+DEBUG SearchEngine - Positions Null    = 83078798 55.09077563364195%
+DEBUG SearchEngine - PV Cut            = 29379 35%
+DEBUG SearchEngine - PV All            = 54265
+DEBUG SearchEngine - Null Cut          = 566523526 71%
+DEBUG SearchEngine - Null All          = 227105548
+DEBUG SearchEngine - Asp Win      Hits = 52.016129032258064%
+DEBUG SearchEngine - TT Eval      Hits = 932358513 29.16949714863753%
+DEBUG SearchEngine - TT PV        Hits = 99262 0.0018326564716005492%
+DEBUG SearchEngine - TT LB        Hits = 5416290589 2.2801271455193706%
+DEBUG SearchEngine - TT UB        Hits = 468188283 8.644076149659481%
+DEBUG SearchEngine - Futility     Hits = 57055301
+DEBUG SearchEngine - Agg.Futility Hits = 43130758
+DEBUG SearchEngine - Null Move    Hits = 86505958 77.99704719009384%
+DEBUG SearchEngine - Razoring     Hits = 35823025 87.4565415289257%
+DEBUG SearchEngine - S.Extensions Hits = 385232 36.28827756153988%
+DEBUG EpdTest - Best move not found :( Nd5-c7 != e5
+DEBUG EpdTest - Status: 23 positions solved of 28 in 6254483Ms (lctPoints=540)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = r1b1kb1r/pp1n1ppp/2q5/2p3B1/Q1B5/2p2N2/PP3PPP/R3K2R w KQkq - bm O-O-O; id "test 29";
+DEBUG EpdTest - Lets see if O-O-O are found
+DEBUG SearchEngine - Board
+r . b . k b . r 8
+p p . n . p p p 7
+. . q . . . . . 6
+. . p . . . B . 5
+Q . B . . . . . 4
+. . p . . N . . 3
+P P . . . P P P 2
+R . . . K . . R 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp -57 nodes 124 time 9 nps 12400 pv a4c6 
+DEBUG SearchEngine - depth 2 score cp -45 nodes 385 time 11 nps 32083 pv a4c6 b7c6 e1c1 
+DEBUG SearchEngine - depth 3 score cp -23 nodes 2229 time 31 nps 69656 pv a4c6 b7c6 e1g1 f8e7 
+DEBUG SearchEngine - depth 4 score cp -13 nodes 3655 time 50 nps 71666 pv a4c6 b7c6 e1g1 d7b6 a1e1 
+DEBUG SearchEngine - depth 5 score cp -5 nodes 5768 time 73 nps 77945 pv a4c6 b7c6 e1g1 d7b6 a1e1 e8d7 
+DEBUG SearchEngine - depth 6 score cp -40 nodes 33223 time 311 nps 106483 pv a4c6 b7c6 e1g1 f7f6 a1e1 e8d8 g5c1 
+DEBUG SearchEngine - depth 7 score cp 1 nodes 86720 time 589 nps 146983 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 c3b2 c1b2 e8f8 
+DEBUG SearchEngine - depth 8 score cp 6 nodes 123706 time 858 nps 144011 pv a4c6 b7c6 e1c1 f7f6 h1e1 e8d8 g5f4 g7g5 f4g3 
+DEBUG SearchEngine - depth 9 score cp -25 nodes 353904 time 1873 nps 188849 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 c3b2 c1b2 d7b6 c4b3 e8f8 
+DEBUG SearchEngine - depth 10 score cp -20 nodes 697657 time 3819 nps 182632 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 d7b6 c4b3 c5c4 b3c2 
+DEBUG SearchEngine - depth 11 score cp -19 nodes 1422336 time 7755 nps 183385 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 d7b6 c4b3 c3b2 c1b2 e8f8 b2c3 c5c4 b3c4 c8f5 
+DEBUG SearchEngine - depth 12 score cp -19 nodes 2807638 time 14999 nps 187175 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 d7b6 c4b3 c3b2 c1b2 e8f8 b2c3 
+DEBUG SearchEngine - depth 13 score cp -36 nodes 6635425 time 31732 nps 209101 pv a4c6 b7c6 e1c1 f7f6 h1e1 f8e7 g5f4 c3b2 c1b2 d7b6 c4b3 e8f8 f4d6 e7d6 d1d6 c8d7 h2h4 
+DEBUG SearchEngine - depth 14 score cp -7 nodes 17167755 time 89412 nps 192005 pv e1c1 c3b2 c1b2 f7f6 h1e1 f8e7 c4b5 c6b6 g5f4 e8f8 a4b3 c5c4 
+DEBUG SearchEngine - depth 15 score cp 57 nodes 53555453 time 291652 nps 183627 pv e1c1 f8e7 a4c6 b7c6 g5e7 c3b2 c1b2 e8e7 h1e1 e7f8 a2a4 a7a5 e1e8 f8e8 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 8715 0.0054093705828322765%
+DEBUG SearchEngine - Positions QS      = 64739758 40.18374554961337%
+DEBUG SearchEngine - Positions Null    = 96360844 59.8108450798038%
+DEBUG SearchEngine - PV Cut            = 31014 34%
+DEBUG SearchEngine - PV All            = 58065
+DEBUG SearchEngine - Null Cut          = 579868130 71%
+DEBUG SearchEngine - Null All          = 232309227
+DEBUG SearchEngine - Asp Win      Hits = 51.30434782608695%
+DEBUG SearchEngine - TT Eval      Hits = 956022617 28.950211133361503%
+DEBUG SearchEngine - TT PV        Hits = 102232 0.0018329693445620016%
+DEBUG SearchEngine - TT LB        Hits = 5577398242 2.2350953005517873%
+DEBUG SearchEngine - TT UB        Hits = 471327193 8.450664136742487%
+DEBUG SearchEngine - Futility     Hits = 58807682
+DEBUG SearchEngine - Agg.Futility Hits = 44461600
+DEBUG SearchEngine - Null Move    Hits = 88538254 78.08966751014697%
+DEBUG SearchEngine - Razoring     Hits = 36840302 87.1504421228226%
+DEBUG SearchEngine - S.Extensions Hits = 386420 36.20381769360638%
+DEBUG EpdTest - Best move found in 89412Ms :D O-O-O
+DEBUG EpdTest - Status: 24 positions solved of 29 in 6343895Ms (lctPoints=560)
+DEBUG EpdTest - 
+DEBUG EpdTest - Test = 2k5/2p3Rp/p1pb4/1p2p3/4P3/PN1P1P2/1P2KP1r/8 w - - bm f4; id "test 30";
+DEBUG EpdTest - Lets see if f4 are found
+DEBUG SearchEngine - Board
+. . k . . . . . 8
+. . p . . . R p 7
+p . p b . . . . 6
+. p . . p . . . 5
+. . . . P . . . 4
+P N . P . P . . 3
+. P . . K P . r 2
+. . . . . . . . 1
+a b c d e f g h  white move
+
+DEBUG SearchEngine - Searching Move in Book
+DEBUG SearchEngine - NOT Found Move in Book
+DEBUG SearchEngine - depth 1 score cp 42 nodes 80 time 4 nps 16000 pv e2e3 
+DEBUG SearchEngine - depth 2 score cp 43 nodes 280 time 5 nps 46666 pv e2e3 h2h3 
+DEBUG SearchEngine - depth 3 score cp 34 nodes 1617 time 11 nps 134750 pv e2e3 h7h5 g7g8 c8d7 
+DEBUG SearchEngine - depth 4 score cp 38 nodes 9280 time 40 nps 226341 pv e2f1 h7h5 f1g1 d6f8 
+DEBUG SearchEngine - depth 5 score cp 34 nodes 15697 time 105 nps 148084 pv e2f1 h2h1 f1g2 h1b1 g7g8 c8b7 
+DEBUG SearchEngine - depth 6 score cp 32 nodes 27301 time 201 nps 135153 pv e2f1 h2h1 f1e2 h1b1 g7g8 c8b7 b3a5 
+DEBUG SearchEngine - depth 7 score cp 32 nodes 53290 time 392 nps 135597 pv e2f1 h2h1 f1e2 h1b1 g7g8 c8b7 b3a5 b7b6 
+DEBUG SearchEngine - depth 8 score cp 39 nodes 104140 time 605 nps 171848 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 e2e3 h4h3 a3a4 c6c5 
+DEBUG SearchEngine - depth 9 score cp 54 nodes 149824 time 825 nps 181384 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 b3a5 c6c5 e2e3 h4h3 a6a7 
+DEBUG SearchEngine - depth 10 score cp 47 nodes 256508 time 1278 nps 200553 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 b3a5 c6c5 e2e3 h4h3 a5c6 h2g2 
+DEBUG SearchEngine - depth 11 score cp 51 nodes 388954 time 1824 nps 213125 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 b3a5 d6c5 a5c6 h2f2 e2e1 f2b2 c6e5 
+DEBUG SearchEngine - depth 12 score cp 55 nodes 628520 time 2796 nps 224712 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 b3a5 d6c5 a5c6 h2f2 e2e1 f2b2 c6e5 d7c8 
+DEBUG SearchEngine - depth 13 score cp 46 nodes 1281718 time 5435 nps 235783 pv g7g8 c8d7 g8a8 h7h5 a8a6 h5h4 b3a5 d6c5 a5c6 h2f2 e2e1 f2b2 c6e5 d7d8 a3a4 
+DEBUG SearchEngine - depth 14 score cp 89 nodes 18557528 time 81774 nps 226934 pv f3f4 c8b7 f4f5 h2h1 b3d2 h1a1 g7h7 a1a2 b2b4 a2a3 d2f3 a3a2 e2f1 b7b6 f5f6 
+DEBUG SearchEngine - depth 15 score cp 58 nodes 51499547 time 226929 nps 226940 pv f3f4 h2h1 b3a5 e5f4 d3d4 h1b1 b2b4 b1b2 e2f3 b2a2 e4e5 a2a3 f3f4 d6b4 a5c6 b4d2 f4e4 
+DEBUG SearchEngine - depth 16 score cp 74 nodes 71987176 time 317584 nps 226670 pv f3f4 h2h1 b3a5 h1b1 g7g8 c8d7 b2b4 e5f4 g8g7 d7e6 a5c6 h7h5 g7h7 b1b2 e2f3 b2d2 h7h6 e6f7 
+DEBUG SearchEngine - depth 17 score cp 76 nodes 152518980 time 674977 nps 225961 pv f3f4 h2h1 b3a5 h1b1 b2b4 b1b2 e2f3 e5f4 d3d4 b2a2 e4e5 a2a3 f3f4 d6b4 a5c6 b4d2 f4e4 h7h5 e5e6 d2c3 
+DEBUG SearchEngine - Time exceed: returning to move 0
+DEBUG SearchEngine - Positions PV      = 21581 0.010675851232920822%
+DEBUG SearchEngine - Positions QS      = 86645546 42.86246972295991%
+DEBUG SearchEngine - Positions Null    = 115480688 57.126854425807174%
+DEBUG SearchEngine - PV Cut            = 35141 34%
+DEBUG SearchEngine - PV All            = 67723
+DEBUG SearchEngine - Null Cut          = 600728671 71%
+DEBUG SearchEngine - Null All          = 240042239
+DEBUG SearchEngine - Asp Win      Hits = 51.50375939849624%
+DEBUG SearchEngine - TT Eval      Hits = 985479365 28.762097779517017%
+DEBUG SearchEngine - TT PV        Hits = 115287 0.0019947422724129124%
+DEBUG SearchEngine - TT LB        Hits = 5779543633 2.192782164951258%
+DEBUG SearchEngine - TT UB        Hits = 478572784 8.280459745427793%
+DEBUG SearchEngine - Futility     Hits = 61010941
+DEBUG SearchEngine - Agg.Futility Hits = 45972457
+DEBUG SearchEngine - Null Move    Hits = 90138815 77.86885383980349%
+DEBUG SearchEngine - Razoring     Hits = 37005058 87.13238778417376%
+DEBUG SearchEngine - S.Extensions Hits = 388263 36.096703386608084%
+DEBUG EpdTest - Best move found in 81774Ms :D f3-f4
+DEBUG EpdTest - Status: 25 positions solved of 30 in 6425669Ms (lctPoints=580)
+DEBUG EpdTest - 
+DEBUG EpdTest - ***** Positions not Solved:
+DEBUG EpdTest - 5r1k/1P4pp/3P1p2/4p3/1P5P/3q2P1/Q2b2K1/B3R3 w - - bm Qf7; id "test 4";
+2b1q3/p7/1p1p2kb/nPpN3p/P1P1P2P/6P1/5R1K/5Q2 w - - bm e5; id "test 15";
+2krr3/pppb1ppp/3b4/3q4/3P3n/2P2N1P/PP2B1P1/R1BQ1RK1 b - - bm Nxg2; id "test 16";
+8/7p/8/p4p2/5K2/Bpk3P1/4P2P/8 w - - bm g4; id "test 23";
+rnb1k1nr/p2p1ppp/3B4/1p1N1N1P/4P1P1/3P1Q2/PqP5/R4Kb1 w kq - bm e5; id "test 28";
+
+DEBUG EpdTest - ***** Result:25 positions solved of 30 in 6425669Ms
+BT2630 Elo = 2415.8333333333335

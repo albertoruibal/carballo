@@ -1,0 +1,12 @@
+r3qb1k/1b4p1/p2pr2p/3n4/Pnp1N1N1/6RP/1B3PP1/1B1QR1K1 w - - bm Nxh6; id "Nolot.1, Heap.100662, move.26"; c0 "Kasparov-Karpov, Wch35-KK5 Lyon-New York (20), CBM 21 1990";
+r4rk1/pp1n1p1p/1nqP2p1/2b1P1B1/4NQ2/1B3P2/PP2K2P/2R5 w - - bm Rxc5; id "Nolot.2, Heap.5154, move.22"; c0 "Bronstein,D-Ljubojevic,L, Petropolis izt (11), IZT 1973";
+r2qk2r/ppp1b1pp/2n1p3/3pP1n1/3P2b1/2PB1NN1/PP4PP/R1BQK2R w - - bm Nxg5; id "Nolot.3, Heap.81891, move.12"; c0 "Smagin,S-Sahovic,D, Biel op (10), EXP 19 1990";
+r1b1kb1r/1p1n1ppp/p2ppn2/6BB/2qNP3/2N5/PPP2PPP/R2Q1RK1 w - - bm Nxe6; id "Nolot.4, Heap.373676, move.10"; c0 "Keres,Paul-Kotov, Budapest, candidate, 1950";
+r2qrb1k/1p1b2p1/p2ppn1p/8/3NP3/1BN5/PPP3QP/1K3RR1 w - - bm e5; id "Nolot.5, Heap.4152, move.21"; c0 "Spassky,B-Petrosian,T, Wch27-Moscow (19), MAINB 1969";
+rnbqk2r/1p3ppp/p7/1NpPp3/QPP1P1n1/P4N2/4KbPP/R1B2B1R b - - bm axb5; id "Nolot.6, Heap.117601, move.13"; c0 "Wlodarczyk,R (2270)-Bandza,A, Miedzybrodzie (5), TD 91/08 1991";
+rnbqk2r/1p3ppp/p7/1NpPp3/QPP1P1n1/P4N2/4KbPP/R1B2B1R b - - bm axb5; id "Nolot.6, Heap.787586, move.13"; c0 "Malaniuk,V (2520)-Ivanchuk,V, USSR(ch), 46/745, [Ivanchuk], 1988";
+1r1bk2r/2R2ppp/p3p3/1b2P2q/4QP2/4N3/1B4PP/3R2K1 w - - bm Rxd8+; id "Nolot.7, src=?";
+r3rbk1/ppq2ppp/2b1pB2/8/6Q1/1P1B3P/P1P2PP1/R2R2K1 w - - bm Bxh7+; id "Nolot.8, Heap.655693, move.24"; c0 "Gufeld,E-Osnos,V, URS 1978";
+r4r1k/4bppb/2n1p2p/p1n1P3/1p1p1BNP/3P1NP1/qP2QPB1/2RR2K1 w - - bm Ng5; id "Nolot.9, src=?"; c0 "Weinstein-Elyoseph, Israel, 1992";
+r1b2rk1/1p1nbppp/pq1p4/3B4/P2NP3/2N1p3/1PP3PP/R2Q1R1K w - - bm Rxf7; id "Nolot.10, Heap.444066, move.15"; c0 "Van der Wiel,J-Ribli,Z, Amsterdam, 1980";
+r1b3k1/p2p1nP1/2pqr1Rp/1p2p2P/2B1PnQ1/1P6/P1PP4/1K4R1 w - - bm Rxh6; id "Nolot.11, src=?"; c0 "Teichmann-NN, Zurich 1920";

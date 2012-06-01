@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.alonsoruibal</groupId>
+	<artifactId>carballo</artifactId>
+	<packaging>pom</packaging>
+	<version>0.7</version>
+	<name>Carballo Chess Engine</name>
+	<description>See readme.txt</description>
+	<url>http://www.alonsoruibal.com/dev/chess</url>
+	<developers>
+		<developer>
+			<id>rui</id>
+			<name>Alberto Alonso Ruibal</name>
+			<email>alberto@alonsoruibal.com</email>
+			<url>http://www.alonsoruibal.com</url>
+		</developer>
+		<developer>
+			<id>laaglu</id>
+			<name>Lukas Laag</name>
+			<email>laaglu@gmail.com</email>
+			<url>http://www.vectomatic.org</url>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU General Public License v3 (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<modules>
+        <module>core</module>
+        <module>jse</module>
+        <module>applet</module>
+    </modules>
+</project>

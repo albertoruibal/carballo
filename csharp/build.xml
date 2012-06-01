@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Converts the Carballo Java Source code to C# using sharpen
+ assumes that you have installed sharpen
+
+-->
+<project name="carballo" default="sharpen-docs">
+	<property file="sharpen.properties" />
+
+	<macrodef name="sharpen">
+		<attribute name="workspace" />
+		<attribute name="resource" />
+
+		<element name="args" optional="yes" />
+
+		<sequential>
+			<exec executable="${file.jvm.jdk1.5}" failonerror="true" timeout="1800000">
+				<arg value="-Xms256m" />
+				<arg value="-Xmx512m" />
+				<arg value="-cp" />
+				<arg value="${eclipse.startup.jar}" />
+				<arg value="org.eclipse.core.launcher.Main" />
+				<arg value="-data" />
+				<arg file="@{workspace}" />
+				<arg value="-application" />
+				<arg value="sharpen.core.application" />
+				<arg value="-header" />
+				<arg file="header.txt" />
+				<arg value="@{resource}" />
+
+				<args />
+
+			</exec>
+		</sequential>
+	</macrodef>
+
+
+	<!-- Main target -->
+	<target name="sharpen-docs">
+
+		<property name="target.dir" location="tmp" />
+
+		<mkdir dir="tmp" />
+
+		<copy todir="${target.dir}/carballo/src">
+			<fileset dir="../core/src/main/java">
+				<include name="**/*.java" />
+			</fileset>
+			<!--fileset dir="../jse/src/main/java">
+        <include name="**/*.java" />
+      </fileset-->
+		</copy>
+
+		<!-- Sharpen java files -->
+		<sharpen workspace="${target.dir}" resource="carballo/src">
+			<args>
+				<!-- Sharpen options are defined in a separate file -->
+				<arg value="@sharpen-all-options" />
+			</args>
+		</sharpen>
+
+		<copy todir="Carballo">
+			<fileset dir="${target.dir}/carballo.net/src">
+				<include name="**/*.cs" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Remove resources from the previous convertion run -->
+	<target name="clean" description="Delete all generated files">
+		<delete dir="tmp" />
+	</target>
+</project>

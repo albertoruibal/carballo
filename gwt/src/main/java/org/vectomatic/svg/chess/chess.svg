@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	viewBox="0 0 400 400">
+	<defs>
+		<symbol id="b">
+			<g style="display:inline">
+				<path
+					d="M 9,36 C 12.385255,35.027671 19.114744,36.430821 22.5,34 C 25.885256,36.430821 32.614745,35.027671 36,36 C 36,36 37.645898,36.541507 39,38 C 38.322949,38.972328 37.354102,38.986164 36,38.5 C 32.614745,37.527672 25.885256,38.958493 22.5,37.5 C 19.114744,38.958493 12.385255,37.527672 9,38.5 C 7.6458978,38.986164 6.6770511,38.972328 6,38 C 7.3541023,36.055343 9,36 9,36 z "
+					id="path4582"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path
+					d="M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z "
+					id="path4584"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 25 10 A 2.5 2.5 0 1 1  20,10 A 2.5 2.5 0 1 1  25 10 z"
+					id="path4586"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(0,-2)" />
+				<path d="M 17.5,26 L 27.5,26" id="path4588"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 15,30 L 30,30" id="path4590"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 22.5,15.5 L 22.5,20.5" id="path4592"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 20,18 L 25,18" id="path4594"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="B">
+			<g style="display:inline">
+				<path
+					d="M 9,36 C 12.385255,35.027671 19.114744,36.430821 22.5,34 C 25.885256,36.430821 32.614745,35.027671 36,36 C 36,36 37.645898,36.541507 39,38 C 38.322949,38.972328 37.354102,38.986164 36,38.5 C 32.614745,37.527672 25.885256,38.958493 22.5,37.5 C 19.114744,38.958493 12.385255,37.527672 9,38.5 C 7.6458978,38.986164 6.6770511,38.972328 6,38 C 7.3541023,36.055343 9,36 9,36 z "
+					id="path4582"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path
+					d="M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z "
+					id="path4584"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 25 10 A 2.5 2.5 0 1 1  20,10 A 2.5 2.5 0 1 1  25 10 z"
+					id="path4586"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(0,-2)" />
+				<path d="M 17.5,26 L 27.5,26" id="path4588"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 15,30 L 30,30" id="path4590"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 22.5,15.5 L 22.5,20.5" id="path4592"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 20,18 L 25,18" id="path4594"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="k">
+			<g>
+				<path d="M 22.5,11.625 L 22.5,6" id="path6570"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25"
+					id="path5683"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 11.5,37 C 17,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 19,16 9.5,13 6.5,19.5 C 3.5,25.5 11.5,29.5 11.5,29.5 L 11.5,37 z "
+					id="path5681"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 20,8 L 25,8" id="path6572"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,29.5 C 17,27 27,27 32.5,30" id="path6574"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,37 C 17,34.5 27,34.5 32.5,37" id="path6576"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,33.5 C 17,31.5 27,31.5 32.5,33.5" id="path6578"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 32,29.5 C 32,29.5 40.5,25.5 38.025969,19.846552 C 34.147406,13.996552 25,18 22.5,24.5 L 22.511718,26.596552 L 22.5,24.5 C 20,18 9.9063892,13.996552 6.9974672,19.846552 C 4.5,25.5 11.845671,28.846552 11.845671,28.846552"
+					id="path5638"
+					style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:white;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="K">
+			<g>
+				<path d="M 22.5,11.625 L 22.5,6" id="path6570"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25"
+					id="path5683"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 11.5,37 C 17,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 19,16 9.5,13 6.5,19.5 C 3.5,25.5 11.5,29.5 11.5,29.5 L 11.5,37 z "
+					id="path5681"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 20,8 L 25,8" id="path6572"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,29.5 C 17,27 27,27 32.5,30" id="path6574"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,37 C 17,34.5 27,34.5 32.5,37" id="path6576"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,33.5 C 17,31.5 27,31.5 32.5,33.5" id="path6578"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+			</g>
+		</symbol>
+		<symbol id="q">
+			<g>
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5571"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(-1,-1)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5573"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(15.5,-5.5)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5575"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(32,-1)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5577"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(7,-4.5)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5579"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(24,-4)" />
+				<path
+					d="M 9,26 C 17.5,24.5 30,24.5 36,26 L 38,14 L 31,25 L 31,11 L 25.5,24.5 L 22.5,9.5 L 19.5,24.5 L 14,10.5 L 14,25 L 7,14 L 9,26 z "
+					id="path5581"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
+				<path
+					d="M 9,26 C 9,28 10.5,28 11.5,30 C 12.5,31.5 12.5,31 12,33.5 C 10.5,34.5 10.5,36 10.5,36 C 9,37.5 11,38.5 11,38.5 C 17.5,39.5 27.5,39.5 34,38.5 C 34,38.5 35.5,37.5 34,36 C 34,36 34.5,34.5 33,33.5 C 32.5,31 32.5,31.5 33.5,30 C 34.5,28 36,28 36,26 C 27.5,24.5 17.5,24.5 9,26 z "
+					id="path5583"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 11.5,30 C 15,29 30,29 33.5,30" id="path5585"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 12,33.5 C 18,32.5 27,32.5 33,33.5" id="path5587"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 10.5,36 C 15.5,35 29,35 34,36" id="path5589"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="Q">
+			<g>
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5571"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(-1,-1)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5573"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(15.5,-5.5)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5575"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(32,-1)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5577"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(7,-4.5)" />
+				<path d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z" id="path5579"
+					style="opacity:1;fill:white;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(24,-4)" />
+				<path
+					d="M 9,26 C 17.5,24.5 30,24.5 36,26 L 38,14 L 31,25 L 31,11 L 25.5,24.5 L 22.5,9.5 L 19.5,24.5 L 14,10.5 L 14,25 L 7,14 L 9,26 z "
+					id="path5581"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 9,26 C 9,28 10.5,28 11.5,30 C 12.5,31.5 12.5,31 12,33.5 C 10.5,34.5 10.5,36 10.5,36 C 9,37.5 11,38.5 11,38.5 C 17.5,39.5 27.5,39.5 34,38.5 C 34,38.5 35.5,37.5 34,36 C 34,36 34.5,34.5 33,33.5 C 32.5,31 32.5,31.5 33.5,30 C 34.5,28 36,28 36,26 C 27.5,24.5 17.5,24.5 9,26 z "
+					id="path5583"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11.5,30 C 15,29 30,29 33.5,30" id="path5585"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 12,33.5 C 18,32.5 27,32.5 33,33.5" id="path5587"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 10.5,36 C 15.5,35 29,35 34,36" id="path5589"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="r">
+			<g style="display:inline">
+				<path d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z " id="path3119"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 12.5,32 L 14,29.5 L 31,29.5 L 32.5,32 L 12.5,32 z "
+					id="path3123"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z " id="path3121"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 14,29.5 L 14,16.5 L 31,16.5 L 31,29.5 L 14,29.5 z "
+					id="path3125"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 14,16.5 L 11,14 L 34,14 L 31,16.5 L 14,16.5 z " id="path3127"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14 L 11,14 z "
+					id="path3129"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 12,35.5 L 33,35.5 L 33,35.5" id="path4967"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+				<path d="M 13,31.5 L 32,31.5" id="path4969"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+				<path d="M 14,29.5 L 31,29.5" id="path4971"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+				<path d="M 14,16.5 L 31,16.5" id="path5050"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+				<path d="M 11,14 L 34,14" id="path5052"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:white;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="R">
+			<g style="display:inline">
+				<path d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z " id="path3119"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z " id="path3121"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14"
+					id="path3129"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 34,14 L 31,17 L 14,17 L 11,14" id="path3127"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 31,17 L 31,29.500018 L 14,29.500018 L 14,17" id="path3125"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.50000036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+				<path d="M 31,29.5 L 32.5,32 L 12.5,32 L 14,29.5" id="path3123"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 11,14 L 34,14" id="path5175"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="p">
+			<g>
+				<path
+					d="M 22 9 C 19.792 9 18 10.792 18 13 C 18 13.885103 18.29397 14.712226 18.78125 15.375 C 16.829274 16.496917 15.5 18.588492 15.5 21 C 15.5 23.033947 16.442042 24.839082 17.90625 26.03125 C 14.907101 27.08912 10.5 31.578049 10.5 39.5 L 33.5 39.5 C 33.5 31.578049 29.092899 27.08912 26.09375 26.03125 C 27.557958 24.839082 28.5 23.033948 28.5 21 C 28.5 18.588492 27.170726 16.496917 25.21875 15.375 C 25.70603 14.712226 26 13.885103 26 13 C 26 10.792 24.208 9 22 9 z "
+					id="path3194"
+					style="opacity:1;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:10;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="P">
+			<g>
+				<path
+					d="M 22 9 C 19.792 9 18 10.792 18 13 C 18 13.885103 18.29397 14.712226 18.78125 15.375 C 16.829274 16.496917 15.5 18.588492 15.5 21 C 15.5 23.033947 16.442042 24.839082 17.90625 26.03125 C 14.907101 27.08912 10.5 31.578049 10.5 39.5 L 33.5 39.5 C 33.5 31.578049 29.092899 27.08912 26.09375 26.03125 C 27.557958 24.839082 28.5 23.033948 28.5 21 C 28.5 18.588492 27.170726 16.496917 25.21875 15.375 C 25.70603 14.712226 26 13.885103 26 13 C 26 10.792 24.208 9 22 9 z "
+					id="path3194"
+					style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:10;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="n">
+			<g>
+				<path
+					d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
+					id="path3491"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+				<path
+					d="M 24,18 C 24.384461,20.911278 18.447064,25.368624 16,27 C 13,29 13.180802,31.342892 11,31 C 9.95828,30.055984 12.413429,27.962451 11,28 C 10,28 11.187332,29.231727 10,30 C 9,30 5.9968392,30.999999 6,26 C 6,24 12,14 12,14 C 12,14 13.885866,12.097871 14,10.5 C 13.273953,9.505631 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.281781,8.0080745 21,7 C 22,7 22,10 22,10"
+					id="path3495"
+					style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+				<path d="M 9 23.5 A 0.5 0.5 0 1 1  8,23.5 A 0.5 0.5 0 1 1  9 23.5 z"
+					id="path3499"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:white;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(0.5,2)" />
+				<path
+					d="M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z"
+					id="path3501"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:white;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="matrix(0.866025,0.5,-0.5,0.866025,9.692632,-5.173394)" />
+				<path
+					d="M 24.55,10.4 L 24.25,11.5 L 24.8,11.6 C 27.901459,12.077147 31.123526,13.834204 33.375,18.09375 C 35.626474,22.353296 36.297157,29.05687 35.8,39 L 35.75,39.5 L 37.5,39.5 L 37.5,39 C 38.002843,28.94313 36.623526,22.146704 34.25,17.65625 C 31.876474,13.165796 28.461041,11.022853 25.0625,10.5 L 24.55,10.4 z "
+					id="path8049"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+			</g>
+		</symbol>
+		<symbol id="N">
+			<g>
+				<path
+					d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
+					id="path3491"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path
+					d="M 24,18 C 24.384461,20.911278 18.447064,25.368624 16,27 C 13,29 13.180802,31.342892 11,31 C 9.95828,30.055984 12.413429,27.962451 11,28 C 10,28 11.187332,29.231727 10,30 C 9,30 5.9968392,30.999999 6,26 C 6,24 12,14 12,14 C 12,14 13.885866,12.097871 14,10.5 C 13.273953,9.505631 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.281781,8.0080745 21,7 C 22,7 22,10 22,10"
+					id="path3495"
+					style="fill:white;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+				<path d="M 9 23.5 A 0.5 0.5 0 1 1  8,23.5 A 0.5 0.5 0 1 1  9 23.5 z"
+					id="path3499"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="translate(0.5,2)" />
+				<path
+					d="M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z"
+					id="path3501"
+					style="opacity:1;fill:black;fill-opacity:1;stroke:black;stroke-width:1.50000052;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+					transform="matrix(0.866025,0.5,-0.5,0.866025,9.692632,-5.173394)" />
+				<path d="M 37,39 C 38,19 31.5,11.5 25,10.5" id="path8049"
+					style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+			</g>
+		</symbol>
+		<linearGradient id="blue" gradientTransform="rotate(45)">
+			<stop offset="0%" stop-color="#58CFF3" />
+			<stop offset="100%" stop-color="#BFF0FE" />
+		</linearGradient>
+		<linearGradient id="green" gradientTransform="rotate(45)">
+			<stop offset="0%" stop-color="#44FF1E" />
+			<stop offset="100%" stop-color="#94FA7F" />
+		</linearGradient>
+		<linearGradient id="yellow" gradientTransform="rotate(45)">
+			<stop offset="0%" stop-color="#FFFF00" />
+			<stop offset="100%" stop-color="#F2FEB4" />
+		</linearGradient>
+		<linearGradient id="red" gradientTransform="rotate(45)">
+			<stop offset="0%" stop-color="#FA172E" />
+			<stop offset="100%" stop-color="#F67784" />
+		</linearGradient>
+	</defs>
+	<g transform="translate(15, 15)" id="board">
+		<rect x="-1" y="-1" width="362" height="362" stroke="black" fill="none"
+			stroke-width="1" />
+		<rect x="-4" y="-4" width="368" height="368" stroke="black" fill="none"
+			stroke-width="1" />
+		<rect id="a8" x="0" y="0" width="45" height="45" />
+		<rect id="b8" x="45" y="0" width="45" height="45" />
+		<rect id="c8" x="90" y="0" width="45" height="45" />
+		<rect id="d8" x="135" y="0" width="45" height="45" />
+		<rect id="e8" x="180" y="0" width="45" height="45" />
+		<rect id="f8" x="225" y="0" width="45" height="45" />
+		<rect id="g8" x="270" y="0" width="45" height="45" />
+		<rect id="h8" x="315" y="0" width="45" height="45" />
+		<rect id="a7" x="0" y="45" width="45" height="45" />
+		<rect id="b7" x="45" y="45" width="45" height="45" />
+		<rect id="c7" x="90" y="45" width="45" height="45" />
+		<rect id="d7" x="135" y="45" width="45" height="45" />
+		<rect id="e7" x="180" y="45" width="45" height="45" />
+		<rect id="f7" x="225" y="45" width="45" height="45" />
+		<rect id="g7" x="270" y="45" width="45" height="45" />
+		<rect id="h7" x="315" y="45" width="45" height="45" />
+		<rect id="a6" x="0" y="90" width="45" height="45" />
+		<rect id="b6" x="45" y="90" width="45" height="45" />
+		<rect id="c6" x="90" y="90" width="45" height="45" />
+		<rect id="d6" x="135" y="90" width="45" height="45" />
+		<rect id="e6" x="180" y="90" width="45" height="45" />
+		<rect id="f6" x="225" y="90" width="45" height="45" />
+		<rect id="g6" x="270" y="90" width="45" height="45" />
+		<rect id="h6" x="315" y="90" width="45" height="45" />
+		<rect id="a5" x="0" y="135" width="45" height="45" />
+		<rect id="b5" x="45" y="135" width="45" height="45" />
+		<rect id="c5" x="90" y="135" width="45" height="45" />
+		<rect id="d5" x="135" y="135" width="45" height="45" />
+		<rect id="e5" x="180" y="135" width="45" height="45" />
+		<rect id="f5" x="225" y="135" width="45" height="45" />
+		<rect id="g5" x="270" y="135" width="45" height="45" />
+		<rect id="h5" x="315" y="135" width="45" height="45" />
+		<rect id="a4" x="0" y="180" width="45" height="45" />
+		<rect id="b4" x="45" y="180" width="45" height="45" />
+		<rect id="c4" x="90" y="180" width="45" height="45" />
+		<rect id="d4" x="135" y="180" width="45" height="45" />
+		<rect id="e4" x="180" y="180" width="45" height="45" />
+		<rect id="f4" x="225" y="180" width="45" height="45" />
+		<rect id="g4" x="270" y="180" width="45" height="45" />
+		<rect id="h4" x="315" y="180" width="45" height="45" />
+		<rect id="a3" x="0" y="225" width="45" height="45" />
+		<rect id="b3" x="45" y="225" width="45" height="45" />
+		<rect id="c3" x="90" y="225" width="45" height="45" />
+		<rect id="d3" x="135" y="225" width="45" height="45" />
+		<rect id="e3" x="180" y="225" width="45" height="45" />
+		<rect id="f3" x="225" y="225" width="45" height="45" />
+		<rect id="g3" x="270" y="225" width="45" height="45" />
+		<rect id="h3" x="315" y="225" width="45" height="45" />
+		<rect id="a2" x="0" y="270" width="45" height="45" />
+		<rect id="b2" x="45" y="270" width="45" height="45" />
+		<rect id="c2" x="90" y="270" width="45" height="45" />
+		<rect id="d2" x="135" y="270" width="45" height="45" />
+		<rect id="e2" x="180" y="270" width="45" height="45" />
+		<rect id="f2" x="225" y="270" width="45" height="45" />
+		<rect id="g2" x="270" y="270" width="45" height="45" />
+		<rect id="h2" x="315" y="270" width="45" height="45" />
+		<rect id="a1" x="0" y="315" width="45" height="45" />
+		<rect id="b1" x="45" y="315" width="45" height="45" />
+		<rect id="c1" x="90" y="315" width="45" height="45" />
+		<rect id="d1" x="135" y="315" width="45" height="45" />
+		<rect id="e1" x="180" y="315" width="45" height="45" />
+		<rect id="f1" x="225" y="315" width="45" height="45" />
+		<rect id="g1" x="270" y="315" width="45" height="45" />
+		<rect id="h1" x="315" y="315" width="45" height="45" />
+		<text x="22" y="378" text-anchor="middle" font-size="15">a</text>
+		<text x="67" y="378" text-anchor="middle" font-size="15">b</text>
+		<text x="112" y="378" text-anchor="middle" font-size="15">c</text>
+		<text x="157" y="378" text-anchor="middle" font-size="15">d</text>
+		<text x="202" y="378" text-anchor="middle" font-size="15">e</text>
+		<text x="247" y="378" text-anchor="middle" font-size="15">f</text>
+		<text x="292" y="378" text-anchor="middle" font-size="15">g</text>
+		<text x="337" y="378" text-anchor="middle" font-size="15">h</text>
+		<text y="22" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">8</text>
+		<text y="67" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">7</text>
+		<text y="112" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">6</text>
+		<text y="157" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">5</text>
+		<text y="202" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">4</text>
+		<text y="247" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">3</text>
+		<text y="292" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">2</text>
+		<text y="337" x="-6" text-anchor="end" dominant-baseline="central"
+			font-size="15">1</text>
+	</g>
+
+
+</svg>
