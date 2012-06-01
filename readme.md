@@ -28,7 +28,7 @@ Carballo (the galician word for Oak, well it's all about search trees) is an Ope
 * UCI interface with lots of UCI options
 * The core of the chess engine was converted to C# using Sharpen
 
-It scores 2415 ELO points at BT2630 tests in my Core2 Duo@2.2GHz. Also solves 280 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
+It scores 2415 ELO points at BT2630 tests in my Core2 Duo 2.2GHz. Also solves 280 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
 
 It is licensed under GPLv3, and you are free to use, distribute or modify the code but I ask for a mention to the original author and/or a link to my blog.
 
@@ -56,6 +56,7 @@ History
 
 Version 0.7: A small leap on the engine performance and a big code clean
 
+* Code moved to github
 * Integrated ROOT, PV and NULL nodes search routine
 * Activated singular movement extensions and changed default singular extension margin
 * Do null move only when the remaining depth is > 3 PLY
