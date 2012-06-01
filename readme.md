@@ -1,7 +1,26 @@
 Description
 ===========
 
-Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with the following features:
+Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with Applet and GWT interfaces.
+
+It's organized into modules:
+* Core: the chess engine
+* Jse: the Java Standard Edition version with an UCI interface and unit tests 
+* Applet: the applet code, depends of Core and Jse
+* GWT: an HTML5 interface, depends of Core
+* CSharp: this is a conversion of the Core source code to C# using Sharpen
+
+Links:
+* Home: http://www.alonsoruibal.com/chess
+* Applet interface: http://www.mobialia.com/webchess
+* GWT interface: http://www.mobialia.com/webtvchess
+* Source code: https://github.com/albertoruibal/carballo
+* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci.tgz
+
+It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
+
+Features
+========
 
 * Simple and clear code
 * Cute drag and drop Java Applet GUI, to fit in web sites
@@ -25,12 +44,10 @@ Carballo (the galician word for Oak, well it's all about search trees) is an Ope
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parametrizable evaluator (only for the complete &amp; experimental evaluators)
 * Contempt factor
-* UCI interface with lots of UCI options
+* UCI interface with lots of UCI options (for chess GUIs like Arena)
 * The core of the chess engine was converted to C# using Sharpen
 
 It scores 2415 ELO points at BT2630 tests in my Core2 Duo 2.2GHz. Also solves 280 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
-
-It is licensed under GPLv3, and you are free to use, distribute or modify the code but I ask for a mention to the original author and/or a link to my blog.
 
 Test Results
 ============
@@ -50,6 +67,12 @@ I made a Java Engines Tournament to compare Carballo against other chess engines
     140 games played / Tournament is finished
     Level: Tournament Game in 5 Minutes
     Hardware: Intel(R) Core(TM)2 Duo CPU     T7500  @ 2.20GHz 2200 MHz with 752 MB Memory
+
+Authors
+=======
+
+* Alberto Alonso Ruibal: http://www.alonsoruibal.com
+* Lukas Laag, developer of a great GWT SVG library and Carballo GWT interface: http://www.vectomatic.org
 
 History
 =======
