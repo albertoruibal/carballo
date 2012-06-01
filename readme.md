@@ -37,19 +37,19 @@ Test Results
 
 I made a Java Engines Tournament to compare Carballo against other chess engines at tournament time 5 minutes. Here are the results:
 
-   Engine              Score     Cu    Ca    Ol    Me    Ca    Fr    Br    Ar    S-B
-1: Cuckoo-1.12         34,5/35 ····· 1=111 11111 11111 11111 11111 11111 11111  515,75
-2: Carballo-0.7.11     23,5/35 0=000 ····· 110=0 11111 10101 1111= 01101 11111  318,00
-3: OliThink-5.3.2      22,5/35 00000 001=1 ····· 00110 11101 11011 11111 11111  274,75
-4: Mediocre-0.3.4      17,5/35 00000 00000 11001 ····· 11001 01011 11=11 11101  210,50
-5: Carballo-0.5        15,0/35 00000 01010 00010 00110 ····· =1100 010=1 11111  184,50
-6: FrankWalter-1.0.8   14,0/35 00000 0000= 00100 10100 =0011 ····· 11011 10111  158,75
-7: Bremboce-0.6.2      8,0/35  00000 10010 00000 00=00 101=0 00100 ····· 00011  117,25
-8: ArabianKnight-1.0.9 5,0/35  00000 00000 00000 00010 00000 01000 11100 ·····   55,50
-
-140 games played / Tournament is finished
-Level: Tournament Game in 5 Minutes
-Hardware: Intel(R) Core(TM)2 Duo CPU     T7500  @ 2.20GHz 2200 MHz with 752 MB Memory
+       Engine              Score     Cu    Ca    Ol    Me    Ca    Fr    Br    Ar    S-B
+    1: Cuckoo-1.12         34,5/35 ····· 1=111 11111 11111 11111 11111 11111 11111  515,75
+    2: Carballo-0.7.11     23,5/35 0=000 ····· 110=0 11111 10101 1111= 01101 11111  318,00
+    3: OliThink-5.3.2      22,5/35 00000 001=1 ····· 00110 11101 11011 11111 11111  274,75
+    4: Mediocre-0.3.4      17,5/35 00000 00000 11001 ····· 11001 01011 11=11 11101  210,50
+    5: Carballo-0.5        15,0/35 00000 01010 00010 00110 ····· =1100 010=1 11111  184,50
+    6: FrankWalter-1.0.8   14,0/35 00000 0000= 00100 10100 =0011 ····· 11011 10111  158,75
+    7: Bremboce-0.6.2      8,0/35  00000 10010 00000 00=00 101=0 00100 ····· 00011  117,25
+    8: ArabianKnight-1.0.9 5,0/35  00000 00000 00000 00010 00000 01000 11100 ·····   55,50
+    
+    140 games played / Tournament is finished
+    Level: Tournament Game in 5 Minutes
+    Hardware: Intel(R) Core(TM)2 Duo CPU     T7500  @ 2.20GHz 2200 MHz with 752 MB Memory
 
 History
 =======
