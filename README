@@ -1,8 +1,7 @@
-
 Description
 ===========
 
-Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine hosted at <a href="http://sourceforge.net/projects/carballo/">http://sourceforge.net/projects/carballo/</a>, where you can download a UCI binary to play in interfaces like <a href="http://www.playwitharena.com">Arena</a>. Has the following features:
+Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with the following features:
 
 * Simple and clear code
 * Cute drag and drop Java Applet GUI, to fit in web sites
@@ -38,7 +37,6 @@ Test Results
 
 I made a Java Engines Tournament to compare Carballo against other chess engines at tournament time 5 minutes. Here are the results:
 
-<pre>    Engine               Score      Ol    Fr    Me    Al    Ca    Cu    Br    Ar    Ch    Fr    JC    S-B
    Engine              Score     Cu    Ca    Ol    Me    Ca    Fr    Br    Ar    S-B
 1: Cuckoo-1.12         34,5/35 ····· 1=111 11111 11111 11111 11111 11111 11111  515,75
 2: Carballo-0.7.11     23,5/35 0=000 ····· 110=0 11111 10101 1111= 01101 11111  318,00
@@ -50,12 +48,8 @@ I made a Java Engines Tournament to compare Carballo against other chess engines
 8: ArabianKnight-1.0.9 5,0/35  00000 00000 00000 00010 00000 01000 11100 ·····   55,50
 
 140 games played / Tournament is finished
-Name of the tournament: JavaEnginesTournament
-Site/ Country: JDEDEVELOPER5, España
 Level: Tournament Game in 5 Minutes
 Hardware: Intel(R) Core(TM)2 Duo CPU     T7500  @ 2.20GHz 2200 MHz with 752 MB Memory
-Operating system: Microsoft Windows XP Professional Service Pack 2 (Build 2600)
-</pre>
 
 History
 =======
