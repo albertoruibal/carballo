@@ -1,0 +1,219 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.alonsoruibal</groupId>
+	<artifactId>carballo-gwt</artifactId>
+	<name>Carballo GWT</name>
+	<packaging>war</packaging>
+	<version>1.0</version>
+	<description>A chess game for web browsers. It uses the Carballo chess engine for chess computations and lib-gwt-svg for the SVG UI. These components are integrated using GWT.</description>
+	<url>http://www.vectomatic.org/lib-gwt-svg-chess</url>
+	<licenses>
+		<license>
+			<name>GPLv3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>laaglu</id>
+			<name>Lukas Laag</name>
+			<email>laaglu@gmail.com</email>
+			<url>http://www.vectomatic.org</url>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.4.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.vectomatic</groupId>
+			<artifactId>lib-gwt-svg</artifactId>
+			<version>0.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alonsoruibal</groupId>
+			<artifactId>carballo-core</artifactId>
+			<version>0.7</version>
+		</dependency>
+	</dependencies>
+	<properties>
+		<google.webtoolkit.home>/usr/local/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201205091048-rel-r37/</google.webtoolkit.home>
+	</properties>
+
+	<build>
+		<plugins>
+			<!-- Build using java 1.6. GWT requires at least Java 1.5 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<!-- Produce a skinny war as only the GWT-generated files are of interest -->
+					<packagingExcludes>WEB-INF/lib/*.jar,WEB-INF/classes/**</packagingExcludes>
+				</configuration>
+			</plugin>
+			<!--  configure the GWT-Maven plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>2.4.0</version>
+				<configuration>
+					<compileSourcesArtifacts>
+          				<compileSourcesArtifact>com.alonsoruibal:carballo-core</compileSourcesArtifact>
+        			</compileSourcesArtifacts>
+				</configuration>
+				<executions>
+					<execution>
+						<id>gwt compilation</id>
+						<configuration>
+							<modules>
+								<module>org.vectomatic.libgwtsvgchess</module>
+							</modules>
+							<style>${gwt.style}</style>
+							<!-- <style>OBF</style>-->
+							<logLevel>${gwt.logLevel}</logLevel>
+							<extraJvmArgs>-Xmx512m</extraJvmArgs>
+							<localWorkers>${gwt.localWorkers}</localWorkers>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>gwt-tests</id>
+						<configuration>
+							<includes>**/*GWTTestSuite.java</includes>
+						</configuration>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Deploy source code in the repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Deploy javadoc in the repository -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<finalName>lib-gwt-svg-chess</finalName>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<!-- Lock down to 2.0.1 + no license report because of
+				http://jira.codehaus.org/browse/MPIR-150 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.0.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.6.1</version>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	<distributionManagement>
+		<repository>
+			<id>${deployment.id}</id>
+			<name>maven repository</name>
+			<url>${deployment.root}/mvn</url>
+		</repository>
+		<site>
+			<id>${deployment.id}</id>
+			<name>maven site</name>
+			<url>${deployment.root}/mvn-sites/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
+	<profiles>
+		<!-- There are two build profiles: development and production
+		+ by default, the production profile is assumed
+		  It builds all GWT permutations and generates reports for the website
+		+ Use the '-P development' mvn flag, or within eclipse, set the
+		  Project > Properties > Maven > Active Maven Profiles to 'development'
+		  to activate the development profile
+		 -->
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<deployment.id>local-server</deployment.id>
+				<deployment.root>scp://localhost/var/www/vectomatic</deployment.root>
+ 				<!-- Build options for development mode -->
+    			<gwt.style>DETAILED</gwt.style>
+    			<gwt.logLevel>WARN</gwt.logLevel>
+    			<gwt.localWorkers>1</gwt.localWorkers>
+    		</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+ 				<!-- Build options for production mode -->
+    			<gwt.style>OBF</gwt.style>
+    			<gwt.logLevel>INFO</gwt.logLevel>
+    			<gwt.localWorkers>2</gwt.localWorkers>
+    		</properties>
+		</profile>
+	</profiles>
+</project>
