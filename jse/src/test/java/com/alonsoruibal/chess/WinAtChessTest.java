@@ -14,10 +14,10 @@ public class WinAtChessTest extends EpdTest {
 		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
 		int solved1 = getSolved();
 
-		search.getConfig().setExtensionsPassedPawn(0);
-		search.getConfig().setExtensionsPawnPush(2);
-		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
-		int solved2 = getSolved();
+//		search.getConfig().setExtensionsPassedPawn(0);
+//		search.getConfig().setExtensionsPawnPush(2);
+//		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
+//		int solved2 = getSolved();
 
 //		search.getConfig().setExtensionsPassedPawn(2);
 //		search.getConfig().setExtensionsPawnPush(0);
@@ -38,7 +38,7 @@ public class WinAtChessTest extends EpdTest {
 //		int solved6 = getSolved();
 		
 		logger.debug("Config1 = " + solved1);
-		logger.debug("Config2 = " + solved2);
+//		logger.debug("Config2 = " + solved2);
 //		logger.debug("Config3 = " + solved3);
 //		logger.debug("Config4 = " + solved4);
 //		logger.debug("Config5 = " + solved5);
