@@ -110,8 +110,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int PAWN_FRONT_DOUB_ISO     = oe(-21,-22); // other pawns in front: doubled and isolated
 	private final static int PAWN_FRONT_ISOLATED     = oe(-15,-20); // other pawns in front: isolated
 
-	//private final static int PAWN_BACKWARDS          = oe(-10,-15); // Backwards pawn 
-	private final static int PAWN_WEAK          	 = oe(-10,-15); // Backwards pawn 
+//	private final static int PAWN_BACKWARDS          = oe(-10,-15); // Backwards pawn 
+//	private final static int PAWN_WEAK          	 = oe(-10,-15); // Backwards pawn 
 	
 	private final static int[] PAWN_CANDIDATE        = {0, oe(5,5), oe(10,12), oe(20,25), 0, 0, 0, 0}; // Candidates to pawn passer
 	
