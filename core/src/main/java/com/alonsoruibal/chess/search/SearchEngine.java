@@ -121,16 +121,16 @@ public class SearchEngine implements Runnable {
 			moveIterators[i] = new MoveIterator(board, sortInfo, i);
 		}
 
-		pvReductionMatrix = new int[64][64];
-		nonPvReductionMatrix = new int[64][64];
+		pvReductionMatrix = new int[MAX_DEPTH][64];
+		nonPvReductionMatrix = new int[MAX_DEPTH][64];
 		// Init our reduction lookup tables
-		for (int i = 1; i < 64; i++) { // i == depth (OnePly = 1)
-			for (int j = 1; j < 64; j++) { // j == moveNumber
+		for (int depth = 1; depth < MAX_DEPTH; depth++) { // OnePly = 1
+			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
 
-				double pvRed = 0.5 + Math.log(i) * Math.log(j) / 6.0;
-				double nonPVRed = 0.5 + Math.log(i) * Math.log(j) / 3.0;
-				pvReductionMatrix[i][j] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
-				nonPvReductionMatrix[i][j] = (int) (nonPVRed >= 1.0 ? Math.floor(nonPVRed * PLY) : 0);
+				double pvRed = 0.5 + Math.log(depth) * Math.log(moveNumber) / 6.0;
+				double nonPVRed = 0.5 + Math.log(depth) * Math.log(moveNumber) / 3.0;
+				pvReductionMatrix[depth][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
+				nonPvReductionMatrix[depth][moveNumber] = (int) (nonPVRed >= 1.0 ? Math.floor(nonPVRed * PLY) : 0);
 				// System.out.println(i + " " + j + " " +
 				// pvReductionMatrix[i][j] + " " + nonPvReductionMatrix[i][j]);
 			}
@@ -409,8 +409,8 @@ public class SearchEngine implements Runnable {
 
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
-		boolean generateChecks = pv && (qsdepth == 0); // Generate checks for PV
-														// on PLY 0
+		// Generate checks for PV on PLY 0
+		boolean generateChecks = pv && (qsdepth == 0);
 
 		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
 		moveIterator.genMoves(ttMove, true, generateChecks);
@@ -458,8 +458,9 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		if (board.getCheck() && !validOperations)
+		if (board.getCheck() && !validOperations) {
 			return valueMatedIn(board.getMoveNumber() - initialPly);
+		}
 
 		return alpha;
 	}
