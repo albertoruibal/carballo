@@ -500,7 +500,8 @@ public class SearchEngine implements Runnable {
 		ttProbe++;
 		boolean foundTT = tt.search(board, excludedMove != 0);
 		if (foundTT) {
-			if (canUseTT(depthRemaining, alpha, beta)) {
+			if (nodeType != NODE_ROOT //
+					&& canUseTT(depthRemaining, alpha, beta)) {
 				return tt.getScore();
 			}
 			ttMove = tt.getBestMove();
@@ -725,7 +726,7 @@ public class SearchEngine implements Runnable {
 				board.undoMove();
 
 				// Tracks the best move also insert errors on the root node
-				if (score > bestScore && (nodeType != NODE_ROOT || (config.getRand() == 0 || (random.nextInt(100) > config.getRand())))) {
+				if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
 					bestMove = move;
 					bestScore = score;
 				}
@@ -779,12 +780,12 @@ public class SearchEngine implements Runnable {
 	}
 
 	private void searchStats() {
-		logger.debug("Positions PV      = " + pvPositionCounter + " " + (100.0 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter))
-				+ "%");
-		logger.debug("Positions QS      = " + qsPositionCounter + " " + (100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter))
-				+ "%");
-		logger.debug("Positions Null    = " + positionCounter + " " + (100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter))
-				+ "%");
+		logger.debug("Positions PV      = " + pvPositionCounter + " " //
+				+ (100.0 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		logger.debug("Positions QS      = " + qsPositionCounter + " " //
+				+ (100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		logger.debug("Positions Null    = " + positionCounter + " " //
+				+ (100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter))	+ "%");
 		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
 		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
@@ -903,8 +904,9 @@ public class SearchEngine implements Runnable {
 			searchStats();
 		}
 		searching = false;
-		if (observer != null)
+		if (observer != null) {
 			observer.bestMove(globalBestMove, ponderMove);
+		}
 	}
 
 	/**
@@ -923,10 +925,11 @@ public class SearchEngine implements Runnable {
 				keys.add(board.getKey());
 				if (tt.getBestMove() == 0)
 					break;
-				if (i == 0)
+				if (i == 0) {
 					globalBestMove = tt.getBestMove();
-				if (i == 1)
+				} else if (i == 1) {
 					ponderMove = tt.getBestMove();
+				}
 				sb.append(Move.toString(tt.getBestMove()));
 				sb.append(" ");
 				i++;
