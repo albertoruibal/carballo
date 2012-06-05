@@ -315,19 +315,7 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		} else if ("elo".equals(oAE.getActionCommand())) {
 			int engineElo = eloValues[comboElo.getSelectedIndex()];
 			logger.debug("Setting elo " + engineElo);
-			int kPercentage = ((engineElo - 500) * 100) / 1600; // knowledge percentage
-			int bookPercentage = ((engineElo - 500) * 100) / 1600; // knowledge percentage
-			int ePercentage = 88 - ((engineElo - 500) * 88) / 1600; // percentage of errors
-			engine.getConfig().setEvaluator("experimental");
-			engine.getConfig().setRand(ePercentage);
-			engine.getConfig().setUseBook(true);
-			engine.getConfig().setBookKnowledge(bookPercentage);
-			engine.getConfig().setEvalPawnStructure(kPercentage);
-			engine.getConfig().setEvalPassedPawns(kPercentage);
-			engine.getConfig().setEvalKingSafety(kPercentage);
-			engine.getConfig().setEvalMobility(kPercentage);
-			engine.getConfig().setEvalPositional(kPercentage);
-			engine.getConfig().setEvalCenter(kPercentage);
+			engine.getConfig().setElo(engineElo);
 		} else if ("flip".equals(oAE.getActionCommand())) {
 			flip = !flip;
 			boardPanel.unhighlight();

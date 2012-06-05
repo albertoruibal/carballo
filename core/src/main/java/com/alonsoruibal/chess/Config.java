@@ -391,6 +391,25 @@ public class Config {
 		this.razoringMargin = razoringMargin;
 	}
 
+	/**
+	 * 2100 is the max, 500 the min
+	 * @param engineElo
+	 */
+	public void setElo(int engineElo) {
+		int kPercentage = ((engineElo - 500) * 100) / 1600; // knowledge percentage
+		int bookPercentage = ((engineElo - 500) * 100) / 1600; // book knowledge percentage
+		int ePercentage = 88 - ((engineElo - 500) * 88) / 1600; // percentage of errors
+		setRand(ePercentage);
+		setUseBook(true);
+		setBookKnowledge(bookPercentage);
+		setEvalPawnStructure(kPercentage);
+		setEvalPassedPawns(kPercentage);
+		setEvalKingSafety(kPercentage);
+		setEvalMobility(kPercentage);
+		setEvalPositional(kPercentage);
+		setEvalCenter(kPercentage);
+	}
+
 	@Override
 	public String toString() {
 		return "Config [aggressiveFutility=" + aggressiveFutility + ", aggressiveFutilityMargin=" + aggressiveFutilityMargin + ", aspirationWindow="
