@@ -286,16 +286,18 @@ public class Move {
 	}
 
 	public static String toStringExt(int move) {
-		if (move == 0 || move == -1)
+		if (move == 0 || move == -1) {
 			return "none";
-		if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING)
+		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
 			return "O-O";
-		else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING)
+		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
 			return "O-O-O";
+		}
 
 		StringBuffer sb = new StringBuffer();
-		if (getPieceMoved(move) != Move.PAWN)
+		if (getPieceMoved(move) != Move.PAWN) {
 			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
+		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(getCapture(move) ? 'x' : '-');
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
