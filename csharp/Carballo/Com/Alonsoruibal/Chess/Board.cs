@@ -634,7 +634,7 @@ namespace Com.Alonsoruibal.Chess
 						if (tokens.Length > 5)
 						{
 							string moveNumberString = tokens[5];
-							int aux = Sharpen.Extensions.ValueOf(moveNumberString);
+							int aux = System.Convert.ToInt32(moveNumberString);
 							fenMoveNumber = ((aux > 0 ? aux - 1 : aux) << 1) + ((tmpFlags & FLAG_TURN) == 0 ? 
 								0 : 1);
 							if (fenMoveNumber < 0)

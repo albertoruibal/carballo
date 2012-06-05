@@ -349,7 +349,7 @@ public class Board {
 					}
 					if (tokens.length > 5) {
 						String moveNumberString = tokens[5];
-						int aux = Integer.valueOf(moveNumberString);
+						int aux = Integer.parseInt(moveNumberString);
 						fenMoveNumber = ((aux > 0 ? aux - 1 : aux) << 1) + ((tmpFlags & FLAG_TURN) == 0 ? 0 : 1);
 						if( fenMoveNumber < 0) {
 							fenMoveNumber = 0;
