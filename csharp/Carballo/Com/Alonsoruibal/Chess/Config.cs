@@ -528,6 +528,27 @@ namespace Com.Alonsoruibal.Chess
 			this.razoringMargin = razoringMargin;
 		}
 
+		/// <summary>2100 is the max, 500 the min</summary>
+		/// <param name="engineElo"></param>
+		public virtual void SetElo(int engineElo)
+		{
+			int kPercentage = ((engineElo - 500) * 100) / 1600;
+			// knowledge percentage
+			int bookPercentage = ((engineElo - 500) * 100) / 1600;
+			// book knowledge percentage
+			int ePercentage = 88 - ((engineElo - 500) * 88) / 1600;
+			// percentage of errors
+			SetRand(ePercentage);
+			SetUseBook(true);
+			SetBookKnowledge(bookPercentage);
+			SetEvalPawnStructure(kPercentage);
+			SetEvalPassedPawns(kPercentage);
+			SetEvalKingSafety(kPercentage);
+			SetEvalMobility(kPercentage);
+			SetEvalPositional(kPercentage);
+			SetEvalCenter(kPercentage);
+		}
+
 		public override string ToString()
 		{
 			return "Config [aggressiveFutility=" + aggressiveFutility + ", aggressiveFutilityMargin="

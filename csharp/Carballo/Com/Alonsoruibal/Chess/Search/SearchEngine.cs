@@ -171,17 +171,17 @@ namespace Com.Alonsoruibal.Chess.Search
 				[64], new int[64], new int[64], new int[64], new int[64], new int[64], new int[64
 				], new int[64], new int[64], new int[64], new int[64] };
 			// Init our reduction lookup tables
-			for (int i_1 = 1; i_1 < 64; i_1++)
+			for (int depth = 1; depth < MAX_DEPTH; depth++)
 			{
-				// i == depth (OnePly = 1)
-				for (int j = 1; j < 64; j++)
+				// OnePly = 1
+				for (int moveNumber = 1; moveNumber < 64; moveNumber++)
 				{
-					// j == moveNumber
-					double pvRed = 0.5 + Math.Log(i_1) * Math.Log(j) / 6.0;
-					double nonPVRed = 0.5 + Math.Log(i_1) * Math.Log(j) / 3.0;
-					pvReductionMatrix[i_1][j] = (int)(pvRed >= 1.0 ? Math.Floor(pvRed * PLY) : 0);
-					nonPvReductionMatrix[i_1][j] = (int)(nonPVRed >= 1.0 ? Math.Floor(nonPVRed * PLY)
-						 : 0);
+					double pvRed = 0.5 + Math.Log(depth) * Math.Log(moveNumber) / 6.0;
+					double nonPVRed = 0.5 + Math.Log(depth) * Math.Log(moveNumber) / 3.0;
+					pvReductionMatrix[depth][moveNumber] = (int)(pvRed >= 1.0 ? Math.Floor(pvRed * PLY
+						) : 0);
+					nonPvReductionMatrix[depth][moveNumber] = (int)(nonPVRed >= 1.0 ? Math.Floor(nonPVRed
+						 * PLY) : 0);
 				}
 			}
 			// System.out.println(i + " " + j + " " +
@@ -537,9 +537,8 @@ namespace Com.Alonsoruibal.Chess.Search
 			}
 			bool validOperations = false;
 			bool checkEvasion = board.GetCheck();
+			// Generate checks for PV on PLY 0
 			bool generateChecks = pv && (qsdepth == 0);
-			// Generate checks for PV
-			// on PLY 0
 			MoveIterator moveIterator = moveIterators[board.GetMoveNumber() - initialPly];
 			moveIterator.GenMoves(ttMove, true, generateChecks);
 			int move = 0;
@@ -632,8 +631,9 @@ namespace Com.Alonsoruibal.Chess.Search
 			bool foundTT = tt.Search(board, excludedMove != 0);
 			if (foundTT)
 			{
-				if (CanUseTT(depthRemaining, alpha, beta))
+				if (nodeType != NODE_ROOT && CanUseTT(depthRemaining, alpha, beta))
 				{
+					//
 					return tt.GetScore();
 				}
 				ttMove = tt.GetBestMove();
@@ -894,8 +894,8 @@ namespace Com.Alonsoruibal.Chess.Search
 					}
 					board.UndoMove();
 					// Tracks the best move also insert errors on the root node
-					if (score > bestScore && (nodeType != NODE_ROOT || (config.GetRand() == 0 || (random
-						.Next(100) > config.GetRand()))))
+					if (score > bestScore && (nodeType != NODE_ROOT || config.GetRand() == 0 || (random
+						.Next(100) > config.GetRand())))
 					{
 						bestMove = move;
 						bestScore = score;
@@ -963,10 +963,13 @@ namespace Com.Alonsoruibal.Chess.Search
 		{
 			logger.Debug("Positions PV      = " + pvPositionCounter + " " + (100.0 * pvPositionCounter
 				 / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+			//
 			logger.Debug("Positions QS      = " + qsPositionCounter + " " + (100.0 * qsPositionCounter
 				 / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+			//
 			logger.Debug("Positions Null    = " + positionCounter + " " + (100.0 * positionCounter
 				 / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+			//
 			logger.Debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes
 				 + pvAllNodes + 1)) + "%");
 			logger.Debug("PV All            = " + pvAllNodes);
@@ -1145,9 +1148,12 @@ namespace Com.Alonsoruibal.Chess.Search
 					{
 						globalBestMove = tt.GetBestMove();
 					}
-					if (i == 1)
+					else
 					{
-						ponderMove = tt.GetBestMove();
+						if (i == 1)
+						{
+							ponderMove = tt.GetBestMove();
+						}
 					}
 					sb.Append(Move.ToString(tt.GetBestMove()));
 					sb.Append(" ");

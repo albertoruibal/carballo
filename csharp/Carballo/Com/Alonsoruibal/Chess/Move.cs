@@ -435,15 +435,18 @@ namespace Com.Alonsoruibal.Chess
 			{
 				return "none";
 			}
-			if (Move.GetMoveType(move) == TYPE_KINGSIDE_CASTLING)
-			{
-				return "O-O";
-			}
 			else
 			{
-				if (Move.GetMoveType(move) == TYPE_QUEENSIDE_CASTLING)
+				if (Move.GetMoveType(move) == TYPE_KINGSIDE_CASTLING)
 				{
-					return "O-O-O";
+					return "O-O";
+				}
+				else
+				{
+					if (Move.GetMoveType(move) == TYPE_QUEENSIDE_CASTLING)
+					{
+						return "O-O-O";
+					}
 				}
 			}
 			StringBuilder sb = new StringBuilder();

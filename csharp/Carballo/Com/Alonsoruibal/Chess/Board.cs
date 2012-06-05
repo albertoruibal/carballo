@@ -24,7 +24,7 @@ namespace Com.Alonsoruibal.Chess
 
 		public const int MAX_MOVES = 1024;
 
-		public static readonly string FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+		public static readonly string FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 		internal LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
 
@@ -55,6 +55,8 @@ namespace Com.Alonsoruibal.Chess
 		public long flags = 0;
 
 		public int fiftyMovesRule = 0;
+
+		public int initialMoveNumber = 0;
 
 		public int moveNumber = 0;
 
@@ -387,6 +389,11 @@ namespace Com.Alonsoruibal.Chess
 			char p = ((pawns & square) != 0 ? 'p' : ((queens & square) != 0 ? 'q' : ((rooks &
 				 square) != 0 ? 'r' : ((bishops & square) != 0 ? 'b' : ((knights & square) != 0 ? 
 				'n' : ((kings & square) != 0 ? 'k' : '.'))))));
+			//
+			//
+			//
+			//
+			//
 			return ((whites & square) != 0 ? System.Char.ToUpper(p) : p);
 		}
 
@@ -515,19 +522,36 @@ namespace Com.Alonsoruibal.Chess
 			sb.Append(" ");
 			sb.Append(fiftyMovesRule);
 			sb.Append(" ");
-			sb.Append(moveNumber);
+			sb.Append((moveNumber >> 1) + 1);
+			// 0,1->1.. 2,3->2
 			return sb.ToString();
 		}
 
-		/// <summary>loads board from a fen notation</summary>
+		/// <summary>Loads board from a fen notation</summary>
 		/// <param name="fen"></param>
 		public virtual void SetFen(string fen)
 		{
-			initialFen = fen;
-			moveNumber = 0;
-			outBookMove = 9999;
-			fiftyMovesRule = 0;
-			sanMoves.Clear();
+			SetFenMove(fen, null);
+		}
+
+		/// <summary>Sets fen without destroying move history.</summary>
+		/// <remarks>
+		/// Sets fen without destroying move history. If lastMove = null destroy the
+		/// move history
+		/// </remarks>
+		public virtual void SetFenMove(string fen, string lastMove)
+		{
+			long tmpWhites = 0;
+			long tmpBlacks = 0;
+			long tmpPawns = 0;
+			long tmpRooks = 0;
+			long tmpQueens = 0;
+			long tmpBishops = 0;
+			long tmpKnights = 0;
+			long tmpKings = 0;
+			long tmpFlags = 0;
+			int tmpFiftyMovesRule = 0;
+			int fenMoveNumber = 0;
 			int i = 0;
 			long j = BitboardUtils.A8;
 			string[] tokens = fen.Split("[ \\t\\n\\x0B\\f\\r]+");
@@ -547,14 +571,16 @@ namespace Com.Alonsoruibal.Chess
 					}
 					for (int k = 0; k < (number == 0 ? 1 : number); k++)
 					{
-						whites = (whites & ~j) | ((number == 0) && (p == System.Char.ToUpper(p)) ? j : 0);
-						blacks = (blacks & ~j) | ((number == 0) && (p == System.Char.ToLower(p)) ? j : 0);
-						pawns = (pawns & ~j) | (System.Char.ToUpper(p) == 'P' ? j : 0);
-						rooks = (rooks & ~j) | (System.Char.ToUpper(p) == 'R' ? j : 0);
-						queens = (queens & ~j) | (System.Char.ToUpper(p) == 'Q' ? j : 0);
-						bishops = (bishops & ~j) | (System.Char.ToUpper(p) == 'B' ? j : 0);
-						knights = (knights & ~j) | (System.Char.ToUpper(p) == 'N' ? j : 0);
-						kings = (kings & ~j) | (System.Char.ToUpper(p) == 'K' ? j : 0);
+						tmpWhites = (tmpWhites & ~j) | ((number == 0) && (p == System.Char.ToUpper(p)) ? 
+							j : 0);
+						tmpBlacks = (tmpBlacks & ~j) | ((number == 0) && (p == System.Char.ToLower(p)) ? 
+							j : 0);
+						tmpPawns = (tmpPawns & ~j) | (System.Char.ToUpper(p) == 'P' ? j : 0);
+						tmpRooks = (tmpRooks & ~j) | (System.Char.ToUpper(p) == 'R' ? j : 0);
+						tmpQueens = (tmpQueens & ~j) | (System.Char.ToUpper(p) == 'Q' ? j : 0);
+						tmpBishops = (tmpBishops & ~j) | (System.Char.ToUpper(p) == 'B' ? j : 0);
+						tmpKnights = (tmpKnights & ~j) | (System.Char.ToUpper(p) == 'N' ? j : 0);
+						tmpKings = (tmpKings & ~j) | (System.Char.ToUpper(p) == 'K' ? j : 0);
 						j = (long)(((ulong)j) >> 1);
 						if (j == 0)
 						{
@@ -563,63 +589,116 @@ namespace Com.Alonsoruibal.Chess
 					}
 				}
 			}
-			// security 
+			// security
 			// Now the rest ...
 			string turn = tokens[1];
-			flags = FLAG_WHITE_DISABLE_KINGSIDE_CASTLING | FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING
+			tmpFlags = FLAG_WHITE_DISABLE_KINGSIDE_CASTLING | FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING
 				 | FLAG_BLACK_DISABLE_KINGSIDE_CASTLING | FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
 			if ("b".Equals(turn))
 			{
-				flags |= FLAG_TURN;
+				tmpFlags |= FLAG_TURN;
 			}
 			if (tokens.Length > 2)
 			{
 				string promotions = tokens[2];
 				if (promotions.IndexOf("K") >= 0)
 				{
-					flags &= ~FLAG_WHITE_DISABLE_KINGSIDE_CASTLING;
+					tmpFlags &= ~FLAG_WHITE_DISABLE_KINGSIDE_CASTLING;
 				}
 				if (promotions.IndexOf("Q") >= 0)
 				{
-					flags &= ~FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING;
+					tmpFlags &= ~FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING;
 				}
 				if (promotions.IndexOf("k") >= 0)
 				{
-					flags &= ~FLAG_BLACK_DISABLE_KINGSIDE_CASTLING;
+					tmpFlags &= ~FLAG_BLACK_DISABLE_KINGSIDE_CASTLING;
 				}
 				if (promotions.IndexOf("q") >= 0)
 				{
-					flags &= ~FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
+					tmpFlags &= ~FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
 				}
 				if (tokens.Length > 3)
 				{
 					string passant = tokens[3];
-					flags |= FLAGS_PASSANT & BitboardUtils.Algebraic2Square(passant);
+					tmpFlags |= FLAGS_PASSANT & BitboardUtils.Algebraic2Square(passant);
 					if (tokens.Length > 4)
 					{
 						try
 						{
-							fiftyMovesRule = System.Convert.ToInt32(tokens[4]);
+							tmpFiftyMovesRule = System.Convert.ToInt32(tokens[4]);
 						}
 						catch (Exception)
 						{
-							fiftyMovesRule = 0;
+							tmpFiftyMovesRule = 0;
+						}
+						if (tokens.Length > 5)
+						{
+							string moveNumberString = tokens[5];
+							int aux = Sharpen.Extensions.ValueOf(moveNumberString);
+							fenMoveNumber = ((aux > 0 ? aux - 1 : aux) << 1) + ((tmpFlags & FLAG_TURN) == 0 ? 
+								0 : 1);
+							if (fenMoveNumber < 0)
+							{
+								fenMoveNumber = 0;
+							}
 						}
 					}
 				}
 			}
-			//					if (st.hasMoreTokens()) {
-			//						String moveNumberString = st.nextToken();
-			//						// TODO
-			//						//moveNumber = Integer.valueOf(moveNumberString);
-			//					}
-			Verify();
-			// Finally set zobrish key and check flags
-			key = ZobristKey.GetKey(this);
-			SetCheckFlags(GetTurn());
-			// and save history
-			ResetHistory();
-			SaveHistory(0, false);
+			// try to apply the last move to see if we are advancing or undo moves
+			if ((moveNumber + 1) == fenMoveNumber && lastMove != null)
+			{
+				DoMove(Move.GetFromString(this, lastMove, false));
+				logger.Debug(ToString());
+				logger.Debug(GetFen());
+			}
+			else
+			{
+				if (fenMoveNumber < moveNumber)
+				{
+					for (int k = moveNumber; k > fenMoveNumber; k--)
+					{
+						UndoMove();
+					}
+				}
+			}
+			// Check if board changed or if we can keep the history
+			if (whites != tmpWhites || blacks != tmpBlacks || pawns != tmpPawns || rooks != tmpRooks
+				 || queens != tmpQueens || bishops != tmpBishops || knights != tmpKnights || kings
+				 != tmpKings)
+			{
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				// board reset
+				sanMoves.Clear();
+				initialFen = fen;
+				initialMoveNumber = fenMoveNumber;
+				moveNumber = fenMoveNumber;
+				outBookMove = 9999;
+				whites = tmpWhites;
+				blacks = tmpBlacks;
+				pawns = tmpPawns;
+				rooks = tmpRooks;
+				queens = tmpQueens;
+				bishops = tmpBishops;
+				knights = tmpKnights;
+				kings = tmpKings;
+				fiftyMovesRule = tmpFiftyMovesRule;
+				// Flags are nort completed till verify, so skip checking
+				flags = tmpFlags;
+				Verify();
+				// Finally set zobrish key and check flags
+				key = ZobristKey.GetKey(this);
+				SetCheckFlags(GetTurn());
+				// and save history
+				ResetHistory();
+				SaveHistory(0, false);
+			}
 		}
 
 		/// <summary>Does some board verification</summary>
@@ -668,7 +747,8 @@ namespace Com.Alonsoruibal.Chess
 			}
 			sb.Append("a b c d e f g h  ");
 			sb.Append((GetTurn() ? "white move\n" : "blacks move\n"));
-			//		sb.append(" " +getWhiteKingsideCastling()+getWhiteQueensideCastling()+getBlackKingsideCastling()+getBlackQueensideCastling());
+			// sb.append(" "
+			// +getWhiteKingsideCastling()+getWhiteQueensideCastling()+getBlackKingsideCastling()+getBlackQueensideCastling());
 			return sb.ToString();
 		}
 
@@ -696,7 +776,8 @@ namespace Com.Alonsoruibal.Chess
 
 		private void SaveHistory(int move, bool fillInfo)
 		{
-			//logger.debug("saving History " + moveNumber + " " + Move.toStringExt(move) + " fillinfo=" + fillInfo);
+			// logger.debug("saving History " + moveNumber + " " +
+			// Move.toStringExt(move) + " fillinfo=" + fillInfo);
 			if (fillInfo)
 			{
 				GenerateLegalMoves();
@@ -727,8 +808,8 @@ namespace Com.Alonsoruibal.Chess
 		}
 
 		/// <summary>
-		/// Recapture for extensions: only if the value of the captured piece is similar
-		/// and we recapture in the same square
+		/// Recapture for extensions: only if the value of the captured piece is
+		/// similar and we recapture in the same square
 		/// </summary>
 		/// <returns></returns>
 		public virtual bool GetLastMoveIsRecapture()
@@ -771,20 +852,20 @@ namespace Com.Alonsoruibal.Chess
 		}
 
 		/// <summary>
-		/// Moves and also updates the board's zobrish key
-		/// verify legality, if not legal undo move and return false
-		/// 0 is the null move
+		/// Moves and also updates the board's zobrish key verify legality, if not
+		/// legal undo move and return false 0 is the null move
 		/// </summary>
 		/// <param name="move"></param>
 		/// <returns></returns>
 		public virtual bool DoMove(int move, bool fillInfo)
 		{
-			//		logger.debug("Before move: \n" + toString() + "\n " + Move.toStringExt(move));
+			// logger.debug("Before move: \n" + toString() + "\n " +
+			// Move.toStringExt(move));
 			if (move == -1)
 			{
 				return false;
 			}
-			// Save history	
+			// Save history
 			SaveHistory(move, fillInfo);
 			long from = Move.GetFromSquare(move);
 			long to = Move.GetToSquare(move);
@@ -797,8 +878,8 @@ namespace Com.Alonsoruibal.Chess
 			int color = (turn ? 0 : 1);
 			char capturedPiece = GetPieceAt(to);
 			capturedPieces[moveNumber] = capturedPiece;
-			fiftyMovesRule++;
 			// Count consecutive moves without capture or without pawn move
+			fiftyMovesRule++;
 			moveNumber++;
 			// Count Ply moves
 			// Remove passant flags: from the zobrist key
@@ -828,12 +909,15 @@ namespace Com.Alonsoruibal.Chess
 					return false;
 				}
 				long moveMask = from | to;
-				// Move is as easy as xor with this mask (exceptions are in captures, promotions and passant captures)
+				// Move is as easy as xor with this mask
+				// (exceptions are in captures,
+				// promotions and passant captures)
 				// Is it is a capture, remove pieces in destination square
 				if (capture)
 				{
 					fiftyMovesRule = 0;
-					// Passant Pawn captures remove captured pawn, put the pawn in to
+					// Passant Pawn captures remove captured pawn, put the pawn in
+					// to
 					int toIndexCapture = toIndex;
 					if (moveType == Move.TYPE_PASSANT)
 					{
@@ -855,7 +939,8 @@ namespace Com.Alonsoruibal.Chess
 					{
 						// Pawn movements
 						fiftyMovesRule = 0;
-						// Set new passant flags if pawn is advancing two squares (marks the destination square where the pawn can be captured)
+						// Set new passant flags if pawn is advancing two squares (marks
+						// the destination square where the pawn can be captured)
 						// Set only passant flags when the other side can capture
 						if (((from << 16) & to) != 0 && (BitboardAttacks.pawnUpwards[toIndex - 8] & pawns
 							 & GetOthers()) != 0)
@@ -877,7 +962,9 @@ namespace Com.Alonsoruibal.Chess
 						if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT
 							 || moveType == Move.TYPE_PROMOTION_BISHOP || moveType == Move.TYPE_PROMOTION_ROOK)
 						{
-							// Promotions: change the piece
+							// Promotions:
+							// change
+							// the piece
 							pawns &= ~from;
 							key[color] ^= ZobristKey.pawn[color][fromIndex];
 							switch (moveType)
@@ -1029,18 +1116,18 @@ namespace Com.Alonsoruibal.Chess
 			// Change turn
 			flags ^= FLAG_TURN;
 			key[0] ^= ZobristKey.whiteMove;
-			//		// TODO remove
-			//		long aux[] = ZobristKey.getKey(this);
-			//		if (key[0] != aux[0] || key[1] != aux[1]) {
-			//			System.out.println("Zobrist key Error");
-			//			logger.debug("\n" + toString());
-			//			logger.debug("Move = " + Move.toStringExt(move));
-			//			Move.printMoves(moveHistory, 0, moveNumber);
-			//			logger.debug("afterc: " + aux[0] + " " + aux[1]);
-			//			logger.debug("after:  " + key[0] + " " + key[1]);
-			//			System.exit(-1);
-			//			key = aux;
-			//		}
+			// // TODO remove
+			// long aux[] = ZobristKey.getKey(this);
+			// if (key[0] != aux[0] || key[1] != aux[1]) {
+			// System.out.println("Zobrist key Error");
+			// logger.debug("\n" + toString());
+			// logger.debug("Move = " + Move.toStringExt(move));
+			// Move.printMoves(moveHistory, 0, moveNumber);
+			// logger.debug("afterc: " + aux[0] + " " + aux[1]);
+			// logger.debug("after:  " + key[0] + " " + key[1]);
+			// System.exit(-1);
+			// key = aux;
+			// }
 			if (IsValid(!turn))
 			{
 				SetCheckFlags(!turn);
@@ -1070,10 +1157,7 @@ namespace Com.Alonsoruibal.Chess
 			}
 		}
 
-		/// <summary>
-		/// Checks is a state is valid
-		/// Basically, not entering own king in check
-		/// </summary>
+		/// <summary>Checks is a state is valid Basically, not entering own king in check</summary>
 		private bool IsValid(bool turn)
 		{
 			return (!BitboardAttacks.IsSquareAttacked(this, kings & GetOthers(), !turn));
@@ -1099,7 +1183,7 @@ namespace Com.Alonsoruibal.Chess
 
 		public virtual void UndoMove(int moveNumber)
 		{
-			if (moveNumber < 0)
+			if (moveNumber < 0 || moveNumber < initialMoveNumber)
 			{
 				return;
 			}
@@ -1158,14 +1242,15 @@ namespace Com.Alonsoruibal.Chess
 				return true;
 			}
 			int repetitions = 0;
-			//		logger.debug("My keys key0=" + key[0] + " " + " key1=" + key[1]);
+			// logger.debug("My keys key0=" + key[0] + " " + " key1=" + key[1]);
 			for (int i = 0; i < (moveNumber - 1); i++)
 			{
 				if (keyHistory[i][0] == key[0] && keyHistory[i][1] == key[1])
 				{
 					repetitions++;
 				}
-				//			logger.debug("movenumber="+i+" key0=" + keyHistory[i][0] + " " + " key1=" + keyHistory[i][1] + " Repetitions="+repetitions);
+				// logger.debug("movenumber="+i+" key0=" + keyHistory[i][0] + " " +
+				// " key1=" + keyHistory[i][1] + " Repetitions="+repetitions);
 				if (repetitions >= 2)
 				{
 					// with the las one they are 3
@@ -1226,7 +1311,8 @@ namespace Com.Alonsoruibal.Chess
 		{
 			int d = 0;
 			long mayXray = pawns | bishops | rooks | queens;
-			// not kings nor knights
+			// not kings nor
+			// knights
 			long fromSquare = 1 << fromIndex;
 			long all = GetAll();
 			long attacks = BitboardAttacks.GetIndexAttacks(this, toIndex);
@@ -1237,8 +1323,8 @@ namespace Com.Alonsoruibal.Chess
 				long side = (d & 1) == 0 ? GetOthers() : GetMines();
 				d++;
 				// next depth and side
-				seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
 				// speculative store, if defended
+				seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
 				attacks ^= fromSquare;
 				// reset bit in set to traverse
 				all ^= fromSquare;
@@ -1342,7 +1428,7 @@ namespace Com.Alonsoruibal.Chess
 			GenerateLegalMoves();
 			for (int i = 0; i < legalMoveCount; i++)
 			{
-				//logger.debug(Move.toStringExt(legalMoves[i]));
+				// logger.debug(Move.toStringExt(legalMoves[i]));
 				if (move == legalMoves[i])
 				{
 					moveOk = true;
@@ -1362,7 +1448,7 @@ namespace Com.Alonsoruibal.Chess
 			}
 		}
 
-		//logger.debug("Generated " + legalMoveCount + " legal moves....");
+		// logger.debug("Generated " + legalMoveCount + " legal moves....");
 		public virtual int GetLegalMoves(int[] moves)
 		{
 			GenerateLegalMoves();

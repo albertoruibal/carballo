@@ -156,8 +156,6 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 
 		private static readonly int PAWN_FRONT_ISOLATED = Oe(-15, -20);
 
-		private static readonly int PAWN_WEAK = Oe(-10, -15);
-
 		private static readonly int[] PAWN_CANDIDATE = new int[] { 0, Oe(5, 5), Oe(10, 12
 			), Oe(20, 25), 0, 0, 0, 0 };
 
@@ -320,8 +318,8 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 			// other pawns in front: isolated
 			// other pawns in front: doubled and isolated
 			// other pawns in front: isolated
-			//private final static int PAWN_BACKWARDS          = oe(-10,-15); // Backwards pawn 
-			// Backwards pawn 
+			//	private final static int PAWN_BACKWARDS          = oe(-10,-15); // Backwards pawn 
+			//	private final static int PAWN_WEAK          	 = oe(-10,-15); // Backwards pawn 
 			// Candidates to pawn passer
 			// no opposite pawns at left or at right 
 			// defended by pawn
