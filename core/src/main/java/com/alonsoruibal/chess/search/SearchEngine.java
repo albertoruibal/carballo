@@ -63,6 +63,11 @@ public class SearchEngine implements Runnable {
 	private String pv;
 
 	private int initialPly; // Inital Ply of search
+	private int depth;
+	private int score;
+	private int aspWindows[];
+
+	long startTime;
 
 	// For performance Benching
 	private long positionCounter;
@@ -357,11 +362,11 @@ public class SearchEngine implements Runnable {
 	 * Search horizon node (depth == 0) some kind of quiescent search
 	 * 
 	 * @return
-	 * @throws TimeExceedException
+	 * @throws SearchFinishedException
 	 */
-	public int quiescentSearch(int qsdepth, int alpha, int beta) throws TimeExceedException {
+	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
 		if (System.currentTimeMillis() > thinkTo && foundOneMove)
-			throw new TimeExceedException();
+			throw new SearchFinishedException();
 		qsPositionCounter++;
 
 		// checks draw by three fold repetition. and fifty moves rule
@@ -468,9 +473,9 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Search Root, PV and null window
 	 */
-	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws TimeExceedException {
+	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws SearchFinishedException {
 		if (System.currentTimeMillis() > thinkTo && foundOneMove) {
-			throw new TimeExceedException();
+			throw new SearchFinishedException();
 		}
 		if (nodeType == NODE_PV || nodeType == NODE_ROOT) {
 			pvPositionCounter++;
@@ -802,11 +807,11 @@ public class SearchEngine implements Runnable {
 		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100.0 * singularExtensionHit / singularExtensionProbe) + "%");
 	}
 
-	public void run() {
+	public void newRun() throws SearchFinishedException {
 		foundOneMove = false;
 		searching = true;
 
-		long startTime = System.currentTimeMillis();
+		startTime = System.currentTimeMillis();
 		logger.debug("Board\n" + board);
 
 		positionCounter = 0;
@@ -817,6 +822,7 @@ public class SearchEngine implements Runnable {
 		ponderMove = 0;
 		pv = null;
 
+		initialPly = board.getMoveNumber();
 		thinkTo = startTime + searchParameters.calculateMoveTime(board) - 100;
 
 		if (config.getUseBook() && config.getBook() != null && board.getOutBookMove() > board.getMoveNumber()
@@ -826,87 +832,102 @@ public class SearchEngine implements Runnable {
 			if (bookMove != 0) {
 				globalBestMove = bookMove;
 				logger.debug("Found Move in Book");
+				throw new SearchFinishedException();
 			} else {
 				logger.debug("NOT Found Move in Book");
 				board.setOutBookMove(board.getMoveNumber());
 			}
 		}
-		initialPly = board.getMoveNumber();
-		if (globalBestMove == 0) {
-			int score = eval(-Evaluator.VICTORY, Evaluator.VICTORY, false, false);
 
-			try {
-				tt.newGeneration();
+		depth = 1;
+		score = eval(-Evaluator.VICTORY, Evaluator.VICTORY, false, false);
+		tt.newGeneration();
+		aspWindows = config.getAspirationWindowSizes();
+	}
+	
+	public void runStepped() throws SearchFinishedException {
+		int failHighCount = 0;
+		int failLowCount = 0;
+		int initialScore = score;
+		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY);
+		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY);
 
-				int aspWindows[] = config.getAspirationWindowSizes();
+		// Iterate aspiration windows
+		while (true) {
+			aspirationWindowProbe++;
 
-				for (int depth = 1; depth < MAX_DEPTH; depth++) {
+			score = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
 
-					int failHighCount = 0;
-					int failLowCount = 0;
-					int initialScore = score;
-					int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY);
-					int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY);
+			// logger.debug("alpha = " + alpha + ", beta = " + beta
+			// + ", score=" + score);
 
-					// Iterate aspiration windows
-					while (true) {
-						aspirationWindowProbe++;
-
-						score = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
-
-						// logger.debug("alpha = " + alpha + ", beta = " + beta
-						// + ", score=" + score);
-
-						if (score <= alpha) {
-							failLowCount++;
-							alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY) ? initialScore
-									- aspWindows[failLowCount] : -Evaluator.VICTORY);
-						} else if (score >= beta) {
-							failHighCount++;
-							beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY) ? initialScore
-									+ aspWindows[failHighCount] : Evaluator.VICTORY);
-						} else {
-							aspirationWindowHit++;
-							break;
-						}
-					}
-
-					long time = System.currentTimeMillis();
-					long oldBestMove = globalBestMove;
-					getPv();
-					if (globalBestMove != 0)
-						foundOneMove = true;
-
-					// update best move time
-					if (oldBestMove != globalBestMove)
-						bestMoveTime = time - startTime;
-					SearchStatusInfo info = new SearchStatusInfo();
-					info.setDepth(depth);
-					info.setTime(time - startTime);
-					info.setPv(pv);
-					info.setScore(score);
-					info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
-					info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
-					logger.debug(info.toString());
-
-					if (observer != null)
-						observer.info(info);
-
-					// if mate found exit
-					if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000))
-						break;
-				}
-			} catch (TimeExceedException e) {
-				// puts the board in the initial position
-				logger.debug("Time exceed: returning to move " + initialPly);
+			if (score <= alpha) {
+				failLowCount++;
+				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY) ? initialScore
+						- aspWindows[failLowCount] : -Evaluator.VICTORY);
+			} else if (score >= beta) {
+				failHighCount++;
+				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY) ? initialScore
+						+ aspWindows[failHighCount] : Evaluator.VICTORY);
+			} else {
+				aspirationWindowHit++;
+				break;
 			}
-			board.undoMove(initialPly);
-			searchStats();
 		}
+
+		long time = System.currentTimeMillis();
+		long oldBestMove = globalBestMove;
+		getPv();
+		if (globalBestMove != 0)
+			foundOneMove = true;
+
+		// update best move time
+		if (oldBestMove != globalBestMove) {
+			bestMoveTime = time - startTime;
+		}
+		SearchStatusInfo info = new SearchStatusInfo();
+		info.setDepth(depth);
+		info.setTime(time - startTime);
+		info.setPv(pv);
+		info.setScore(score);
+		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
+		logger.debug(info.toString());
+
+		if (observer != null) {
+			observer.info(info);
+		}
+
+		// if mate found exit
+		if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000)) {
+			throw new SearchFinishedException();
+		}
+		
+		depth++;
+		if (depth == MAX_DEPTH) {
+			throw new SearchFinishedException();
+		}
+	}
+	
+	public void finishRun() {
+		// puts the board in the initial position
+		board.undoMove(initialPly);
+		searchStats();
 		searching = false;
 		if (observer != null) {
 			observer.bestMove(globalBestMove, ponderMove);
 		}
+	}
+	
+	public void run() {
+		try {
+			newRun();
+			while(true) {
+				runStepped();
+			}
+		} catch (SearchFinishedException e) {
+		}
+		finishRun();
 	}
 
 	/**
