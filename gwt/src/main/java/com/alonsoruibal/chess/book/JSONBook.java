@@ -15,17 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with carballo-gwt.  If not, see http://www.gnu.org/licenses/
  **********************************************/
-package org.vectomatic.svg.chess;
+package com.alonsoruibal.chess.book;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.book.Book;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
-import com.google.gwt.user.client.Random;
 
 
 /**
@@ -33,9 +32,9 @@ import com.google.gwt.user.client.Random;
  * @author rui
  */
 public class JSONBook implements Book {
-	/**
-	 * Logger for this class
-	 */
+
+	Random random = new Random();
+
 	static {
 		init();
 	}
@@ -52,8 +51,6 @@ public class JSONBook implements Book {
 		return weights;
 	}
 
-
-	
 	/**
 	 * "move" is a bit field with the following meaning (bit 0 is the least significant bit)
 	 *
@@ -115,7 +112,7 @@ public class JSONBook implements Book {
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
-		long randomWeight = (new Double(Random.nextDouble() * totalWeight)).longValue();
+		long randomWeight = (new Double(random.nextDouble() * totalWeight)).longValue();
 		for (int i = 0; i < moves.size(); i++) {
 			randomWeight -= weights.get(i);
 			if (randomWeight<=0) return moves.get(i);
@@ -124,11 +121,11 @@ public class JSONBook implements Book {
 	}
 	
 	private static final native JsArray<JsArrayInteger> getData(String key) /*-{
-		return $wnd.__book[key];
+		return self.__book[key];
 	}-*/;  
 	
 	private static final native void init() /*-{
-$wnd.__book={"x851c6cbc1831bf29":[[332],[4]],
+self.__book={"x851c6cbc1831bf29":[[332],[4]],
 "x82a7ddedf29f25a":[[80,983],[9,6]],
 "x818b0685bea641a9":[[660],[4]],
 "x1447cdd701941c77":[[3779],[4]],
