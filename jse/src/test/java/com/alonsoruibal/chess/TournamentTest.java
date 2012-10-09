@@ -15,13 +15,13 @@ import com.alonsoruibal.chess.search.SearchStatusInfo;
 public class TournamentTest extends EpdTest implements SearchObserver {
 
 //	static final int GAME_TIME_PER_PLAYER = 30 * 1000; // in milliseconds
-//	static final int GAME_TIME_PER_PLAYER = 5 * 60 * 1000; // in milliseconds
-	static final int GAME_TIME_PER_PLAYER = 5 * 1000; // in milliseconds
-//	static final int GAME_TIME_PER_PLAYER = 1000; // in milliseconds
+//	static final int GAME_TIME_PER_PLAYER = 1 * 60 * 1000; // in milliseconds
+//	static final int GAME_TIME_PER_PLAYER = 5 * 1000; // in milliseconds
+	static final int GAME_TIME_PER_PLAYER = 1 * 1000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
 	static final int SLEEP = 0; //1000; // Do not touch
 	static final int SLEEP2 = 0;
-	static final int GAMES = 240; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
+	static final int GAMES = 120; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
 	
 	SearchEngine engine1;
 	SearchEngine engine2;
@@ -33,58 +33,21 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	SearchParameters params;
 	long lastTime;
 	
-	public void setElo(Config config, int elo) {
-		int kPercentage = ((elo - 1000) * 100) / 1100; // knowledge percentage
-		int ePercentage = 60 - ((elo - 1000) * 60) / 1100; // percentage of errors
-		
-		config.setEvaluator("experimental");
-		config.setRand(ePercentage);
-		config.setUseBook(true);
-		config.setBook(new FileBook("/book_small.bin"));
-		config.setBookKnowledge(kPercentage);
-		config.setEvalPawnStructure(kPercentage);
-		config.setEvalPassedPawns(kPercentage);
-		config.setEvalKingSafety(kPercentage);
-		config.setEvalMobility(kPercentage);
-		config.setEvalPositional(kPercentage);
-		config.setEvalCenter(kPercentage); // TODO try to modify also this
-	}
-	
+
 	public void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
-		config1.setEvaluator("experimentalnew");
+		config1.setElo(2100);
+//		config1.setEvaluator("experimentalnew");
 //		config1.setExtensionsSingular(0);
 //		setElo(config1, 1800);
 		//config1.setAspirationWindowSizes("10");
 		//config1.setExtensionsRecapture(0);
 		//config.setExtensionsSingular(0);
 		
-		
 		Config config2 = new Config();
 		config2.setBook(new FileBook("/book_small.bin"));
-		config1.setEvaluator("experimental");
-//		public final static boolean DEFAULT_NULL_MOVE = true;
-//		public final static int DEFAULT_NULL_MOVE_MARGIN = 300;
-//		public final static boolean DEFAULT_STATIC_NULL_MOVE = true;
-//		public final static boolean DEFAULT_IID = true;
-//		public final static boolean DEFAULT_LMR = true;
-//		public final static int DEFAULT_EXTENSIONS_CHECK = 2; // 2 = 1 PLY
-//		public final static int DEFAULT_EXTENSIONS_MATE_THREAT = 1;
-//		public final static int DEFAULT_EXTENSIONS_PAWN_PUSH = 1;
-//		public final static int DEFAULT_EXTENSIONS_PASSED_PAWN = 1;
-//		public final static int DEFAULT_EXTENSIONS_RECAPTURE = 0;
-//		public final static int DEFAULT_EXTENSIONS_SINGULAR = 0;
-//		public final static int DEFAULT_SINGULAR_EXTENSION_MARGIN = 32;
-//		public final static boolean DEFAULT_ASPIRATION_WINDOW = true;
-//		public final static String DEFAULT_ASPIRATION_WINDOW_SIZES = "10,25,150,400,550,1025";
-//		public final static int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
-//		public final static boolean DEFAULT_FUTILITY = true;
-//		public final static int DEFAULT_FUTILITY_MARGIN = 300; // 200-300-350? 300 seems better, at least +2 @WAC than 350
-//		public final static boolean DEFAULT_AGGRESIVE_FUTILITY = true;
-//		public final static int DEFAULT_AGGRESIVE_FUTILITY_MARGIN = 500; // 500-600? 500 seems better, at least +2 @WAC
-//		public final static boolean DEFAULT_RAZORING = true;
-//		public final static int DEFAULT_RAZORING_MARGIN = 900;
+		config2.setElo(2000);
 		
 //		config2.setExtensionsMateThreat(1);
 //		config2.setExtensionsRecapture(0);
@@ -121,7 +84,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 		engine2 = new SearchEngine(config2);
 	
 		
-		Pgn pgn = new Pgn();
+		PgnFile pgn = new PgnFile();
 		int pgnGameNumber = 0;
 		
 		// wins[0] = draws

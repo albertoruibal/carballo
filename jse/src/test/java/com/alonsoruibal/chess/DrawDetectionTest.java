@@ -22,7 +22,7 @@ public class DrawDetectionTest extends TestCase {
 
 
 	public void test3FoldDraw() {
-		Pgn pgn = new Pgn();
+		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());
 		
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
@@ -37,7 +37,7 @@ public class DrawDetectionTest extends TestCase {
 	}
 	
 	public void test3FoldDrawNo() {
-		Pgn pgn = new Pgn();
+		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());
 		
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");

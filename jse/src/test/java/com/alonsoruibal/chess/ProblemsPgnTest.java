@@ -15,7 +15,7 @@ public class ProblemsPgnTest extends TestCase {
 		
    public void processPgnFile(String file, int count) {
 	   
-	   Pgn pgn = new Pgn();
+	   PgnFile pgn = new PgnFile();
 	   Board board = new Board();
 	   
 	   for (int gameNo = 0; gameNo < count; gameNo++) {  
