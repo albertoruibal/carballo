@@ -33,6 +33,5 @@
         <module>core</module>
         <module>jse</module>
         <module>applet</module>
-        <module>gwt</module>
     </modules>
 </project>
