@@ -36,7 +36,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -49,15 +49,15 @@
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-				<archive>
-				<manifest>
-					<mainClass>com.alonsoruibal.chess.uci.Uci</mainClass>
-				</manifest>
-				</archive>
+					<archive>
+						<manifest>
+							<mainClass>com.alonsoruibal.chess.uci.Uci</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>com.pyx4me</groupId>
+				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
 				<executions>
 					<execution>
@@ -68,14 +68,15 @@
 					</execution>
 				</executions>
 				<configuration>
-				     <assembly>
-                        <inclusions>
-                            <inclusion>
-                                <groupId>com.alonsoruibal</groupId>
-                                <artifactId>carballo-core</artifactId>
-                            </inclusion>
-                        </inclusions>
-                    </assembly>
+					<proguardVersion>4.9</proguardVersion>
+					<assembly>
+						<inclusions>
+							<inclusion>
+								<groupId>com.alonsoruibal</groupId>
+								<artifactId>carballo-core</artifactId>
+							</inclusion>
+						</inclusions>
+					</assembly>
 					<options>
 						<option>-allowaccessmodification</option>
 						<option>-keep public class com.alonsoruibal.chess.uci.Uci { *; }</option>
@@ -86,6 +87,13 @@
 						<lib>${java.home}/lib/rt.jar</lib>
 					</libs>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.proguard</groupId>
+						<artifactId>proguard-base</artifactId>
+						<version>4.9</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
