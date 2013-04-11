@@ -59,7 +59,7 @@ public class Pgn {
 			whiteName = "?";
 		if (blackName == null || "".equals(blackName))
 			blackName = "?";
-		
+
 		if (event == null) {
 			event = "Chess Game";
 		}
@@ -69,7 +69,7 @@ public class Pgn {
 
 		sb.append("[Event \"" + event + "\"]\n");
 		sb.append("[Site \"" + site + "\"]\n");
-		
+
 		Date d = new Date();
 		// For GWT we use deprecated methods
 		sb.append("[Date \"" + d.getYear() + "." + d.getMonth() + "." + d.getDay() + "\"]\n");
@@ -330,6 +330,40 @@ public class Pgn {
 
 	public ArrayList<String> getMoves() {
 		return moves;
+	}
+
+	public String getGameNumber(String pgnFileContent, int gameNumber) {
+		int lineNumber = 0;
+		String lines[] = pgnFileContent.split("\\r?\\n");
+		String line;
+		int counter = 0;
+
+		try {
+			while (true) {
+				line = lines[lineNumber++];
+				if (line == null) {
+					break;
+				}
+
+				if (line.indexOf("[Event ") == 0) {
+					if (counter == gameNumber) {
+						StringBuffer pgnSb = new StringBuffer();
+						while (true) {
+							pgnSb.append(line);
+							pgnSb.append("\n");
+							line = lines[lineNumber++];
+							if (line == null || line.indexOf("[Event ") == 0)
+								break;
+						}
+						return pgnSb.toString();
+					}
+					counter++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
