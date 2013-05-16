@@ -8,7 +8,6 @@ import java.util.Random;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
@@ -167,7 +166,6 @@ public class SearchEngine implements Runnable {
 		logger.debug(new Date());
 		initialized = false;
 
-		BitboardAttacks.init();
 		board.startPosition();
 		sortInfo.clear();
 
