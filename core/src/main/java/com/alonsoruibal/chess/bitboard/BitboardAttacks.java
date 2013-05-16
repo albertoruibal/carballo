@@ -16,6 +16,10 @@ public class BitboardAttacks {
 	public long[] pawnDownwards;
 	public long[] pawnUpwards;
 
+	/**
+	 * If disabled, does not use Magic Bitboards, improves loading speed in GWT
+	 * and avoids memory crashes in mobile browsers
+	 */
 	public static boolean USE_MAGIC = true;
 	static BitboardAttacks instance;
 
