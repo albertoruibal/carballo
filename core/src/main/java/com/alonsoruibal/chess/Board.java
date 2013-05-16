@@ -76,6 +76,8 @@ public class Board {
 	// Thos the SEE SWAP algorithm
 	private static final int[] SEE_PIECE_VALUES = { 0, 100, 325, 330, 500, 900, 9999 };
 
+	BitboardAttacks bbAttacks;
+
 	public Board() {
 		whitesHistory = new long[MAX_MOVES];
 		blacksHistory = new long[MAX_MOVES];
@@ -95,6 +97,8 @@ public class Board {
 		moveHistory = new int[MAX_MOVES];
 
 		sanMoves = new HashMap<Integer, String>();
+
+		bbAttacks = BitboardAttacks.getInstance();
 	}
 
 	/**
@@ -457,7 +461,7 @@ public class Board {
 	}
 
 	/**
-	 * TODO is it neccesary??
+	 * TODO is it necessary??
 	 * 
 	 */
 	private void resetHistory() {
@@ -627,10 +631,10 @@ public class Board {
 				// Set new passant flags if pawn is advancing two squares (marks
 				// the destination square where the pawn can be captured)
 				// Set only passant flags when the other side can capture
-				if (((from << 16) & to) != 0 && (BitboardAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
+				if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
 					flags |= (from << 8);
 				}
-				if (((from >>> 16) & to) != 0 && (BitboardAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
+				if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
 					flags |= (from >>> 8);
 				}
 				if ((flags & FLAGS_PASSANT) != 0) {
@@ -768,12 +772,12 @@ public class Board {
 	 * Checks is a state is valid Basically, not entering own king in check
 	 */
 	private boolean isValid(boolean turn) {
-		return (!BitboardAttacks.isSquareAttacked(this, kings & getOthers(), !turn));
+		return (!bbAttacks.isSquareAttacked(this, kings & getOthers(), !turn));
 	}
 
 	private void setCheckFlags(boolean turn) {
 		// Set check flags
-		if (BitboardAttacks.isSquareAttacked(this, kings & getMines(), turn)) {
+		if (bbAttacks.isSquareAttacked(this, kings & getMines(), turn)) {
 			flags |= FLAG_CHECK;
 		} else {
 			flags &= ~FLAG_CHECK;
@@ -882,7 +886,7 @@ public class Board {
 															// knights
 		long fromSquare = 1 << fromIndex;
 		long all = getAll();
-		long attacks = BitboardAttacks.getIndexAttacks(this, toIndex);
+		long attacks = bbAttacks.getIndexAttacks(this, toIndex);
 		long fromCandidates = 0;
 
 		seeGain[d] = SEE_PIECE_VALUES[targetPiece];
@@ -894,7 +898,7 @@ public class Board {
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
 			if ((fromSquare & mayXray) != 0)
-				attacks |= BitboardAttacks.getXrayAttacks(this, toIndex, all);
+				attacks |= bbAttacks.getXrayAttacks(this, toIndex, all);
 
 			// Gets the next attacker
 			fromSquare = 0;

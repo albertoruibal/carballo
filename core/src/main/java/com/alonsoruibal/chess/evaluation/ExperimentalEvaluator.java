@@ -2,7 +2,6 @@ package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
-import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 
@@ -309,8 +308,8 @@ public class ExperimentalEvaluator extends Evaluator {
 		pawnCanAttack[1] = pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40;
 		
 		// Squares surrounding King
-		squaresNearKing[0] = BitboardAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
-		squaresNearKing[1] = BitboardAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
+		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
+		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
 
 		minorPiecesDefendedByPawns[0] = board.whites & (board.bishops | board.knights) & pawnAttacks[0];
 		minorPiecesDefendedByPawns[1] = board.blacks & (board.bishops | board.knights) & pawnAttacks[1];
@@ -323,17 +322,17 @@ public class ExperimentalEvaluator extends Evaluator {
 				int color = (isWhite ? 0 : 1);
 				
 				if ((square & board.pawns  ) != 0) {
-					pieceAttacks = (isWhite ? BitboardAttacks.pawnUpwards[index] : BitboardAttacks.pawnDownwards[index]);
+					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
 				} else if ((square & board.knights) != 0) {
-					pieceAttacks = BitboardAttacks.knight[index];					
+					pieceAttacks = bbAttacks.knight[index];
 				} else if ((square & board.bishops) != 0) {
-					pieceAttacks = BitboardAttacks.getBishopAttacks(index, all);
+					pieceAttacks = bbAttacks.getBishopAttacks(index, all);
 				} else if ((square & board.rooks) != 0) {
-					pieceAttacks = BitboardAttacks.getRookAttacks(index, all);
+					pieceAttacks = bbAttacks.getRookAttacks(index, all);
 				} else if ((square & board.queens) != 0) {
-					pieceAttacks = BitboardAttacks.getRookAttacks(index, all) | BitboardAttacks.getBishopAttacks(index, all);
+					pieceAttacks = bbAttacks.getRookAttacks(index, all) | bbAttacks.getBishopAttacks(index, all);
 				} else if ((square & board.kings) != 0) {
-					pieceAttacks = BitboardAttacks.king[index];
+					pieceAttacks = bbAttacks.king[index];
 				} else {
 					pieceAttacks = 0;
 				}
@@ -466,7 +465,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					// Candidates is the same check but removing opposite pawns attacking our square
 					} else if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
 								BitboardUtils.RANKS_FORWARD[color][rank]
-								& (isWhite ? BitboardAttacks.pawnUpwards[index] : BitboardAttacks.pawnDownwards[index])
+							& (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index])
 								& board.pawns & others) == 0) {
 						passedPawns[color] += PAWN_CANDIDATE[(isWhite ? rank : 7-rank)];
 					}
@@ -524,7 +523,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 					
-					pieceAttacksXray = BitboardAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) attacks[color] += PINNED_PIECE;
 
 					// Bishop Outpost: no opposite pawns can attack the square and defended by one of our pawns
@@ -566,7 +565,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					
 					superiorPieceAttacked[color] |= pieceAttacks & others & board.queens;
 					
-					pieceAttacksXray = BitboardAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) attacks[color] += PINNED_PIECE;
 					
 					auxLong = (isWhite ? BitboardUtils.b_u : BitboardUtils.b_d);				
@@ -627,7 +626,9 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((pieceAttacks & squaresNearKing[color]) != 0) kingDefense[color] += QUEEN_DEFENDS_KING;
 					if ((pieceAttacks & others & ~otherPawnAttacks) != 0) attacks[color] += QUEEN_ATTACKS_PU;
 					
-					pieceAttacksXray = (BitboardAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | BitboardAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)))  & ~pieceAttacks;
+					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | bbAttacks.getBishopAttacks(index, all
+							& ~(pieceAttacks & others)))
+							& ~pieceAttacks;
 					if ((pieceAttacksXray & board.kings & others) != 0) attacks[color] += PINNED_PIECE;
 					
 					auxLong = (isWhite ? BitboardUtils.b_u : BitboardUtils.b_d);									

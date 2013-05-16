@@ -1,11 +1,18 @@
 package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 
 public abstract class Evaluator {
 
 	public final static int VICTORY    = Short.MAX_VALUE - 1;
 //	private final static Random random = new Random(System.currentTimeMillis());
+
+	public BitboardAttacks bbAttacks;
+
+	public Evaluator() {
+		bbAttacks = BitboardAttacks.getInstance();
+	}
 
 	/**
 	 * Board evaluator

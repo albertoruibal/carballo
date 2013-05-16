@@ -146,23 +146,25 @@ public class Move {
 		long to = 0x1L << toIndex;
 		long from = 0;
 
+		BitboardAttacks bbAttacks = BitboardAttacks.getInstance();
+
 		// Fills from with a mask of possible from values
 		switch (move.charAt(0)) {
 		case 'N':
-			from = board.knights & board.getMines() & BitboardAttacks.knight[toIndex];
+			from = board.knights & board.getMines() & bbAttacks.knight[toIndex];
 			break;
 		case 'K':
-			from = board.kings & board.getMines() & BitboardAttacks.king[toIndex];
+			from = board.kings & board.getMines() & bbAttacks.king[toIndex];
 			break;
 		case 'R':
-			from = board.rooks & board.getMines() & BitboardAttacks.getRookAttacks(toIndex, board.getAll());
+			from = board.rooks & board.getMines() & bbAttacks.getRookAttacks(toIndex, board.getAll());
 			break;
 		case 'B':
-			from = board.bishops & board.getMines() & BitboardAttacks.getBishopAttacks(toIndex, board.getAll());
+			from = board.bishops & board.getMines() & bbAttacks.getBishopAttacks(toIndex, board.getAll());
 			break;
 		case 'Q':
 			from = board.queens & board.getMines()
-					& (BitboardAttacks.getRookAttacks(toIndex, board.getAll()) | BitboardAttacks.getBishopAttacks(toIndex, board.getAll()));
+				& (bbAttacks.getRookAttacks(toIndex, board.getAll()) | bbAttacks.getBishopAttacks(toIndex, board.getAll()));
 			break;
 		}
 		if (from != 0) { // remove the piece char
@@ -176,7 +178,7 @@ public class Move {
 				}
 			}
 			if (move.length() == 3) { // Pawn capture
-				from = board.pawns & board.getMines() & (board.getTurn() ? BitboardAttacks.pawnDownwards[toIndex] : BitboardAttacks.pawnUpwards[toIndex]);
+				from = board.pawns & board.getMines() & (board.getTurn() ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
 			}
 		}
 		if (move.length() == 3) { // now disambiaguate

@@ -18,8 +18,12 @@ public class MagicMoveGenerator implements MoveGenerator {
 	private long mines;
 	private long others;
 	
+	BitboardAttacks bbAttacks;
+
 	public int generateMoves(Board board, int[] moves, int mIndex) {
 		this.moves = moves;
+		bbAttacks = BitboardAttacks.getInstance();
+
 		moveIndex = mIndex;
 		all = board.getAll(); // only for clearity
 		mines = board.getMines();
@@ -31,16 +35,16 @@ public class MagicMoveGenerator implements MoveGenerator {
 			if (board.getTurn() == ((square & board.whites ) != 0)) {
 				
 				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Move.ROOK, index, BitboardAttacks.getRookAttacks(index, all)); 
+					generateMovesFromAttacks(Move.ROOK, index, bbAttacks.getRookAttacks(index, all));
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Move.BISHOP, index, BitboardAttacks.getBishopAttacks(index, all)); 
+					generateMovesFromAttacks(Move.BISHOP, index, bbAttacks.getBishopAttacks(index, all));
 				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Move.QUEEN, index, BitboardAttacks.getRookAttacks(index, all)); 
-					generateMovesFromAttacks(Move.QUEEN, index, BitboardAttacks.getBishopAttacks(index, all)); 
+					generateMovesFromAttacks(Move.QUEEN, index, bbAttacks.getRookAttacks(index, all));
+					generateMovesFromAttacks(Move.QUEEN, index, bbAttacks.getBishopAttacks(index, all));
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Move.KING, index, BitboardAttacks.king[index]); 
+					generateMovesFromAttacks(Move.KING, index, bbAttacks.king[index]);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Move.KNIGHT, index, BitboardAttacks.knight[index]); 
+					generateMovesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index]);
 				} else if ((square & board.pawns) != 0) { // Pawns
 					if ((square & board.whites) != 0) {
 						if (((square << 8) & all) == 0) {
@@ -48,14 +52,14 @@ public class MagicMoveGenerator implements MoveGenerator {
 							// Two squares if it is in he first row	
 							if (((square & BitboardUtils.b2_d) != 0) && (((square << 16) & all) == 0)) addMoves(Move.PAWN, index, index+16, (square << 16), false, false, 0);
 						}
-						generatePawnCapturesFromAttacks(index, BitboardAttacks.pawnUpwards[index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, bbAttacks.pawnUpwards[index], board.getPassantSquare());
 					} else {
 						if (((square >>> 8) & all) == 0) {
 							addMoves(Move.PAWN, index, index-8, (square >>> 8), false, true, 0);
 							// Two squares if it is in he first row	
 							if (((square & BitboardUtils.b2_u) != 0) && (((square >>> 16) & all) == 0)) addMoves(Move.PAWN, index, index-16, (square >>> 16), false, false, 0);
 						}
-						generatePawnCapturesFromAttacks(index, BitboardAttacks.pawnDownwards[index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, bbAttacks.pawnDownwards[index], board.getPassantSquare());
 					}
 				}
 			}
@@ -70,8 +74,8 @@ public class MagicMoveGenerator implements MoveGenerator {
 			  (board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling())))) {
 			myKingIndex = BitboardUtils.square2Index(square);
 			if (!board.getCheck() &&
-				!BitboardAttacks.isIndexAttacked(board, (byte) (myKingIndex-1), board.getTurn()) &&
-				!BitboardAttacks.isIndexAttacked(board, (byte) (myKingIndex-2), board.getTurn()))
+ !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 1), board.getTurn())
+					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 2), board.getTurn()))
 				addMoves(Move.KING, myKingIndex, myKingIndex-2, 0, false, false, Move.TYPE_KINGSIDE_CASTLING);	
 		}
 		if ((((all & (board.getTurn() ? 0x70L : 0x7000000000000000L)) == 0 &&
@@ -80,8 +84,8 @@ public class MagicMoveGenerator implements MoveGenerator {
 				myKingIndex = BitboardUtils.square2Index(square);
 			}
 			if (!board.getCheck() &&
-				!BitboardAttacks.isIndexAttacked(board, (byte) (myKingIndex+1), board.getTurn()) &&
-				!BitboardAttacks.isIndexAttacked(board, (byte) (myKingIndex+2), board.getTurn()))
+ !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 1), board.getTurn())
+					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 2), board.getTurn()))
 				addMoves(Move.KING, myKingIndex, myKingIndex+2, 0, false, false, Move.TYPE_QUEENSIDE_CASTLING);	
 		}
 		return moveIndex;

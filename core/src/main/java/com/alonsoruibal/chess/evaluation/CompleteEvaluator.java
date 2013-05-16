@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
-import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 
@@ -268,8 +267,8 @@ public class CompleteEvaluator extends Evaluator {
 		pawnAttacks[1] = ((board.pawns & board.blacks & ~ BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~ BitboardUtils.b_l) >>> 7);
 
 		// Squares surrounding King
-		squaresNearKing[0] = BitboardAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)];
-		squaresNearKing[1] = BitboardAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)];
+		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)];
+		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)];
 
 		// From material imbalances (Larry Kaufmann):
 		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
@@ -298,7 +297,7 @@ public class CompleteEvaluator extends Evaluator {
 					pawnMaterial[color] += PAWN;
 					center[color] += pawnIndexValue[pcsqIndex];
 					
-					pieceAttacks = (isWhite ? BitboardAttacks.pawnUpwards[index] : BitboardAttacks.pawnDownwards[index]);
+					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
 					
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.knights | board.bishops | board.rooks | board.queens);
 					
@@ -337,7 +336,7 @@ public class CompleteEvaluator extends Evaluator {
 						; // not defended is weak and only if over rank 2
 					if (weak) {
 						// Can be defended advancing one square
-						auxLong = (isWhite ? BitboardAttacks.pawnDownwards[color] : BitboardAttacks.pawnUpwards[color]) & ~pawnAttacks[1-color] & ~all; 
+						auxLong = (isWhite ? bbAttacks.pawnDownwards[color] : bbAttacks.pawnUpwards[color]) & ~pawnAttacks[1 - color] & ~all;
 						while (auxLong != 0) { // Not attacked by other pawn and empty
 							auxLong2 = BitboardUtils.lsb(auxLong);
 							auxLong &= ~auxLong2;
@@ -381,7 +380,7 @@ public class CompleteEvaluator extends Evaluator {
 					material[color] += KNIGHT + knightKaufBonus[color];
 					center[color] += knightIndexValue[pcsqIndex];
 					
-					pieceAttacks = BitboardAttacks.knight[index];
+					pieceAttacks = bbAttacks.knight[index];
 					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~pawnAttacks[1-color]) - KNIGHT_M_UNITS;
 					mobility[color] += KNIGHT_M * auxInt;
 					
@@ -396,7 +395,7 @@ public class CompleteEvaluator extends Evaluator {
 					if ((( BitboardUtils.COLUMNS_ADJACENTS[column] &
 						(isWhite ? BitboardUtils.RANKS_UPWARDS[rank] : BitboardUtils.RANKS_DOWNWARDS[rank])
 						& board.pawns & others) == 0) &&
-						(((isWhite ? BitboardAttacks.pawnDownwards[index] : BitboardAttacks.pawnUpwards[index]) & board.pawns & mines) !=0))
+ (((isWhite ? bbAttacks.pawnDownwards[index] : bbAttacks.pawnUpwards[index]) & board.pawns & mines) != 0))
 						positional[color] += KNIGTH_OUTPOST[pcsqIndex];
 				
 				} else if ((square & board.bishops) != 0) {
@@ -405,7 +404,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					center[color] += bishopIndexValue[pcsqIndex];
 					
-					pieceAttacks = BitboardAttacks.getBishopAttacks(index, all);
+					pieceAttacks = bbAttacks.getBishopAttacks(index, all);
 					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~pawnAttacks[1-color]) - BISHOP_M_UNITS;
 					mobility[color] += BISHOP_M * auxInt;
 					
@@ -414,7 +413,7 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[color]++;
 					}
 					
-					pieceAttacksXray = BitboardAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) attacks[color] += PINNED_PIECE;
 					
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
@@ -425,11 +424,11 @@ public class CompleteEvaluator extends Evaluator {
 					material[color] += ROOK + rookKaufBonus[color];
 					center[color] += rookIndexValue[pcsqIndex];
 
-					pieceAttacks = BitboardAttacks.getRookAttacks(index, all);
+					pieceAttacks = bbAttacks.getRookAttacks(index, all);
 					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~pawnAttacks[1-color]) - ROOK_M_UNITS;
 					mobility[color] += ROOK_M * auxInt;
 					
-					pieceAttacksXray = BitboardAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) attacks[color] += PINNED_PIECE;
 					
 					if ((pieceAttacks & squaresNearKing[1-color]) != 0) {
@@ -452,7 +451,7 @@ public class CompleteEvaluator extends Evaluator {
 					center[color] += queenIndexValue[pcsqIndex];
 					material[color] += QUEEN;
 					
-					pieceAttacks = BitboardAttacks.getRookAttacks(index, all) | BitboardAttacks.getBishopAttacks(index, all);
+					pieceAttacks = bbAttacks.getRookAttacks(index, all) | bbAttacks.getBishopAttacks(index, all);
 					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~pawnAttacks[1-color]) - QUEEN_M_UNITS;
 					mobility[color] += QUEEN_M * auxInt;
 					
@@ -461,11 +460,13 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[color]++;
 					}
 					
-					pieceAttacksXray = (BitboardAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | BitboardAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)))  & ~pieceAttacks;
+					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | bbAttacks.getBishopAttacks(index, all
+							& ~(pieceAttacks & others)))
+							& ~pieceAttacks;
 					if ((pieceAttacksXray & board.kings & others) != 0) attacks[color] += PINNED_PIECE;
 					
 				} else if ((square & board.kings  ) != 0) {
-					pieceAttacks = BitboardAttacks.king[index];
+					pieceAttacks = bbAttacks.king[index];
 					center[color] += kingIndexValue[pcsqIndex];
 					// TODO
 					if ((square & (isWhite ? BitboardUtils.RANK[1] : BitboardUtils.RANK[7])) != 0)
