@@ -68,7 +68,7 @@ public class MagicNumbersGenerator {
 		for (i = 0; i < (1 << n); i++) {
 			block[i] = generatePieces(i, n, mask);
 			// System.out.println("b:\n" + BitboardUtils.toString(block[i]));
-			attack[i] = bishop ? bbAttacks.getBishopShiftAttacks(BitboardUtils.index2Square(index), block[i]) : bbAttacks.getRookShiftAttacks(
+			attack[i] = bishop ? attacks.getBishopShiftAttacks(BitboardUtils.index2Square(index), block[i]) : attacks.getRookShiftAttacks(
 					BitboardUtils.index2Square(index), block[i]);
 			// System.out.println("attack:\n" +
 			// BitboardUtils.toString(attack[i]));
