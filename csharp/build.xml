@@ -15,7 +15,7 @@
 		<element name="args" optional="yes" />
 
 		<sequential>
-			<exec executable="${file.jvm.jdk1.5}" failonerror="true" timeout="1800000">
+			<exec executable="${java.bin}" failonerror="true" timeout="1800000">
 				<arg value="-Xms256m" />
 				<arg value="-Xmx512m" />
 				<arg value="-cp" />
