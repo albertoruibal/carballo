@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.alonsoruibal'
+archivesBaseName = 'carballo-gwt'
+version = '0.8'
+sourceCompatibility = '1.7'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.gwt:gwt-user:2.5.1'
+    compile 'com.google.gwt:gwt-dev:2.5.1'
+    compile 'com.alonsoruibal:carballo-core:0.8'
+}
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}

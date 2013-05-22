@@ -1,0 +1,61 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.alonsoruibal'
+archivesBaseName = 'carballo-jse'
+version = '0.8'
+sourceCompatibility = '1.7'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:4.9'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.alonsoruibal:carballo-core:0.8'
+    testCompile 'junit:junit:4.11'
+}
+
+task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
+    doFirst {
+        configurations.compile.each { println it.name}
+    }
+
+    ext {
+        outDir = file("${buildDir}/proguard")
+        obfuscatedJar = "${outDir}/carballo.jar"
+    }
+    outDir.mkdirs()
+
+    injars jar.archivePath
+    injars configurations.compile
+    outjars obfuscatedJar
+
+    //printmapping "${outDir}/mappings.out"
+    //libraryjars configurations.compile
+    libraryjars "<java.home>/lib/rt.jar"
+
+    allowaccessmodification
+    dontskipnonpubliclibraryclassmembers
+    keep "public class com.alonsoruibal.chess.uci.Uci { *; }"
+
+    doLast {
+        logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
+    }
+}
+
+jar {
+    manifest.attributes("Main-Class": "com.alonsoruibal.chess.uci.Uci")
+}
+
+

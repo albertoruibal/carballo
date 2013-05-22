@@ -1,11 +1,11 @@
 Description
 ===========
 
-Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with Applet and GWT interfaces.
+Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with Applet and GWT (HTML5) interfaces.
 
 It's organized into modules:
 * Core: the chess engine
-* Jse: the Java Standard Edition version with an UCI interface and unit tests 
+* JSE: the Java Standard Edition version with an UCI interface and unit tests
 * Applet: the applet code, depends of Core and Jse
 * GWT: an HTML5 interface, depends of Core
 * CSharp: this is a conversion of the Core source code to C# using Sharpen
@@ -25,7 +25,7 @@ Features
 * Simple and clear code
 * Cute drag and drop Java Applet GUI, to fit in web sites
 * Includes also a great GWT interface by Lukas Laag
-* Maven source code organization
+* Gadle source code organization
 * JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
 * Based on Bitboards (not so complicated as other people say)
 * State-of-the-art magic bitboard move generator (doubles the basic move generator speed!), also code for magic number generation
@@ -72,10 +72,16 @@ Authors
 =======
 
 * Alberto Alonso Ruibal: http://www.alonsoruibal.com
-* Lukas Laag, developer of a great GWT SVG library and Carballo GWT interface: http://www.vectomatic.org
+* Lukas Laag, developer of a great GWT SVG library (http://www.vectomatic.org) and the Carballo GWT interface
 
 History
 =======
+
+Version 0.8:
+* Project build system migrated from Maven to Gradle
+* Solved some evaluator bugs
+* New option to do not use Magic Bitboard Attacks: optimizes start time in HTML5
+* Removed specific Bitboard attacks code from GWT, can be simulated setting BitboardAttacks.USE_MAGIC = false
 
 Version 0.7: A small leap on the engine performance and a big code clean
 
