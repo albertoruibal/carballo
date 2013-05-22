@@ -29,7 +29,6 @@ import com.google.gwt.core.client.JsArrayInteger;
 
 /**
  * Polyglot opening book support
- * @author rui
  */
 public class JSONBook implements Book {
 
@@ -107,8 +106,6 @@ public class JSONBook implements Book {
 	
 	/**
 	 * Gets a random move from the book taking care of weights 
-	 * @param fen
-	 * @return
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
@@ -120,11 +117,11 @@ public class JSONBook implements Book {
 		return 0;
 	}
 	
-	private static final native JsArray<JsArrayInteger> getData(String key) /*-{
+	private static native JsArray<JsArrayInteger> getData(String key) /*-{
 		return self.__book[key];
 	}-*/;  
 	
-	private static final native void init() /*-{
+	private static native void init() /*-{
 self.__book={"x851c6cbc1831bf29":[[332],[4]],
 "x82a7ddedf29f25a":[[80,983],[9,6]],
 "x818b0685bea641a9":[[660],[4]],
