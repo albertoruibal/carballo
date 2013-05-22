@@ -45,9 +45,9 @@ public class SquareJPanel extends JPanel {
 
 		int row = (index / 8) % 2;
 		if (row == 0) {
-			color = index % 2 == 0 ? true : false;
+			color = index % 2 == 0;
 		} else {
-			color =  index % 2 == 0 ? false : true;
+			color = index % 2 != 0;
 		}		
 	}
 

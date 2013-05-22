@@ -43,9 +43,9 @@ public class Pgn {
 	String eventDate;
 	String annotator;
 
-	ArrayList<String> moves = new ArrayList<String>();;
+	ArrayList<String> moves = new ArrayList<String>();
 
-	public String getPgn(Board b, String whiteName, String blackName) {
+    public String getPgn(Board b, String whiteName, String blackName) {
 		return getPgn(b, whiteName, blackName, null, null, null);
 	}
 

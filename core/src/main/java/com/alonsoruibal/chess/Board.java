@@ -306,7 +306,7 @@ public class Board {
 				int number = 0;
 				try {
 					number = Integer.parseInt(String.valueOf(p));
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 
 				for (int k = 0; k < (number == 0 ? 1 : number); k++) {
@@ -852,10 +852,8 @@ public class Board {
 			}
 		}
 		// Draw by no material to mate
-		if (pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0)
-			return true;
-		return false;
-	}
+        return pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0;
+    }
 
 	/**
 	 * The SWAP algorithm

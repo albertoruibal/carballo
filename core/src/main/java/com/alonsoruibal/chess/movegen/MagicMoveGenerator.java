@@ -94,19 +94,19 @@ public class MagicMoveGenerator implements MoveGenerator {
 	/**
 	 * Generates moves from an attack mask
 	 */
-	private final void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks) { 
+	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			// If we collide with other piece (or other piece and cannot capture), this is blocking
 			if ((to & mines) == 0) {
 				// Capturing
-				addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, ((to & others) != 0 ? true : false), true, 0);
+				addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, ((to & others) != 0), true, 0);
 			}
 			attacks ^= to;
 		}
 	}
 	
-	private final void generatePawnCapturesFromAttacks(int fromIndex, long attacks, long passant) { 
+	private void generatePawnCapturesFromAttacks(int fromIndex, long attacks, long passant) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & others) != 0) { 

@@ -20,7 +20,7 @@ public abstract class Evaluator {
 	public abstract int evaluateBoard(Board board, int alpha, int beta);
 
 	public static int oe(int opening, int endgame) {
-		return (int)(((short)(opening)) << 16) + (short)(endgame);
+		return (((short)(opening)) << 16) + (short)(endgame);
 	}
 	public static int o(int oe) {
 		return oe >> 16;

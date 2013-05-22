@@ -53,7 +53,7 @@ public class PgnFile extends Pgn {
 								if (line == null || line.indexOf("[Event ") == 0)
 									break;
 							}
-						} catch (IOException e) {
+						} catch (IOException ignored) {
 						}
 						return pgnSb.toString();
 					}

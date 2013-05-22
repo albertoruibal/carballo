@@ -199,8 +199,9 @@ public class Move {
 		if (move.length() == 4) { // was algebraic complete e2e4 (=UCI!)
 			from = BitboardUtils.algebraic2Square(move.substring(0, 2));
 		}
-		if (from == 0)
+		if (from == 0) {
 			return -1;
+        }
 
 		// Treats multiple froms, choosing the first Legal Move
 		while (from != 0) {

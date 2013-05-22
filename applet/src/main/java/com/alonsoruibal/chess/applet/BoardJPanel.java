@@ -137,7 +137,7 @@ public class BoardJPanel extends JPanel implements MouseListener, MouseMotionLis
 				int number = 0;
 				try {
 					number = Integer.parseInt(String.valueOf(p));
-				} catch (Exception e) {}
+				} catch (Exception ignored) {}
 				
 				for (int k = 0; k < (number == 0 ? 1 : number); k++) {
 					SquareJPanel panel = (SquareJPanel) chessBoard.getComponent(flip ? 63 - j++ : j++);

@@ -193,7 +193,7 @@ public class MoveIterator {
 	/**
 	 * Generates moves from an attack mask
 	 */
-	private final void generateCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) { 
+	private void generateCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			addCapturesAndGoodPromos(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, true, 0);
@@ -201,7 +201,7 @@ public class MoveIterator {
 		}
 	}
 	
-	private final void generateNonCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) { 
+	private void generateNonCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			addNonCapturesAndBadPromos(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, false, 0);
@@ -209,7 +209,7 @@ public class MoveIterator {
 		}
 	}
 	
-	private final void generatePawnCapturesAndGoodPromos(int fromIndex, long attacks, long passant) {
+	private void generatePawnCapturesAndGoodPromos(int fromIndex, long attacks, long passant) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & passant) != 0) { 
@@ -226,7 +226,7 @@ public class MoveIterator {
 		}
 	}
 
-	private final void generatePawnNonCapturesAndBadPromos(int fromIndex, long attacks) { 
+	private void generatePawnNonCapturesAndBadPromos(int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			boolean capture = (to & others) != 0;

@@ -923,7 +923,7 @@ public class SearchEngine implements Runnable {
 			while(true) {
 				runStepped();
 			}
-		} catch (SearchFinishedException e) {
+		} catch (SearchFinishedException ignored) {
 		}
 		finishRun();
 	}

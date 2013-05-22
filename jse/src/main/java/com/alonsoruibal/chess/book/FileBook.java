@@ -105,7 +105,7 @@ public class FileBook implements Book {
 					dataInputStream.skipBytes(8);
 				}
 			}
-		} catch (Exception e) {}
+		} catch (Exception ignored) {}
 	}
 
 	/**

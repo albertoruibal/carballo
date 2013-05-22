@@ -104,7 +104,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 
 		this.svgElt = svgElt;
 		this.boardDoc = (OMSVGDocument) svgElt.getOwnerDocument();
-		this.boardElt = (OMSVGGElement) boardDoc.getElementById("board");
+		this.boardElt = boardDoc.getElementById("board");
 		this.css = Resources.INSTANCE.getCss();
 		moveOriginIndex = -1;
 		this.algebraicToRects = new HashMap<String, OMSVGRectElement>();
@@ -113,7 +113,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 				int index = j + 8 * i;
 
 				String squareId = BitboardUtils.index2Algebraic(index);
-				OMSVGRectElement squareElt = (OMSVGRectElement) boardDoc.getElementById(squareId);
+				OMSVGRectElement squareElt = boardDoc.getElementById(squareId);
 				algebraicToRects.put(squareId, squareElt);
 			}
 		}
@@ -141,7 +141,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 	private OMSVGUseElement addPiece(char piece, String algebraic) {
 		// GWT.log("addPiece("+piece+", "+algebraic+")");
 		if (piece != '.') {
-			OMSVGRectElement squareElt = (OMSVGRectElement) boardDoc.getElementById(algebraic);
+			OMSVGRectElement squareElt = boardDoc.getElementById(algebraic);
 			OMSVGUseElement useElt = boardDoc.createSVGUseElement();
 			useElt.getX().getBaseVal().setValue(squareElt.getX().getBaseVal().getValue());
 			useElt.getY().getBaseVal().setValue(squareElt.getY().getBaseVal().getValue());
