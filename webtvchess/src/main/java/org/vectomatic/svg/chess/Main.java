@@ -23,6 +23,7 @@ import org.vectomatic.dom.svg.utils.OMSVGParser;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.book.JSONBook;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
@@ -138,6 +139,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * GWT entry point
 	 */
 	public void onModuleLoad() {
+		BitboardAttacks.USE_MAGIC = false;
+
 //		final DecoratedPopupPanel initBox = new DecoratedPopupPanel();
 //		HorizontalPanel hpanel = new HorizontalPanel();
 //		hpanel.add(new Label(ChessConstants.INSTANCE.waitMessage()));
