@@ -43,7 +43,6 @@
     <Compile Include="Com\Alonsoruibal\Chess\Evaluation\CompleteEvaluator.cs" />
     <Compile Include="Com\Alonsoruibal\Chess\Evaluation\Evaluator.cs" />
     <Compile Include="Com\Alonsoruibal\Chess\Evaluation\ExperimentalEvaluator.cs" />
-    <Compile Include="Com\Alonsoruibal\Chess\Evaluation\ExperimentalEvaluatorNew.cs" />
     <Compile Include="Com\Alonsoruibal\Chess\Evaluation\SimplifiedEvaluator.cs" />
     <Compile Include="Com\Alonsoruibal\Chess\Hash\ZobristKey.cs" />
     <Compile Include="Com\Alonsoruibal\Chess\Hash\ZobristKeyFen.cs" />
@@ -176,6 +175,9 @@
     <Compile Include="Sharpen\URLEncoder.cs" />
     <Compile Include="Sharpen\X509Certificate.cs" />
     <Compile Include="Sharpen\X509TrustManager.cs" />
+    <Compile Include="Com\Alonsoruibal\Chess\Bitboard\BitboardAttacksMagic.cs" />
+    <Compile Include="Com\Alonsoruibal\Chess\Pgn.cs" />
+    <Compile Include="Com\Alonsoruibal\Chess\Search\SearchFinishedException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib" />
