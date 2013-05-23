@@ -64,7 +64,7 @@ public class SearchEngine implements Runnable {
 	private int initialPly; // Inital Ply of search
 	private int depth;
 	private int score;
-	private int aspWindows[];
+	private int[] aspWindows;
 
 	long startTime;
 
