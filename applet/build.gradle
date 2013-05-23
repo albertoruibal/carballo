@@ -1,17 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
-group = 'com.alonsoruibal'
 archivesBaseName = 'carballo-applet'
-version = '0.8'
-sourceCompatibility = '1.7'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 dependencies {
-    compile 'com.alonsoruibal:carballo-core:0.8'
-    compile 'com.alonsoruibal:carballo-jse:0.8'
+    compile project(':core')
+    compile project(':jse')
 }

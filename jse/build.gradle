@@ -1,10 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
-group = 'com.alonsoruibal'
 archivesBaseName = 'carballo-jse'
-version = '0.8'
-sourceCompatibility = '1.7'
 
 buildscript {
     repositories {
@@ -16,13 +13,8 @@ buildscript {
     }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
-    compile 'com.alonsoruibal:carballo-core:0.8'
+    compile project(':core')
     testCompile 'junit:junit:4.11'
 }
 

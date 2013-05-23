@@ -1,24 +1,16 @@
 apply plugin: 'java'
 apply plugin: 'war'
 
-group = 'com.alonsoruibal'
 archivesBaseName = 'webtvchess'
-version = '0.8'
-sourceCompatibility = '1.7'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 dependencies {
     compile 'com.google.gwt:gwt-user:2.5.1'
     compile 'com.google.gwt:gwt-dev:2.5.1'
     compile 'org.vectomatic:lib-gwt-svg:0.5.7'
-    compile 'com.alonsoruibal:carballo-core:0.8'
-    compile 'com.alonsoruibal:carballo-core:0.8:sources'
-    compile 'com.alonsoruibal:carballo-gwt:0.8'
-    compile 'com.alonsoruibal:carballo-gwt:0.8:sources'
+    compile project(':core')
+    compile project(path: ':core', configuration: 'archives')
+    compile project(':gwt')
+    compile project(path: ':gwt', configuration: 'archives')
 }
 
 task compileGwt (dependsOn: classes, type: JavaExec) {

@@ -1,0 +1,9 @@
+allprojects {
+    group = 'com.alonsoruibal'
+    version = '0.8'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
