@@ -17,7 +17,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 //	static final int GAME_TIME_PER_PLAYER = 30 * 1000; // in milliseconds
 //	static final int GAME_TIME_PER_PLAYER = 1 * 60 * 1000; // in milliseconds
 //	static final int GAME_TIME_PER_PLAYER = 5 * 1000; // in milliseconds
-	static final int GAME_TIME_PER_PLAYER = 1 * 1000; // in milliseconds
+	static final int GAME_TIME_PER_PLAYER = 1000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
 	static final int SLEEP = 0; //1000; // Do not touch
 	static final int SLEEP2 = 0;

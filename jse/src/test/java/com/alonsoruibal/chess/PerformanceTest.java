@@ -22,8 +22,8 @@ public class PerformanceTest extends TestCase {
 
 	Evaluator experimentalEvaluator, completeEvaluator;
 	MoveGenerator movegen;
-	MoveGenerator legalMovegen;;
-	Board testBoards[];
+	MoveGenerator legalMovegen;
+    Board testBoards[];
 
 	
 	String tests[] = {
@@ -179,8 +179,8 @@ public class PerformanceTest extends TestCase {
 		int moves[] = new int[256];
 
 		for (int i=0; i< 10000; i++) {
-			for (int j=0; j< tests.length; j++) {;
-				legalMovegen.generateMoves(testBoards[j], moves, 0);
+			for (int j=0; j< tests.length; j++) {
+                legalMovegen.generateMoves(testBoards[j], moves, 0);
 				positions++;
 			}
 		}

@@ -19,8 +19,8 @@ public class SearchTest extends TestCase {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
-	};
-	
+	}
+
     /**
      * Late move pruning must not be used in mate search.
      */

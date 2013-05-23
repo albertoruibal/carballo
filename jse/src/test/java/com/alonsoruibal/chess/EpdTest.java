@@ -65,7 +65,7 @@ public class EpdTest extends TestCase {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
-	};
+	}
 	
    long processEpdFile(InputStream is, int timeLimit) {
 		totalTime = 0;
