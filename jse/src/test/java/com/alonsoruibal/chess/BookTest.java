@@ -1,5 +1,6 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.book.FileBook;
 import junit.framework.TestCase;
 
 /**
@@ -7,10 +8,10 @@ import junit.framework.TestCase;
  */
 public class BookTest extends TestCase {
 
-	public void testBook() {
+//	public void testBook() {
 //		Board board = new Board();
 //		board.startPosition();
-//		Book book = new Book(new Config());
+//		Book book = new FileBook(new Config());
 //		int move = book.getMove(board);
 //		while (move != -1) {
 //			System.out.println(move);
@@ -18,5 +19,5 @@ public class BookTest extends TestCase {
 //			System.out.println(board);
 //			move = book.getMove(board);
 //		}
-	}
+//	}
 }
