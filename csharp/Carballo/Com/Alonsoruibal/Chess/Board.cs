@@ -115,6 +115,8 @@ namespace Com.Alonsoruibal.Chess
 		private static readonly int[] SEE_PIECE_VALUES = new int[] { 0, 100, 325, 330, 500
 			, 900, 9999 };
 
+		internal BitboardAttacks bbAttacks;
+
 		public Board()
 		{
 			// if -1 then legal moves not generated
@@ -303,6 +305,7 @@ namespace Com.Alonsoruibal.Chess
 			seeGain = new int[32];
 			moveHistory = new int[MAX_MOVES];
 			sanMoves = new Dictionary<int, string>();
+			bbAttacks = BitboardAttacks.GetInstance();
 		}
 
 		/// <summary>Also computes zobrish key</summary>
@@ -752,7 +755,7 @@ namespace Com.Alonsoruibal.Chess
 			return sb.ToString();
 		}
 
-		/// <summary>TODO is it neccesary??</summary>
+		/// <summary>TODO is it necessary??</summary>
 		private void ResetHistory()
 		{
 			Arrays.Fill(whitesHistory, 0);
@@ -942,13 +945,13 @@ namespace Com.Alonsoruibal.Chess
 						// Set new passant flags if pawn is advancing two squares (marks
 						// the destination square where the pawn can be captured)
 						// Set only passant flags when the other side can capture
-						if (((from << 16) & to) != 0 && (BitboardAttacks.pawnUpwards[toIndex - 8] & pawns
-							 & GetOthers()) != 0)
+						if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & GetOthers
+							()) != 0)
 						{
 							// white
 							flags |= (from << 8);
 						}
-						if ((((long)(((ulong)from) >> 16)) & to) != 0 && (BitboardAttacks.pawnDownwards[toIndex
+						if ((((long)(((ulong)from) >> 16)) & to) != 0 && (bbAttacks.pawnDownwards[toIndex
 							 + 8] & pawns & GetOthers()) != 0)
 						{
 							// blask
@@ -1160,13 +1163,13 @@ namespace Com.Alonsoruibal.Chess
 		/// <summary>Checks is a state is valid Basically, not entering own king in check</summary>
 		private bool IsValid(bool turn)
 		{
-			return (!BitboardAttacks.IsSquareAttacked(this, kings & GetOthers(), !turn));
+			return (!bbAttacks.IsSquareAttacked(this, kings & GetOthers(), !turn));
 		}
 
 		private void SetCheckFlags(bool turn)
 		{
 			// Set check flags
-			if (BitboardAttacks.IsSquareAttacked(this, kings & GetMines(), turn))
+			if (bbAttacks.IsSquareAttacked(this, kings & GetMines(), turn))
 			{
 				flags |= FLAG_CHECK;
 			}
@@ -1258,11 +1261,7 @@ namespace Com.Alonsoruibal.Chess
 				}
 			}
 			// Draw by no material to mate
-			if (pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0)
-			{
-				return true;
-			}
-			return false;
+			return pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0;
 		}
 
 		/// <summary>The SWAP algorithm</summary>
@@ -1315,7 +1314,7 @@ namespace Com.Alonsoruibal.Chess
 			// knights
 			long fromSquare = 1 << fromIndex;
 			long all = GetAll();
-			long attacks = BitboardAttacks.GetIndexAttacks(this, toIndex);
+			long attacks = bbAttacks.GetIndexAttacks(this, toIndex);
 			long fromCandidates = 0;
 			seeGain[d] = SEE_PIECE_VALUES[targetPiece];
 			do
@@ -1331,7 +1330,7 @@ namespace Com.Alonsoruibal.Chess
 				// reset bit in temporary occupancy (for x-Rays)
 				if ((fromSquare & mayXray) != 0)
 				{
-					attacks |= BitboardAttacks.GetXrayAttacks(this, toIndex, all);
+					attacks |= bbAttacks.GetXrayAttacks(this, toIndex, all);
 				}
 				// Gets the next attacker
 				fromSquare = 0;

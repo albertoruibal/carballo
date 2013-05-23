@@ -199,23 +199,23 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 			5), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		private static readonly long[] BISHOP_TRAPPING = new long[] { unchecked((int)(0x00
-			)), 1 << 10, unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
-			)), unchecked((int)(0x00)), 1 << 13, unchecked((int)(0x00)), 1 << 17, unchecked(
+			)), 1L << 10, unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
+			)), unchecked((int)(0x00)), 1L << 13, unchecked((int)(0x00)), 1L << 17, unchecked(
 			(int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
-			)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1 << 22, 1 << 25, unchecked(
+			)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1L << 22, 1L << 25, unchecked(
 			(int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
-			)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1 << 30, unchecked((int)(0x00
+			)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1L << 30, unchecked((int)(0x00
 			)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked(
 			(int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
 			)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked(
 			(int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00
-			)), unchecked((int)(0x00)), 1 << 33, unchecked((int)(0x00)), unchecked((int)(0x00
+			)), unchecked((int)(0x00)), 1L << 33, unchecked((int)(0x00)), unchecked((int)(0x00
 			)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked(
-			(int)(0x00)), 1 << 38, 1 << 41, unchecked((int)(0x00)), unchecked((int)(0x00)), 
-			unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked(
-			(int)(0x00)), 1 << 46, unchecked((int)(0x00)), 1 << 50, unchecked((int)(0x00)), 
-			unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1 << 53, 
-			unchecked((int)(0x00)) };
+			(int)(0x00)), 1L << 38, 1L << 41, unchecked((int)(0x00)), unchecked((int)(0x00))
+			, unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked(
+			(int)(0x00)), 1L << 46, unchecked((int)(0x00)), 1L << 50, unchecked((int)(0x00))
+			, unchecked((int)(0x00)), unchecked((int)(0x00)), unchecked((int)(0x00)), 1L << 
+			53, unchecked((int)(0x00)) };
 
 		private static readonly int[] KING_SAFETY_PONDER = new int[] { 0, 1, 2, 4, 8, 8, 
 			8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
@@ -501,10 +501,10 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 				(((ulong)pawnAttacks[1]) >> 16) | (long)(((ulong)pawnAttacks[1]) >> 24) | (long)
 				(((ulong)pawnAttacks[1]) >> 32) | (long)(((ulong)pawnAttacks[1]) >> 40);
 			// Squares surrounding King
-			squaresNearKing[0] = BitboardAttacks.king[BitboardUtils.Square2Index(board.whites
-				 & board.kings)] | board.whites & board.kings;
-			squaresNearKing[1] = BitboardAttacks.king[BitboardUtils.Square2Index(board.blacks
-				 & board.kings)] | board.blacks & board.kings;
+			squaresNearKing[0] = bbAttacks.king[BitboardUtils.Square2Index(board.whites & board
+				.kings)] | board.whites & board.kings;
+			squaresNearKing[1] = bbAttacks.king[BitboardUtils.Square2Index(board.blacks & board
+				.kings)] | board.blacks & board.kings;
 			minorPiecesDefendedByPawns[0] = board.whites & (board.bishops | board.knights) & 
 				pawnAttacks[0];
 			minorPiecesDefendedByPawns[1] = board.blacks & (board.bishops | board.knights) & 
@@ -519,39 +519,39 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 					int color = (isWhite ? 0 : 1);
 					if ((square & board.pawns) != 0)
 					{
-						pieceAttacks = (isWhite ? BitboardAttacks.pawnUpwards[index] : BitboardAttacks.pawnDownwards
-							[index]);
+						pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[
+							index]);
 					}
 					else
 					{
 						if ((square & board.knights) != 0)
 						{
-							pieceAttacks = BitboardAttacks.knight[index];
+							pieceAttacks = bbAttacks.knight[index];
 						}
 						else
 						{
 							if ((square & board.bishops) != 0)
 							{
-								pieceAttacks = BitboardAttacks.GetBishopAttacks(index, all);
+								pieceAttacks = bbAttacks.GetBishopAttacks(index, all);
 							}
 							else
 							{
 								if ((square & board.rooks) != 0)
 								{
-									pieceAttacks = BitboardAttacks.GetRookAttacks(index, all);
+									pieceAttacks = bbAttacks.GetRookAttacks(index, all);
 								}
 								else
 								{
 									if ((square & board.queens) != 0)
 									{
-										pieceAttacks = BitboardAttacks.GetRookAttacks(index, all) | BitboardAttacks.GetBishopAttacks
-											(index, all);
+										pieceAttacks = bbAttacks.GetRookAttacks(index, all) | bbAttacks.GetBishopAttacks(
+											index, all);
 									}
 									else
 									{
 										if ((square & board.kings) != 0)
 										{
-											pieceAttacks = BitboardAttacks.king[index];
+											pieceAttacks = bbAttacks.king[index];
 										}
 										else
 										{
@@ -744,7 +744,7 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 						{
 							// Candidates is the same check but removing opposite pawns attacking our square
 							if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) & BitboardUtils
-								.RANKS_FORWARD[color][rank] & (isWhite ? BitboardAttacks.pawnUpwards[index] : BitboardAttacks
+								.RANKS_FORWARD[color][rank] & (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks
 								.pawnDownwards[index]) & board.pawns & others) == 0)
 							{
 								passedPawns[color] += PAWN_CANDIDATE[(isWhite ? rank : 7 - rank)];
@@ -835,8 +835,8 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 								}
 								superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens
 									);
-								pieceAttacksXray = BitboardAttacks.GetBishopAttacks(index, all & ~(pieceAttacks &
-									 others)) & ~pieceAttacks;
+								pieceAttacksXray = bbAttacks.GetBishopAttacks(index, all & ~(pieceAttacks & others
+									)) & ~pieceAttacks;
 								if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0)
 								{
 									attacks[color] += PINNED_PIECE;
@@ -903,8 +903,8 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 										attacks[color] += ROOK_ATTACKS_Q;
 									}
 									superiorPieceAttacked[color] |= pieceAttacks & others & board.queens;
-									pieceAttacksXray = BitboardAttacks.GetRookAttacks(index, all & ~(pieceAttacks & others
-										)) & ~pieceAttacks;
+									pieceAttacksXray = bbAttacks.GetRookAttacks(index, all & ~(pieceAttacks & others)
+										) & ~pieceAttacks;
 									if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0)
 									{
 										attacks[color] += PINNED_PIECE;
@@ -1000,9 +1000,8 @@ namespace Com.Alonsoruibal.Chess.Evaluation
 										{
 											attacks[color] += QUEEN_ATTACKS_PU;
 										}
-										pieceAttacksXray = (BitboardAttacks.GetRookAttacks(index, all & ~(pieceAttacks & 
-											others)) | BitboardAttacks.GetBishopAttacks(index, all & ~(pieceAttacks & others
-											))) & ~pieceAttacks;
+										pieceAttacksXray = (bbAttacks.GetRookAttacks(index, all & ~(pieceAttacks & others
+											)) | bbAttacks.GetBishopAttacks(index, all & ~(pieceAttacks & others))) & ~pieceAttacks;
 										if ((pieceAttacksXray & board.kings & others) != 0)
 										{
 											attacks[color] += PINNED_PIECE;

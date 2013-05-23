@@ -68,6 +68,14 @@ namespace Com.Alonsoruibal.Chess.Search
 
 		private int initialPly;
 
+		private int depth;
+
+		private int score;
+
+		private int[] aspWindows;
+
+		internal long startTime;
+
 		private long positionCounter;
 
 		private long pvPositionCounter;
@@ -217,7 +225,6 @@ namespace Com.Alonsoruibal.Chess.Search
 		{
 			logger.Debug(new DateTime());
 			initialized = false;
-			BitboardAttacks.Init();
 			board.StartPosition();
 			sortInfo.Clear();
 			logger.Debug("Creating Evaluator");
@@ -478,13 +485,13 @@ namespace Com.Alonsoruibal.Chess.Search
 
 		/// <summary>Search horizon node (depth == 0) some kind of quiescent search</summary>
 		/// <returns></returns>
-		/// <exception cref="TimeExceedException">TimeExceedException</exception>
-		/// <exception cref="Com.Alonsoruibal.Chess.Search.TimeExceedException"></exception>
+		/// <exception cref="SearchFinishedException">SearchFinishedException</exception>
+		/// <exception cref="Com.Alonsoruibal.Chess.Search.SearchFinishedException"></exception>
 		public virtual int QuiescentSearch(int qsdepth, int alpha, int beta)
 		{
 			if (Runtime.CurrentTimeMillis() > thinkTo && foundOneMove)
 			{
-				throw new TimeExceedException();
+				throw new SearchFinishedException();
 			}
 			qsPositionCounter++;
 			// checks draw by three fold repetition. and fifty moves rule
@@ -593,13 +600,13 @@ namespace Com.Alonsoruibal.Chess.Search
 		}
 
 		/// <summary>Search Root, PV and null window</summary>
-		/// <exception cref="Com.Alonsoruibal.Chess.Search.TimeExceedException"></exception>
+		/// <exception cref="Com.Alonsoruibal.Chess.Search.SearchFinishedException"></exception>
 		public virtual int Search(int nodeType, int depthRemaining, int alpha, int beta, 
 			bool allowNullMove, int excludedMove)
 		{
 			if (Runtime.CurrentTimeMillis() > thinkTo && foundOneMove)
 			{
-				throw new TimeExceedException();
+				throw new SearchFinishedException();
 			}
 			if (nodeType == NODE_PV || nodeType == NODE_ROOT)
 			{
@@ -996,11 +1003,12 @@ namespace Com.Alonsoruibal.Chess.Search
 				 / singularExtensionProbe) + "%");
 		}
 
-		public virtual void Run()
+		/// <exception cref="Com.Alonsoruibal.Chess.Search.SearchFinishedException"></exception>
+		public virtual void NewRun()
 		{
 			foundOneMove = false;
 			searching = true;
-			long startTime = Runtime.CurrentTimeMillis();
+			startTime = Runtime.CurrentTimeMillis();
 			logger.Debug("Board\n" + board);
 			positionCounter = 0;
 			pvPositionCounter = 0;
@@ -1009,6 +1017,7 @@ namespace Com.Alonsoruibal.Chess.Search
 			globalBestMove = 0;
 			ponderMove = 0;
 			pv = null;
+			initialPly = board.GetMoveNumber();
 			thinkTo = startTime + searchParameters.CalculateMoveTime(board) - 100;
 			if (config.GetUseBook() && config.GetBook() != null && board.GetOutBookMove() > board
 				.GetMoveNumber() && (config.GetBookKnowledge() == 100 || ((random.NextDouble() *
@@ -1020,6 +1029,7 @@ namespace Com.Alonsoruibal.Chess.Search
 				{
 					globalBestMove = bookMove;
 					logger.Debug("Found Move in Book");
+					throw new SearchFinishedException();
 				}
 				else
 				{
@@ -1027,98 +1037,115 @@ namespace Com.Alonsoruibal.Chess.Search
 					board.SetOutBookMove(board.GetMoveNumber());
 				}
 			}
-			initialPly = board.GetMoveNumber();
-			if (globalBestMove == 0)
+			depth = 1;
+			score = Eval(-Evaluator.VICTORY, Evaluator.VICTORY, false, false);
+			tt.NewGeneration();
+			aspWindows = config.GetAspirationWindowSizes();
+		}
+
+		/// <exception cref="Com.Alonsoruibal.Chess.Search.SearchFinishedException"></exception>
+		public virtual void RunStepped()
+		{
+			int failHighCount = 0;
+			int failLowCount = 0;
+			int initialScore = score;
+			int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore
+				 - aspWindows[failLowCount] : -Evaluator.VICTORY);
+			int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore
+				 + aspWindows[failHighCount] : Evaluator.VICTORY);
+			// Iterate aspiration windows
+			while (true)
 			{
-				int score = Eval(-Evaluator.VICTORY, Evaluator.VICTORY, false, false);
-				try
+				aspirationWindowProbe++;
+				score = Search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
+				// logger.debug("alpha = " + alpha + ", beta = " + beta
+				// + ", score=" + score);
+				if (score <= alpha)
 				{
-					tt.NewGeneration();
-					int[] aspWindows = config.GetAspirationWindowSizes();
-					for (int depth = 1; depth < MAX_DEPTH; depth++)
+					failLowCount++;
+					alpha = (failLowCount < aspWindows.Length && (initialScore - aspWindows[failLowCount
+						] > -Evaluator.VICTORY) ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY
+						);
+				}
+				else
+				{
+					if (score >= beta)
 					{
-						int failHighCount = 0;
-						int failLowCount = 0;
-						int initialScore = score;
-						int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore
-							 - aspWindows[failLowCount] : -Evaluator.VICTORY);
-						int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore
-							 + aspWindows[failHighCount] : Evaluator.VICTORY);
-						// Iterate aspiration windows
-						while (true)
-						{
-							aspirationWindowProbe++;
-							score = Search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
-							// logger.debug("alpha = " + alpha + ", beta = " + beta
-							// + ", score=" + score);
-							if (score <= alpha)
-							{
-								failLowCount++;
-								alpha = (failLowCount < aspWindows.Length && (initialScore - aspWindows[failLowCount
-									] > -Evaluator.VICTORY) ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY
-									);
-							}
-							else
-							{
-								if (score >= beta)
-								{
-									failHighCount++;
-									beta = (failHighCount < aspWindows.Length && (initialScore + aspWindows[failHighCount
-										] < Evaluator.VICTORY) ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY
-										);
-								}
-								else
-								{
-									aspirationWindowHit++;
-									break;
-								}
-							}
-						}
-						long time = Runtime.CurrentTimeMillis();
-						long oldBestMove = globalBestMove;
-						GetPv();
-						if (globalBestMove != 0)
-						{
-							foundOneMove = true;
-						}
-						// update best move time
-						if (oldBestMove != globalBestMove)
-						{
-							bestMoveTime = time - startTime;
-						}
-						SearchStatusInfo info = new SearchStatusInfo();
-						info.SetDepth(depth);
-						info.SetTime(time - startTime);
-						info.SetPv(pv);
-						info.SetScore(score);
-						info.SetNodes(positionCounter + pvPositionCounter + qsPositionCounter);
-						info.SetNps((int)(1000 * (positionCounter + pvPositionCounter + qsPositionCounter
-							) / ((time - startTime + 1))));
-						logger.Debug(info.ToString());
-						if (observer != null)
-						{
-							observer.Info(info);
-						}
-						// if mate found exit
-						if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000))
-						{
-							break;
-						}
+						failHighCount++;
+						beta = (failHighCount < aspWindows.Length && (initialScore + aspWindows[failHighCount
+							] < Evaluator.VICTORY) ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY
+							);
+					}
+					else
+					{
+						aspirationWindowHit++;
+						break;
 					}
 				}
-				catch (TimeExceedException)
-				{
-					// puts the board in the initial position
-					logger.Debug("Time exceed: returning to move " + initialPly);
-				}
-				board.UndoMove(initialPly);
-				SearchStats();
 			}
+			long time = Runtime.CurrentTimeMillis();
+			long oldBestMove = globalBestMove;
+			GetPv();
+			if (globalBestMove != 0)
+			{
+				foundOneMove = true;
+			}
+			// update best move time
+			if (oldBestMove != globalBestMove)
+			{
+				bestMoveTime = time - startTime;
+			}
+			SearchStatusInfo info = new SearchStatusInfo();
+			info.SetDepth(depth);
+			info.SetTime(time - startTime);
+			info.SetPv(pv);
+			info.SetScore(score);
+			info.SetNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+			info.SetNps((int)(1000 * (positionCounter + pvPositionCounter + qsPositionCounter
+				) / ((time - startTime + 1))));
+			logger.Debug(info.ToString());
+			if (observer != null)
+			{
+				observer.Info(info);
+			}
+			// if mate found exit
+			if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000))
+			{
+				throw new SearchFinishedException();
+			}
+			depth++;
+			if (depth == MAX_DEPTH)
+			{
+				throw new SearchFinishedException();
+			}
+		}
+
+		public virtual void FinishRun()
+		{
+			// puts the board in the initial position
+			board.UndoMove(initialPly);
+			SearchStats();
 			searching = false;
 			if (observer != null)
 			{
 				observer.BestMove(globalBestMove, ponderMove);
 			}
+		}
+
+		public virtual void Run()
+		{
+			try
+			{
+				NewRun();
+				while (true)
+				{
+					RunStepped();
+				}
+			}
+			catch (SearchFinishedException)
+			{
+			}
+			FinishRun();
 		}
 
 		/// <summary>

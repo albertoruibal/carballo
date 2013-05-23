@@ -203,39 +203,40 @@ namespace Com.Alonsoruibal.Chess
 				 - 2, move.Length));
 			long to = unchecked((long)(0x1L)) << toIndex;
 			long from = 0;
+			BitboardAttacks bbAttacks = BitboardAttacks.GetInstance();
 			switch (move[0])
 			{
 				case 'N':
 				{
 					// Fills from with a mask of possible from values
-					from = board.knights & board.GetMines() & BitboardAttacks.knight[toIndex];
+					from = board.knights & board.GetMines() & bbAttacks.knight[toIndex];
 					break;
 				}
 
 				case 'K':
 				{
-					from = board.kings & board.GetMines() & BitboardAttacks.king[toIndex];
+					from = board.kings & board.GetMines() & bbAttacks.king[toIndex];
 					break;
 				}
 
 				case 'R':
 				{
-					from = board.rooks & board.GetMines() & BitboardAttacks.GetRookAttacks(toIndex, board
-						.GetAll());
+					from = board.rooks & board.GetMines() & bbAttacks.GetRookAttacks(toIndex, board.GetAll
+						());
 					break;
 				}
 
 				case 'B':
 				{
-					from = board.bishops & board.GetMines() & BitboardAttacks.GetBishopAttacks(toIndex
-						, board.GetAll());
+					from = board.bishops & board.GetMines() & bbAttacks.GetBishopAttacks(toIndex, board
+						.GetAll());
 					break;
 				}
 
 				case 'Q':
 				{
-					from = board.queens & board.GetMines() & (BitboardAttacks.GetRookAttacks(toIndex, 
-						board.GetAll()) | BitboardAttacks.GetBishopAttacks(toIndex, board.GetAll()));
+					from = board.queens & board.GetMines() & (bbAttacks.GetRookAttacks(toIndex, board
+						.GetAll()) | bbAttacks.GetBishopAttacks(toIndex, board.GetAll()));
 					break;
 				}
 			}
@@ -263,8 +264,8 @@ namespace Com.Alonsoruibal.Chess
 				if (move.Length == 3)
 				{
 					// Pawn capture
-					from = board.pawns & board.GetMines() & (board.GetTurn() ? BitboardAttacks.pawnDownwards
-						[toIndex] : BitboardAttacks.pawnUpwards[toIndex]);
+					from = board.pawns & board.GetMines() & (board.GetTurn() ? bbAttacks.pawnDownwards
+						[toIndex] : bbAttacks.pawnUpwards[toIndex]);
 				}
 			}
 			if (move.Length == 3)

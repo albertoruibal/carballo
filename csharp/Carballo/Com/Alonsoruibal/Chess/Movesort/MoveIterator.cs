@@ -103,6 +103,8 @@ namespace Com.Alonsoruibal.Chess.Movesort
 
 		internal int phase;
 
+		internal BitboardAttacks bbAttacks;
+
 		//	private static final Logger logger = Logger.getLogger(MoveIterator.class);
 		// Stores slider pieces attacks
 		// Stores captures and queen promotions
@@ -119,6 +121,7 @@ namespace Com.Alonsoruibal.Chess.Movesort
 			this.sortInfo = sortInfo;
 			this.board = board;
 			this.depth = depth;
+			bbAttacks = BitboardAttacks.GetInstance();
 		}
 
 		public virtual void SetBoard(Board board)
@@ -129,7 +132,7 @@ namespace Com.Alonsoruibal.Chess.Movesort
 		/// <summary>Generates captures and tactical moves (not underpromotions)</summary>
 		public virtual void GenerateCaptures()
 		{
-			//		logger.debug(board);
+			// logger.debug(board);
 			all = board.GetAll();
 			// only for clearity
 			mines = board.GetMines();
@@ -144,7 +147,7 @@ namespace Com.Alonsoruibal.Chess.Movesort
 					if ((square & board.rooks) != 0)
 					{
 						// Rook
-						attacks[index] = BitboardAttacks.GetRookAttacks(index, all);
+						attacks[index] = bbAttacks.GetRookAttacks(index, all);
 						GenerateCapturesFromAttacks(Move.ROOK, index, attacks[index] & others);
 					}
 					else
@@ -152,7 +155,7 @@ namespace Com.Alonsoruibal.Chess.Movesort
 						if ((square & board.bishops) != 0)
 						{
 							// Bishop
-							attacks[index] = BitboardAttacks.GetBishopAttacks(index, all);
+							attacks[index] = bbAttacks.GetBishopAttacks(index, all);
 							GenerateCapturesFromAttacks(Move.BISHOP, index, attacks[index] & others);
 						}
 						else
@@ -160,7 +163,7 @@ namespace Com.Alonsoruibal.Chess.Movesort
 							if ((square & board.queens) != 0)
 							{
 								// Queen
-								attacks[index] = BitboardAttacks.GetRookAttacks(index, all) | BitboardAttacks.GetBishopAttacks
+								attacks[index] = bbAttacks.GetRookAttacks(index, all) | bbAttacks.GetBishopAttacks
 									(index, all);
 								GenerateCapturesFromAttacks(Move.QUEEN, index, attacks[index] & others);
 							}
@@ -169,16 +172,14 @@ namespace Com.Alonsoruibal.Chess.Movesort
 								if ((square & board.kings) != 0)
 								{
 									// King
-									GenerateCapturesFromAttacks(Move.KING, index, BitboardAttacks.king[index] & others
-										);
+									GenerateCapturesFromAttacks(Move.KING, index, bbAttacks.king[index] & others);
 								}
 								else
 								{
 									if ((square & board.knights) != 0)
 									{
 										// Knight
-										GenerateCapturesFromAttacks(Move.KNIGHT, index, BitboardAttacks.knight[index] & others
-											);
+										GenerateCapturesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index] & others);
 									}
 									else
 									{
@@ -187,15 +188,15 @@ namespace Com.Alonsoruibal.Chess.Movesort
 											// Pawns
 											if ((square & board.whites) != 0)
 											{
-												GeneratePawnCapturesAndGoodPromos(index, (BitboardAttacks.pawnUpwards[index] & (others
-													 | board.GetPassantSquare())) | (((square << 8) & all) == 0 ? (square << 8) : 0)
-													, board.GetPassantSquare());
+												GeneratePawnCapturesAndGoodPromos(index, (bbAttacks.pawnUpwards[index] & (others 
+													| board.GetPassantSquare())) | (((square << 8) & all) == 0 ? (square << 8) : 0), 
+													board.GetPassantSquare());
 											}
 											else
 											{
-												GeneratePawnCapturesAndGoodPromos(index, (BitboardAttacks.pawnDownwards[index] & 
-													(others | board.GetPassantSquare())) | ((((long)(((ulong)square) >> 8)) & all) ==
-													 0 ? ((long)(((ulong)square) >> 8)) : 0), board.GetPassantSquare());
+												GeneratePawnCapturesAndGoodPromos(index, (bbAttacks.pawnDownwards[index] & (others
+													 | board.GetPassantSquare())) | ((((long)(((ulong)square) >> 8)) & all) == 0 ? (
+													(long)(((ulong)square) >> 8)) : 0), board.GetPassantSquare());
 											}
 										}
 									}
@@ -246,16 +247,15 @@ namespace Com.Alonsoruibal.Chess.Movesort
 								if ((square & board.kings) != 0)
 								{
 									// King
-									GenerateNonCapturesFromAttacks(Move.KING, index, BitboardAttacks.king[index] & ~all
-										);
+									GenerateNonCapturesFromAttacks(Move.KING, index, bbAttacks.king[index] & ~all);
 								}
 								else
 								{
 									if ((square & board.knights) != 0)
 									{
 										// Knight
-										GenerateNonCapturesFromAttacks(Move.KNIGHT, index, BitboardAttacks.knight[index] 
-											& ~all);
+										GenerateNonCapturesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index] & ~all
+											);
 									}
 								}
 							}
@@ -266,18 +266,18 @@ namespace Com.Alonsoruibal.Chess.Movesort
 						// Pawns
 						if ((square & board.whites) != 0)
 						{
-							GeneratePawnNonCapturesAndBadPromos(index, (BitboardAttacks.pawnUpwards[index] & 
-								others) | (((square << 8) & all) == 0 ? (square << 8) : 0) | ((square & BitboardUtils
-								.b2_d) != 0 && (((square << 8) | (square << 16)) & all) == 0 ? (square << 16) : 
-								0));
+							GeneratePawnNonCapturesAndBadPromos(index, (bbAttacks.pawnUpwards[index] & others
+								) | (((square << 8) & all) == 0 ? (square << 8) : 0) | ((square & BitboardUtils.
+								b2_d) != 0 && (((square << 8) | (square << 16)) & all) == 0 ? (square << 16) : 0
+								));
 						}
 						else
 						{
-							GeneratePawnNonCapturesAndBadPromos(index, (BitboardAttacks.pawnDownwards[index] 
-								& others) | ((((long)(((ulong)square) >> 8)) & all) == 0 ? ((long)(((ulong)square
-								) >> 8)) : 0) | ((square & BitboardUtils.b2_u) != 0 && ((((long)(((ulong)square)
-								 >> 8)) | ((long)(((ulong)square) >> 16))) & all) == 0 ? ((long)(((ulong)square)
-								 >> 16)) : 0));
+							GeneratePawnNonCapturesAndBadPromos(index, (bbAttacks.pawnDownwards[index] & others
+								) | ((((long)(((ulong)square) >> 8)) & all) == 0 ? ((long)(((ulong)square) >> 8)
+								) : 0) | ((square & BitboardUtils.b2_u) != 0 && ((((long)(((ulong)square) >> 8))
+								 | ((long)(((ulong)square) >> 16))) & all) == 0 ? ((long)(((ulong)square) >> 16)
+								) : 0));
 						}
 					}
 				}
@@ -293,9 +293,9 @@ namespace Com.Alonsoruibal.Chess.Movesort
 				()))))
 			{
 				myKingIndex = BitboardUtils.Square2Index(square);
-				if (!board.GetCheck() && !BitboardAttacks.IsIndexAttacked(board, unchecked((byte)
-					(myKingIndex - 1)), board.GetTurn()) && !BitboardAttacks.IsIndexAttacked(board, 
-					unchecked((byte)(myKingIndex - 2)), board.GetTurn()))
+				if (!board.GetCheck() && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 - 1)), board.GetTurn()) && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 - 2)), board.GetTurn()))
 				{
 					AddNonCapturesAndBadPromos(Move.KING, myKingIndex, myKingIndex - 2, 0, false, Move
 						.TYPE_KINGSIDE_CASTLING);
@@ -309,9 +309,9 @@ namespace Com.Alonsoruibal.Chess.Movesort
 				{
 					myKingIndex = BitboardUtils.Square2Index(square);
 				}
-				if (!board.GetCheck() && !BitboardAttacks.IsIndexAttacked(board, unchecked((byte)
-					(myKingIndex + 1)), board.GetTurn()) && !BitboardAttacks.IsIndexAttacked(board, 
-					unchecked((byte)(myKingIndex + 2)), board.GetTurn()))
+				if (!board.GetCheck() && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 + 1)), board.GetTurn()) && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 + 2)), board.GetTurn()))
 				{
 					AddNonCapturesAndBadPromos(Move.KING, myKingIndex, myKingIndex + 2, 0, false, Move
 						.TYPE_QUEENSIDE_CASTLING);

@@ -25,9 +25,12 @@ namespace Com.Alonsoruibal.Chess.Movegen
 
 		private long others;
 
+		internal BitboardAttacks bbAttacks;
+
 		public virtual int GenerateMoves(Board board, int[] moves, int mIndex)
 		{
 			this.moves = moves;
+			bbAttacks = BitboardAttacks.GetInstance();
 			moveIndex = mIndex;
 			all = board.GetAll();
 			// only for clearity
@@ -42,40 +45,38 @@ namespace Com.Alonsoruibal.Chess.Movegen
 					if ((square & board.rooks) != 0)
 					{
 						// Rook
-						GenerateMovesFromAttacks(Move.ROOK, index, BitboardAttacks.GetRookAttacks(index, 
-							all));
+						GenerateMovesFromAttacks(Move.ROOK, index, bbAttacks.GetRookAttacks(index, all));
 					}
 					else
 					{
 						if ((square & board.bishops) != 0)
 						{
 							// Bishop
-							GenerateMovesFromAttacks(Move.BISHOP, index, BitboardAttacks.GetBishopAttacks(index
-								, all));
+							GenerateMovesFromAttacks(Move.BISHOP, index, bbAttacks.GetBishopAttacks(index, all
+								));
 						}
 						else
 						{
 							if ((square & board.queens) != 0)
 							{
 								// Queen
-								GenerateMovesFromAttacks(Move.QUEEN, index, BitboardAttacks.GetRookAttacks(index, 
-									all));
-								GenerateMovesFromAttacks(Move.QUEEN, index, BitboardAttacks.GetBishopAttacks(index
-									, all));
+								GenerateMovesFromAttacks(Move.QUEEN, index, bbAttacks.GetRookAttacks(index, all));
+								GenerateMovesFromAttacks(Move.QUEEN, index, bbAttacks.GetBishopAttacks(index, all
+									));
 							}
 							else
 							{
 								if ((square & board.kings) != 0)
 								{
 									// King
-									GenerateMovesFromAttacks(Move.KING, index, BitboardAttacks.king[index]);
+									GenerateMovesFromAttacks(Move.KING, index, bbAttacks.king[index]);
 								}
 								else
 								{
 									if ((square & board.knights) != 0)
 									{
 										// Knight
-										GenerateMovesFromAttacks(Move.KNIGHT, index, BitboardAttacks.knight[index]);
+										GenerateMovesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index]);
 									}
 									else
 									{
@@ -93,8 +94,8 @@ namespace Com.Alonsoruibal.Chess.Movegen
 														AddMoves(Move.PAWN, index, index + 16, (square << 16), false, false, 0);
 													}
 												}
-												GeneratePawnCapturesFromAttacks(index, BitboardAttacks.pawnUpwards[index], board.
-													GetPassantSquare());
+												GeneratePawnCapturesFromAttacks(index, bbAttacks.pawnUpwards[index], board.GetPassantSquare
+													());
 											}
 											else
 											{
@@ -110,8 +111,8 @@ namespace Com.Alonsoruibal.Chess.Movegen
 															, 0);
 													}
 												}
-												GeneratePawnCapturesFromAttacks(index, BitboardAttacks.pawnDownwards[index], board
-													.GetPassantSquare());
+												GeneratePawnCapturesFromAttacks(index, bbAttacks.pawnDownwards[index], board.GetPassantSquare
+													());
 											}
 										}
 									}
@@ -132,9 +133,9 @@ namespace Com.Alonsoruibal.Chess.Movegen
 				()))))
 			{
 				myKingIndex = BitboardUtils.Square2Index(square);
-				if (!board.GetCheck() && !BitboardAttacks.IsIndexAttacked(board, unchecked((byte)
-					(myKingIndex - 1)), board.GetTurn()) && !BitboardAttacks.IsIndexAttacked(board, 
-					unchecked((byte)(myKingIndex - 2)), board.GetTurn()))
+				if (!board.GetCheck() && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 - 1)), board.GetTurn()) && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 - 2)), board.GetTurn()))
 				{
 					AddMoves(Move.KING, myKingIndex, myKingIndex - 2, 0, false, false, Move.TYPE_KINGSIDE_CASTLING
 						);
@@ -148,9 +149,9 @@ namespace Com.Alonsoruibal.Chess.Movegen
 				{
 					myKingIndex = BitboardUtils.Square2Index(square);
 				}
-				if (!board.GetCheck() && !BitboardAttacks.IsIndexAttacked(board, unchecked((byte)
-					(myKingIndex + 1)), board.GetTurn()) && !BitboardAttacks.IsIndexAttacked(board, 
-					unchecked((byte)(myKingIndex + 2)), board.GetTurn()))
+				if (!board.GetCheck() && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 + 1)), board.GetTurn()) && !bbAttacks.IsIndexAttacked(board, unchecked((byte)(myKingIndex
+					 + 2)), board.GetTurn()))
 				{
 					AddMoves(Move.KING, myKingIndex, myKingIndex + 2, 0, false, false, Move.TYPE_QUEENSIDE_CASTLING
 						);
@@ -171,7 +172,7 @@ namespace Com.Alonsoruibal.Chess.Movegen
 				{
 					// Capturing
 					AddMoves(pieceMoved, fromIndex, BitboardUtils.Square2Index(to), to, ((to & others
-						) != 0 ? true : false), true, 0);
+						) != 0), true, 0);
 				}
 				attacks ^= to;
 			}
