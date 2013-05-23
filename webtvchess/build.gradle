@@ -41,10 +41,16 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
         [
                 'org.vectomatic.libgwtsvgchess',
                 '-war', buildDir,
+                '-extra', extraDir,
                 '-logLevel', 'INFO',
                 '-localWorkers', '2',
+                //'-optimize', '9',        // No effect?
+                '-XdisableCastChecking',   // Disables runtime checking of cast operations. This can reduce compiled file sizes.
+                '-XdisableClassMetadata',  // Disables some java.lang.Class methods. This can reduce compiled file sizes.
+                //'-XenableClosureCompiler', // This should create smaller JavaScript output. Not compatible with the compile report
                 '-compileReport',
-                '-extra', extraDir,
+                '-XsoycDetailed',
+                '-XcompilerMetrics',
         ]
 
     maxHeapSize = '256M'
