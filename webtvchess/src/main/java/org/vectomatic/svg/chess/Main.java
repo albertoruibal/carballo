@@ -17,13 +17,9 @@
  **********************************************/
 package org.vectomatic.svg.chess;
 
-import org.vectomatic.dom.svg.OMSVGSVGElement;
-import org.vectomatic.dom.svg.utils.OMSVGParser;
-
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.book.JSONBook;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
@@ -32,25 +28,16 @@ import com.alonsoruibal.chess.search.SearchStatusInfo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.StyleInjector;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.*;
+import org.vectomatic.dom.svg.OMSVGSVGElement;
+import org.vectomatic.dom.svg.utils.OMSVGParser;
 
 /**
  * Main class. Instantiates the UI and runs the game loop
@@ -139,15 +126,13 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * GWT entry point
 	 */
 	public void onModuleLoad() {
-		BitboardAttacks.USE_MAGIC = false;
+		final DecoratedPopupPanel initBox = new DecoratedPopupPanel();
+		HorizontalPanel hpanel = new HorizontalPanel();
+		hpanel.add(new Label(ChessConstants.INSTANCE.waitMessage()));
+		initBox.add(hpanel);
+		initBox.center();
+		initBox.show();
 
-//		final DecoratedPopupPanel initBox = new DecoratedPopupPanel();
-//		HorizontalPanel hpanel = new HorizontalPanel();
-//		hpanel.add(new Label(ChessConstants.INSTANCE.waitMessage()));
-//		initBox.add(hpanel);
-//		initBox.center();
-//		initBox.show();
-//
 		// Inject CSS in the document headers
 		StyleInjector.inject(Resources.INSTANCE.getCss().getText());
 		
@@ -174,10 +159,10 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 		new Timer()
         {
             public void run() {
-				
-				// Create a Carballo chess engine
+                // Create a Carballo chess engine
+                BitboardAttacks.USE_MAGIC = false;
 				Config config = new Config();
-				//config.setTranspositionTableSize(2);
+				config.setTranspositionTableSize(2);
 				config.setBook(new JSONBook());
 				engine = new SearchEngine(config);
 				engine.setObserver(Main.this);
@@ -197,7 +182,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 				chessboard.setMoveListener(Main.this);
 		
 				restart();
-//				initBox.hide();
+				initBox.hide();
 				
 				focusPanel.addKeyDownHandler(Main.this);
 				focusPanel.setFocus(true);
@@ -320,7 +305,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * Invoked by the carballo engine when the search is done
 	 */
 	public void bestMove(int bestMove, int ponder) {
-		GWT.log("Main.bestMove(" + Move.toStringExt(bestMove) + ", " + Move.toStringExt(ponder) + ")", null);
+		log("bestMove(" + Move.toStringExt(bestMove) + ", " + Move.toStringExt(ponder) + ")");
 		doMove(bestMove);
 	}
 
@@ -328,22 +313,23 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * Unused carballo chess engine event handler
 	 */
 	public void info(SearchStatusInfo info) {
-		GWT.log("Main.info(" + info + ")", null);
+		log(info.toString());
 	}
+
 	
 	/**
 	 * Start a new game
 	 */
 	public void restart() {
-		board.startPosition();
-		//board.setFen("rq2r1k1/5pp1/p7/4bNP1/1p2P2P/5Q2/PP4K1/5R1R w - -");
+		//board.startPosition();
+		board.setFen("rq2r1k1/5pp1/p7/4bNP1/1p2P2P/5Q2/PP4K1/5R1R w - -");
 		chessboard.update(board.getFen(), 0, 0, true, true);
 		nextMove();
 	}
 	
 //	@UiHandler("fenButton")
 //	public void updateFen(ClickEvent event) {
-//		GWT.log("Main.updateFen(" + fenArea.getText() + ")", null);
+//		log("Main.updateFen(" + fenArea.getText() + ")");
 //		board.setFen(fenArea.getText());
 //		chessboard.update(board.getFen(), board.getLastMove(), 0, true, true);
 //		nextMove();
@@ -351,19 +337,17 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 
 	@UiHandler("modeListBox")
 	public void modeChange(ChangeEvent event) {
-		GWT.log("Main.modeChange(" + modeListBox.getSelectedIndex() + ")", null);
+		log("Main.modeChange(" + modeListBox.getSelectedIndex() + ")");
 		nextMove();
 	}
 	
 	@UiHandler("restartButton")
 	public void restart(ClickEvent event) {
-		GWT.log("Main.restart()", null);
         restart();
     }
 
 	@UiHandler("undoButton")
 	public void undo(ClickEvent event) {
-		GWT.log("Main.undo()", null);
 		undo();
 	}
 	
@@ -385,7 +369,6 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 
 	@UiHandler("redoButton")
 	public void redo(ClickEvent event) {
-		GWT.log("Main.redo()", null);
 		redo();
     }
 
@@ -470,9 +453,14 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	
 	@Override
 	public void doMove(int move) {
-		GWT.log("doMove(" + board.getMoveNumber() +  ")", null);
+		log("doMove(" + board.getMoveNumber() + ")");
 		board.doMove(move);
 		chessboard.update(board.getFen(), board.getLastMove(), 0, true, true);
 		nextMove();
 	}
+
+    public static native void log(String message)
+	/*-{
+		console.debug(message);
+	}-*/;
 }
