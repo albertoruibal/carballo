@@ -322,8 +322,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * Start a new game
 	 */
 	public void restart() {
-		//board.startPosition();
-		board.setFen("rq2r1k1/5pp1/p7/4bNP1/1p2P2P/5Q2/PP4K1/5R1R w - -");
+		board.startPosition();
+		//board.setFen("rq2r1k1/5pp1/p7/4bNP1/1p2P2P/5Q2/PP4K1/5R1R w - -");
 		chessboard.update(board.getFen(), 0, 0, true, true);
 		nextMove();
 	}
