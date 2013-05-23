@@ -19,10 +19,5 @@
   <!-- Allow the app to run locally -->
   <add-linker name="xsiframe" />
   <!-- Reduce permutations -->
-  <set-property name="user.agent" value="safari"></set-property>
-
-  <!-- script src="/hedjsdk/jquery/core/v1.3.2/jquery.min.js"></script>
-  <script src="/hedjsdk/jquery/plugins/json/v1.0/jquery.json.js"></script>
-  <script src="/hedjsdk/jquery.hed.js"></script>
-  <script src="/blusens/js/HED.helpers.js"></script-->
+  <set-property name="user.agent" value="safari, gecko1_8"></set-property>
 </module>
