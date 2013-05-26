@@ -21,7 +21,7 @@ import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
-import com.alonsoruibal.chess.book.JSONBook;
+import com.alonsoruibal.chess.book.ArrayBufferBook;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
@@ -164,7 +164,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
                 BitboardAttacks.USE_MAGIC = false;
 				Config config = new Config();
 				config.setTranspositionTableSize(2);
-				config.setBook(new JSONBook());
+				//config.setBook(new JSONBook());
+                config.setBook(new ArrayBufferBook());
 				engine = new SearchEngine(config);
 				engine.setObserver(Main.this);
 				board = engine.getBoard();
