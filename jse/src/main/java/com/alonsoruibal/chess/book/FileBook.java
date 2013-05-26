@@ -33,14 +33,6 @@ public class FileBook implements Book {
 		bookName = fileName;
 		logger.debug("Using opening book " + bookName);
 	}
-
-	public List<Integer> getMoves() {
-		return moves;
-	}
-
-	public List<Integer> getWeights() {
-		return weights;
-	}
 	
 	/**
 	 * "move" is a bit field with the following meaning (bit 0 is the least significant bit)
