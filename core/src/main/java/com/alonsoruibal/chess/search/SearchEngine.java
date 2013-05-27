@@ -180,7 +180,7 @@ public class SearchEngine implements Runnable {
 			evaluator = new ExperimentalEvaluator(config);
 		}
 
-		int size = BitboardUtils.square2Index(Long.valueOf(config.getTranspositionTableSize())) + 16;
+		int size = BitboardUtils.square2Index((long) config.getTranspositionTableSize()) + 16;
 
 		logger.debug("Creating TT");
 
@@ -373,7 +373,7 @@ public class SearchEngine implements Runnable {
 
 		int ttMove = 0;
 		int eval = -Evaluator.VICTORY;
-		int score = -Evaluator.VICTORY;
+		int score;
 		boolean pv = beta - alpha > 1;
 		// int initialAlpha = alpha;
 		// int bestMove = 0;
@@ -417,7 +417,7 @@ public class SearchEngine implements Runnable {
 
 		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
 		moveIterator.genMoves(ttMove, true, generateChecks);
-		int move = 0;
+		int move;
 
 		while ((move = moveIterator.next()) != 0) {
 
@@ -641,7 +641,7 @@ public class SearchEngine implements Runnable {
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
 
-		int move = 0;
+		int move;
 		while ((move = moveIterator.next()) != 0) {
 			int extension = 0;
 			int reduction = 0;
@@ -934,7 +934,7 @@ public class SearchEngine implements Runnable {
 	 * 
 	 */
 	private void getPv() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
 		int i = 0;
 		while (i < 256) {

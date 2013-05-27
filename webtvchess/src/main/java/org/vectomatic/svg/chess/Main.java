@@ -197,7 +197,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * Refresh the non SVG elements of the UI (list of moves, current player, FEN) 
 	 */
 	private void updateUI() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int line = 0;
 		for (int i = 0; i < board.getMoveNumber(); i++) {
 			String move = board.getSanMove(i);
@@ -205,12 +205,12 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 				if (buffer.length() != 0) {
 					buffer.append("\n");
 				}
-				buffer.append(++line + ". " + move);
+				buffer.append(++line).append(". ").append(move);
 			} else {
 				if (buffer.length() == 0) {
-					buffer.append(++line + ". ...");
+					buffer.append(++line).append(". ...");
 				}
-				buffer.append(" " + move);
+				buffer.append(" ").append(move);
 			}
 		}
 		historyArea.setVisibleLines(line);

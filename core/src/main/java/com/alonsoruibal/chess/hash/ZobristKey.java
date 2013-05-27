@@ -51,7 +51,7 @@ public class ZobristKey {
 
 		long square = BitboardUtils.H1;
 		byte index = 0;
-		int color = 0;
+		int color;
 		while (square != 0) {
 			color = (square & board.whites) != 0 ? 0 : 1;
 			key[color] ^= getKeyPieceIndex(index, board.getPieceAt(square));

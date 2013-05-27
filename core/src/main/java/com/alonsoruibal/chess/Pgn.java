@@ -53,7 +53,7 @@ public class Pgn {
 	public String getPgn(Board b, String whiteName, String blackName, String event, String site, String result) {
 		// logger.debug("PGN start");
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (whiteName == null || "".equals(whiteName))
 			whiteName = "?";
@@ -67,15 +67,15 @@ public class Pgn {
 			site = "-";
 		}
 
-		sb.append("[Event \"" + event + "\"]\n");
-		sb.append("[Site \"" + site + "\"]\n");
+		sb.append("[Event \"").append(event).append("\"]\n");
+		sb.append("[Site \"").append(site).append("\"]\n");
 
 		Date d = new Date();
 		// For GWT we use deprecated methods
-		sb.append("[Date \"" + d.getYear() + "." + d.getMonth() + "." + d.getDay() + "\"]\n");
+		sb.append("[Date \"").append(d.getYear()).append(".").append(d.getMonth()).append(".").append(d.getDay()).append("\"]\n");
 		sb.append("[Round \"?\"]\n");
-		sb.append("[White \"" + whiteName + "\"]\n");
-		sb.append("[Black \"" + blackName + "\"]\n");
+		sb.append("[White \"").append(whiteName).append("\"]\n");
+		sb.append("[Black \"").append(blackName).append("\"]\n");
 		if (result == null) {
 			result = "*";
 			switch (b.isEndGame()) {
@@ -90,14 +90,14 @@ public class Pgn {
 				break;
 			}
 		}
-		sb.append("[Result \"" + result + "\"]\n");
+		sb.append("[Result \"").append(result).append("\"]\n");
 		if (!Board.FEN_START_POSITION.equals(b.initialFen)) {
-			sb.append("[FEN \"" + b.initialFen + "\"]\n");
+			sb.append("[FEN \"").append(b.initialFen).append("\"]\n");
 		}
-		sb.append("[PlyCount \"" + (b.moveNumber - b.initialMoveNumber) + "\"]\n");
+		sb.append("[PlyCount \"").append(b.moveNumber - b.initialMoveNumber).append("\"]\n");
 		sb.append("\n");
 
-		StringBuffer line = new StringBuffer();
+		StringBuilder line = new StringBuilder();
 
 		for (int i = b.initialMoveNumber; i < b.moveNumber; i++) {
 			line.append(" ");
@@ -116,18 +116,17 @@ public class Pgn {
 		String[] tokens = line.toString().split("[ \\t\\n\\x0B\\f\\r]+");
 
 		int length = 0;
-		for (int i = 0; i < tokens.length; i++) {
-			String next = tokens[i];
-			if (length + next.length() + 1 > 80) {
-				sb.append("\n");
-				length = 0;
-			} else if (length > 0) {
-				sb.append(" ");
-				length++;
-			}
-			length += next.length();
-			sb.append(next);
-		}
+        for (String token : tokens) {
+            if (length + token.length() + 1 > 80) {
+                sb.append("\n");
+                length = 0;
+            } else if (length > 0) {
+                sb.append(" ");
+                length++;
+            }
+            length += token.length();
+            sb.append(token);
+        }
 		// logger.debug("PGN end");
 
 		// logger.debug("PGN:\n" + sb.toString());
@@ -160,45 +159,43 @@ public class Pgn {
 		if (pgn == null)
 			return;
 
-		StringBuffer movesSb = new StringBuffer();
+		StringBuilder movesSb = new StringBuilder();
 
 		try {
 			String lines[] = pgn.split("\\r?\\n");
 
-			for (int i = 0; i < lines.length; i++) {
-				String line = lines[i];
+            for (String line : lines) {
+                if (line.indexOf("[") == 0) {
+                    // Is a header
+                    String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
+                    String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
-				if (line.indexOf("[") == 0) {
-					// Is a header
-					String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
-					String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-
-					if ("event".equals(headerName)) {
-						event = headerValue;
-					} else if ("round".equals(headerName)) {
-						round = headerValue;
-					} else if ("site".equals(headerName)) {
-						site = headerValue;
-					} else if ("date".equals(headerName)) {
-						date = headerValue;
-					} else if ("white".equals(headerName)) {
-						white = headerValue;
-					} else if ("black".equals(headerName)) {
-						black = headerValue;
-					} else if ("whiteelo".equals(headerName)) {
-						whiteElo = headerValue;
-					} else if ("blackelo".equals(headerName)) {
-						blackElo = headerValue;
-					} else if ("result".equals(headerName)) {
-						result = headerValue;
-					} else if ("fen".equals(headerName)) {
-						fenStartPosition = headerValue;
-					}
-				} else {
-					movesSb.append(line);
-					movesSb.append(" ");
-				}
-			}
+                    if ("event".equals(headerName)) {
+                        event = headerValue;
+                    } else if ("round".equals(headerName)) {
+                        round = headerValue;
+                    } else if ("site".equals(headerName)) {
+                        site = headerValue;
+                    } else if ("date".equals(headerName)) {
+                        date = headerValue;
+                    } else if ("white".equals(headerName)) {
+                        white = headerValue;
+                    } else if ("black".equals(headerName)) {
+                        black = headerValue;
+                    } else if ("whiteelo".equals(headerName)) {
+                        whiteElo = headerValue;
+                    } else if ("blackelo".equals(headerName)) {
+                        blackElo = headerValue;
+                    } else if ("result".equals(headerName)) {
+                        result = headerValue;
+                    } else if ("fen".equals(headerName)) {
+                        fenStartPosition = headerValue;
+                    }
+                } else {
+                    movesSb.append(line);
+                    movesSb.append(" ");
+                }
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,44 +208,44 @@ public class Pgn {
 		// logger.debug("Moves = " + movesSb.toString());
 
 		String[] tokens = movesSb.toString().split("[ \\t\\n\\x0B\\f\\r]+");
-		for (int i = 0; i < tokens.length; i++) {
-			String el = tokens[i].trim();
+        for (String token : tokens) {
+            String el = token.trim();
 
-			boolean addMove = true;
+            boolean addMove = true;
 
-			if (el.indexOf("(") >= 0) {
-				addMove = false;
-				comment1++;
-			}
-			if (el.indexOf(")") >= 0) {
-				addMove = false;
-				comment1--;
-			}
-			if (el.indexOf("{") >= 0) {
-				addMove = false;
-				comment2++;
-			}
-			if (el.indexOf("}") >= 0) {
-				addMove = false;
-				comment2--;
-			}
+            if (el.contains("(")) {
+                addMove = false;
+                comment1++;
+            }
+            if (el.contains(")")) {
+                addMove = false;
+                comment1--;
+            }
+            if (el.contains("{")) {
+                addMove = false;
+                comment2++;
+            }
+            if (el.contains("}")) {
+                addMove = false;
+                comment2--;
+            }
 
-			if (addMove) {
-				if ("1/2-1/2".equals(el)) {
-				} else if ("1-0".equals(el)) {
-				} else if ("0-1".equals(el)) {
-				} else if (comment1 == 0 && comment2 == 0) {
-					// Move 1.
-					if (el.indexOf(".") >= 0) {
-						el = el.substring(el.lastIndexOf(".") + 1);
-					}
+            if (addMove) {
+                if ("1/2-1/2".equals(el)) {
+                } else if ("1-0".equals(el)) {
+                } else if ("0-1".equals(el)) {
+                } else if (comment1 == 0 && comment2 == 0) {
+                    // Move 1.
+                    if (el.contains(".")) {
+                        el = el.substring(el.lastIndexOf(".") + 1);
+                    }
 
-					if (el.length() > 0 && comment1 == 0 && comment2 == 0 && el.indexOf("$") < 0) {
-						moves.add(el);
-					}
-				}
-			}
-		}
+                    if (el.length() > 0 && comment1 == 0 && comment2 == 0 && !el.contains("$")) {
+                        moves.add(el);
+                    }
+                }
+            }
+        }
 	}
 
 	// parses a PGN and does all moves
@@ -347,7 +344,7 @@ public class Pgn {
 
 				if (line.indexOf("[Event ") == 0) {
 					if (counter == gameNumber) {
-						StringBuffer pgnSb = new StringBuffer();
+						StringBuilder pgnSb = new StringBuilder();
 						while (true) {
 							pgnSb.append(line);
 							pgnSb.append("\n");

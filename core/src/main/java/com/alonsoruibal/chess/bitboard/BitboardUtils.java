@@ -157,7 +157,7 @@ public class BitboardUtils {
 	 * prints a BitBoard to standard output
 	 */
 	public static String toString(long b) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		long i = A8;
 		while (i != 0) {
 			sb.append(((b & i) != 0 ? "1 " : "0 "));

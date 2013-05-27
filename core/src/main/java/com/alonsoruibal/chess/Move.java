@@ -103,8 +103,8 @@ public class Move {
 	 * @param move
 	 */
 	public static int getFromString(Board board, String move, boolean checkLegality) {
-		int fromIndex = 0;
-		int toIndex = 0;
+		int fromIndex;
+		int toIndex;
 		int moveType = 0;
 		int pieceMoved = 0;
 
@@ -268,7 +268,7 @@ public class Move {
 	public static String toString(int move) {
 		if (move == 0 || move == -1)
 			return "none";
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		switch (Move.getMoveType(move)) {
@@ -297,7 +297,7 @@ public class Move {
 			return "O-O-O";
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (getPieceMoved(move) != Move.PAWN) {
 			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
 		}
@@ -338,7 +338,7 @@ public class Move {
 		else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING)
 			return "O-O-O";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (getPieceMoved(move) != Move.PAWN)
 			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
 

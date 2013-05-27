@@ -84,7 +84,7 @@ public class Uci implements SearchObserver {
 				} else if ("setoption".equals(command)) {
 
 					// get the option name without spaces
-					StringBuffer nameSB = new StringBuffer();
+					StringBuilder nameSB = new StringBuilder();
 					String tok;
 					while (!"value".equals(tok = tokens[index++])) {
 						nameSB.append(tok);
@@ -215,7 +215,7 @@ public class Uci implements SearchObserver {
 							engine.getBoard().startPosition();
 						} else if ("fen".equals(arg1)) {
 							// FEN string may have spaces
-							StringBuffer fenSb = new StringBuffer();
+							StringBuilder fenSb = new StringBuilder();
 							while (index < tokens.length) {
 								fenSb.append(tokens[index++]);
 								if (index < tokens.length) {
@@ -251,7 +251,7 @@ public class Uci implements SearchObserver {
 	}
 
 	public void bestMove(int bestMove, int ponder) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("bestmove ");
 		sb.append(Move.toString(bestMove));
 		if (ponder != 0 && ponder != -1) {

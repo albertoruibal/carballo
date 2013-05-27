@@ -48,7 +48,7 @@ public class ArrayBufferBook implements Book {
 	 * @return
 	 */
 	private String int2MoveString(int move) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append((char)('a' + ((move >> 6) & 0x7)));
 		sb.append(((move >> 9) & 0x7) +1);
 		sb.append((char)('a' + (move & 0x7)));

@@ -279,8 +279,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private int[] bishopCount = {0,0};
 
 	public int evaluateBoard(Board board, int alpha, int beta) {		
-		long square = 1;
-		byte index = 0;
+		long square;
+		byte index;
 		
 		all = board.getAll();
 		superiorPieceAttacked[0] = superiorPieceAttacked[1] = 0;

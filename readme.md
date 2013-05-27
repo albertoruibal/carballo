@@ -82,6 +82,7 @@ Version 0.8:
 * Solved some evaluator bugs
 * New option to do not use Magic Bitboard Attacks: optimizes start time in HTML5
 * Removed specific Bitboard attacks code from GWT, can be simulated setting BitboardAttacks.USE_MAGIC = false
+* New ArrayBufferBook for GWT, can process any opening book loaded as a JS ArrayBuffer
 
 Version 0.7: A small leap on the engine performance and a big code clean
 

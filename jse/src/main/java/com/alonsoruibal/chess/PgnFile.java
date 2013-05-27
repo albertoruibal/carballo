@@ -44,7 +44,7 @@ public class PgnFile extends Pgn {
 
 				if (line.indexOf("[Event ") == 0) {
 					if (counter == gameNumber) {
-						StringBuffer pgnSb = new StringBuffer();
+						StringBuilder pgnSb = new StringBuilder();
 						try {
 							while (true) {
 								pgnSb.append(line);

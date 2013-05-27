@@ -72,7 +72,7 @@ public class EpdTest extends TestCase {
 		lctPoints = 0;
 		solved = 0;
 		total = 0;
-		StringBuffer notSolved = new StringBuffer();
+		StringBuilder notSolved = new StringBuilder();
 		// goes through all positions
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		try {
@@ -138,13 +138,13 @@ public class EpdTest extends TestCase {
 		
 		boolean found = false;
 
-		for (int i = 0; i<moves.length; i++) {
-			if (moves[i] == search.getBestMove()) {
-				logger.debug("Best move found in " + search.getBestMoveTime() + "Ms :D " + Move.toStringExt(moves[i]));
-				time += search.getBestMoveTime();
-				found = true;
-			}
-		}
+        for (int move : moves) {
+            if (move == search.getBestMove()) {
+                logger.debug("Best move found in " + search.getBestMoveTime() + "Ms :D " + Move.toStringExt(move));
+                time += search.getBestMoveTime();
+                found = true;
+            }
+        }
 		if (!found) {
 			logger.debug("Best move not found :( "  + Move.toStringExt(search.getBestMove()) + " != " + movesString);
 			return timeLimit;

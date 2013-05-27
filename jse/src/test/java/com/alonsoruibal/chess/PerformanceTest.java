@@ -77,10 +77,10 @@ public class PerformanceTest extends TestCase {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i=0; i< 10000; i++) {
-			for (int j=0; j< testBoards.length; j++) {
-				completeEvaluator.evaluateBoard(testBoards[j], -Evaluator.VICTORY, Evaluator.VICTORY);
-				positions++;
-			}
+            for (Board testBoard : testBoards) {
+                completeEvaluator.evaluateBoard(testBoard, -Evaluator.VICTORY, Evaluator.VICTORY);
+                positions++;
+            }
 		}
 		long t2 = System.currentTimeMillis();
 		long pps = 1000 * positions / (t2-t1+1);
@@ -92,10 +92,10 @@ public class PerformanceTest extends TestCase {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i=0; i< 10000; i++) {
-			for (int j=0; j< testBoards.length; j++) {
-				experimentalEvaluator.evaluateBoard(testBoards[j], -Evaluator.VICTORY, Evaluator.VICTORY);
-				positions++;
-			}
+            for (Board testBoard : testBoards) {
+                experimentalEvaluator.evaluateBoard(testBoard, -Evaluator.VICTORY, Evaluator.VICTORY);
+                positions++;
+            }
 		}
 		long t2 = System.currentTimeMillis();
 		long pps = 1000 * positions / (t2-t1+1);
@@ -108,10 +108,10 @@ public class PerformanceTest extends TestCase {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i=0; i< 10000; i++) {
-			for (int j=0; j< testBoards.length; j++) {
-				simplifiedEvaluator.evaluateBoard(testBoards[j], Evaluator.VICTORY, Evaluator.VICTORY);
-				positions++;
-			}
+            for (Board testBoard : testBoards) {
+                simplifiedEvaluator.evaluateBoard(testBoard, Evaluator.VICTORY, Evaluator.VICTORY);
+                positions++;
+            }
 		}
 		long t2 = System.currentTimeMillis();
 		long pps = 1000 * positions / (t2-t1+1);

@@ -229,7 +229,7 @@ public class Board {
 	 * Converts board to its fen notation
 	 */
 	public String getFen() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		long i = BitboardUtils.A8;
 		int j = 0;
 		while (i != 0) {
@@ -291,7 +291,7 @@ public class Board {
 		long tmpBishops = 0;
 		long tmpKnights = 0;
 		long tmpKings = 0;
-		long tmpFlags = 0;
+		long tmpFlags;
 		int tmpFiftyMovesRule = 0;
 		int fenMoveNumber = 0;
 
@@ -334,13 +334,13 @@ public class Board {
 		}
 		if (tokens.length > 2) {
 			String promotions = tokens[2];
-			if (promotions.indexOf("K") >= 0)
+			if (promotions.contains("K"))
 				tmpFlags &= ~FLAG_WHITE_DISABLE_KINGSIDE_CASTLING;
-			if (promotions.indexOf("Q") >= 0)
+			if (promotions.contains("Q"))
 				tmpFlags &= ~FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING;
-			if (promotions.indexOf("k") >= 0)
+			if (promotions.contains("k"))
 				tmpFlags &= ~FLAG_BLACK_DISABLE_KINGSIDE_CASTLING;
-			if (promotions.indexOf("q") >= 0)
+			if (promotions.contains("q"))
 				tmpFlags &= ~FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
 			if (tokens.length > 3) {
 				String passant = tokens[3];
@@ -440,7 +440,7 @@ public class Board {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int j = 8;
 		long i = BitboardUtils.A8;
 		while (i != 0) {
@@ -885,7 +885,7 @@ public class Board {
 		long fromSquare = 1 << fromIndex;
 		long all = getAll();
 		long attacks = bbAttacks.getIndexAttacks(this, toIndex);
-		long fromCandidates = 0;
+		long fromCandidates;
 
 		seeGain[d] = SEE_PIECE_VALUES[targetPiece];
 		do {
@@ -899,8 +899,6 @@ public class Board {
 				attacks |= bbAttacks.getXrayAttacks(this, toIndex, all);
 
 			// Gets the next attacker
-			fromSquare = 0;
-			fromCandidates = 0;
 			if ((fromCandidates = attacks & pawns & side) != 0) {
 				pieceMoved = Move.PAWN;
 			} else if ((fromCandidates = attacks & knights & side) != 0) {
@@ -982,9 +980,7 @@ public class Board {
 
 	public int getLegalMoves(int moves[]) {
 		generateLegalMoves();
-		for (int i = 0; i < legalMoveCount; i++) {
-			moves[i] = legalMoves[i];
-		}
+        System.arraycopy(legalMoves, 0, moves, 0, legalMoveCount);
 		return legalMoveCount;
 	}
 
