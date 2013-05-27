@@ -2,10 +2,7 @@ package com.alonsoruibal.chess.book;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
-import com.google.gwt.typedarrays.client.Uint8ArrayNative;
 import com.google.gwt.typedarrays.shared.Uint8Array;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,27 +22,12 @@ public class ArrayBufferBook implements Book {
 	
 	private final Random random = new Random();
 
-    XMLHttpRequest request;
     Uint8Array arrayBuffer;
 
-	public ArrayBufferBook() {
-        request = XMLHttpRequest.create();
-        request.setOnReadyStateChange(new ReadyStateChangeHandler() {
-
-            @Override
-            public void onReadyStateChange(XMLHttpRequest xhr) {
-
-                if (xhr.getReadyState() == XMLHttpRequest.DONE) {
-                    arrayBuffer = Uint8ArrayNative.create(xhr.getResponseArrayBuffer());
-                }
-            }
-        });
-
-        request.open("GET", BookClientBundle.INSTANCE.book_small().getSafeUri().asString());
-        request.setResponseType(XMLHttpRequest.ResponseType.ArrayBuffer);
-        request.send();
+	public ArrayBufferBook(Uint8Array arrayBuffer) {
+        this.arrayBuffer = arrayBuffer;
 	}
-	
+
 	/**
 	 * "move" is a bit field with the following meaning (bit 0 is the least significant bit)
 	 *
@@ -119,7 +101,6 @@ public class ArrayBufferBook implements Book {
 
 	/**
 	 * Gets a random move from the book taking care of weights
-     * TODO wait for book load
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
