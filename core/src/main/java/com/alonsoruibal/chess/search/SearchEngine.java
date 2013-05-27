@@ -823,7 +823,7 @@ public class SearchEngine implements Runnable {
 		initialPly = board.getMoveNumber();
 		thinkTo = startTime + searchParameters.calculateMoveTime(board) - 100;
 
-		if (config.getUseBook() && config.getBook() != null && board.getOutBookMove() > board.getMoveNumber()
+		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
 			logger.debug("Searching Move in Book");
 			int bookMove = config.getBook().getMove(board);

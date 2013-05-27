@@ -923,13 +923,13 @@ public class Board {
 		return seeGain[0];
 	}
 
-	public int getOutBookMove() {
-		return outBookMove;
-	}
+    public boolean isUsingBook() {
+        return outBookMove > moveNumber;
+    }
 
-	public void setOutBookMove(int outBookMove) {
-		this.outBookMove = outBookMove;
-	}
+    public void setOutBookMove(int outBookMove) {
+        this.outBookMove = outBookMove;
+    }
 
 	/**
 	 * Check if a passed pawn is in the square, useful to trigger extensions
