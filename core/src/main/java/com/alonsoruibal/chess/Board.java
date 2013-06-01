@@ -1,19 +1,18 @@
 package com.alonsoruibal.chess;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.hash.ZobristKey;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 /**
  * Stores the position and the move history
- * 
  * TODO FRC
- * 
+ *
  * @author Alberto Alonso Ruibal
  */
 public class Board {
@@ -25,7 +24,7 @@ public class Board {
 	LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
 	int[] legalMoves = new int[256];
 	int legalMoveCount = -1; // if -1 then legal moves not generated
-	long[] legalMovesKey = { 0, 0 };
+	long[] legalMovesKey = {0, 0};
 	public HashMap<Integer, String> sanMoves;
 
 	// Bitboard arrays
@@ -43,7 +42,7 @@ public class Board {
 	public int initialMoveNumber = 0;
 	public int moveNumber = 0;
 	public int outBookMove = 0;
-	public long[] key = { 0, 0 };
+	public long[] key = {0, 0};
 
 	public String initialFen;
 
@@ -71,10 +70,10 @@ public class Board {
 	private static final long FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING = 0x0010L;
 	private static final long FLAG_CHECK = 0x0020L;
 	// Position on boarch in which is captured
-	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L; 
+	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
 	// Thos the SEE SWAP algorithm
-	private static final int[] SEE_PIECE_VALUES = { 0, 100, 325, 330, 500, 900, 9999 };
+	private static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
 
 	BitboardAttacks bbAttacks;
 
@@ -118,7 +117,7 @@ public class Board {
 
 	/**
 	 * An alternative key to avoid collisions on tt
-	 * 
+	 *
 	 * @return
 	 */
 	public long getKey2() {
@@ -130,7 +129,6 @@ public class Board {
 	}
 
 	/**
-	 * 
 	 * @return true if white moves
 	 */
 	public final boolean getTurn() {
@@ -175,11 +173,11 @@ public class Board {
 
 	public char getPieceAt(long square) {
 		char p = ((pawns & square) != 0 ? 'p' : //
-			((queens & square) != 0 ? 'q' : //
-			((rooks & square) != 0 ? 'r' : //
-			((bishops & square) != 0 ? 'b' : //
-			((knights & square) != 0 ? 'n' : //
-			((kings & square) != 0 ? 'k' : '.'))))));
+				((queens & square) != 0 ? 'q' : //
+						((rooks & square) != 0 ? 'r' : //
+								((bishops & square) != 0 ? 'b' : //
+										((knights & square) != 0 ? 'n' : //
+												((kings & square) != 0 ? 'k' : '.'))))));
 		return ((whites & square) != 0 ? Character.toUpperCase(p) : p);
 	}
 
@@ -204,24 +202,24 @@ public class Board {
 		}
 
 		switch (Character.toLowerCase(piece)) {
-		case 'p':
-			pawns |= square;
-			break;
-		case 'q':
-			queens |= square;
-			break;
-		case 'r':
-			rooks |= square;
-			break;
-		case 'b':
-			bishops |= square;
-			break;
-		case 'n':
-			knights |= square;
-			break;
-		case 'k':
-			kings |= square;
-			break;
+			case 'p':
+				pawns |= square;
+				break;
+			case 'q':
+				queens |= square;
+				break;
+			case 'r':
+				rooks |= square;
+				break;
+			case 'b':
+				bishops |= square;
+				break;
+			case 'n':
+				knights |= square;
+				break;
+			case 'k':
+				kings |= square;
+				break;
 		}
 	}
 
@@ -270,7 +268,7 @@ public class Board {
 
 	/**
 	 * Loads board from a fen notation
-	 * 
+	 *
 	 * @param fen
 	 */
 	public void setFen(String fen) {
@@ -280,9 +278,8 @@ public class Board {
 	/**
 	 * Sets fen without destroying move history. If lastMove = null destroy the
 	 * move history
-	 * 
 	 */
-	public void setFenMove(String fen, String lastMove) {		
+	public void setFenMove(String fen, String lastMove) {
 		long tmpWhites = 0;
 		long tmpBlacks = 0;
 		long tmpPawns = 0;
@@ -355,7 +352,7 @@ public class Board {
 						String moveNumberString = tokens[5];
 						int aux = Integer.parseInt(moveNumberString);
 						fenMoveNumber = ((aux > 0 ? aux - 1 : aux) << 1) + ((tmpFlags & FLAG_TURN) == 0 ? 0 : 1);
-						if( fenMoveNumber < 0) {
+						if (fenMoveNumber < 0) {
 							fenMoveNumber = 0;
 						}
 					}
@@ -462,7 +459,6 @@ public class Board {
 
 	/**
 	 * TODO is it necessary??
-	 * 
 	 */
 	private void resetHistory() {
 		Arrays.fill(whitesHistory, 0);
@@ -515,7 +511,7 @@ public class Board {
 	/**
 	 * Recapture for extensions: only if the value of the captured piece is
 	 * similar and we recapture in the same square
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean getLastMoveIsRecapture() {
@@ -547,7 +543,7 @@ public class Board {
 	/**
 	 * Moves and also updates the board's zobrish key verify legality, if not
 	 * legal undo move and return false 0 is the null move
-	 * 
+	 *
 	 * @param move
 	 * @return
 	 */
@@ -600,8 +596,8 @@ public class Board {
 			}
 
 			long moveMask = from | to; // Move is as easy as xor with this mask
-										// (exceptions are in captures,
-										// promotions and passant captures)
+			// (exceptions are in captures,
+			// promotions and passant captures)
 
 			// Is it is a capture, remove pieces in destination square
 			if (capture) {
@@ -626,88 +622,88 @@ public class Board {
 
 			// Pawn movements
 			switch (pieceMoved) {
-			case Move.PAWN:
-				fiftyMovesRule = 0;
-				// Set new passant flags if pawn is advancing two squares (marks
-				// the destination square where the pawn can be captured)
-				// Set only passant flags when the other side can capture
-				if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
-					flags |= (from << 8);
-				}
-				if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
-					flags |= (from >>> 8);
-				}
-				if ((flags & FLAGS_PASSANT) != 0) {
-					key[color] ^= ZobristKey.passantColumn[BitboardUtils.getColumn(flags & FLAGS_PASSANT)];
-				}
-
-				if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_BISHOP
-						|| moveType == Move.TYPE_PROMOTION_ROOK) { // Promotions:
-																	// change
-																	// the piece
-					pawns &= ~from;
-					key[color] ^= ZobristKey.pawn[color][fromIndex];
-					switch (moveType) {
-					case Move.TYPE_PROMOTION_QUEEN:
-						queens |= to;
-						key[color] ^= ZobristKey.queen[color][toIndex];
-						break;
-					case Move.TYPE_PROMOTION_KNIGHT:
-						knights |= to;
-						key[color] ^= ZobristKey.knight[color][toIndex];
-						break;
-					case Move.TYPE_PROMOTION_BISHOP:
-						bishops |= to;
-						key[color] ^= ZobristKey.bishop[color][toIndex];
-						break;
-					case Move.TYPE_PROMOTION_ROOK:
-						rooks |= to;
-						key[color] ^= ZobristKey.rook[color][toIndex];
-						break;
+				case Move.PAWN:
+					fiftyMovesRule = 0;
+					// Set new passant flags if pawn is advancing two squares (marks
+					// the destination square where the pawn can be captured)
+					// Set only passant flags when the other side can capture
+					if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
+						flags |= (from << 8);
 					}
-				} else {
-					pawns ^= moveMask;
-					key[color] ^= ZobristKey.pawn[color][fromIndex] ^ ZobristKey.pawn[color][toIndex];
-				}
-				break;
-			case Move.ROOK:
-				rooks ^= moveMask;
-				key[color] ^= ZobristKey.rook[color][fromIndex] ^ ZobristKey.rook[color][toIndex];
-				break;
-			case Move.BISHOP:
-				bishops ^= moveMask;
-				key[color] ^= ZobristKey.bishop[color][fromIndex] ^ ZobristKey.bishop[color][toIndex];
-				break;
-			case Move.KNIGHT:
-				knights ^= moveMask;
-				key[color] ^= ZobristKey.knight[color][fromIndex] ^ ZobristKey.knight[color][toIndex];
-				break;
-			case Move.QUEEN:
-				queens ^= moveMask;
-				key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
-				break;
-			case Move.KING: // if castling, moves rooks too
-				long rookMask = 0;
-				switch (moveType) {
-				case Move.TYPE_KINGSIDE_CASTLING:
-					rookMask = (getTurn() ? 0x05L : 0x0500000000000000L);
-					key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 1];
+					if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
+						flags |= (from >>> 8);
+					}
+					if ((flags & FLAGS_PASSANT) != 0) {
+						key[color] ^= ZobristKey.passantColumn[BitboardUtils.getColumn(flags & FLAGS_PASSANT)];
+					}
+
+					if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_BISHOP
+							|| moveType == Move.TYPE_PROMOTION_ROOK) { // Promotions:
+						// change
+						// the piece
+						pawns &= ~from;
+						key[color] ^= ZobristKey.pawn[color][fromIndex];
+						switch (moveType) {
+							case Move.TYPE_PROMOTION_QUEEN:
+								queens |= to;
+								key[color] ^= ZobristKey.queen[color][toIndex];
+								break;
+							case Move.TYPE_PROMOTION_KNIGHT:
+								knights |= to;
+								key[color] ^= ZobristKey.knight[color][toIndex];
+								break;
+							case Move.TYPE_PROMOTION_BISHOP:
+								bishops |= to;
+								key[color] ^= ZobristKey.bishop[color][toIndex];
+								break;
+							case Move.TYPE_PROMOTION_ROOK:
+								rooks |= to;
+								key[color] ^= ZobristKey.rook[color][toIndex];
+								break;
+						}
+					} else {
+						pawns ^= moveMask;
+						key[color] ^= ZobristKey.pawn[color][fromIndex] ^ ZobristKey.pawn[color][toIndex];
+					}
 					break;
-				case Move.TYPE_QUEENSIDE_CASTLING:
-					rookMask = (getTurn() ? 0x90L : 0x9000000000000000L);
-					key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 2];
+				case Move.ROOK:
+					rooks ^= moveMask;
+					key[color] ^= ZobristKey.rook[color][fromIndex] ^ ZobristKey.rook[color][toIndex];
 					break;
-				}
-				if (rookMask != 0) {
-					if (getTurn())
-						whites ^= rookMask;
-					else
-						blacks ^= rookMask;
-					rooks ^= rookMask;
-				}
-				kings ^= moveMask;
-				key[color] ^= ZobristKey.king[color][fromIndex] ^ ZobristKey.king[color][toIndex];
-				break;
+				case Move.BISHOP:
+					bishops ^= moveMask;
+					key[color] ^= ZobristKey.bishop[color][fromIndex] ^ ZobristKey.bishop[color][toIndex];
+					break;
+				case Move.KNIGHT:
+					knights ^= moveMask;
+					key[color] ^= ZobristKey.knight[color][fromIndex] ^ ZobristKey.knight[color][toIndex];
+					break;
+				case Move.QUEEN:
+					queens ^= moveMask;
+					key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
+					break;
+				case Move.KING: // if castling, moves rooks too
+					long rookMask = 0;
+					switch (moveType) {
+						case Move.TYPE_KINGSIDE_CASTLING:
+							rookMask = (getTurn() ? 0x05L : 0x0500000000000000L);
+							key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 1];
+							break;
+						case Move.TYPE_QUEENSIDE_CASTLING:
+							rookMask = (getTurn() ? 0x90L : 0x9000000000000000L);
+							key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 2];
+							break;
+					}
+					if (rookMask != 0) {
+						if (getTurn())
+							whites ^= rookMask;
+						else
+							blacks ^= rookMask;
+						rooks ^= rookMask;
+					}
+					kings ^= moveMask;
+					key[color] ^= ZobristKey.king[color][fromIndex] ^ ZobristKey.king[color][toIndex];
+					break;
 			}
 			// Move pieces in colour fields
 			if (getTurn())
@@ -788,9 +784,6 @@ public class Board {
 		undoMove(moveNumber - 1);
 	}
 
-	/**
-	 * 
-	 */
 	public void undoMove(int moveNumber) {
 		if (moveNumber < 0 || moveNumber < initialMoveNumber) {
 			return;
@@ -813,7 +806,6 @@ public class Board {
 
 	/**
 	 * 0 no, 1 whites won, -1 blacks won, 99 draw
-	 * 
 	 */
 	public int isEndGame() {
 		int endGame = 0;
@@ -852,12 +844,11 @@ public class Board {
 			}
 		}
 		// Draw by no material to mate
-        return pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0;
-    }
+		return pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0;
+	}
 
 	/**
 	 * The SWAP algorithm
-	 * 
 	 */
 	public int see(int move) {
 		int pieceCaptured = 0;
@@ -880,8 +871,7 @@ public class Board {
 
 	public int see(int fromIndex, int toIndex, int pieceMoved, int targetPiece) {
 		int d = 0;
-		long mayXray = pawns | bishops | rooks | queens; // not kings nor
-															// knights
+		long mayXray = pawns | bishops | rooks | queens; // not kings nor knights
 		long fromSquare = 1 << fromIndex;
 		long all = getAll();
 		long attacks = bbAttacks.getIndexAttacks(this, toIndex);
@@ -921,17 +911,17 @@ public class Board {
 		return seeGain[0];
 	}
 
-    public boolean isUsingBook() {
-        return outBookMove > moveNumber;
-    }
+	public boolean isUsingBook() {
+		return outBookMove > moveNumber;
+	}
 
-    public void setOutBookMove(int outBookMove) {
-        this.outBookMove = outBookMove;
-    }
+	public void setOutBookMove(int outBookMove) {
+		this.outBookMove = outBookMove;
+	}
 
 	/**
 	 * Check if a passed pawn is in the square, useful to trigger extensions
-	 * 
+	 *
 	 * @param index
 	 * @return
 	 */
@@ -950,7 +940,7 @@ public class Board {
 
 	/**
 	 * Returns true if move is legal
-	 * 
+	 *
 	 * @param move
 	 * @return
 	 */
@@ -980,7 +970,7 @@ public class Board {
 
 	public int getLegalMoves(int moves[]) {
 		generateLegalMoves();
-        System.arraycopy(legalMoves, 0, moves, 0, legalMoveCount);
+		System.arraycopy(legalMoves, 0, moves, 0, legalMoveCount);
 		return legalMoveCount;
 	}
 

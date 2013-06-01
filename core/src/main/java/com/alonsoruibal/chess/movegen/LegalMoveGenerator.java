@@ -5,7 +5,6 @@ import com.alonsoruibal.chess.Board;
 public class LegalMoveGenerator extends MagicMoveGenerator {
 
 	/**
-	 * 
 	 * get only LEGAL Operations by testing with domove
 	 */
 	@Override

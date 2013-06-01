@@ -1,8 +1,6 @@
 package com.alonsoruibal.chess.bitboard;
 
 /**
- * 
- * 
  * @author rui
  */
 public class BitboardUtils {
@@ -42,7 +40,7 @@ public class BitboardUtils {
 	public static final long r9 = 0xE7E7E70000E7E7E7L; // corners (9 squares)
 
 	// 0 is a, 7 is g
-	public static final long[] COLUMN = { b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r }; 
+	public static final long[] COLUMN = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
 	public static final long[] COLUMNS_ADJACENTS = { //
 			COLUMN[1], //
 			COLUMN[0] | COLUMN[1], //
@@ -55,7 +53,7 @@ public class BitboardUtils {
 	};
 
 	public static final long[] ROWS_LEFT = { //
-	0, //
+			0, //
 			COLUMN[0], //
 			COLUMN[0] | COLUMN[1], //
 			COLUMN[0] | COLUMN[1] | COLUMN[2], //
@@ -66,7 +64,7 @@ public class BitboardUtils {
 	};
 
 	public static final long[] ROWS_RIGHT = { //
-	COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
+			COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
 			COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
 			COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
 			COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
@@ -77,9 +75,9 @@ public class BitboardUtils {
 	};
 
 	// 0 is 1, 7 is 8
-	public static final long[] RANK = { b_d, b_d << 8, b_d << 16, b_d << 24, b_d << 32, b_d << 40, b_d << 48, b_d << 56 }; 
+	public static final long[] RANK = {b_d, b_d << 8, b_d << 16, b_d << 24, b_d << 32, b_d << 40, b_d << 48, b_d << 56};
 	public static final long[] RANKS_UPWARDS = { //
-	RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
 			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
 			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
 			RANK[4] | RANK[5] | RANK[6] | RANK[7], //
@@ -89,7 +87,7 @@ public class BitboardUtils {
 			0 //
 	};
 	public static final long[] RANKS_DOWNWARDS = { //
-	0, //
+			0, //
 			RANK[0], //
 			RANK[0] | RANK[1], //
 			RANK[0] | RANK[1] | RANK[2], //
@@ -100,22 +98,22 @@ public class BitboardUtils {
 	};
 
 	// Ranks fordward in pawn direction
-	public static final long[][] RANKS_FORWARD = { RANKS_UPWARDS, RANKS_DOWNWARDS };
-	public static final long[][] RANKS_BACKWARD = { RANKS_DOWNWARDS, RANKS_UPWARDS };
+	public static final long[][] RANKS_FORWARD = {RANKS_UPWARDS, RANKS_DOWNWARDS};
+	public static final long[][] RANKS_BACKWARD = {RANKS_DOWNWARDS, RANKS_UPWARDS};
 
 	public static final String[] squareNames = changeEndianArray64(new String[] //
-	{ "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", //
-			"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", //
-			"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", //
-			"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", //
-			"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", //
-			"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", //
-			"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", //
-			"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1" });
+			{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", //
+					"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", //
+					"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", //
+					"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", //
+					"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", //
+					"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", //
+					"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", //
+					"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"});
 
 	// To use with square2Index
-	public static final byte[] bitTable = { 63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57,
-			0, 35, 62, 31, 40, 4, 49, 5, 52, 26, 60, 6, 23, 44, 46, 27, 56, 16, 7, 39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8 };
+	public static final byte[] bitTable = {63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57,
+			0, 35, 62, 31, 40, 4, 49, 5, 52, 26, 60, 6, 23, 44, 46, 27, 56, 16, 7, 39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
 
 	/**
 	 * Converts a square to its index 0=H1, 63=A8
@@ -171,7 +169,7 @@ public class BitboardUtils {
 	/**
 	 * Flips board vertically
 	 * https://chessprogramming.wikispaces.com/Flipping+Mirroring+and+Rotating
-	 * 
+	 *
 	 * @param in
 	 * @return
 	 */
@@ -187,7 +185,7 @@ public class BitboardUtils {
 	/**
 	 * Counts the number of bits of one long
 	 * http://chessprogramming.wikispaces.com/Population+Count
-	 * 
+	 *
 	 * @param x
 	 * @return
 	 */
@@ -200,17 +198,17 @@ public class BitboardUtils {
 		final long kf = 0x0101010101010101L;
 		x = x - ((x >> 1) & k1); // put count of each 2 bits into those 2 bits
 		x = (x & k2) + ((x >> 2) & k2); // put count of each 4 bits into those 4
-										// bits
+		// bits
 		x = (x + (x >> 4)) & k4; // put count of each 8 bits into those 8 bits
 		x = (x * kf) >> 56; // returns 8 most significant bits of x + (x<<8) +
-							// (x<<16) + (x<<24) + ...
+		// (x<<16) + (x<<24) + ...
 		return (int) x;
 	}
 
 	/**
 	 * Convert a bitboard square to algebraic notation Number depends of rotated
 	 * board.
-	 * 
+	 *
 	 * @param square
 	 * @return
 	 */
@@ -242,7 +240,7 @@ public class BitboardUtils {
 
 	/**
 	 * gets the column (0..7) of the square
-	 * 
+	 *
 	 * @param square
 	 * @return
 	 */

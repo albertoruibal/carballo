@@ -4,10 +4,9 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
- * 
  * For efficience Moves are int, this is a static class to threat with this
  * moves score is limited to 10 bits (positive) 1024 values
- * 
+ *
  * @author Alberto Alonso Ruibal
  */
 public class Move {
@@ -25,9 +24,8 @@ public class Move {
 	public static final int TYPE_KINGSIDE_CASTLING = 1;
 	public static final int TYPE_QUEENSIDE_CASTLING = 2;
 	public static final int TYPE_PASSANT = 3;
-	public static final int TYPE_PROMOTION_QUEEN = 4; // promotions must be
-														// always >=
-														// TYPE_PROMOTION_QUEEN
+	// promotions must be always >= TYPE_PROMOTION_QUEEN
+	public static final int TYPE_PROMOTION_QUEEN = 4;
 	public static final int TYPE_PROMOTION_KNIGHT = 5;
 	public static final int TYPE_PROMOTION_BISHOP = 6;
 	public static final int TYPE_PROMOTION_ROOK = 7;
@@ -98,7 +96,7 @@ public class Move {
 	/**
 	 * Given a boards creates a move from a String in uci format or short
 	 * algebraic form
-	 * 
+	 *
 	 * @param board
 	 * @param move
 	 */
@@ -124,18 +122,18 @@ public class Move {
 		}
 		char promo = move.charAt(move.length() - 1);
 		switch (Character.toLowerCase(promo)) {
-		case 'q':
-			moveType = TYPE_PROMOTION_QUEEN;
-			break;
-		case 'n':
-			moveType = TYPE_PROMOTION_KNIGHT;
-			break;
-		case 'b':
-			moveType = TYPE_PROMOTION_BISHOP;
-			break;
-		case 'r':
-			moveType = TYPE_PROMOTION_ROOK;
-			break;
+			case 'q':
+				moveType = TYPE_PROMOTION_QUEEN;
+				break;
+			case 'n':
+				moveType = TYPE_PROMOTION_KNIGHT;
+				break;
+			case 'b':
+				moveType = TYPE_PROMOTION_BISHOP;
+				break;
+			case 'r':
+				moveType = TYPE_PROMOTION_ROOK;
+				break;
 		}
 		// If promotion, remove the last char
 		if (moveType != 0)
@@ -150,22 +148,22 @@ public class Move {
 
 		// Fills from with a mask of possible from values
 		switch (move.charAt(0)) {
-		case 'N':
-			from = board.knights & board.getMines() & bbAttacks.knight[toIndex];
-			break;
-		case 'K':
-			from = board.kings & board.getMines() & bbAttacks.king[toIndex];
-			break;
-		case 'R':
-			from = board.rooks & board.getMines() & bbAttacks.getRookAttacks(toIndex, board.getAll());
-			break;
-		case 'B':
-			from = board.bishops & board.getMines() & bbAttacks.getBishopAttacks(toIndex, board.getAll());
-			break;
-		case 'Q':
-			from = board.queens & board.getMines()
-				& (bbAttacks.getRookAttacks(toIndex, board.getAll()) | bbAttacks.getBishopAttacks(toIndex, board.getAll()));
-			break;
+			case 'N':
+				from = board.knights & board.getMines() & bbAttacks.knight[toIndex];
+				break;
+			case 'K':
+				from = board.kings & board.getMines() & bbAttacks.king[toIndex];
+				break;
+			case 'R':
+				from = board.rooks & board.getMines() & bbAttacks.getRookAttacks(toIndex, board.getAll());
+				break;
+			case 'B':
+				from = board.bishops & board.getMines() & bbAttacks.getBishopAttacks(toIndex, board.getAll());
+				break;
+			case 'Q':
+				from = board.queens & board.getMines()
+						& (bbAttacks.getRookAttacks(toIndex, board.getAll()) | bbAttacks.getBishopAttacks(toIndex, board.getAll()));
+				break;
 		}
 		if (from != 0) { // remove the piece char
 			move = move.substring(1);
@@ -201,7 +199,7 @@ public class Move {
 		}
 		if (from == 0) {
 			return -1;
-        }
+		}
 
 		// Treats multiple froms, choosing the first Legal Move
 		while (from != 0) {
@@ -236,7 +234,7 @@ public class Move {
 			else if ((myFrom & board.kings) != 0) {
 				pieceMoved = KING;
 				// Only if origin square is king's initial square TODO FRC
-				if (fromIndex == 3 || fromIndex == 3 + (8 * 7)) { 
+				if (fromIndex == 3 || fromIndex == 3 + (8 * 7)) {
 					if (toIndex == (fromIndex + 2))
 						moveType = TYPE_QUEENSIDE_CASTLING;
 					if (toIndex == (fromIndex - 2))
@@ -261,7 +259,7 @@ public class Move {
 
 	/**
 	 * Gets an UCI-String representation of the move
-	 * 
+	 *
 	 * @param move
 	 * @return
 	 */
@@ -272,18 +270,18 @@ public class Move {
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		switch (Move.getMoveType(move)) {
-		case TYPE_PROMOTION_QUEEN:
-			sb.append("q");
-			break;
-		case TYPE_PROMOTION_KNIGHT:
-			sb.append("n");
-			break;
-		case TYPE_PROMOTION_BISHOP:
-			sb.append("b");
-			break;
-		case TYPE_PROMOTION_ROOK:
-			sb.append("r");
-			break;
+			case TYPE_PROMOTION_QUEEN:
+				sb.append("q");
+				break;
+			case TYPE_PROMOTION_KNIGHT:
+				sb.append("n");
+				break;
+			case TYPE_PROMOTION_BISHOP:
+				sb.append("b");
+				break;
+			case TYPE_PROMOTION_ROOK:
+				sb.append("r");
+				break;
 		}
 		return sb.toString();
 	}
@@ -305,25 +303,25 @@ public class Move {
 		sb.append(getCapture(move) ? 'x' : '-');
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		switch (Move.getMoveType(move)) {
-		case TYPE_PROMOTION_QUEEN:
-			sb.append("q");
-			break;
-		case TYPE_PROMOTION_KNIGHT:
-			sb.append("n");
-			break;
-		case TYPE_PROMOTION_BISHOP:
-			sb.append("b");
-			break;
-		case TYPE_PROMOTION_ROOK:
-			sb.append("r");
-			break;
+			case TYPE_PROMOTION_QUEEN:
+				sb.append("q");
+				break;
+			case TYPE_PROMOTION_KNIGHT:
+				sb.append("n");
+				break;
+			case TYPE_PROMOTION_BISHOP:
+				sb.append("b");
+				break;
+			case TYPE_PROMOTION_ROOK:
+				sb.append("r");
+				break;
 		}
 		return sb.toString();
 	}
 
 	/**
 	 * Des not append + or #
-	 * 
+	 *
 	 * @param board
 	 * @param move
 	 * @param legalMoves
@@ -376,18 +374,18 @@ public class Move {
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		switch (Move.getMoveType(move)) {
-		case TYPE_PROMOTION_QUEEN:
-			sb.append("Q");
-			break;
-		case TYPE_PROMOTION_KNIGHT:
-			sb.append("N");
-			break;
-		case TYPE_PROMOTION_BISHOP:
-			sb.append("B");
-			break;
-		case TYPE_PROMOTION_ROOK:
-			sb.append("R");
-			break;
+			case TYPE_PROMOTION_QUEEN:
+				sb.append("Q");
+				break;
+			case TYPE_PROMOTION_KNIGHT:
+				sb.append("N");
+				break;
+			case TYPE_PROMOTION_BISHOP:
+				sb.append("B");
+				break;
+			case TYPE_PROMOTION_ROOK:
+				sb.append("R");
+				break;
 		}
 
 		return sb.toString();

@@ -1,10 +1,5 @@
 package com.alonsoruibal.chess.search;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
@@ -19,10 +14,14 @@ import com.alonsoruibal.chess.movesort.SortInfo;
 import com.alonsoruibal.chess.tt.MultiprobeTranspositionTable;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
 /**
- * 
  * Search engine
- * 
+ *
  * @author Alberto Alonso Ruibal
  */
 public class SearchEngine implements Runnable {
@@ -112,8 +111,8 @@ public class SearchEngine implements Runnable {
 	private Random random;
 
 	private int[][] pvReductionMatrix, nonPvReductionMatrix;
-	private int[] singularMoveDepth = { 6 * PLY, 6 * PLY, 8 * PLY };
-	private int[] iidDepth = { 5 * PLY, 5 * PLY, 8 * PLY };
+	private int[] singularMoveDepth = {6 * PLY, 6 * PLY, 8 * PLY};
+	private int[] iidDepth = {5 * PLY, 5 * PLY, 8 * PLY};
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -268,21 +267,21 @@ public class SearchEngine implements Runnable {
 	private boolean canUseTT(int depthRemaining, int alpha, int beta) {
 		if (tt.getDepthAnalyzed() >= depthRemaining && tt.isMyGeneration()) {
 			switch (tt.getNodeType()) {
-			case TranspositionTable.TYPE_EXACT_SCORE:
-				ttPvHit++;
-				return true;
-			case TranspositionTable.TYPE_FAIL_LOW:
-				ttLBHit++;
-				if (tt.getScore() <= alpha) {
+				case TranspositionTable.TYPE_EXACT_SCORE:
+					ttPvHit++;
 					return true;
-				}
-				break;
-			case TranspositionTable.TYPE_FAIL_HIGH:
-				ttUBHit++;
-				if (tt.getScore() >= beta) {
-					return true;
-				}
-				break;
+				case TranspositionTable.TYPE_FAIL_LOW:
+					ttLBHit++;
+					if (tt.getScore() <= alpha) {
+						return true;
+					}
+					break;
+				case TranspositionTable.TYPE_FAIL_HIGH:
+					ttUBHit++;
+					if (tt.getScore() >= beta) {
+						return true;
+					}
+					break;
 			}
 		}
 		return false;
@@ -322,14 +321,14 @@ public class SearchEngine implements Runnable {
 		if (foundTT && refine) {
 			// Refine Value with TT
 			switch (tt.getNodeType()) {
-			case TranspositionTable.TYPE_FAIL_LOW:
-				if (tt.getScore() > score)
-					score = tt.getScore();
-				break;
-			case TranspositionTable.TYPE_FAIL_HIGH:
-				if (tt.getScore() < score)
-					score = tt.getScore();
-				break;
+				case TranspositionTable.TYPE_FAIL_LOW:
+					if (tt.getScore() > score)
+						score = tt.getScore();
+					break;
+				case TranspositionTable.TYPE_FAIL_HIGH:
+					if (tt.getScore() < score)
+						score = tt.getScore();
+					break;
 			}
 		}
 		return score;
@@ -342,23 +341,23 @@ public class SearchEngine implements Runnable {
 	private int pieceValue(char piece) {
 		int capturedPieceValue = 0;
 		switch (Character.toLowerCase(piece)) {
-		case 'p':
-			return CompleteEvaluator.PAWN;
-		case 'n':
-			return CompleteEvaluator.KNIGHT;
-		case 'b':
-			return CompleteEvaluator.BISHOP;
-		case 'r':
-			return CompleteEvaluator.ROOK;
-		case 'q':
-			return CompleteEvaluator.QUEEN;
+			case 'p':
+				return CompleteEvaluator.PAWN;
+			case 'n':
+				return CompleteEvaluator.KNIGHT;
+			case 'b':
+				return CompleteEvaluator.BISHOP;
+			case 'r':
+				return CompleteEvaluator.ROOK;
+			case 'q':
+				return CompleteEvaluator.QUEEN;
 		}
 		return capturedPieceValue;
 	}
 
 	/**
 	 * Search horizon node (depth == 0) some kind of quiescent search
-	 * 
+	 *
 	 * @return
 	 * @throws SearchFinishedException
 	 */
@@ -788,7 +787,7 @@ public class SearchEngine implements Runnable {
 		logger.debug("Positions QS      = " + qsPositionCounter + " " //
 				+ (100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("Positions Null    = " + positionCounter + " " //
-				+ (100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter))	+ "%");
+				+ (100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
 		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
@@ -842,7 +841,7 @@ public class SearchEngine implements Runnable {
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
-	
+
 	public void runStepped() throws SearchFinishedException {
 		int failHighCount = 0;
 		int failLowCount = 0;
@@ -900,13 +899,13 @@ public class SearchEngine implements Runnable {
 		if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000)) {
 			throw new SearchFinishedException();
 		}
-		
+
 		depth++;
 		if (depth == MAX_DEPTH) {
 			throw new SearchFinishedException();
 		}
 	}
-	
+
 	public void finishRun() {
 		// puts the board in the initial position
 		board.undoMove(initialPly);
@@ -916,11 +915,11 @@ public class SearchEngine implements Runnable {
 			observer.bestMove(globalBestMove, ponderMove);
 		}
 	}
-	
+
 	public void run() {
 		try {
 			newRun();
-			while(true) {
+			while (true) {
 				runStepped();
 			}
 		} catch (SearchFinishedException ignored) {
@@ -931,7 +930,6 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Gets the principal variation and the best move from the transposition
 	 * table
-	 * 
 	 */
 	private void getPv() {
 		StringBuilder sb = new StringBuilder();

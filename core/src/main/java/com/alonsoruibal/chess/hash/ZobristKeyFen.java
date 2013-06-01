@@ -10,7 +10,7 @@ package com.alonsoruibal.chess.hash;
  */
 public class ZobristKeyFen {
 
-	static final long[] random64 = { 0x9D39247E33776D41L, 0x2AF7398005AAA5C7L, 0x44DB015024623547L, 0x9C15F73E62A76AE2L, 0x75834465489C0C89L,
+	static final long[] random64 = {0x9D39247E33776D41L, 0x2AF7398005AAA5C7L, 0x44DB015024623547L, 0x9C15F73E62A76AE2L, 0x75834465489C0C89L,
 			0x3290AC3A203001BFL, 0x0FBBAD1F61042279L, 0xE83A908FF2FB60CAL, 0x0D7E765D58755C10L, 0x1A083822CEAFE02DL, 0x9605D5F0E25EC3B0L, 0xD021FF5CD13A2ED5L,
 			0x40BDF15D4A672E32L, 0x011355146FD56395L, 0x5DB4832046F3D9E5L, 0x239F8B2D7FF719CCL, 0x05D1A1AE85B49AA1L, 0x679F848F6E8FC971L, 0x7449BBFF801FED0BL,
 			0x7D11CDB1C3B7ADF0L, 0x82C7709E781EB7CCL, 0xF3218F1C9510786CL, 0x331478F3AF51BBE6L, 0x4BB38DE5E7219443L, 0xAA649C6EBCFD50FCL, 0x8DBD98A352AFD40BL,
@@ -121,7 +121,7 @@ public class ZobristKeyFen {
 			0x64A53DC924FE7AC9L, 0x142DE49FFF7A7C3DL, 0x0C335248857FA9E7L, 0x0A9C32D5EAE45305L, 0xE6C42178C4BBB92EL, 0x71F1CE2490D20B07L, 0xF1BCC3D275AFE51AL,
 			0xE728E8C83C334074L, 0x96FBF83A12884624L, 0x81A1549FD6573DA5L, 0x5FA7867CAF35E149L, 0x56986E2EF3ED091BL, 0x917F1DD5F8886C61L, 0xD20D8C88C8FFE65FL,
 			0x31D71DCE64B2C310L, 0xF165B587DF898190L, 0xA57E6339DD2CF3A0L, 0x1EF6E6DBB1961EC9L, 0x70CC73D90BC26E24L, 0xE21A6B35DF0C3AD7L, 0x003A93D8B2806962L,
-			0x1C99DED33CB890A1L, 0xCF3145DE0ADD4289L, 0xD0E4427A5514FB72L, 0x77C621CC9FB3A483L, 0x67A34DAC4356550BL, 0xF8D626AAAF278509L, };
+			0x1C99DED33CB890A1L, 0xCF3145DE0ADD4289L, 0xD0E4427A5514FB72L, 0x77C621CC9FB3A483L, 0x67A34DAC4356550BL, 0xF8D626AAAF278509L,};
 
 	static final int randomEnPassantOffset = 772;
 	static final int randomCastleOffset = 768;
@@ -179,20 +179,20 @@ public class ZobristKeyFen {
 				break;
 			pieceChar = castleFlags.charAt(p++);
 			switch (pieceChar) {
-			case '-':
-				break;
-			case 'K':
-				key ^= random64[randomCastleOffset];
-				break;
-			case 'Q':
-				key ^= random64[randomCastleOffset + 1];
-				break;
-			case 'k':
-				key ^= random64[randomCastleOffset + 2];
-				break;
-			case 'q':
-				key ^= random64[randomCastleOffset + 3];
-				break;
+				case '-':
+					break;
+				case 'K':
+					key ^= random64[randomCastleOffset];
+					break;
+				case 'Q':
+					key ^= random64[randomCastleOffset + 1];
+					break;
+				case 'k':
+					key ^= random64[randomCastleOffset + 2];
+					break;
+				case 'q':
+					key ^= random64[randomCastleOffset + 3];
+					break;
 			}
 		}
 		// EnPassant Flag is only set if pawn can capture

@@ -4,9 +4,7 @@ import com.alonsoruibal.chess.Board;
 
 
 /**
- * 
  * @author rui
- *
  */
 public interface MoveGenerator {
 

@@ -1,17 +1,16 @@
 package com.alonsoruibal.chess.tt;
 
-import java.util.Arrays;
-
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.log.Logger;
 
+import java.util.Arrays;
+
 /**
  * Transposition table using two keys and multiprobe
- * 
+ * <p/>
  * Uses part of the board's zobrish key (shifted) as the index
- * 
+ *
  * @author rui
- * 
  */
 public class MultiprobeTranspositionTable extends TranspositionTable {
 	/**
@@ -33,7 +32,7 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 	/**
 	 * Whe must indicate the number in bits of the size example: 23 => 2^23 are
 	 * 8 million entries
-	 * 
+	 *
 	 * @param sizeBits
 	 */
 	public MultiprobeTranspositionTable(int sizeBits) {
@@ -93,7 +92,7 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 		index = -1;
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];
-			
+
 			// TODO do not replace PVs
 			//if (keys[i] == 0 || (keys[i] == key2 && (getGeneration() != generation || getDepthAnalyzed() <= depthAnalyzed))) {
 			if (keys[i] == 0 || (keys[i] == key2)) {

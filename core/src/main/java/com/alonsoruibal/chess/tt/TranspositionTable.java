@@ -8,7 +8,7 @@ public abstract class TranspositionTable {
 	public final static int TYPE_FAIL_LOW = 2;
 	public final static int TYPE_FAIL_HIGH = 3;
 	public final static int TYPE_EVAL = 4;
-	
+
 	/**
 	 * Returns true if key matches with key stored
 	 */
@@ -21,7 +21,7 @@ public abstract class TranspositionTable {
 	public abstract byte getGeneration();
 
 	public abstract boolean isMyGeneration();
-	
+
 	public abstract byte getDepthAnalyzed();
 
 	public abstract int getScore();
@@ -31,13 +31,13 @@ public abstract class TranspositionTable {
 			set(board, TranspositionTable.TYPE_FAIL_LOW, bestMove, score, depthAnalyzed, exclusion);
 		} else if (score >= upperBound) {
 			set(board, TranspositionTable.TYPE_FAIL_HIGH, bestMove, score, depthAnalyzed, exclusion);
-		} else { 	
+		} else {
 			set(board, TranspositionTable.TYPE_EXACT_SCORE, bestMove, score, depthAnalyzed, exclusion);
 		}
 	}
 
 	public abstract void set(Board board, int nodeType, int bestMove,
-			int score, byte depthAnalyzed, boolean exclusion);
+							 int score, byte depthAnalyzed, boolean exclusion);
 
 	// called at the start of each search
 	public abstract void newGeneration();

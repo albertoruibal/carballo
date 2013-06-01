@@ -1,12 +1,12 @@
 package com.alonsoruibal.chess;
 
-import java.util.Arrays;
-
 import com.alonsoruibal.chess.book.Book;
+
+import java.util.Arrays;
 
 /**
  * Holds configuration parameters
- * 
+ *
  * @author rui
  */
 public class Config {
@@ -161,7 +161,7 @@ public class Config {
 	public void getIid(boolean iid) {
 		this.iid = iid;
 	}
-	
+
 	public int getIidMargin() {
 		return iidMargin;
 	}
@@ -393,6 +393,7 @@ public class Config {
 
 	/**
 	 * 2100 is the max, 500 the min
+	 *
 	 * @param engineElo
 	 */
 	public void setElo(int engineElo) {

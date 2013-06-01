@@ -5,6 +5,7 @@ import com.alonsoruibal.chess.Board;
 
 /**
  * Opening book support
+ *
  * @author rui
  */
 public interface Book {

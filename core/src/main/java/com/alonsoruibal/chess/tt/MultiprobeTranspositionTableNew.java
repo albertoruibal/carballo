@@ -1,17 +1,16 @@
 package com.alonsoruibal.chess.tt;
 
-import java.util.Arrays;
-
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.log.Logger;
 
+import java.util.Arrays;
+
 /**
  * Transposition table using two keys and multiprobe
- * 
+ * <p/>
  * Uses part of the board's zobrish key (shifted) as the index
- * 
+ *
  * @author rui
- * 
  */
 public class MultiprobeTranspositionTableNew extends TranspositionTable {
 	/**
@@ -33,7 +32,7 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 	/**
 	 * Whe must indicate the number in bits of the size example: 23 => 2^23 are
 	 * 8 million entries
-	 * 
+	 *
 	 * @param sizeBits
 	 */
 	public MultiprobeTranspositionTableNew(int sizeBits) {
@@ -93,29 +92,23 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 			info = infos[i];
 			if (keys[i] == 0 || (keys[i] == key2)) { // Empty or replace
 				if (keys[i] != 0 && getGeneration() == generation && // When
-																		// replacing
-																		// something
-																		// my
-																		// generation
+						// replacing something my generation
 						(depthAnalyzed == 0 || getDepthAnalyzed() > depthAnalyzed
-						// || (getDepthAnalyzed() == depthAnalyzed &&
-						// getNodeType() == TYPE_EXACT_SCORE && nodeType !=
-						// TYPE_EXACT_SCORE)
+								// || (getDepthAnalyzed() == depthAnalyzed &&
+								// getNodeType() == TYPE_EXACT_SCORE && nodeType !=
+								// TYPE_EXACT_SCORE)
 						))
 					return; // Never replace with eval values or lower depth or
-							// exact scores with other nodetypes
+				// exact scores with other nodetypes
 				index = i;
 				if (keys[i] == key2 && bestMove == 0)
 					bestMove = getBestMove(); // Keep best move when replacing
-												// and no move
+				// and no move
 				break;
 			}
 
 			if (getGeneration() != generation || getDepthAnalyzed() < depthAnalyzed) { // TODO
-																						// <
-																						// or
-																						// >=
-																						// ?
+				// < or >= ?
 				index = i;
 				break;
 			}

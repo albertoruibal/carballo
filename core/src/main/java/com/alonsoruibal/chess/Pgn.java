@@ -1,13 +1,13 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.log.Logger;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.alonsoruibal.chess.log.Logger;
-
 /**
  * TODO Parse comments
- * 
+ *
  * 1. Event: the name of the tournament or match event. 2. Site: the location of
  * the event. This is in "City, Region COUNTRY" format, where COUNTRY is the
  * 3-letter International Olympic Committee code for the country. An example is
@@ -18,9 +18,8 @@ import com.alonsoruibal.chess.log.Logger;
  * pieces, same format as White. 7. Result: the result of the game. This can
  * only have four possible values: "1-0" (White won), "0-1" (Black won),
  * "1/2-1/2" (Draw), or "*" (other, e.g., the game is ongoing).
- * 
+ *
  * @author rui
- * 
  */
 
 public class Pgn {
@@ -45,7 +44,7 @@ public class Pgn {
 
 	ArrayList<String> moves = new ArrayList<String>();
 
-    public String getPgn(Board b, String whiteName, String blackName) {
+	public String getPgn(Board b, String whiteName, String blackName) {
 		return getPgn(b, whiteName, blackName, null, null, null);
 	}
 
@@ -79,15 +78,15 @@ public class Pgn {
 		if (result == null) {
 			result = "*";
 			switch (b.isEndGame()) {
-			case 1:
-				result = "1-0";
-				break;
-			case -1:
-				result = "0-1";
-				break;
-			case 99:
-				result = "1/2-1/2";
-				break;
+				case 1:
+					result = "1-0";
+					break;
+				case -1:
+					result = "0-1";
+					break;
+				case 99:
+					result = "1/2-1/2";
+					break;
 			}
 		}
 		sb.append("[Result \"").append(result).append("\"]\n");
@@ -116,17 +115,17 @@ public class Pgn {
 		String[] tokens = line.toString().split("[ \\t\\n\\x0B\\f\\r]+");
 
 		int length = 0;
-        for (String token : tokens) {
-            if (length + token.length() + 1 > 80) {
-                sb.append("\n");
-                length = 0;
-            } else if (length > 0) {
-                sb.append(" ");
-                length++;
-            }
-            length += token.length();
-            sb.append(token);
-        }
+		for (String token : tokens) {
+			if (length + token.length() + 1 > 80) {
+				sb.append("\n");
+				length = 0;
+			} else if (length > 0) {
+				sb.append(" ");
+				length++;
+			}
+			length += token.length();
+			sb.append(token);
+		}
 		// logger.debug("PGN end");
 
 		// logger.debug("PGN:\n" + sb.toString());
@@ -135,7 +134,6 @@ public class Pgn {
 
 	/**
 	 * Sets a board from a only 1-game pgn
-	 * 
 	 */
 	public void parsePgn(String pgn) {
 		event = "";
@@ -164,38 +162,38 @@ public class Pgn {
 		try {
 			String lines[] = pgn.split("\\r?\\n");
 
-            for (String line : lines) {
-                if (line.indexOf("[") == 0) {
-                    // Is a header
-                    String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
-                    String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+			for (String line : lines) {
+				if (line.indexOf("[") == 0) {
+					// Is a header
+					String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
+					String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
-                    if ("event".equals(headerName)) {
-                        event = headerValue;
-                    } else if ("round".equals(headerName)) {
-                        round = headerValue;
-                    } else if ("site".equals(headerName)) {
-                        site = headerValue;
-                    } else if ("date".equals(headerName)) {
-                        date = headerValue;
-                    } else if ("white".equals(headerName)) {
-                        white = headerValue;
-                    } else if ("black".equals(headerName)) {
-                        black = headerValue;
-                    } else if ("whiteelo".equals(headerName)) {
-                        whiteElo = headerValue;
-                    } else if ("blackelo".equals(headerName)) {
-                        blackElo = headerValue;
-                    } else if ("result".equals(headerName)) {
-                        result = headerValue;
-                    } else if ("fen".equals(headerName)) {
-                        fenStartPosition = headerValue;
-                    }
-                } else {
-                    movesSb.append(line);
-                    movesSb.append(" ");
-                }
-            }
+					if ("event".equals(headerName)) {
+						event = headerValue;
+					} else if ("round".equals(headerName)) {
+						round = headerValue;
+					} else if ("site".equals(headerName)) {
+						site = headerValue;
+					} else if ("date".equals(headerName)) {
+						date = headerValue;
+					} else if ("white".equals(headerName)) {
+						white = headerValue;
+					} else if ("black".equals(headerName)) {
+						black = headerValue;
+					} else if ("whiteelo".equals(headerName)) {
+						whiteElo = headerValue;
+					} else if ("blackelo".equals(headerName)) {
+						blackElo = headerValue;
+					} else if ("result".equals(headerName)) {
+						result = headerValue;
+					} else if ("fen".equals(headerName)) {
+						fenStartPosition = headerValue;
+					}
+				} else {
+					movesSb.append(line);
+					movesSb.append(" ");
+				}
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -208,44 +206,44 @@ public class Pgn {
 		// logger.debug("Moves = " + movesSb.toString());
 
 		String[] tokens = movesSb.toString().split("[ \\t\\n\\x0B\\f\\r]+");
-        for (String token : tokens) {
-            String el = token.trim();
+		for (String token : tokens) {
+			String el = token.trim();
 
-            boolean addMove = true;
+			boolean addMove = true;
 
-            if (el.contains("(")) {
-                addMove = false;
-                comment1++;
-            }
-            if (el.contains(")")) {
-                addMove = false;
-                comment1--;
-            }
-            if (el.contains("{")) {
-                addMove = false;
-                comment2++;
-            }
-            if (el.contains("}")) {
-                addMove = false;
-                comment2--;
-            }
+			if (el.contains("(")) {
+				addMove = false;
+				comment1++;
+			}
+			if (el.contains(")")) {
+				addMove = false;
+				comment1--;
+			}
+			if (el.contains("{")) {
+				addMove = false;
+				comment2++;
+			}
+			if (el.contains("}")) {
+				addMove = false;
+				comment2--;
+			}
 
-            if (addMove) {
-                if ("1/2-1/2".equals(el)) {
-                } else if ("1-0".equals(el)) {
-                } else if ("0-1".equals(el)) {
-                } else if (comment1 == 0 && comment2 == 0) {
-                    // Move 1.
-                    if (el.contains(".")) {
-                        el = el.substring(el.lastIndexOf(".") + 1);
-                    }
+			if (addMove) {
+				if ("1/2-1/2".equals(el)) {
+				} else if ("1-0".equals(el)) {
+				} else if ("0-1".equals(el)) {
+				} else if (comment1 == 0 && comment2 == 0) {
+					// Move 1.
+					if (el.contains(".")) {
+						el = el.substring(el.lastIndexOf(".") + 1);
+					}
 
-                    if (el.length() > 0 && comment1 == 0 && comment2 == 0 && !el.contains("$")) {
-                        moves.add(el);
-                    }
-                }
-            }
-        }
+					if (el.length() > 0 && comment1 == 0 && comment2 == 0 && !el.contains("$")) {
+						moves.add(el);
+					}
+				}
+			}
+		}
 	}
 
 	// parses a PGN and does all moves
