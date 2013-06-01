@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Generates magic numbers without postmask!!!! by try and error
- * 
+ *
  * @author rui
  */
 public class MagicNumbersGenerator {
@@ -13,7 +13,7 @@ public class MagicNumbersGenerator {
 
 	/**
 	 * Generates a randon number with few bits
-	 * 
+	 *
 	 * @return
 	 */
 	private long randomFewbits() {
@@ -31,8 +31,7 @@ public class MagicNumbersGenerator {
 		long result = 0L;
 		for (i = 0; i < bits; i++) {
 			lsb = mask & (-mask);
-			mask ^= lsb; // Deactivates lsb bit of the mask to get next bit next
-							// time
+			mask ^= lsb; // Deactivates lsb bit of the mask to get next bit next time
 			if ((index & (1 << i)) != 0)
 				result |= lsb; // if bit is set to 1
 		}
@@ -41,13 +40,10 @@ public class MagicNumbersGenerator {
 
 	/**
 	 * Routine to generate our own magic bits
-	 * 
-	 * @param index
-	 *            of the square
-	 * @param m
-	 *            bits needed
-	 * @param bishop
-	 *            is a bishop or rook?
+	 *
+	 * @param index  of the square
+	 * @param m      bits needed
+	 * @param bishop is a bishop or rook?
 	 * @return
 	 */
 	long findMagics(byte index, byte m, boolean bishop) {

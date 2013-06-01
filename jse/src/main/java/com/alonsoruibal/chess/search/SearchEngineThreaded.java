@@ -5,7 +5,7 @@ import com.alonsoruibal.chess.Config;
 public class SearchEngineThreaded extends SearchEngine {
 
 	Thread thread;
-	
+
 	public SearchEngineThreaded(Config config) {
 		super(config);
 	}
@@ -21,7 +21,7 @@ public class SearchEngineThreaded extends SearchEngine {
 			thread.start();
 		}
 	}
-	
+
 	/**
 	 * Stops thinking
 	 */
@@ -34,5 +34,5 @@ public class SearchEngineThreaded extends SearchEngine {
 				e.printStackTrace();
 			}
 		}
-	}	
+	}
 }

@@ -4,15 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import com.alonsoruibal.chess.log.Logger;
 
 /**
  * TODO Parse comments
- * 
+ * <p/>
  * 1. Event: the name of the tournament or match event. 2. Site: the location of
  * the event. This is in "City, Region COUNTRY" format, where COUNTRY is the
  * 3-letter International Olympic Committee code for the country. An example is
@@ -23,9 +18,8 @@ import com.alonsoruibal.chess.log.Logger;
  * pieces, same format as White. 7. Result: the result of the game. This can
  * only have four possible values: "1-0" (White won), "0-1" (Black won),
  * "1/2-1/2" (Draw), or "*" (other, e.g., the game is ongoing).
- * 
+ *
  * @author rui
- * 
  */
 
 public class PgnFile extends Pgn {
