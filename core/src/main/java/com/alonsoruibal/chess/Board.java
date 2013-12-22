@@ -247,14 +247,14 @@ public class Board {
 		sb.append(" ");
 		sb.append((getTurn() ? "w" : "b"));
 		sb.append(" ");
-		if (getWhiteQueensideCastling())
-			sb.append("Q");
 		if (getWhiteKingsideCastling())
 			sb.append("K");
-		if (getBlackQueensideCastling())
-			sb.append("q");
+		if (getWhiteQueensideCastling())
+			sb.append("Q");
 		if (getBlackKingsideCastling())
 			sb.append("k");
+		if (getBlackQueensideCastling())
+			sb.append("q");
 		if (!getWhiteQueensideCastling() && !getWhiteKingsideCastling() && !getBlackQueensideCastling() && !getBlackKingsideCastling())
 			sb.append("-");
 		sb.append(" ");
@@ -371,7 +371,6 @@ public class Board {
 			}
 		}
 
-
 		// Check if board changed or if we can keep the history
 		if (whites != tmpWhites //
 				|| blacks != tmpBlacks //
@@ -380,7 +379,8 @@ public class Board {
 				|| queens != tmpQueens //
 				|| bishops != tmpBishops //
 				|| knights != tmpKnights //
-				|| kings != tmpKings) {
+				|| kings != tmpKings //
+				|| (flags & FLAG_TURN) != (tmpFlags & FLAG_TURN)) {
 
 			// board reset
 			sanMoves.clear();
@@ -400,7 +400,7 @@ public class Board {
 			kings = tmpKings;
 			fiftyMovesRule = tmpFiftyMovesRule;
 
-			// Flags are nort completed till verify, so skip checking
+			// Flags are not completed till verify, so skip checking
 			flags = tmpFlags;
 
 			verify();
