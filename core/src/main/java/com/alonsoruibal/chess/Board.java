@@ -360,11 +360,9 @@ public class Board {
 			}
 		}
 
-		// try to apply the last move to see if we are advancing or undo moves
+		// try to apply the last move to see if we are advancing or undoing moves
 		if ((moveNumber + 1) == fenMoveNumber && lastMove != null) {
-			doMove(Move.getFromString(this, lastMove, false));
-			logger.debug(toString());
-			logger.debug(getFen());
+			doMove(Move.getFromString(this, lastMove, true));
 		} else if (fenMoveNumber < moveNumber) {
 			for (int k = moveNumber; k > fenMoveNumber; k--) {
 				undoMove();
