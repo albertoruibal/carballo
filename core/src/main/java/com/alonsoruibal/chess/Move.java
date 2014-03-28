@@ -2,6 +2,7 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
+import com.alonsoruibal.chess.log.Logger;
 
 /**
  * For efficience Moves are int, this is a static class to threat with this
@@ -10,7 +11,7 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
  * @author Alberto Alonso Ruibal
  */
 public class Move {
-	// private static final Logger logger = Logger.getLogger(Move.class);
+	// private static final Logger logger = Logger.getLogger(Move.class.toString());
 
 	// Move pieces ordered by value
 	public static final int PAWN = 1;
@@ -94,8 +95,8 @@ public class Move {
 	}
 
 	/**
-	 * Given a boards creates a move from a String in uci format or short
-	 * algebraic form
+	 * Given a board creates a move from a String in uci format or short
+	 * algebraic form. Checklegality true is mandatory if using sort algebraic
 	 *
 	 * @param board
 	 * @param move
@@ -188,12 +189,6 @@ public class Move {
 			if (j >= 0)
 				from &= BitboardUtils.RANK[j];
 		}
-		// if (BitboardUtils.popCount(from) > 1) {
-		// logger.error("Move NOT disambiaguated:\n"+board.toString() + "\n" +
-		// in);
-		// System.exit(-1);
-		// return -1;
-		// }
 		if (move.length() == 4) { // was algebraic complete e2e4 (=UCI!)
 			from = BitboardUtils.algebraic2Square(move.substring(0, 2));
 		}
@@ -247,9 +242,11 @@ public class Move {
 				capture = true;
 			}
 			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, moveType);
-			if (checkLegality && board.doMove(moveInt, false)) {
-				board.undoMove();
-				return moveInt;
+			if (checkLegality) {
+				if (board.doMove(moveInt, false)) {
+					board.undoMove();
+					return moveInt;
+				}
 			} else {
 				return moveInt;
 			}
