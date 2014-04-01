@@ -40,6 +40,8 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     //libraryjars configurations.compile
     libraryjars "<java.home>/lib/rt.jar"
 
+    optimizationpasses 5
+
     allowaccessmodification
     dontskipnonpubliclibraryclassmembers
     keep "public class com.alonsoruibal.chess.uci.Uci { *; }"
