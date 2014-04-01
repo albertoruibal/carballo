@@ -4,6 +4,7 @@ Description
 Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with Applet and GWT (HTML5) interfaces.
 
 It's organized into modules:
+
 * Core: the chess engine
 * JSE: the Java Standard Edition version with an UCI interface and unit tests
 * Applet: the applet code, depends of Core and Jse
@@ -11,6 +12,7 @@ It's organized into modules:
 * CSharp: this is a conversion of the Core source code to C# using Sharpen
 
 Links:
+
 * Home: http://www.alonsoruibal.com/chess
 * Applet interface: http://www.mobialia.com/webchess
 * GWT interface: http://www.mobialia.com/webtvchess
@@ -47,7 +49,7 @@ Features
 * UCI interface with lots of UCI options (for chess GUIs like Arena)
 * The core of the chess engine was converted to C# using Sharpen
 
-It scores 2415 ELO points at BT2630 tests in my Core2 Duo 2.2GHz. Also solves 280 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
+It scores 2415 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz. Also solves 285 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
 
 Test Results
 ============
@@ -78,6 +80,7 @@ History
 =======
 
 Version 0.8:
+
 * Project build system migrated from Maven to Gradle
 * Solved some evaluator bugs
 * New option to do not use Magic Bitboard Attacks: optimizes start time in HTML5
