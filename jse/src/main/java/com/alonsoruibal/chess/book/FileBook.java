@@ -66,7 +66,6 @@ public class FileBook implements Book {
 	}
 
 	public void generateMoves(Board board) {
-
 		totalWeight = 0;
 		moves.clear();
 		weights.clear();
