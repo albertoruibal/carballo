@@ -1,13 +1,10 @@
 package com.alonsoruibal.chess;
 
-import junit.framework.TestCase;
-
 import com.alonsoruibal.chess.tt.MultiprobeTranspositionTable;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
-/**
- * @author rui
- */
+import junit.framework.TestCase;
+
 public class TranspositionTableTest extends TestCase {
 
 
@@ -15,7 +12,7 @@ public class TranspositionTableTest extends TestCase {
 		Board b = new Board();
 		b.startPosition();
 		TranspositionTable tt = new MultiprobeTranspositionTable(20);
-		
+
 		int nodeType = TranspositionTable.TYPE_EXACT_SCORE;
 		int bestMove = Move.getFromString(b, "e2e4", true);
 		int score = -100;

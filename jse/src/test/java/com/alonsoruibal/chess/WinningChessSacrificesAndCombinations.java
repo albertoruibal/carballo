@@ -1,9 +1,5 @@
 package com.alonsoruibal.chess;
 
-/**
-
- * @author rui
- */
 public class WinningChessSacrificesAndCombinations extends EpdTest {
 
 	public void testMyEpd() {

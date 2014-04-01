@@ -1,9 +1,5 @@
 package com.alonsoruibal.chess;
 
-/**
-
- * @author rui
- */
 public class ArasanTest extends EpdTest {
 
 	public void testMyEpd() {

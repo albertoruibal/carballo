@@ -1,15 +1,16 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.book.FileBook;
+
 import junit.framework.TestCase;
 
 public class BookTest extends TestCase {
 
 	public void testBook() {
-        int count = 0;
+		int count = 0;
 		Board board = new Board();
 		board.startPosition();
-        FileBook book = new FileBook("/book_small.bin");
+		FileBook book = new FileBook("/book_small.bin");
 		int move = book.getMove(board);
 		while (move != -1) {
 			System.out.println(move);
@@ -17,8 +18,8 @@ public class BookTest extends TestCase {
 			System.out.println(board);
 			move = book.getMove(board);
 
-            count++;
+			count++;
 		}
-        assertTrue(count > 3);
+		assertTrue(count > 3);
 	}
 }

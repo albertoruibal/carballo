@@ -1,20 +1,18 @@
 package com.alonsoruibal.chess;
 
-import junit.framework.TestCase;
-
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
+import junit.framework.TestCase;
+
 /**
- * 
  * Some tests from http://membres.lycos.fr/albillo/
- * @author rui
  */
 public class ContemptFactorTest extends TestCase {
 
 	Config config;
 	SearchEngine searchEngine;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		config = new Config();
@@ -22,9 +20,9 @@ public class ContemptFactorTest extends TestCase {
 	}
 
 	public void testContemp1() {
-		testPosition("7k/7p/5P1K/8/8/8/8/8 w", "a1a8");	
+		testPosition("7k/7p/5P1K/8/8/8/8/8 w", "a1a8");
 	}
-	
+
 	private void testPosition(String fen, String move) {
 
 		searchEngine.getBoard().setFen(fen);

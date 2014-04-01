@@ -1,21 +1,20 @@
 package com.alonsoruibal.chess;
 
-import junit.framework.TestCase;
-
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
+import junit.framework.TestCase;
+
 /**
  * Estimate program ELO, from:
  * http://www.chessmaniac.com/ELORating/ELO_Chess_Rating.shtml
- * @author rui
  */
 public class BasicEloTest extends TestCase {
 
 	Config config;
 	SearchEngine search;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		config = new Config();
@@ -110,7 +109,7 @@ public class BasicEloTest extends TestCase {
 		if ("e3h6".equals(move9)) elo9 = 1700;
 		if ("d7b7".equals(move9)) elo9 = 1400;
 		System.out.println(move9 + " Elo9 = " + elo9);
-		
+
 		int elo10 = 1000;
 		String move10 = testPosition("r1bq1rk1/p4ppp/1pnp1n2/2p5/2PPpP2/1NP1P3/P3B1PP/R1BQ1RK1 b");
 		if ("d8d7".equals(move10)) elo10 = 2000;
@@ -120,24 +119,16 @@ public class BasicEloTest extends TestCase {
 		if ("c8a6".equals(move10)) elo10 = 1800;
 		if ("a7a5".equals(move10)) elo10 = 1800;
 		if ("f8e8".equals(move10)) elo10 = 1400;
-		if ("d6d5".equals(move10)) elo10 = 1500;		
+		if ("d6d5".equals(move10)) elo10 = 1500;
 		System.out.println(move10 + " Elo10 = " + elo10);
-		
+
 		int elo = (elo1 + elo2 + elo3 + elo4 + elo5 + elo6 + elo7 + elo8 + elo9 + elo10) / 10;
 		System.out.println("Calculated Elo = " + elo);
 
 		assertTrue(elo > 2000);
 	}
-	
+
 	private String testPosition(String fen) {
-//		BoardFrame frame = new BoardFrame();
-//		frame.setFen(fen);
-//        frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
-//        frame.pack();
-//        frame.setResizable( false );
-//        frame.setLocationRelativeTo( null );
-//        frame.setVisible(true);
-		
 		search.getBoard().setFen(fen);
 		search.go(SearchParameters.get(5 * 60000)); // five minutes
 		String move = Move.toString(search.getBestMove());

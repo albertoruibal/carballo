@@ -9,7 +9,7 @@ public class ParseMoveTest extends TestCase {
 		b.setFen("1r1qk2r/1bp1n1pp/p2b1p2/2B1p3/2Q1P3/2N2N2/PPP2PPP/R4RK1 w k - 1 26");
 		assertEquals("Ra1-d1", Move.toStringExt(Move.getFromString(b, "Ra1-d1", true)));
 	}
-	
+
 	public void testGetFromString2() {
 		Board b = new Board();
 		b.setFen("1r1qk2r/1bp1n1pp/p2b1p2/2B1p3/2Q1P3/2N2N2/PPP2PPP/R4RK1 w k - 1 26");

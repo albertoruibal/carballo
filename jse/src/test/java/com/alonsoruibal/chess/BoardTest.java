@@ -2,10 +2,6 @@ package com.alonsoruibal.chess;
 
 import junit.framework.TestCase;
 
-/**
-
- * @author rui
- */
 public class BoardTest extends TestCase {
 
 	public void testMoveNumber1() {
@@ -27,7 +23,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.initialMoveNumber, 0);
 		assertEquals(b.moveNumber, 1);
 	}
-	
+
 	public void testUndo() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
@@ -37,13 +33,12 @@ public class BoardTest extends TestCase {
 		b.undoMove();
 		assertEquals(b.getFen(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
 	}
-	
 
 	public void testCastling() {
 		// Must keep history after castling
 		Board b = new Board();
 		b.setFen("rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/3QP3/PP1B1PPP/RN2KBNR b QKqk - 2 5");
 		b.setFenMove("rnbq1rk1/ppp1bppp/4pn2/3p4/2PP4/3QP3/PP1B1PPP/RN2KBNR w QK - 0 6", "O-O");
-		assertEquals(b.initialMoveNumber, 9);		
+		assertEquals(b.initialMoveNumber, 9);
 	}
 }

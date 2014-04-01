@@ -1,9 +1,5 @@
 package com.alonsoruibal.chess;
 
-/**
-
- * @author rui
- */
 public class SilentButDeadlyTest extends EpdTest {
 
 	public void testMyEpd() {

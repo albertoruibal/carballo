@@ -1,32 +1,30 @@
 package com.alonsoruibal.chess;
 
-import junit.framework.TestCase;
-
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
+import junit.framework.TestCase;
+
 /**
- * 
- * Some tests from http://membres.lycos.fr/albillo/
- * @author rui
+ * Mate tests from http://membres.lycos.fr/albillo/
  */
 public class MateTest extends TestCase {
 
 	SearchEngine inferenceEngine;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		inferenceEngine = new SearchEngine(new Config());
 	}
 
 	public void testBasic1() {
-		testPosition("6k1/8/6K1/8/8/8/8/R7 w", "a1a8");	
+		testPosition("6k1/8/6K1/8/8/8/8/R7 w", "a1a8");
 	}
 
 	public void testBasic2() {
-		testPosition("5rk1/5ppp/8/8/8/4PQ2/r1q2PPP/RR4K1 b", "c2b2");	
+		testPosition("5rk1/5ppp/8/8/8/4PQ2/r1q2PPP/RR4K1 b", "c2b2");
 	}
-	
+
 	public void testMate1() {
 		// 1.- Study by Dr. Lasker and Reichhel
 		// posic101
@@ -34,8 +32,8 @@ public class MateTest extends TestCase {
 		// 1. Ka1-b1 Ka7-b7 2. Kb1-c1
 		testPosition("8/k7/3p4/p2P1p2/P2P1P2/8/8/K7 w", "a1b1");
 	}
-	
-	public void testMate2() {		
+
+	public void testMate2() {
 		// 2.- Marco vs. Maroczy. Paris, 1900
 		// posic102
 		// Black to play and win:
@@ -58,7 +56,7 @@ public class MateTest extends TestCase {
 		// 1. Nc5-d3+ Nb4xd3 2. a5-a6 Bf7-e8 3. Nc3-d5+ Kf4-e5 4. Nd5-e7
 		testPosition("8/5b2/6p1/P1N4p/1n3k2/1PN5/6P1/6K1 w", "c5d3");
 	}
-	
+
 	public void testMate5() {
 		// 5.- Sam Loyd, American Chess Nuts, 1868
 		// posic105
@@ -104,7 +102,7 @@ public class MateTest extends TestCase {
 		// White to play and mate in 9: 1. Qg7-b2 
 		testPosition("7K/6Q1/8/8/8/3k4/8/8 w", "g7b2");
 	}
-	
+
 	private void testPosition(String fen, String move) {
 
 //		ChessBoardFrame frame = new ChessBoardFrame();
@@ -114,7 +112,7 @@ public class MateTest extends TestCase {
 //        frame.setResizable( false );
 //        frame.setLocationRelativeTo( null );
 //        frame.setVisible(true);
-		
+
 		inferenceEngine.getBoard().setFen(fen);
 		System.out.println("Looking for " + move);
 		//System.out.println(moveGenerator.generateMoves(board));
