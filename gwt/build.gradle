@@ -4,8 +4,8 @@ apply plugin: 'maven'
 archivesBaseName = 'carballo-gwt'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.6.0'
-    compile 'com.google.gwt:gwt-dev:2.6.0'
+    compile 'com.google.gwt:gwt-user:2.7.0'
+    compile 'com.google.gwt:gwt-dev:2.7.0'
     compile project(':core')
 }
 
