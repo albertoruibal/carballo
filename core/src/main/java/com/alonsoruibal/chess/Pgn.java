@@ -238,7 +238,7 @@ public class Pgn {
 						el = el.substring(el.lastIndexOf(".") + 1);
 					}
 
-					if (el.length() > 0 && comment1 == 0 && comment2 == 0 && !el.contains("$")) {
+					if (el.length() > 0 && !el.contains("$")) {
 						moves.add(el);
 					}
 				}
