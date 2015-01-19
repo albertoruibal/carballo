@@ -2,7 +2,6 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.log.Logger;
 
 /**
  * For efficience Moves are int, this is a static class to threat with this
