@@ -35,7 +35,6 @@ public class EvaluatorTest extends TestCase {
 		assertEquals(9, value);
 	}
 
-
 	public void testPassedPawn1() {
 		String fen = "7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0";
 		Board board = new Board();
