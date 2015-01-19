@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * TODO Parse comments
- *
+ * <p/>
  * 1. Event: the name of the tournament or match event. 2. Site: the location of
  * the event. This is in "City, Region COUNTRY" format, where COUNTRY is the
  * 3-letter International Olympic Committee code for the country. An example is
@@ -237,7 +237,6 @@ public class Pgn {
 					if (el.contains(".")) {
 						el = el.substring(el.lastIndexOf(".") + 1);
 					}
-
 					if (el.length() > 0 && !el.contains("$")) {
 						moves.add(el);
 					}
