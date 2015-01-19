@@ -6,8 +6,8 @@
 	<g:FocusPanel ui:field="focusPanel" width="100%" height="100%">
 		<g:DockLayoutPanel width="100%" height="100%">
 			<g:center>
-				<g:HTML ui:field="boardContainer"></g:HTML>
-			</g:center>
+                <g:HTML ui:field="boardContainer" />
+            </g:center>
 			<g:east size="300">
 				<g:SimplePanel>
 					<g:FlowPanel>
@@ -40,8 +40,8 @@
 								<g:Button ui:field='fenButton' text="{constants.setFen}" />
 							</g:VerticalPanel>
 						</g:DisclosurePanel-->
-						<g:HTML ui:field="about"></g:HTML>
-					</g:FlowPanel>
+                        <g:HTML ui:field="about" />
+                    </g:FlowPanel>
 				</g:SimplePanel>
 			</g:east>
 		</g:DockLayoutPanel>
