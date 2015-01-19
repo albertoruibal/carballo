@@ -6,7 +6,6 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 public abstract class Evaluator {
 
 	public final static int VICTORY = Short.MAX_VALUE - 1;
-//	private final static Random random = new Random(System.currentTimeMillis());
 
 	public BitboardAttacks bbAttacks;
 
