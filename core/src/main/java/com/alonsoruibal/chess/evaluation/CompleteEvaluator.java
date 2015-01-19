@@ -172,7 +172,7 @@ public class CompleteEvaluator extends Evaluator {
 			knightIndexValue[i] += KnightBackRankValue;
 			bishopIndexValue[i] += BishopBackRankValue;
 			bishopIndexValue[(i << 3) | i] += BishopDiagonalValue;
-			bishopIndexValue[((i << 3) | i) ^ 070] += BishopDiagonalValue;
+			bishopIndexValue[((i << 3) | i) ^ 0x38] += BishopDiagonalValue;
 		}
 
 		// Pawn opening corrections
@@ -198,25 +198,20 @@ public class CompleteEvaluator extends Evaluator {
 //		logger.debug("PCSQ tables generated");
 	}
 
-//	private static void printPcsq(int pcsq[][]) {
+//	private static void printPcsq(int pcsq[]) {
 //		StringBuffer sb = new StringBuffer();
-//		for (int k=0; k<2; k++) {
-//			if (k==0) sb.append("Opening:\n");
-//			else sb.append("Endgame:\n");
-//			for (int i = 0; i<64; i++) {
-//				String aux = "     " + pcsq[i][k];
-//				aux = aux.substring(aux.length()-5);
-//				sb.append(aux);
-//				if (i%8 != 7) {
-//					sb.append(",");
-//				} else {
-//					sb.append("\n");
-//				}
+//		for (int i = 0; i<64; i++) {
+//			String aux = "     " + pcsq[i];
+//			aux = aux.substring(aux.length()-5);
+//			sb.append(aux);
+//			if (i % 8 != 7) {
+//				sb.append(",");
+//			} else {
+//				sb.append("\n");
 //			}
 //		}
 //		logger.debug(sb.toString());
 //	}
-
 
 	private int[] bishopCount = {0, 0};
 	private long[] superiorPieceAttacked = {0, 0};
