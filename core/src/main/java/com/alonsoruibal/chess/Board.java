@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 /**
  * Stores the position and the move history
- * TODO FRC
+ * TODO FRC, Atomic, Suicide...
  *
  * @author Alberto Alonso Ruibal
  */
