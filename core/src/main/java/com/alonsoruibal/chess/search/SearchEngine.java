@@ -142,25 +142,6 @@ public class SearchEngine implements Runnable {
 		init();
 	}
 
-	private int getReduction(int nodeType, int depth, int movecount) {
-		return nodeType == NODE_PV || nodeType == NODE_ROOT ? pvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)] : nonPvReductionMatrix[Math
-				.min(depth / PLY, 63)][Math.min(movecount, 63)];
-	}
-
-	public void destroy() {
-		config = null;
-		observer = null;
-		tt = null;
-		evaluator = null;
-		sortInfo = null;
-		if (moveIterators != null) {
-			for (int i = 0; i < MAX_DEPTH; i++) {
-				moveIterators[i] = null;
-			}
-		}
-		System.gc();
-	}
-
 	public void init() {
 		logger.debug(new Date());
 		initialized = false;
@@ -189,6 +170,30 @@ public class SearchEngine implements Runnable {
 
 		initialized = true;
 		logger.debug(config.toString());
+	}
+
+	public void clear() {
+		sortInfo.clear();
+		tt.clear();
+	}
+
+	public void destroy() {
+		config = null;
+		observer = null;
+		tt = null;
+		evaluator = null;
+		sortInfo = null;
+		if (moveIterators != null) {
+			for (int i = 0; i < MAX_DEPTH; i++) {
+				moveIterators[i] = null;
+			}
+		}
+		System.gc();
+	}
+
+	private int getReduction(int nodeType, int depth, int movecount) {
+		return nodeType == NODE_PV || nodeType == NODE_ROOT ? pvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)] : nonPvReductionMatrix[Math
+				.min(depth / PLY, 63)][Math.min(movecount, 63)];
 	}
 
 	public void setObserver(SearchObserver observer) {

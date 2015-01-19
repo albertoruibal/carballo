@@ -125,7 +125,8 @@ public class EpdTest extends TestCase {
 
 	private int testPosition(String fen, String movesString, int timeLimit) {
 		int time = 0;
-		search.getBoard().setFen(fen);
+        search.clear();
+        search.getBoard().setFen(fen);
 		String movesStringArray[] = movesString.split(" ");
 		int moves[] = new int[movesStringArray.length];
 		for (int i = 0; i < moves.length; i++) {

@@ -49,7 +49,7 @@ Features
 * UCI interface with lots of UCI options (for chess GUIs like Arena)
 * The core of the chess engine was converted to C# using Sharpen
 
-It scores 2415 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz. Also solves 285 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
+It scores 2415 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz. Also solves 289 positions of the 300 WinAtChess test (5 seconds for each). His real strength is about 2100 ELO points.
 
 Test Results
 ============
