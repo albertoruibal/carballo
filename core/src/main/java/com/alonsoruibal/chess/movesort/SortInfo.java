@@ -1,6 +1,5 @@
 package com.alonsoruibal.chess.movesort;
 
-import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.search.SearchEngine;
 
