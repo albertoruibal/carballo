@@ -32,7 +32,7 @@ public class SortInfo {
 	/**
 	 * we are informed of the score produced by the move at any level
 	 */
-	public void betaCutoff(Board board, int move, int depth) {
+	public void betaCutoff(int move, int depth) {
 
 		// removes captures and promotions from killers
 		if (move == 0 || Move.isTactical(move)) return;

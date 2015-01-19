@@ -752,7 +752,7 @@ public class SearchEngine implements Runnable {
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
 			if (excludedMove == 0) {
-				sortInfo.betaCutoff(board, bestMove, board.getMoveNumber() - initialPly);
+				sortInfo.betaCutoff(bestMove, board.getMoveNumber() - initialPly);
 			}
 			if (nodeType == NODE_NULL) {
 				nullCutNodes++;
