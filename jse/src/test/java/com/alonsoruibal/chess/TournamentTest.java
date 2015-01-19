@@ -81,7 +81,6 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 		engine1 = new SearchEngine(config1);
 		engine2 = new SearchEngine(config2);
 
-
 		PgnFile pgn = new PgnFile();
 		int pgnGameNumber = 0;
 
