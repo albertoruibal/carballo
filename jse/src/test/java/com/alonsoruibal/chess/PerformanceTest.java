@@ -77,7 +77,7 @@ public class PerformanceTest extends TestCase {
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				completeEvaluator.evaluateBoard(testBoard, -Evaluator.VICTORY, Evaluator.VICTORY);
+				completeEvaluator.evaluate(testBoard);
 				positions++;
 			}
 		}
@@ -92,7 +92,7 @@ public class PerformanceTest extends TestCase {
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				experimentalEvaluator.evaluateBoard(testBoard, -Evaluator.VICTORY, Evaluator.VICTORY);
+				experimentalEvaluator.evaluate(testBoard);
 				positions++;
 			}
 		}
@@ -108,7 +108,7 @@ public class PerformanceTest extends TestCase {
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				simplifiedEvaluator.evaluateBoard(testBoard, Evaluator.VICTORY, Evaluator.VICTORY);
+				simplifiedEvaluator.evaluate(testBoard);
 				positions++;
 			}
 		}

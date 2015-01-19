@@ -95,7 +95,7 @@ public class SimplifiedEvaluator extends Evaluator {
 	};
 
 
-	public int evaluateBoard(Board board, int alpha, int beta) {
+	public int evaluate(Board board) {
 		long all = board.getAll();
 
 		int materialValue[] = {0, 0};

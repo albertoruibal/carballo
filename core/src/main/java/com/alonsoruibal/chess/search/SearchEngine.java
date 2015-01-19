@@ -303,12 +303,11 @@ public class SearchEngine implements Runnable {
 			if (tt.getNodeType() == TranspositionTable.TYPE_EVAL) {
 				ttEvalHit++;
 				// // uncomment to test if eval tt is Working: seems yes
-				// if (evaluator.evaluateBoard(board, alpha, beta) !=
+				// if (evaluator.evaluate(board) !=
 				// tt.getScore()) {
 				// System.out.println("Error Garrafal!!!");
 				// System.out.println(tt.getScore());
-				// System.out.println(evaluator.evaluateBoard(board, alpha,
-				// beta));
+				// System.out.println(evaluator.evaluate(board));
 				// System.out.println(board.toString());
 				// System.exit(-1);
 				// }
@@ -318,7 +317,7 @@ public class SearchEngine implements Runnable {
 				return score;
 			}
 		}
-		int score = evaluator.evaluateBoard(board, alpha, beta);
+		int score = evaluator.evaluate(board);
 		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
 		if (!board.getTurn())
 			score = -score;

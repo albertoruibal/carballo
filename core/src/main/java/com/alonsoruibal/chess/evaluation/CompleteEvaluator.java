@@ -241,7 +241,7 @@ public class CompleteEvaluator extends Evaluator {
 	private int auxInt, pcsqIndex, color, index;
 	private boolean isWhite;
 
-	public int evaluateBoard(Board board, int alpha, int beta) {
+	public int evaluate(Board board) {
 		all = board.getAll();
 
 		Arrays.fill(bishopCount, 0);

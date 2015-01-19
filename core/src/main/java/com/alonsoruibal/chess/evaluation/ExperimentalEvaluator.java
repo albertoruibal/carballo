@@ -278,7 +278,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private int[] passedPawns = {0, 0};
 	private int[] bishopCount = {0, 0};
 
-	public int evaluateBoard(Board board, int alpha, int beta) {
+	public int evaluate(Board board) {
 		long square;
 		byte index;
 

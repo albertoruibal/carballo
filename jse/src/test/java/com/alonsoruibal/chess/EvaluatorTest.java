@@ -20,7 +20,7 @@ public class EvaluatorTest extends TestCase {
 		Board board = new Board();
 		board.setFen(fen);
 		System.out.print(board);
-		int value = evaluator.evaluateBoard(board, -Evaluator.VICTORY, Evaluator.VICTORY);
+		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
 		assertEquals(9, value);
 	}
@@ -30,7 +30,7 @@ public class EvaluatorTest extends TestCase {
 		Board board = new Board();
 		board.setFen(fen);
 		System.out.print(board);
-		int value = evaluator.evaluateBoard(board, -Evaluator.VICTORY, Evaluator.VICTORY);
+		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
 		assertEquals(9, value);
 	}
@@ -41,7 +41,7 @@ public class EvaluatorTest extends TestCase {
 		Board board = new Board();
 		board.setFen(fen);
 		System.out.print(board);
-		int value = evaluator.evaluateBoard(board, -Evaluator.VICTORY, Evaluator.VICTORY);
+		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
 		assertTrue(value > 0);
 	}
@@ -51,7 +51,7 @@ public class EvaluatorTest extends TestCase {
 		Board board = new Board();
 		board.setFen(fen);
 		System.out.print(board);
-		int value = evaluator.evaluateBoard(board, -Evaluator.VICTORY, Evaluator.VICTORY);
+		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
 		assertTrue(value > 0);
 	}
@@ -61,7 +61,7 @@ public class EvaluatorTest extends TestCase {
 		Board board = new Board();
 		board.setFen(fen);
 		System.out.print(board);
-		int value = evaluator.evaluateBoard(board, -Evaluator.VICTORY, Evaluator.VICTORY);
+		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
 		assertTrue(value > 0);
 	}
