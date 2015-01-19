@@ -18,7 +18,7 @@ buildscript {
 
 dependencies {
     compile project(':core')
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
