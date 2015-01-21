@@ -96,7 +96,7 @@ public class BitboardAttacksMagic extends BitboardAttacks {
 			i++;
 		}
 		long time2 = System.currentTimeMillis();
-		logger.debug("Generated attack tables in " + (time2 - time1) + "ms");
+		logger.debug("Generated magic tables in " + (time2 - time1) + "ms");
 	}
 
 	/**
