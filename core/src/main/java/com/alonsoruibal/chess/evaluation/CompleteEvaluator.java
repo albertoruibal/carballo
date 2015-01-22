@@ -396,7 +396,9 @@ public class CompleteEvaluator extends Evaluator {
 
 				} else if ((square & board.bishops) != 0) {
 					material[color] += BISHOP;
-					if (bishopCount[color]++ == 2) material[color] += BISHOP_PAIR;
+					if (++bishopCount[color] == 2) {
+						material[color] += BISHOP_PAIR;
+					}
 
 					center[color] += bishopIndexValue[pcsqIndex];
 
