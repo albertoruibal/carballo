@@ -475,7 +475,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						// Candidates is the same check but removing opposite pawns attacking our square
 					} else if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
 							BitboardUtils.RANKS_FORWARD[color][rank]
-							& (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index])
+							& (isWhite ? ~bbAttacks.pawnUpwards[index] : ~bbAttacks.pawnDownwards[index])
 							& board.pawns & others) == 0) {
 						passedPawns[color] += PAWN_CANDIDATE[(isWhite ? rank : 7 - rank)];
 					}
