@@ -1,1 +1,1 @@
-include 'core', 'jse', 'applet', 'gwt', 'webtvchess'
+include 'core', 'jse', 'applet', 'gwt', 'gwtgui'
