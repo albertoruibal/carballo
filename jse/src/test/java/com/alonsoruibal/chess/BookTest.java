@@ -12,12 +12,11 @@ public class BookTest extends TestCase {
 		board.startPosition();
 		FileBook book = new FileBook("/book_small.bin");
 		int move = book.getMove(board);
-		while (move != -1) {
-			System.out.println(move);
+		while (move != 0) {
+			System.out.println(Move.toString(move));
 			board.doMove(move);
 			System.out.println(board);
 			move = book.getMove(board);
-
 			count++;
 		}
 		assertTrue(count > 3);
