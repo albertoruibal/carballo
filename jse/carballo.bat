@@ -1,1 +1,1 @@
-java -jar build\proguard\carballo.jar -Xmx512M
+java -jar carballo-0.9.jar -Xmx512M

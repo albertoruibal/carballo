@@ -3,8 +3,8 @@ apply plugin: 'maven'
 
 archivesBaseName = 'carballo-jse'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 buildscript {
     repositories {
@@ -27,8 +27,8 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     }
 
     ext {
-        outDir = file("${buildDir}/proguard")
-        obfuscatedJar = "${outDir}/carballo.jar"
+        outDir = file("./")
+        obfuscatedJar = "${outDir}/carballo-${version}.jar"
     }
     outDir.mkdirs()
 

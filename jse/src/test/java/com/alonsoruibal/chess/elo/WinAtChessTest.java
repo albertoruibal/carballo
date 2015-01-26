@@ -1,4 +1,4 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.elo;
 
 import com.alonsoruibal.chess.log.Logger;
 

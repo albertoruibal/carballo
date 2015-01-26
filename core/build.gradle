@@ -3,8 +3,8 @@ apply plugin: 'maven'
 
 archivesBaseName = 'carballo-core'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'

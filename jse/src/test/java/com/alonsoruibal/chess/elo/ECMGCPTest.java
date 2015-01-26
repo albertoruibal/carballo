@@ -1,4 +1,6 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.elo;
+
+import com.alonsoruibal.chess.elo.EpdTest;
 
 public class ECMGCPTest extends EpdTest {
 

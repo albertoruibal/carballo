@@ -1,4 +1,4 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.elo;
 
 public class WinningChessSacrificesAndCombinations extends EpdTest {
 
