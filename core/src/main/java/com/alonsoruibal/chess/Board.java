@@ -501,8 +501,9 @@ public class Board {
 	}
 
 	public int getLastMove() {
-		if (moveNumber == 0)
+		if (moveNumber == 0) {
 			return 0;
+		}
 		return moveHistory[moveNumber - 1];
 	}
 
