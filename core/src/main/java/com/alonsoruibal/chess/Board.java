@@ -828,8 +828,9 @@ public class Board {
 	 * checks draw by fiftymoves rule and threefold repetition
 	 */
 	public boolean isDraw() {
-		if (fiftyMovesRule >= 100)
+		if (fiftyMovesRule >= 100) {
 			return true;
+		}
 		int repetitions = 0;
 		// logger.debug("My keys key0=" + key[0] + " " + " key1=" + key[1]);
 		for (int i = 0; i < (moveNumber - 1); i++) {
@@ -837,7 +838,7 @@ public class Board {
 				repetitions++;
 			// logger.debug("movenumber="+i+" key0=" + keyHistory[i][0] + " " +
 			// " key1=" + keyHistory[i][1] + " Repetitions="+repetitions);
-			if (repetitions >= 2) { // with the las one they are 3
+			if (repetitions >= 2) { // with the last one they are 3
 				return true;
 			}
 		}

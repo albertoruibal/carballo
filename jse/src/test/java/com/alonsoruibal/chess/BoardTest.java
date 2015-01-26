@@ -26,12 +26,12 @@ public class BoardTest extends TestCase {
 
 	public void testUndo() {
 		Board b = new Board();
-		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
+		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		b.doMove(Move.getFromString(b, "e2e4", true));
 		b.doMove(Move.getFromString(b, "e7e5", true));
 		b.undoMove();
 		b.undoMove();
-		assertEquals(b.getFen(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
+		assertEquals(b.getFen(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
 	public void testCastling() {
