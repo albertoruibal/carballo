@@ -1,7 +1,8 @@
-Description
-===========
+Carballo Chess Engine
+=====================
 
-Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C# chess engine with Applet and GWT (HTML5) interfaces.
+Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C#
+chess engine with Applet and GWT (HTML5) interfaces. It is used in the Mobialia Chess apps.
 
 It's organized into modules:
 
@@ -14,7 +15,7 @@ It's organized into modules:
 
 Links:
 
-* Home: http://www.alonsoruibal.com/chess
+* Home: https://github.com/albertoruibal/carballo
 * Applet interface: http://www.mobialia.com/webchess
 * GWT interface: http://www.mobialia.com/webtvchess
 * Source code: https://github.com/albertoruibal/carballo
