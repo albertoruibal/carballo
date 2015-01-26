@@ -324,7 +324,9 @@ public class CompleteEvaluator extends Evaluator {
 
 					// Isolated pawn
 					boolean isolated = (BitboardUtils.COLUMNS_ADJACENTS[column] & board.pawns & mines) == 0;
-					if (isolated) pawnStructure[color] += PAWN_ISOLATED;
+					if (isolated) {
+						pawnStructure[color] += PAWN_ISOLATED;
+					}
 
 					long auxLong, auxLong2;
 					boolean weak = !isolated && (pawnAttacks[color] & square) == 0
