@@ -25,7 +25,9 @@ public interface ChessConstants extends Constants {
 	public String whitesVsBlacks();
 	public String whitesVsComputer();
 	public String blacksVsComputer();
-	
+
+	public String computerVsComputer();
+
 	public String white();
 	public String black();
 	

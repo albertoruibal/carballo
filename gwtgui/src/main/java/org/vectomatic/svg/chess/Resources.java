@@ -27,4 +27,5 @@ public interface Resources extends ClientBundle {
 	public TextResource getBoard();
 	@Source("chess.css")
 	public ChessCss getCss();
+
 }
