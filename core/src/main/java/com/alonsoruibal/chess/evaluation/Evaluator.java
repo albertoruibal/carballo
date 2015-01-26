@@ -7,6 +7,9 @@ public abstract class Evaluator {
 
 	public final static int VICTORY = Short.MAX_VALUE - 1;
 
+	public final static int DRAW = 0;
+	public final static int KNOWN_WIN = 10000;
+
 	public BitboardAttacks bbAttacks;
 
 	public Evaluator() {

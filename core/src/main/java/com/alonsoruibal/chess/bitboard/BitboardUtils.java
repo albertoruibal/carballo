@@ -266,4 +266,25 @@ public class BitboardUtils {
 	public static int distance(int index1, int index2) {
 		return Math.max(Math.abs((index1 & 7) - (index2 & 7)), Math.abs((index1 >> 3) - (index2 >> 3)));
 	}
+
+	public static int columnOf(int index) {
+		return index & 7;
+	}
+
+	public static int rankOf(int index) {
+		return index >> 3;
+	}
+
+	public static int flipHorizontal(int index) {
+		return (index & 0xF8) | (7 - (index & 7));
+	}
+
+	public static boolean inWhiteSquare(long square) {
+		return (square & WHITE_SQUARES) != 0;
+	}
+
+	public static boolean inBlackSquare(long square) {
+		return (square & BLACK_SQUARES) != 0;
+	}
+
 }
