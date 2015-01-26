@@ -20,17 +20,11 @@ public class ContemptFactorTest extends TestCase {
 	}
 
 	public void testContemp1() {
-		testPosition("7k/7p/5P1K/8/8/8/8/8 w", "a1a8");
+		searchEngine.getBoard().setFen("7k/7p/5P1K/8/8/8/8/8 w");
+		searchEngine.go(SearchParameters.get(1000));
+		searchEngine.getBoard().doMove(searchEngine.getBestMove());
+		searchEngine.getTT().search(searchEngine.getBoard(), false);
+		assertEquals(-Config.DEFAULT_CONTEMPT_FACTOR, searchEngine.getBestMoveScore());
 	}
 
-	private void testPosition(String fen, String move) {
-
-		searchEngine.getBoard().setFen(fen);
-		System.out.println("Looking for " + move);
-		//System.out.println(moveGenerator.generateMoves(board));
-		searchEngine.go(SearchParameters.get(10 * 60000)); // 10 minutes max
-		String bestOperation = Move.toString(searchEngine.getBestMove());
-		System.out.println();
-		assertEquals(move, bestOperation);
-	}
 }

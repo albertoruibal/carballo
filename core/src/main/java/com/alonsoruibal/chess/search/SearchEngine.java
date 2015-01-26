@@ -57,6 +57,7 @@ public class SearchEngine implements Runnable {
 	private MoveIterator[] moveIterators;
 
 	private long bestMoveTime; // For testing suites
+	private int bestMoveScore; // For testing suites
 	private int globalBestMove, ponderMove;
 	private String pv;
 
@@ -212,6 +213,10 @@ public class SearchEngine implements Runnable {
 		return bestMoveTime;
 	}
 
+	public long getBestMoveScore() {
+		return bestMoveScore;
+	}
+
 	public Config getConfig() {
 		return config;
 	}
@@ -302,7 +307,7 @@ public class SearchEngine implements Runnable {
 		if (foundTT) {
 			if (tt.getNodeType() == TranspositionTable.TYPE_EVAL) {
 				ttEvalHit++;
-				// // uncomment to test if eval tt is Working: seems yes
+				// // uncomment to test if eval tt is Working
 				// if (evaluator.evaluate(board) !=
 				// tt.getScore()) {
 				// System.out.println("Error Garrafal!!!");
@@ -312,26 +317,29 @@ public class SearchEngine implements Runnable {
 				// System.exit(-1);
 				// }
 				int score = tt.getScore();
-				if (!board.getTurn())
+				if (!board.getTurn()) {
 					score = -score;
+				}
 				return score;
 			}
 		}
 		int score = evaluator.evaluate(board);
 		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
-		if (!board.getTurn())
+		if (!board.getTurn()) {
 			score = -score;
-
+		}
 		if (foundTT && refine) {
 			// Refine Value with TT
 			switch (tt.getNodeType()) {
 				case TranspositionTable.TYPE_FAIL_LOW:
-					if (tt.getScore() > score)
+					if (tt.getScore() > score) {
 						score = tt.getScore();
+					}
 					break;
 				case TranspositionTable.TYPE_FAIL_HIGH:
-					if (tt.getScore() < score)
+					if (tt.getScore() < score) {
 						score = tt.getScore();
+					}
 					break;
 			}
 		}
@@ -363,7 +371,7 @@ public class SearchEngine implements Runnable {
 	 * Search horizon node (depth == 0) some kind of quiescent search
 	 *
 	 * @return
-	 * @throws SearchFinishedException
+	 * @throws com.alonsoruibal.chess.search.SearchFinishedException
 	 */
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
 		if (System.currentTimeMillis() > thinkTo && foundOneMove)
@@ -371,8 +379,9 @@ public class SearchEngine implements Runnable {
 		qsPositionCounter++;
 
 		// checks draw by three fold repetition. and fifty moves rule
-		if (board.isDraw())
+		if (board.isDraw()) {
 			return evaluateDraw();
+		}
 
 		int ttMove = 0;
 		int eval = -Evaluator.VICTORY;
@@ -396,10 +405,12 @@ public class SearchEngine implements Runnable {
 
 			// Evaluation functions increase alpha and can originate beta
 			// cutoffs
-			if (eval >= beta)
+			if (eval >= beta) {
 				return eval;
-			if (eval > alpha)
+			}
+			if (eval > alpha) {
 				alpha = eval;
+			}
 		}
 
 		// If we have more depths than needed...
@@ -423,7 +434,6 @@ public class SearchEngine implements Runnable {
 		int move;
 
 		while ((move = moveIterator.next()) != 0) {
-
 			if (board.doMove(move, false)) {
 				validOperations = true;
 
@@ -616,7 +626,7 @@ public class SearchEngine implements Runnable {
 				&& depthRemaining >= singularMoveDepth[nodeType] //
 				&& tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH // ???
 				&& tt.getDepthAnalyzed() >= depthRemaining - 3 * PLY //
-				&& Math.abs(ttScore) < Evaluator.VICTORY - 100;
+				&& Math.abs(ttScore) < Evaluator.KNOWN_WIN;
 
 		// Futility pruning
 		boolean futilityPrune = false;
@@ -690,7 +700,7 @@ public class SearchEngine implements Runnable {
 						|| sortInfo.isKiller(move, board.getMoveNumber() - initialPly);
 
 				if (futilityPrune //
-						&& bestScore > -Evaluator.VICTORY + 100 //
+						&& bestScore > -Evaluator.KNOWN_WIN //
 						&& !importantMove) {
 					board.undoMove();
 					continue;
@@ -777,8 +787,9 @@ public class SearchEngine implements Runnable {
 	 * looks for the best movement
 	 */
 	public void go(SearchParameters searchParameters) {
-		if (!initialized)
+		if (!initialized) {
 			return;
+		}
 		if (!searching) {
 			this.searchParameters = searchParameters;
 			run();
@@ -886,6 +897,8 @@ public class SearchEngine implements Runnable {
 		if (oldBestMove != globalBestMove) {
 			bestMoveTime = time - startTime;
 		}
+		bestMoveScore = score;
+
 		SearchStatusInfo info = new SearchStatusInfo();
 		info.setDepth(depth);
 		info.setTime(time - startTime);
@@ -959,8 +972,9 @@ public class SearchEngine implements Runnable {
 				break;
 		}
 		// Now undo moves
-		for (int j = 0; j < i; j++)
+		for (int j = 0; j < i; j++) {
 			board.undoMove();
+		}
 		pv = sb.toString();
 	}
 
@@ -975,8 +989,9 @@ public class SearchEngine implements Runnable {
 	public int evaluateEndgame() {
 		if (board.getCheck()) {
 			return valueMatedIn(board.getMoveNumber() - initialPly);
-		} else
+		} else {
 			return evaluateDraw();
+		}
 	}
 
 	public int evaluateDraw() {
