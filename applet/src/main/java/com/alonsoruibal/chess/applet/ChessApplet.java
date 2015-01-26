@@ -1,5 +1,18 @@
 package com.alonsoruibal.chess.applet;
 
+import com.alonsoruibal.chess.Config;
+import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.Pgn;
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
+import com.alonsoruibal.chess.book.FileBook;
+import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
+import com.alonsoruibal.chess.evaluation.Evaluator;
+import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.search.SearchEngineThreaded;
+import com.alonsoruibal.chess.search.SearchObserver;
+import com.alonsoruibal.chess.search.SearchParameters;
+import com.alonsoruibal.chess.search.SearchStatusInfo;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -13,19 +26,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.alonsoruibal.chess.Config;
-import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.Pgn;
-import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.book.FileBook;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
-import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.log.Logger;
-import com.alonsoruibal.chess.search.SearchEngineThreaded;
-import com.alonsoruibal.chess.search.SearchObserver;
-import com.alonsoruibal.chess.search.SearchParameters;
-import com.alonsoruibal.chess.search.SearchStatusInfo;
 
 /**
  * 
@@ -251,7 +251,7 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 //		if (moves.size() == 0) {
 //			System.out.println("End Game");
 //		}
-		System.out.println("value="+ evaluator.evaluateBoard(engine.getBoard(), -Evaluator.VICTORY, Evaluator.VICTORY));
+		System.out.println("value=" + evaluator.evaluate(engine.getBoard()));
 		switch (engine.getBoard().isEndGame()) {
 		case 1 :
 			message.setText("White win");
