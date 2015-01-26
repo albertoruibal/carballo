@@ -17,9 +17,6 @@ import com.alonsoruibal.chess.log.Logger;
  * @author rui
  */
 public class ExperimentalEvaluator extends Evaluator {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("ExperimentalEvaluator");
 
 	Config config;
@@ -101,16 +98,15 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int PAWN_ATTACKS_ROOK = oe(7, 10);
 	private final static int PAWN_ATTACKS_QUEEN = oe(8, 12);
 
-	private final static int PAWN_NO_FRONT_DOUBLED = oe(-2, -4); // no other pawns in front: isolated
+	private final static int PAWN_NO_FRONT_DOUBLED = oe(-2, -4); // no other pawns in front: doubled
 	private final static int PAWN_NO_FRONT_DOUB_ISO = oe(-7, -12); // no other pawns in front: doubled and isolated
 	private final static int PAWN_NO_FRONT_ISOLATED = oe(-5, -8); // no other pawns in front: isolated
 
-	private final static int PAWN_FRONT_DOUBLED = oe(-4, -8); // other pawns in front: isolated
+	private final static int PAWN_FRONT_DOUBLED = oe(-4, -8); // other pawns in front: doubled
 	private final static int PAWN_FRONT_DOUB_ISO = oe(-21, -22); // other pawns in front: doubled and isolated
 	private final static int PAWN_FRONT_ISOLATED = oe(-15, -20); // other pawns in front: isolated
 
-//	private final static int PAWN_BACKWARDS          = oe(-10,-15); // Backwards pawn 
-//	private final static int PAWN_WEAK          	 = oe(-10,-15); // Backwards pawn 
+	private final static int PAWN_BACKWARDS = oe(-10, -15); // Backwards pawn
 
 	private final static int[] PAWN_CANDIDATE = {0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0, 0, 0}; // Candidates to pawn passer
 
@@ -256,66 +252,99 @@ public class ExperimentalEvaluator extends Evaluator {
 //		logger.debug(sb.toString());
 //	}
 
-	private long all, pieceAttacks, pieceAttacksXray, auxLong, auxLong2;
-	private long[] attacksSquare = new long[64];
-	private long[] superiorPieceAttacked = {0, 0};
-	private long[] attacksColor = {0, 0};
-	private long[] minorPiecesDefendedByPawns = {0, 0};
-	private long[] pawnAttacks = {0, 0};
-	private long[] pawnCanAttack = {0, 0};
-	private long[] squaresNearKing = {0, 0};
-
-	private int[] material = {0, 0};
-	private int[] pawnMaterial = {0, 0};
-	private int[] center = {0, 0};
-	private int[] positional = {0, 0};
-	private int[] mobility = {0, 0};
-	private int[] attacks = {0, 0};
-	private int[] kingAttackersCount = {0, 0};
-	private int[] kingSafety = {0, 0};
-	private int[] kingDefense = {0, 0};
-	private int[] pawnStructure = {0, 0};
-	private int[] passedPawns = {0, 0};
-	private int[] bishopCount = {0, 0};
-
 	public int evaluate(Board board) {
-		long square;
-		byte index;
+		int[] pawnMaterial = {0, 0};
+		pawnMaterial[0] = PAWN * BitboardUtils.popCount(board.pawns & board.whites);
+		pawnMaterial[1] = PAWN * BitboardUtils.popCount(board.pawns & board.blacks);
 
-		all = board.getAll();
-		superiorPieceAttacked[0] = superiorPieceAttacked[1] = 0;
-		attacksColor[0] = attacksColor[1] = 0;
+		int[] material = {0, 0};
+		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
+		material[0] = KNIGHT * BitboardUtils.popCount(board.knights & board.whites) + //
+				BISHOP * whiteBishops + ((whiteBishops >= 2) ? BISHOP_PAIR : 0) + //
+				ROOK * BitboardUtils.popCount(board.rooks & board.whites) + //
+				QUEEN * BitboardUtils.popCount(board.queens & board.whites);
 
-		material[0] = material[1] = 0;
-		pawnMaterial[0] = pawnMaterial[1] = 0;
-		center[0] = center[1] = 0;
-		positional[0] = positional[1] = 0;
-		mobility[0] = mobility[1] = 0;
-		attacks[0] = attacks[1] = 0;
-		kingAttackersCount[0] = kingAttackersCount[1] = 0;
-		kingSafety[0] = kingSafety[1] = 0;
-		kingDefense[0] = kingDefense[1] = 0;
-		pawnStructure[0] = pawnStructure[1] = 0;
-		passedPawns[0] = passedPawns[1] = 0;
-		bishopCount[0] = bishopCount[1] = 0;
+		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
+		material[1] = KNIGHT * BitboardUtils.popCount(board.knights & board.blacks) + //
+				BISHOP * blackBishops + (blackBishops >= 2 ? BISHOP_PAIR : 0) + //
+				ROOK * BitboardUtils.popCount(board.rooks & board.blacks) + //
+				QUEEN * BitboardUtils.popCount(board.queens & board.blacks);
 
-		// Squares attackeds by pawns
-		pawnAttacks[0] = ((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7);
-		pawnAttacks[1] = ((board.pawns & board.blacks & ~BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~BitboardUtils.b_l) >>> 7);
+		// Draw detection
+		if (material[1] < ROOK && material[0] < ROOK && pawnMaterial[1] == 0 && pawnMaterial[0] == 0) {
+			return Evaluator.DRAW;
+		}
+		// Endgame detection
+		if ((material[1] == 0 && material[0] == 0 && pawnMaterial[1] == 0 && pawnMaterial[0] == PAWN) || //
+				(material[0] == 0 && material[1] == 0 && pawnMaterial[0] == 0 && pawnMaterial[1] == PAWN)) {
+			return Endgame.endgameKPK(board, pawnMaterial);
+		}
+		if ((material[1] == 0 && pawnMaterial[1] == 0 && material[0] >= ROOK) || //
+				(material[0] == 0 && pawnMaterial[0] == 0 && material[1] >= ROOK)) {
+			if (board.pawns == 0 && board.rooks == 0 && board.queens == 0 && //
+					BitboardUtils.popCount(board.bishops) == 1 && BitboardUtils.popCount(board.knights) == 1) {
+				return Endgame.endgameKBNK(board, pawnMaterial, material);
+			}
+			if (board.rooks != 0 || board.queens != 0) {
+				return Endgame.endgameKXK(board, pawnMaterial, material);
+			}
+		}
+
+		long all = board.getAll();
+		long pieceAttacks, pieceAttacksXray, auxLong, auxLong2;
+
+		long[] attacksSquare = new long[64];
+		long[] superiorPieceAttacked = {0, 0};
+		long[] attacksColor = {0, 0};
+
+		int[] center = {0, 0};
+		int[] positional = {0, 0};
+		int[] mobility = {0, 0};
+		int[] kingAttackersCount = {0, 0};
+		int[] kingSafety = {0, 0};
+		int[] kingDefense = {0, 0};
+		int[] pawnStructure = {0, 0};
+		int[] passedPawns = {0, 0};
+
+		// Squares attacked by pawns
+		long[] pawnAttacks = {
+				((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7), //
+				((board.pawns & board.blacks & ~BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~BitboardUtils.b_l) >>> 7)
+		};
 
 		// Square that pawn attacks or can attack by advancing
-		pawnCanAttack[0] = pawnAttacks[0] | pawnAttacks[0] << 8 | pawnAttacks[0] << 16 | pawnAttacks[0] << 24 | pawnAttacks[0] << 32 | pawnAttacks[0] << 40;
-		pawnCanAttack[1] = pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40;
+		long[] pawnCanAttack = {
+				pawnAttacks[0] | pawnAttacks[0] << 8 | pawnAttacks[0] << 16 | pawnAttacks[0] << 24 | pawnAttacks[0] << 32 | pawnAttacks[0] << 40,  //
+				pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40
+		};
+
+		// initialize attacks with pawn attacks
+		int[] attacks = {
+				PAWN_ATTACKS_KNIGHT * BitboardUtils.popCount(pawnAttacks[0] & board.knights & board.blacks) + //
+						PAWN_ATTACKS_BISHOP * BitboardUtils.popCount(pawnAttacks[0] & board.bishops & board.blacks) + //
+						PAWN_ATTACKS_ROOK * BitboardUtils.popCount(pawnAttacks[0] & board.rooks & board.blacks) + //
+						PAWN_ATTACKS_QUEEN * BitboardUtils.popCount(pawnAttacks[0] & board.queens & board.blacks), //
+
+				PAWN_ATTACKS_KNIGHT * BitboardUtils.popCount(pawnAttacks[1] & board.knights & board.whites) + //
+						PAWN_ATTACKS_BISHOP * BitboardUtils.popCount(pawnAttacks[1] & board.bishops & board.whites) + //
+						PAWN_ATTACKS_ROOK * BitboardUtils.popCount(pawnAttacks[1] & board.rooks & board.whites) + //
+						PAWN_ATTACKS_QUEEN * BitboardUtils.popCount(pawnAttacks[1] & board.queens & board.whites), //
+		};
 
 		// Squares surrounding King
-		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
-		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
+		long[] squaresNearKing = {
+				bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings, //
+				bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings
+		};
 
-		minorPiecesDefendedByPawns[0] = board.whites & (board.bishops | board.knights) & pawnAttacks[0];
-		minorPiecesDefendedByPawns[1] = board.blacks & (board.bishops | board.knights) & pawnAttacks[1];
+		long[] minorPiecesDefendedByPawns = {
+				board.whites & (board.bishops | board.knights) & pawnAttacks[0], //
+				board.blacks & (board.bishops | board.knights) & pawnAttacks[1]
+		};
 
 		// first build attacks info
-		square = 1;
+		byte index;
+		long square = 1;
 		for (index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
 				boolean isWhite = ((board.whites & square) != 0);
@@ -359,129 +388,96 @@ public class ExperimentalEvaluator extends Evaluator {
 				pieceAttacks = attacksSquare[index];
 
 				if ((square & board.pawns) != 0) {
-					pawnMaterial[color] += PAWN;
 					center[color] += pawnIndexValue[pcsqIndex];
 
 					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += PAWN_ATTACKS_KING;
 					}
 
-					// TODO: if two pawns attacks the same square, add only once
-					if ((pieceAttacks & board.knights & others) != 0)
-						attacks[color] += PAWN_ATTACKS_KNIGHT;
-					if ((pieceAttacks & board.bishops & others) != 0)
-						attacks[color] += PAWN_ATTACKS_BISHOP;
-					if ((pieceAttacks & board.rooks & others) != 0)
-						attacks[color] += PAWN_ATTACKS_ROOK;
-					if ((pieceAttacks & board.queens & others) != 0)
-						attacks[color] += PAWN_ATTACKS_QUEEN;
-
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.knights | board.bishops | board.rooks | board.queens);
 
-					boolean isolated = (BitboardUtils.COLUMNS_ADJACENTS[column] & board.pawns & mines) == 0;
-					boolean doubled = (BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] & board.pawns & mines) != 0;
-//					boolean backwards = ((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) & ~BitboardUtils.RANKS_FORWARD[color][rank] & board.pawns & mines) == 0;
+					boolean isolated = (BitboardUtils.COLUMNS_ADJACENTS[column] &
+							board.pawns & mines) == 0;
+					boolean doubled = (BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] &
+							board.pawns & mines) != 0;
+					boolean opposed = (BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] &
+							board.pawns) == 0;
+					boolean passed = ((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
+							BitboardUtils.RANKS_FORWARD[color][rank] &
+							board.pawns & others) == 0;
+					// Candidates is the same check but removing opposite pawns attacking our square
+					boolean candidate = !passed && ((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
+							BitboardUtils.RANKS_FORWARD[color][rank] &
+							(isWhite ? ~bbAttacks.pawnUpwards[index] : ~bbAttacks.pawnDownwards[index]) &
+							board.pawns & others) == 0;
+					boolean backwards = !isolated && !passed && !candidate &&
+							((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
+									~BitboardUtils.RANKS_FORWARD[color][rank] &
+									board.pawns & mines) == 0;
 
-//					boolean weak = !isolated && (pawnAttacks[color] & square) == 0 
-//					&& pcsqIndex >= 24;
-//					 // not defended is weak
-//					if (weak) {
-//						// Can be defended advancing one pawn
-//						auxLong = (isWhite ? BitboardAttacks.pawnDownwards[color] : BitboardAttacks.pawnUpwards[color]) & ~otherPawnAttacks & ~all; 
-//						while (auxLong != 0) { // Not attacked by other pawn and empty
-//							auxLong2 = BitboardUtils.lsb(auxLong);
-//							auxLong &= ~auxLong2;
-//							auxLong2 = isWhite ?  auxLong2 >>> 8 : auxLong2 << 8;
-//							if ((auxLong2 & mines & board.pawns) !=0) {
-//								weak = false;							
-//							} else { // Defended advancing one pawn two squares
-//								if ((auxLong2 & all) == 0) { // empty square								
-//									auxLong2 = (isWhite ? auxLong2 >>> 8 : auxLong2 << 8);
-//									if (((isWhite ? BitboardUtils.RANK[1] : BitboardUtils.RANK[6]) & auxLong2 & board.pawns & mines) != 0) {
-//										weak = false;
-//									}
-//								}
-//							}
-//						}
-//						
-//						if (weak) {
-//							// Can advance to be supported
-//							auxLong = (isWhite ? square << 8 : square >>> 8) & ~otherPawnAttacks & ~all;
-//							if (auxLong != 0) {
-//								if ((auxLong & pawnAttacks[color]) != 0) {
-//									weak = false;
-//								} else {
-//									// Checks advancing two squares if in initial position
-//									if (((isWhite ? BitboardUtils.RANK[1] : BitboardUtils.RANK[6]) & square) != 0) {
-//										auxLong = (isWhite ? square << 16 : square >>> 16) & ~otherPawnAttacks & ~all;
-//										if ((auxLong & pawnAttacks[color]) != 0) weak = false;
-//									}
-//								}
-//							}
-//						}
-//					}
-//					if (weak) pawnStructure[color] += PAWN_WEAK;
-////					if (weak) {
-////						System.out.println("weak pawn: \n" + board.toString());
-////						System.out.println("square: \n" + BitboardUtils.toString(square));
-////					}
-//					
+					//logger.debug("PAWN isolated = " + isolated + " backwards = " + backwards + " doubled = " + doubled + " opposed = " + opposed + " passed = " + passed + " candidate = " + candidate);
+
 					// No pawns in front
-					if ((BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] & board.pawns) == 0) {
+					if (opposed) {
 						if (doubled) {
 							pawnStructure[color] += PAWN_NO_FRONT_DOUBLED;
-							if (isolated) pawnStructure[color] += PAWN_NO_FRONT_DOUB_ISO;
-						} else if (isolated) pawnStructure[color] += PAWN_NO_FRONT_ISOLATED;
+							if (isolated) {
+								pawnStructure[color] += PAWN_NO_FRONT_DOUB_ISO;
+							}
+						} else if (isolated) {
+							pawnStructure[color] += PAWN_NO_FRONT_ISOLATED;
+						}
 					} else { // pawns in front
 						if (doubled) {
 							pawnStructure[color] += PAWN_FRONT_DOUBLED;
-							if (isolated) pawnStructure[color] += PAWN_FRONT_DOUB_ISO;
-						} else if (isolated) pawnStructure[color] += PAWN_FRONT_ISOLATED;
+							if (isolated) {
+								pawnStructure[color] += PAWN_FRONT_DOUB_ISO;
+							}
+						} else if (isolated) {
+							pawnStructure[color] += PAWN_FRONT_ISOLATED;
+						}
 					}
 
-					// Backwards pawns and advance squares attacked by opposite pawns (TODO only three) 
-//					if (backwards && (BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] & otherPawnAttacks) !=0)
-//						pawnStructure[color] += PAWN_BACKWARDS;
+					if (backwards) {
+						pawnStructure[color] += PAWN_BACKWARDS;
+					}
 
 					// Passed Pawns
-					if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
-							BitboardUtils.RANKS_FORWARD[color][rank]
-							& board.pawns & others) == 0) {
-
+					if (passed) {
 						// Static part
 						passedPawns[color] += PAWN_PASSER[(isWhite ? rank : 7 - rank)];
-						if ((square & pawnAttacks[color]) != 0)
+						if ((square & pawnAttacks[color]) != 0) {
 							passedPawns[color] += PAWN_PASSER_PROTECTED[(isWhite ? rank : 7 - rank)];
+						}
 						if ((BitboardUtils.ROWS_LEFT[column] & board.pawns & others) == 0 &&
-								(BitboardUtils.ROWS_RIGHT[column] & board.pawns & others) == 0)
+								(BitboardUtils.ROWS_RIGHT[column] & board.pawns & others) == 0) {
 							passedPawns[color] += PAWN_PASSER_OUTSIDE[(isWhite ? rank : 7 - rank)];
+						}
 
 						// Dynamic part
 						auxLong = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank];
-						if ((auxLong & mines) == 0)
+						if ((auxLong & mines) == 0) {
 							passedPawns[color] += PAWN_PASSER_NO_MINES[(isWhite ? rank : 7 - rank)];
-						if ((auxLong & others) == 0)
+						}
+						if ((auxLong & others) == 0) {
 							passedPawns[color] += PAWN_PASSER_NO_OTHERS[(isWhite ? rank : 7 - rank)];
-						if (((isWhite ? square << 8 : square >>> 8) & others) == 0)
+						}
+						if (((isWhite ? square << 8 : square >>> 8) & others) == 0) {
 							passedPawns[color] += PAWN_PASSER_MOBILE[(isWhite ? rank : 7 - rank)];
-						if ((auxLong & ~attacksColor[color] & attacksColor[1 - color]) == 0)
+						}
+						if ((auxLong & ~attacksColor[color] & attacksColor[1 - color]) == 0) {
 							passedPawns[color] += PAWN_PASSER_RUNNER[(isWhite ? rank : 7 - rank)];
-
+						}
 						if ((BitboardUtils.COLUMN[column] &
-								BitboardUtils.RANKS_BACKWARD[color][rank]
-								& board.rooks & mines) != 0) {
+								BitboardUtils.RANKS_BACKWARD[color][rank] &
+								board.rooks & mines) != 0) {
 							passedPawns[color] += PAWN_PASSER_ROOK_BEHIND[(isWhite ? rank : 7 - rank)];
 						}
-						// Candidates is the same check but removing opposite pawns attacking our square
-					} else if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
-							BitboardUtils.RANKS_FORWARD[color][rank]
-							& (isWhite ? ~bbAttacks.pawnUpwards[index] : ~bbAttacks.pawnDownwards[index])
-							& board.pawns & others) == 0) {
+					} else if (candidate) {
 						passedPawns[color] += PAWN_CANDIDATE[(isWhite ? rank : 7 - rank)];
 					}
 
 				} else if ((square & board.knights) != 0) {
-					material[color] += KNIGHT;
 					center[color] += knightIndexValue[pcsqIndex];
 
 					// Only mobility forward
@@ -517,11 +513,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.bishops) != 0) {
-					material[color] += BISHOP;
-					if (++bishopCount[color] == 2) {
-						material[color] += BISHOP_PAIR;
-					}
-
 					center[color] += bishopIndexValue[pcsqIndex];
 
 					mobility[color] += BISHOP_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks &
@@ -570,7 +561,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.rooks) != 0) {
-					material[color] += ROOK;
 					center[color] += rookIndexValue[pcsqIndex];
 
 					mobility[color] += ROOK_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks);
@@ -643,7 +633,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.queens) != 0) {
-					material[color] += QUEEN;
 					center[color] += queenIndexValue[pcsqIndex];
 
 					mobility[color] += QUEEN_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks);
