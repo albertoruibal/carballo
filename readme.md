@@ -15,10 +15,9 @@ It's organized into modules:
 
 Links:
 
-* Home: https://github.com/albertoruibal/carballo
+* Source code: https://github.com/albertoruibal/carballo
 * Applet interface: http://www.mobialia.com/webchess
 * GWT interface: http://www.mobialia.com/webtvchess
-* Source code: https://github.com/albertoruibal/carballo
 * UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci.tgz
 
 It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
