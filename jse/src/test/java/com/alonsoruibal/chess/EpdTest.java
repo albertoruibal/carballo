@@ -1,7 +1,5 @@
 package com.alonsoruibal.chess;
 
-import com.alonsoruibal.chess.Config;
-import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
@@ -127,8 +125,8 @@ public class EpdTest extends TestCase {
 
 	private int testPosition(String fen, String movesString, int timeLimit) {
 		int time = 0;
-        search.clear();
-        search.getBoard().setFen(fen);
+		search.clear();
+		search.getBoard().setFen(fen);
 		String movesStringArray[] = movesString.split(" ");
 		int moves[] = new int[movesStringArray.length];
 		for (int i = 0; i < moves.length; i++) {

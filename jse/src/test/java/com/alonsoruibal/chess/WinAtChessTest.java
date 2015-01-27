@@ -7,7 +7,7 @@ public class WinAtChessTest extends EpdTest {
 
 	public void testWinAtChess() {
 
-		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 10000);
+		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
 		int solved1 = getSolved();
 
 //		search.getConfig().setExtensionsPassedPawn(0);

@@ -3,7 +3,6 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
-import com.alonsoruibal.chess.search.SearchEngineOld;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
@@ -24,7 +23,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	static final int GAMES = 20 * 60; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
 
 	SearchEngine engine1;
-	SearchEngineOld engine2;
+	SearchEngine engine2;
 	Board b;
 	boolean engine1Whites;
 	int endGame;
@@ -36,7 +35,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	public void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
-//		config1.setElo(2100);
+		config1.setElo(2100);
 //		config1.setEvaluator("experimentalnew");
 //		config1.setExtensionsSingular(0);
 //		setElo(config1, 1800);
@@ -46,7 +45,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 
 		Config config2 = new Config();
 		config2.setBook(new FileBook("/book_small.bin"));
-//		config2.setElo(2000);
+		config2.setElo(2000);
 
 //		config2.setExtensionsMateThreat(1);
 //		config2.setExtensionsRecapture(0);
@@ -80,7 +79,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 		//config2.setNullMoveMargin(300);
 
 		engine1 = new SearchEngine(config1);
-		engine2 = new SearchEngineOld(config2);
+		engine2 = new SearchEngine(config2);
 
 		PgnFile pgn = new PgnFile();
 		int pgnGameNumber = 0;

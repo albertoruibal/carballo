@@ -1,7 +1,7 @@
 Carballo Chess Engine
 =====================
 
-Carballo (the galician word for Oak, well it's all about search trees) is an Open Source Java and C#
+Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java and C#
 chess engine with Applet and GWT (HTML5) interfaces. It is used in the Mobialia Chess apps.
 
 It's organized into modules:
@@ -16,8 +16,8 @@ It's organized into modules:
 Links:
 
 * Source code: https://github.com/albertoruibal/carballo
+* GWT interface: http://www.mobialia.com/webchessgwt
 * Applet interface: http://www.mobialia.com/webchess
-* GWT interface: http://www.mobialia.com/webtvchess
 * UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci.tgz
 
 It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
@@ -26,11 +26,10 @@ Features
 ========
 
 * Simple and clear code
-* Cute drag and drop Java Applet GUI, to fit in web sites
-* It also includes a great GWT interface by Lukas Laag
-* Gadle source code organization
+* It includes a great GWT interface by Lukas Laag
+* Also a Java Applet GUI
 * JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
-* Based on Bitboards (not so complicated as other people say)
+* Based on Bitboards
 * State-of-the-art magic bitboard move generator (doubles the basic move generator speed!), also code for magic number generation
 * PVS searcher
 * Iterative deepening
@@ -52,7 +51,7 @@ Features
 
 It scores 2513 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
 It also solves 291 positions of the 300 WinAtChess test (at 5 seconds each).
-His real strength is about 2200 ELO points.
+His real strength is about 2200 ELO points, you can check his tournament ranking at http://www.computerchess.org.uk/ccrl/
 
 Authors
 =======
@@ -78,6 +77,11 @@ Build the GWT interface:
 ```
 cd gwtgui
 gradle compileGwt
+```
+Build the Applet interface:
+```
+cd applet
+gradle proguard
 ```
 
 History
