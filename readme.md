@@ -87,13 +87,11 @@ gradle proguard
 History
 =======
 
-Version 0.9: A 150 ELO jump in the engine with evaluator and endgame improvements
+Version 0.9: A 150 ELO jump in the engine fixing evaluator bugs
 
 * Reordered some logic in the ExperimentalEvaluator
 * Fixed a bug in the detection of the 2 bishop bonus
 * Fixed a bug in the detection of the candidate passer pawns
-* We started to add some endgame logic (KP vs K, KNB vs K and KX vs K)
-* KPK Bitbase with his generator
 * Some improvements in the HTML5 interface
 
 Version 0.8:

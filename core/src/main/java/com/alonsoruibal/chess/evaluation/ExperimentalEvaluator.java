@@ -270,25 +270,21 @@ public class ExperimentalEvaluator extends Evaluator {
 				ROOK * BitboardUtils.popCount(board.rooks & board.blacks) + //
 				QUEEN * BitboardUtils.popCount(board.queens & board.blacks);
 
-		// Draw detection
-		if (material[1] < ROOK && material[0] < ROOK && pawnMaterial[1] == 0 && pawnMaterial[0] == 0) {
-			return Evaluator.DRAW;
-		}
-		// Endgame detection
-		if ((material[1] == 0 && material[0] == 0 && pawnMaterial[1] == 0 && pawnMaterial[0] == PAWN) || //
-				(material[0] == 0 && material[1] == 0 && pawnMaterial[0] == 0 && pawnMaterial[1] == PAWN)) {
-			return Endgame.endgameKPK(board, pawnMaterial);
-		}
-		if ((material[1] == 0 && pawnMaterial[1] == 0 && material[0] >= ROOK) || //
-				(material[0] == 0 && pawnMaterial[0] == 0 && material[1] >= ROOK)) {
-			if (board.pawns == 0 && board.rooks == 0 && board.queens == 0 && //
-					BitboardUtils.popCount(board.bishops) == 1 && BitboardUtils.popCount(board.knights) == 1) {
-				return Endgame.endgameKBNK(board, pawnMaterial, material);
-			}
-			if (board.rooks != 0 || board.queens != 0) {
-				return Endgame.endgameKXK(board, pawnMaterial, material);
-			}
-		}
+//		// Endgame detection
+//		if ((material[1] == 0 && material[0] == 0 && pawnMaterial[1] == 0 && pawnMaterial[0] == PAWN) || //
+//				(material[0] == 0 && material[1] == 0 && pawnMaterial[0] == 0 && pawnMaterial[1] == PAWN)) {
+//			return Endgame.endgameKPK(board, pawnMaterial);
+//		}
+//		if ((material[1] == 0 && pawnMaterial[1] == 0 && material[0] >= ROOK) || //
+//				(material[0] == 0 && pawnMaterial[0] == 0 && material[1] >= ROOK)) {
+//			if (board.pawns == 0 && board.rooks == 0 && board.queens == 0 && //
+//					BitboardUtils.popCount(board.bishops) == 1 && BitboardUtils.popCount(board.knights) == 1) {
+//				return Endgame.endgameKBNK(board, pawnMaterial, material);
+//			}
+//			if (board.rooks != 0 || board.queens != 0) {
+//				return Endgame.endgameKXK(board, pawnMaterial, material);
+//			}
+//		}
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray, auxLong, auxLong2;
@@ -370,7 +366,6 @@ public class ExperimentalEvaluator extends Evaluator {
 			}
 			square <<= 1;
 		}
-		// Ok, ended initialization
 
 		square = 1;
 		index = 0;
