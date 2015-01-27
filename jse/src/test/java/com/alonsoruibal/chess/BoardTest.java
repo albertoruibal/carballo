@@ -41,4 +41,16 @@ public class BoardTest extends TestCase {
 		b.setFenMove("rnbq1rk1/ppp1bppp/4pn2/3p4/2PP4/3QP3/PP1B1PPP/RN2KBNR w QK - 0 6", "O-O");
 		assertEquals(b.initialMoveNumber, 9);
 	}
+
+	public void testDrawDetection() {
+		Board b = new Board();
+		b.setFen("7k/8/8/8/8/8/8/7K w - - 0 0");
+		assertEquals(b.isDraw(), true);
+		b.setFen("7k/8/8/8/8/8/8/6BK b - - 0 0");
+		assertEquals(b.isDraw(), true);
+		b.setFen("7k/8/8/8/8/8/8/6NK b - - 0 0");
+		assertEquals(b.isDraw(), true);
+		b.setFen("7k/7p/8/8/8/8/8/6NK b - - 0 0");
+		assertEquals(b.isDraw(), false);
+	}
 }

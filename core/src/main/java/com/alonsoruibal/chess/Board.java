@@ -810,10 +810,11 @@ public class Board {
 		int endGame = 0;
 		generateLegalMoves();
 		if (legalMoveCount == 0) {
-			if (getCheck())
+			if (getCheck()) {
 				endGame = (getTurn() ? -1 : 1);
-			else
+			} else {
 				endGame = 99;
+			}
 		} else if (isDraw()) {
 			endGame = 99;
 		}
@@ -844,7 +845,10 @@ public class Board {
 			}
 		}
 		// Draw by no material to mate
-		return pawns == 0 && rooks == 0 && queens == 0 && bishops == 0 && knights == 0;
+		return (pawns == 0 && rooks == 0 && queens == 0) &&
+				((bishops == 0 && knights == 0) || //
+						(bishops == 0 && BitboardUtils.popCount(knights) == 1) || //
+						(knights == 0 && BitboardUtils.popCount(bishops) == 1));
 	}
 
 	/**
