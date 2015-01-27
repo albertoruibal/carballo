@@ -1,5 +1,7 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.Config;
+import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
@@ -10,11 +12,11 @@ import junit.framework.TestCase;
  */
 public class MateTest extends TestCase {
 
-	SearchEngine inferenceEngine;
+	SearchEngine searchEngine;
 
 	@Override
 	protected void setUp() throws Exception {
-		inferenceEngine = new SearchEngine(new Config());
+		searchEngine = new SearchEngine(new Config());
 	}
 
 	public void testBasic1() {
@@ -113,11 +115,11 @@ public class MateTest extends TestCase {
 //        frame.setLocationRelativeTo( null );
 //        frame.setVisible(true);
 
-		inferenceEngine.getBoard().setFen(fen);
+		searchEngine.getBoard().setFen(fen);
 		System.out.println("Looking for " + move);
 		//System.out.println(moveGenerator.generateMoves(board));
-		inferenceEngine.go(SearchParameters.get(10 * 60000)); // 10 minutes max
-		String bestOperation = Move.toString(inferenceEngine.getBestMove());
+		searchEngine.go(SearchParameters.get(5000));
+		String bestOperation = Move.toString(searchEngine.getBestMove());
 		System.out.println();
 		assertEquals(move, bestOperation);
 	}

@@ -3,6 +3,7 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchEngineOld;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
@@ -15,14 +16,15 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	//	static final int GAME_TIME_PER_PLAYER = 30 * 1000; // in milliseconds
 //	static final int GAME_TIME_PER_PLAYER = 1 * 60 * 1000; // in milliseconds
 //	static final int GAME_TIME_PER_PLAYER = 5 * 1000; // in milliseconds
+//	static final int GAME_TIME_PER_PLAYER = 3 * 1000; // in milliseconds
 	static final int GAME_TIME_PER_PLAYER = 1000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
 	static final int SLEEP = 0; //1000; // Do not touch
 	static final int SLEEP2 = 0;
-	static final int GAMES = 120; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
+	static final int GAMES = 20 * 60; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
 
 	SearchEngine engine1;
-	SearchEngine engine2;
+	SearchEngineOld engine2;
 	Board b;
 	boolean engine1Whites;
 	int endGame;
@@ -31,11 +33,10 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	SearchParameters params;
 	long lastTime;
 
-
 	public void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
-		config1.setElo(2100);
+//		config1.setElo(2100);
 //		config1.setEvaluator("experimentalnew");
 //		config1.setExtensionsSingular(0);
 //		setElo(config1, 1800);
@@ -45,7 +46,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 
 		Config config2 = new Config();
 		config2.setBook(new FileBook("/book_small.bin"));
-		config2.setElo(2000);
+//		config2.setElo(2000);
 
 //		config2.setExtensionsMateThreat(1);
 //		config2.setExtensionsRecapture(0);
@@ -79,7 +80,7 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 		//config2.setNullMoveMargin(300);
 
 		engine1 = new SearchEngine(config1);
-		engine2 = new SearchEngine(config2);
+		engine2 = new SearchEngineOld(config2);
 
 		PgnFile pgn = new PgnFile();
 		int pgnGameNumber = 0;
@@ -145,7 +146,6 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 
 			System.out.println("At: " + (i + 1) + " draws: " + wins[0] + "  engine1: " + wins[1] + " engine2: " + wins[2] + " elodif: " + eloDifference + " pointspercentage=" + (percentage * 100));
 		}
-
 	}
 
 	private void go() {

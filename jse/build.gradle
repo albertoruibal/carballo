@@ -17,7 +17,7 @@ dependencies {
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     doFirst {
-        configurations.compile.each { println it.name }
+        configurations.compile.each {println it.name}
     }
     ext {
         obfuscatedJar = "./carballo-${version}.jar"
