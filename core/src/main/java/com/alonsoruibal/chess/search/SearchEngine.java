@@ -784,7 +784,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * looks for the best movement
+	 * It searches for the best movement
 	 */
 	public void go(SearchParameters searchParameters) {
 		if (!initialized) {
@@ -820,10 +820,10 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void newRun() throws SearchFinishedException {
+		startTime = System.currentTimeMillis();
 		foundOneMove = false;
 		searching = true;
 
-		startTime = System.currentTimeMillis();
 		logger.debug("Board\n" + board);
 
 		positionCounter = 0;
@@ -835,7 +835,7 @@ public class SearchEngine implements Runnable {
 		pv = null;
 
 		initialPly = board.getMoveNumber();
-		thinkTo = startTime + searchParameters.calculateMoveTime(board) - 100;
+		thinkTo = startTime + searchParameters.calculateMoveTime(board);
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {

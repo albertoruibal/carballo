@@ -123,14 +123,22 @@ public class SearchParameters {
 	 * @return
 	 */
 	public long calculateMoveTime(Board board) {
-		if (infinite) return 999999999;
-		if (moveTime != 0) return moveTime;
+		if (infinite) {
+			return 999999999;
+		}
+		if (moveTime != 0) {
+			return moveTime;
+		}
 
 		int calctime = 0;
 		if (board.getTurn()) {
-			if (wtime > 0) calctime = wtime / 40 + winc;
+			if (wtime > 0) {
+				calctime = wtime / 40 + winc;
+			}
 		} else {
-			if (btime > 0) calctime = btime / 40 + binc;
+			if (btime > 0) {
+				calctime = btime / 40 + binc;
+			}
 		}
 		logger.debug("Thinking for " + calctime + "Ms");
 		return calctime;
