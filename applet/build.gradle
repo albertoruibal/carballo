@@ -1,9 +1,37 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-
 archivesBaseName = 'carballo-applet'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:5.1'
+    }
+}
 
 dependencies {
     compile project(':core')
     compile project(':jse')
+}
+
+task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
+    doFirst {
+        configurations.compile.each { println it.name }
+    }
+    ext {
+        obfuscatedJar = "./carballo-applet-${version}.jar"
+    }
+    injars jar.archivePath
+    injars configurations.compile
+    outjars obfuscatedJar
+    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    optimizationpasses 5
+    allowaccessmodification
+    //dontskipnonpubliclibraryclassmembers
+    target '1.7'
+    keep 'public class com.alonsoruibal.chess.applet.ChessApplet { *; }'
+    doLast {
+        logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
+    }
 }

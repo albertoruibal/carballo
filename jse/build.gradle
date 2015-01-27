@@ -1,10 +1,4 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-
 archivesBaseName = 'carballo-jse'
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
 
 buildscript {
     repositories {
@@ -12,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:4.9'
+        classpath 'net.sf.proguard:proguard-gradle:5.1'
     }
 }
 
@@ -23,29 +17,20 @@ dependencies {
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     doFirst {
-        configurations.compile.each { println it.name}
+        configurations.compile.each { println it.name }
     }
-
     ext {
-        outDir = file("${buildDir}/proguard")
-        obfuscatedJar = "${outDir}/carballo.jar"
+        obfuscatedJar = "./carballo-${version}.jar"
     }
-    outDir.mkdirs()
-
     injars jar.archivePath
     injars configurations.compile
     outjars obfuscatedJar
-
-    //printmapping "${outDir}/mappings.out"
-    //libraryjars configurations.compile
-    libraryjars "<java.home>/lib/rt.jar"
-
+    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
     optimizationpasses 5
-
     allowaccessmodification
     dontskipnonpubliclibraryclassmembers
-    keep "public class com.alonsoruibal.chess.uci.Uci { *; }"
-
+    target '1.7'
+    keep 'public class com.alonsoruibal.chess.uci.Uci { *; }'
     doLast {
         logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
     }
@@ -54,5 +39,3 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
 jar {
     manifest.attributes("Main-Class": "com.alonsoruibal.chess.uci.Uci")
 }
-
-

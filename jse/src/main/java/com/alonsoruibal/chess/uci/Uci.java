@@ -1,9 +1,5 @@
 package com.alonsoruibal.chess.uci;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.book.FileBook;
@@ -13,9 +9,13 @@ import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * UCI Interface TODO ponder
- * 
+ *
  * @author rui
  */
 public class Uci implements SearchObserver {
@@ -40,7 +40,7 @@ public class Uci implements SearchObserver {
 				String command = tokens[index++].toLowerCase();
 
 				if ("uci".equals(command)) {
-					System.out.println("id name Carballo Chess Engine v0.8");
+					System.out.println("id name Carballo Chess Engine v0.9");
 					System.out.println("id author Alberto Alonso Ruibal");
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
@@ -59,7 +59,7 @@ public class Uci implements SearchObserver {
 					System.out
 							.println("option name Singular Extension Margin type spin default " + Config.DEFAULT_SINGULAR_EXTENSION_MARGIN + " min 0 max 300");
 					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR
-							+ " var simplified var complete var experimental var experimentalold");
+							+ " var simplified var complete var experimental");
 					System.out.println("option name Aspiration Window type check default " + Config.DEFAULT_ASPIRATION_WINDOW);
 					System.out.println("option name Aspiration Window Sizes type string default " + Config.DEFAULT_ASPIRATION_WINDOW_SIZES);
 					System.out.println("option name Futility type check default " + Config.DEFAULT_FUTILITY);
