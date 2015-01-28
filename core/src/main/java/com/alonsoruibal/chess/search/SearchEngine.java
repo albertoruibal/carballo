@@ -370,7 +370,7 @@ public class SearchEngine implements Runnable {
 		}
 		qsPositionCounter++;
 
-		// checks draw by three fold repetition, fifty moves rule and no material to mate
+		// It checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
 			return evaluateDraw();
 		}
@@ -479,7 +479,7 @@ public class SearchEngine implements Runnable {
 			positionCounter++;
 		}
 
-		// checks draw by treefold rep. and fifty moves rule
+		// It checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
 			return evaluateDraw();
 		}
@@ -642,8 +642,7 @@ public class SearchEngine implements Runnable {
 			int extension = 0;
 			int reduction = 0;
 
-			// Operations are pseudo-legal, doMove checks if they lead to a
-			// valid state
+			// Operations are pseudo-legal, doMove checks if they lead to a valid state
 			if (board.doMove(move, false)) {
 				validOperations = true;
 
