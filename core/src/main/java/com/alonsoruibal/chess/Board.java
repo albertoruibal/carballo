@@ -232,31 +232,39 @@ public class Board {
 		int j = 0;
 		while (i != 0) {
 			char p = getPieceAt(i);
-			if (p == '.')
+			if (p == '.') {
 				j++;
+			}
 			if ((j != 0) && (p != '.' || ((i & BitboardUtils.b_r) != 0))) {
 				sb.append(j);
 				j = 0;
 			}
-			if (p != '.')
+			if (p != '.') {
 				sb.append(p);
-			if ((i != 1) && (i & BitboardUtils.b_r) != 0)
+			}
+			if ((i != 1) && (i & BitboardUtils.b_r) != 0) {
 				sb.append("/");
+			}
 			i >>>= 1;
 		}
 		sb.append(" ");
 		sb.append((getTurn() ? "w" : "b"));
 		sb.append(" ");
-		if (getWhiteKingsideCastling())
+		if (getWhiteKingsideCastling()) {
 			sb.append("K");
-		if (getWhiteQueensideCastling())
+		}
+		if (getWhiteQueensideCastling()) {
 			sb.append("Q");
-		if (getBlackKingsideCastling())
+		}
+		if (getBlackKingsideCastling()) {
 			sb.append("k");
-		if (getBlackQueensideCastling())
+		}
+		if (getBlackQueensideCastling()) {
 			sb.append("q");
-		if (!getWhiteQueensideCastling() && !getWhiteKingsideCastling() && !getBlackQueensideCastling() && !getBlackKingsideCastling())
+		}
+		if (!getWhiteQueensideCastling() && !getWhiteKingsideCastling() && !getBlackQueensideCastling() && !getBlackKingsideCastling()) {
 			sb.append("-");
+		}
 		sb.append(" ");
 		sb.append((getPassantSquare() != 0 ? BitboardUtils.square2Algebraic(getPassantSquare()) : "-"));
 		sb.append(" ");
@@ -316,8 +324,9 @@ public class Board {
 					tmpKnights = (tmpKnights & ~j) | (Character.toUpperCase(p) == 'N' ? j : 0);
 					tmpKings = (tmpKings & ~j) | (Character.toUpperCase(p) == 'K' ? j : 0);
 					j >>>= 1;
-					if (j == 0)
+					if (j == 0) {
 						break; // security
+					}
 				}
 			}
 		}
@@ -331,14 +340,18 @@ public class Board {
 		}
 		if (tokens.length > 2) {
 			String promotions = tokens[2];
-			if (promotions.contains("K"))
+			if (promotions.contains("K")) {
 				tmpFlags &= ~FLAG_WHITE_DISABLE_KINGSIDE_CASTLING;
-			if (promotions.contains("Q"))
+			}
+			if (promotions.contains("Q")) {
 				tmpFlags &= ~FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING;
-			if (promotions.contains("k"))
+			}
+			if (promotions.contains("k")) {
 				tmpFlags &= ~FLAG_BLACK_DISABLE_KINGSIDE_CASTLING;
-			if (promotions.contains("q"))
+			}
+			if (promotions.contains("q")) {
 				tmpFlags &= ~FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
+			}
 			if (tokens.length > 3) {
 				String passant = tokens[3];
 				tmpFlags |= FLAGS_PASSANT & BitboardUtils.algebraic2Square(passant);
@@ -420,14 +433,18 @@ public class Board {
 		// TODO Verify only one king per side
 
 		// Verify castling
-		if (getWhiteKingsideCastling() && ((whites & kings & 0x08) == 0 || (whites & rooks & 0x01) == 0))
+		if (getWhiteKingsideCastling() && ((whites & kings & 0x08) == 0 || (whites & rooks & 0x01) == 0)) {
 			flags |= FLAG_WHITE_DISABLE_KINGSIDE_CASTLING;
-		if (getWhiteQueensideCastling() && ((whites & kings & 0x08) == 0 || (whites & rooks & 0x80) == 0))
+		}
+		if (getWhiteQueensideCastling() && ((whites & kings & 0x08) == 0 || (whites & rooks & 0x80) == 0)) {
 			flags |= FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING;
-		if (getBlackKingsideCastling() && ((blacks & kings & 0x0800000000000000L) == 0 || (blacks & rooks & 0x0100000000000000L) == 0))
+		}
+		if (getBlackKingsideCastling() && ((blacks & kings & 0x0800000000000000L) == 0 || (blacks & rooks & 0x0100000000000000L) == 0)) {
 			flags |= FLAG_BLACK_DISABLE_KINGSIDE_CASTLING;
-		if (getBlackQueensideCastling() && ((blacks & kings & 0x0800000000000000L) == 0 || (blacks & rooks & 0x8000000000000000L) == 0))
+		}
+		if (getBlackQueensideCastling() && ((blacks & kings & 0x0800000000000000L) == 0 || (blacks & rooks & 0x8000000000000000L) == 0)) {
 			flags |= FLAG_BLACK_DISABLE_QUEENSIDE_CASTLING;
+		}
 	}
 
 	/**
@@ -518,12 +535,15 @@ public class Board {
 				&& capturedPieces[moveNumber - 1] != '.' && capturedPieces[moveNumber - 2] != '.') {
 			char captured1 = Character.toLowerCase(capturedPieces[moveNumber - 1]);
 			char captured2 = Character.toLowerCase(capturedPieces[moveNumber - 2]);
-			if (captured1 == 'n')
+			if (captured1 == 'n') {
 				captured1 = 'b'; // Converts knights in bishops
-			if (captured2 == 'n')
+			}
+			if (captured2 == 'n') {
 				captured2 = 'b';
-			if (captured1 == captured2)
+			}
+			if (captured1 == captured2) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -550,8 +570,9 @@ public class Board {
 		// logger.debug("Before move: \n" + toString() + "\n " +
 		// Move.toStringExt(move));
 
-		if (move == -1)
+		if (move == -1) {
 			return false;
+		}
 		// Save history
 		saveHistory(move, fillInfo);
 
@@ -580,7 +601,6 @@ public class Board {
 		flags &= ~FLAGS_PASSANT;
 
 		if (move != 0) {
-
 			if ((from & getMines()) == 0) {
 				logger.error("Origin square not valid");
 				logger.debug("\n" + toString());
@@ -705,10 +725,11 @@ public class Board {
 					break;
 			}
 			// Move pieces in colour fields
-			if (getTurn())
+			if (getTurn()) {
 				whites ^= moveMask;
-			else
+			} else {
 				blacks ^= moveMask;
+			}
 
 			// Tests to disable castling
 			if ((moveMask & 0x0000000000000009L) != 0 && (flags & FLAG_WHITE_DISABLE_KINGSIDE_CASTLING) == 0) {
@@ -836,8 +857,9 @@ public class Board {
 		int repetitions = 0;
 		// logger.debug("My keys key0=" + key[0] + " " + " key1=" + key[1]);
 		for (int i = 0; i < (moveNumber - 1); i++) {
-			if (keyHistory[i][0] == key[0] && keyHistory[i][1] == key[1])
+			if (keyHistory[i][0] == key[0] && keyHistory[i][1] == key[1]) {
 				repetitions++;
+			}
 			// logger.debug("movenumber="+i+" key0=" + keyHistory[i][0] + " " +
 			// " key1=" + keyHistory[i][1] + " Repetitions="+repetitions);
 			if (repetitions >= 2) { // with the last one they are 3
