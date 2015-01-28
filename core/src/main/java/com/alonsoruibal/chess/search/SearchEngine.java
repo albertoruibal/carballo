@@ -375,7 +375,6 @@ public class SearchEngine implements Runnable {
 			return evaluateDraw();
 		}
 
-		int ttMove = 0;
 		int eval = -Evaluator.VICTORY;
 		int score;
 		boolean pv = beta - alpha > 1;
@@ -386,7 +385,6 @@ public class SearchEngine implements Runnable {
 			if (!pv && canUseTT(0, alpha, beta)) {
 				return tt.getScore();
 			}
-//			ttMove = tt.getBestMove();
 		}
 
 		// Do not allow stand pat when in check
@@ -418,7 +416,7 @@ public class SearchEngine implements Runnable {
 		boolean generateChecks = pv && (qsdepth == 0);
 
 		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
-		moveIterator.genMoves(ttMove, true, generateChecks);
+		moveIterator.genMoves(0, true, generateChecks);
 		int move;
 
 		while ((move = moveIterator.next()) != 0) {
