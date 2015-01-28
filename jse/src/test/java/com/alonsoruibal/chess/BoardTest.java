@@ -53,4 +53,20 @@ public class BoardTest extends TestCase {
 		b.setFen("7k/7p/8/8/8/8/8/6NK b - - 0 0");
 		assertEquals(b.isDraw(), false);
 	}
+
+	public void testPassedPawn() {
+		Board b = new Board();
+		// Position from http://en.wikipedia.org/wiki/Passed_pawn
+		b.setFen("7k/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
+		System.out.print(b);
+		assertEquals(b.isPassedPawn(25), false);
+		assertEquals(b.isPassedPawn(26), false);
+		assertEquals(b.isPassedPawn(28), true);
+		assertEquals(b.isPassedPawn(29), true);
+		assertEquals(b.isPassedPawn(32), false);
+		assertEquals(b.isPassedPawn(34), false);
+		assertEquals(b.isPassedPawn(35), true);
+		assertEquals(b.isPassedPawn(38), true);
+		assertEquals(b.isPassedPawn(40), false);
+	}
 }
