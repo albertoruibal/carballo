@@ -248,9 +248,7 @@ public class SearchEngine implements Runnable {
 				ext += config.getExtensionsPawnPush();
 			}
 			if (board.isPassedPawn(Move.getToIndex(move))) {
-				// ext += pv ? config.getExtensionsPassedPawn() :
-				// config.getExtensionsPassedPawn() >> 1;
-				ext += config.getExtensionsPassedPawn();
+				ext += pv ? config.getExtensionsPassedPawn() : config.getExtensionsPassedPawn() >> 1;
 			}
 		}
 		if (mateThreat) {
@@ -271,8 +269,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Returns true if we can use the value stored on the TT to return from
-	 * search
+	 * Returns true if we can use the value stored on the TT to return from search
 	 */
 	private boolean canUseTT(int depthRemaining, int alpha, int beta) {
 		if (tt.getDepthAnalyzed() >= depthRemaining && tt.isMyGeneration()) {
@@ -301,7 +298,7 @@ public class SearchEngine implements Runnable {
 	 * Also changes sign to score depending of turn usetTT requires to do a
 	 * previous search on TT
 	 */
-	private int eval(int alpha, int beta, boolean foundTT, boolean refine) {
+	private int eval(boolean foundTT, boolean refine) {
 		ttEvalProbe++;
 
 		if (foundTT) {
@@ -367,18 +364,13 @@ public class SearchEngine implements Runnable {
 		return capturedPieceValue;
 	}
 
-	/**
-	 * Search horizon node (depth == 0) some kind of quiescent search
-	 *
-	 * @return
-	 * @throws com.alonsoruibal.chess.search.SearchFinishedException
-	 */
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
-		if (System.currentTimeMillis() > thinkTo && foundOneMove)
+		if (System.currentTimeMillis() > thinkTo && foundOneMove) {
 			throw new SearchFinishedException();
+		}
 		qsPositionCounter++;
 
-		// checks draw by three fold repetition. and fifty moves rule
+		// checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
 			return evaluateDraw();
 		}
@@ -387,8 +379,6 @@ public class SearchEngine implements Runnable {
 		int eval = -Evaluator.VICTORY;
 		int score;
 		boolean pv = beta - alpha > 1;
-		// int initialAlpha = alpha;
-		// int bestMove = 0;
 
 		ttProbe++;
 		boolean foundTT = tt.search(board, false);
@@ -396,15 +386,14 @@ public class SearchEngine implements Runnable {
 			if (!pv && canUseTT(0, alpha, beta)) {
 				return tt.getScore();
 			}
-			//ttMove = tt.getBestMove();
+//			ttMove = tt.getBestMove();
 		}
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
-			eval = eval(alpha, beta, foundTT, true);
+			eval = eval(foundTT, true);
 
-			// Evaluation functions increase alpha and can originate beta
-			// cutoffs
+			// Evaluation functions increase alpha and can originate beta cutoffs
 			if (eval >= beta) {
 				return eval;
 			}
@@ -420,7 +409,6 @@ public class SearchEngine implements Runnable {
 			for (int i = 0; i < board.getMoveNumber(); i++) {
 				System.out.println(Move.toStringExt(board.moveHistory[i]));
 			}
-			// System.exit(-1);
 			return eval;
 		}
 
@@ -466,7 +454,6 @@ public class SearchEngine implements Runnable {
 				board.undoMove();
 				if (score > alpha) {
 					alpha = score;
-					// bestMove = move;
 					if (score >= beta) {
 						break;
 					}
@@ -508,10 +495,7 @@ public class SearchEngine implements Runnable {
 
 		int ttMove = 0;
 		int ttScore = 0;
-		int bestMove = 0;
-		int bestScore = -Evaluator.VICTORY;
 		int score = 0;
-		boolean mateThreat = false;
 
 		ttProbe++;
 		boolean foundTT = tt.search(board, excludedMove != 0);
@@ -525,15 +509,14 @@ public class SearchEngine implements Runnable {
 		}
 
 		if (depthRemaining < PLY) {
-			score = quiescentSearch(0, alpha, beta);
-			return score;
+			return quiescentSearch(0, alpha, beta);
 		}
 
 		int eval = -Evaluator.VICTORY;
 
 		// Do a static eval
 		if (!board.getCheck()) {
-			eval = eval(beta - 1, beta, foundTT, true);
+			eval = eval(foundTT, true);
 		}
 
 		// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
@@ -569,6 +552,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Null move pruning and mate threat detection
+		boolean mateThreat = false;
 		if (nodeType == NODE_NULL //
 				&& config.getNullMove() //
 				&& allowNullMove //
@@ -630,7 +614,6 @@ public class SearchEngine implements Runnable {
 
 		// Futility pruning
 		boolean futilityPrune = false;
-
 		if (nodeType == NODE_NULL //
 				&& !board.getCheck()) {
 			if (depthRemaining <= PLY) { // at frontier nodes
@@ -648,13 +631,15 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		int movesDone = 0;
 		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
 		moveIterator.genMoves(ttMove);
+
+		int movesDone = 0;
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
+		int bestScore = -Evaluator.VICTORY;
+		int move, bestMove = 0;
 
-		int move;
 		while ((move = moveIterator.next()) != 0) {
 			int extension = 0;
 			int reduction = 0;
@@ -741,7 +726,7 @@ public class SearchEngine implements Runnable {
 
 				board.undoMove();
 
-				// Tracks the best move also insert errors on the root node
+				// It tracks the best move and it also insert errors on the root node
 				if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
 					bestMove = move;
 					bestScore = score;
@@ -852,7 +837,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		score = eval(-Evaluator.VICTORY, Evaluator.VICTORY, false, false);
+		score = eval(false, false);
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
@@ -890,8 +875,9 @@ public class SearchEngine implements Runnable {
 		long time = System.currentTimeMillis();
 		long oldBestMove = globalBestMove;
 		getPv();
-		if (globalBestMove != 0)
+		if (globalBestMove != 0) {
 			foundOneMove = true;
+		}
 
 		// update best move time
 		if (oldBestMove != globalBestMove) {
@@ -954,11 +940,13 @@ public class SearchEngine implements Runnable {
 		int i = 0;
 		while (i < 256) {
 			if (tt.search(board, false)) {
-				if (keys.contains(board.getKey()))
+				if (keys.contains(board.getKey())) {
 					break;
+				}
 				keys.add(board.getKey());
-				if (tt.getBestMove() == 0)
+				if (tt.getBestMove() == 0) {
 					break;
+				}
 				if (i == 0) {
 					globalBestMove = tt.getBestMove();
 				} else if (i == 1) {
@@ -968,8 +956,9 @@ public class SearchEngine implements Runnable {
 				sb.append(" ");
 				i++;
 				board.doMove(tt.getBestMove(), false);
-			} else
+			} else {
 				break;
+			}
 		}
 		// Now undo moves
 		for (int j = 0; j < i; j++) {
