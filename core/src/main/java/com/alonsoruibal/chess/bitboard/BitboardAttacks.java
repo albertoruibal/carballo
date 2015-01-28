@@ -36,10 +36,11 @@ public class BitboardAttacks {
 
 	long squareAttackedAux(long square, int shift, long border) {
 		if ((square & border) == 0) {
-			if (shift > 0)
+			if (shift > 0) {
 				square <<= shift;
-			else
+			} else {
 				square >>>= -shift;
+			}
 			return square;
 		}
 		return 0;
@@ -48,10 +49,11 @@ public class BitboardAttacks {
 	long squareAttackedAuxSlider(long square, int shift, long border) {
 		long ret = 0;
 		while ((square & border) == 0) {
-			if (shift > 0)
+			if (shift > 0) {
 				square <<= shift;
-			else
+			} else {
 				square >>>= -shift;
+			}
 			ret |= square;
 		}
 		return ret;
@@ -122,8 +124,9 @@ public class BitboardAttacks {
 	 * Discover attacks to squares using magics: cheap version
 	 */
 	public boolean isIndexAttacked(Board board, byte index, boolean white) {
-		if (index < 0 || index > 63)
+		if (index < 0 || index > 63) {
 			return false;
+		}
 		long others = (white ? board.blacks : board.whites);
 		long all = board.getAll();
 
@@ -145,8 +148,9 @@ public class BitboardAttacks {
 	 * Discover attacks to squares using magics: cheap version
 	 */
 	public long getIndexAttacks(Board board, int index) {
-		if (index < 0 || index > 63)
+		if (index < 0 || index > 63) {
 			return 0;
+		}
 		long all = board.getAll();
 
 		return ((board.blacks & pawnUpwards[index] | board.whites & pawnDownwards[index]) & board.pawns) | (king[index] & board.kings)
@@ -155,9 +159,9 @@ public class BitboardAttacks {
 	}
 
 	public long getXrayAttacks(Board board, int index, long all) {
-		if (index < 0 || index > 63)
+		if (index < 0 || index > 63) {
 			return 0;
-
+		}
 		return ((getRookAttacks(index, all) & (board.rooks | board.queens)) | (getBishopAttacks(index, all) & (board.bishops | board.queens))) & all;
 	}
 
@@ -190,14 +194,16 @@ public class BitboardAttacks {
 	private long checkSquareAttackedAux(long square, long all, int shift, long border) {
 		long ret = 0;
 		while ((square & border) == 0) {
-			if (shift > 0)
+			if (shift > 0) {
 				square <<= shift;
-			else
+			} else {
 				square >>>= -shift;
+			}
 			ret |= square;
 			// If we collide with other piece
-			if ((square & all) != 0)
+			if ((square & all) != 0) {
 				break;
+			}
 		}
 		return ret;
 	}
