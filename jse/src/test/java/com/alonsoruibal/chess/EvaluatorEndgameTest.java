@@ -23,7 +23,7 @@ public class EvaluatorEndgameTest extends TestCase {
 		board.setFen(fen1);
 		int value = evaluator.evaluate(board);
 		System.out.println("value = " + value);
-		assertTrue("Does not indentify a KNOW_WIN", value > Evaluator.KNOWN_WIN);
+		assertTrue("Does not indentify a KNOWN_WIN", value > Evaluator.KNOWN_WIN);
 	}
 
 	public void testKNBK() {
