@@ -59,9 +59,9 @@ public class Endgame {
 		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
 		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
 
-		if (BitboardUtils.inBlackSquare(board.bishops)) {
-			whiteKingIndex = BitboardUtils.flipHorizontal(whiteKingIndex);
-			blackKingIndex = BitboardUtils.flipHorizontal(blackKingIndex);
+		if (BitboardUtils.isBlack(board.bishops)) {
+			whiteKingIndex = BitboardUtils.flipHorizontalIndex(whiteKingIndex);
+			blackKingIndex = BitboardUtils.flipHorizontalIndex(blackKingIndex);
 		}
 
 		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] + //
@@ -76,7 +76,7 @@ public class Endgame {
 		}
 
 		boolean whiteDominant = (board.whites & board.pawns) != 0;
-		return whiteDominant ? Evaluator.KNOWN_WIN + BitboardUtils.rankOf(BitboardUtils.square2Index(board.pawns)) : //
-				-Evaluator.KNOWN_WIN - (7 - BitboardUtils.rankOf(BitboardUtils.square2Index(board.pawns))) + pawnMaterial[0] - pawnMaterial[1];
+		return whiteDominant ? Evaluator.KNOWN_WIN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
+				-Evaluator.KNOWN_WIN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns))) + pawnMaterial[0] - pawnMaterial[1];
 	}
 }

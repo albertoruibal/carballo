@@ -39,7 +39,7 @@ public class KPKBitbaseCalculator {
 	int index(boolean whitetoMove, int blackKingIndex, int whiteKingIndex, int pawnIndex) {
 		return whiteKingIndex + (blackKingIndex << 6) + //
 				((whitetoMove ? 1 : 0) << 12) + //
-				(BitboardUtils.columnOf(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.rankOf(pawnIndex)) << 15);
+				(BitboardUtils.getColumnOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
 	}
 
 	class KPKPosition {
@@ -51,7 +51,7 @@ public class KPKBitbaseCalculator {
 			whiteKingIndex = (idx >>> 0) & 0x3F;
 			blackKingIndex = (idx >>> 6) & 0x3F;
 			whiteToMove = ((idx >>> 12) & 0x01) != 0;
-			pawnIndex = ((idx >>> 13) & 0x03) + ((RANK_7 - (idx >>> 15)) << 3);
+			pawnIndex = 7 - ((idx >>> 13) & 0x03) + ((RANK_7 - (idx >>> 15)) << 3);
 			result = RESULT_UNKNOWN;
 
 			long blackKingSquare = BitboardUtils.index2Square((byte) blackKingIndex);
@@ -70,10 +70,11 @@ public class KPKBitbaseCalculator {
 				result = RESULT_INVALID;
 			} else if (whiteToMove) {
 				// Immediate win if a pawn can be promoted without getting captured
-				if (BitboardUtils.rankOf(pawnIndex) == RANK_7
+				if (BitboardUtils.getRankOfIndex(pawnIndex) == RANK_7
 						&& whiteKingIndex != pawnIndex + DELTA_N
-						&& ((BitboardUtils.distance(blackKingIndex, pawnIndex + DELTA_N) > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0)))
+						&& ((BitboardUtils.distance(blackKingIndex, pawnIndex + DELTA_N) > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0))) {
 					result = RESULT_WIN;
+				}
 			}
 			// Immediate draw if it is a stalemate or a king captures undefended pawn
 			else if ((blackKingAttacks & ~(whiteKingAttacks | pawnAttacks)) == 0
@@ -112,11 +113,11 @@ public class KPKBitbaseCalculator {
 						db.get(index(true, BitboardUtils.square2Index(b1), whiteKingIndex, pawnIndex)).getResult();
 			}
 
-			if (whiteToMove && BitboardUtils.rankOf(pawnIndex) < RANK_7) {
+			if (whiteToMove && BitboardUtils.getRankOfIndex(pawnIndex) < RANK_7) {
 				int s = pawnIndex + DELTA_N;
 				r |= db.get(index(false, blackKingIndex, whiteKingIndex, s)).getResult(); // Single push
 
-				if (BitboardUtils.rankOf(pawnIndex) == RANK_2 && s != whiteKingIndex && s != blackKingIndex) {
+				if (BitboardUtils.getRankOfIndex(pawnIndex) == RANK_2 && s != whiteKingIndex && s != blackKingIndex) {
 					r |= db.get(index(false, blackKingIndex, whiteKingIndex, s + DELTA_N)).getResult(); // Double push
 				}
 			}

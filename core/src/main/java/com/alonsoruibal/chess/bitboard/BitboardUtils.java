@@ -173,13 +173,17 @@ public class BitboardUtils {
 	 * @param in
 	 * @return
 	 */
-	public static long vflip(long in) {
+	public static long flipVertical(long in) {
 		final long k1 = 0x00FF00FF00FF00FFL;
 		final long k2 = 0x0000FFFF0000FFFFL;
 		in = ((in >>> 8) & k1) | ((in & k1) << 8);
 		in = ((in >>> 16) & k2) | ((in & k2) << 16);
 		in = (in >>> 32) | (in << 32);
 		return in;
+	}
+
+	public static int flipHorizontalIndex(int index) {
+		return (index & 0xF8) | (7 - (index & 7));
 	}
 
 	/**
@@ -253,6 +257,15 @@ public class BitboardUtils {
 		return 0;
 	}
 
+
+	public static int getColumnOfIndex(int index) {
+		return 7 - index & 7;
+	}
+
+	public static int getRankOfIndex(int index) {
+		return index >> 3;
+	}
+
 	/**
 	 * Gets a long with the less significative bit of the board
 	 */
@@ -267,23 +280,11 @@ public class BitboardUtils {
 		return Math.max(Math.abs((index1 & 7) - (index2 & 7)), Math.abs((index1 >> 3) - (index2 >> 3)));
 	}
 
-	public static int columnOf(int index) {
-		return index & 7;
-	}
-
-	public static int rankOf(int index) {
-		return index >> 3;
-	}
-
-	public static int flipHorizontal(int index) {
-		return (index & 0xF8) | (7 - (index & 7));
-	}
-
-	public static boolean inWhiteSquare(long square) {
+	public static boolean isWhite(long square) {
 		return (square & WHITE_SQUARES) != 0;
 	}
 
-	public static boolean inBlackSquare(long square) {
+	public static boolean isBlack(long square) {
 		return (square & BLACK_SQUARES) != 0;
 	}
 
