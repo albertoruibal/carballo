@@ -44,13 +44,13 @@ Features
 * Polyglot Opening Book support; in the code I include Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
-* Parametrizable evaluator (only for the complete &amp; experimental evaluators)
+* Parameterizable evaluator (only for the complete &amp; experimental evaluators)
 * Contempt factor
 * UCI interface with lots of UCI options (for chess GUIs like Arena)
 * The core of the chess engine was converted to C# using Sharpen
 
-It scores 2513 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
-It also solves 291 positions of the 300 WinAtChess test (at 5 seconds each).
+It scores 2522 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
+It also solves 290 positions of the 300 WinAtChess test (at 5 seconds each).
 His real strength is about 2200 ELO points, you can check his tournament ranking at http://www.computerchess.org.uk/ccrl/
 
 Authors
@@ -87,14 +87,14 @@ gradle proguard
 History
 =======
 
-Version 0.9: A 150 ELO jump in the engine fixing evaluator bugs
+Version 0.9: Fixes evaluator bugs
 
 * Reordered some logic in the ExperimentalEvaluator
 * Fixed a bug in the detection of the 2 bishop bonus
-* Fixed a bug in the detection of the candidate passer pawns
+* Fixed another bug in the detection of candidate passer pawns
 * Some improvements in the HTML5 interface
 
-Version 0.8:
+Version 0.8: Build system and GWT modifications
 
 * Project build system migrated from Maven to Gradle
 * Solved some evaluator bugs
