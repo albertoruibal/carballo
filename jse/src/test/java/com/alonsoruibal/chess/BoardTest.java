@@ -69,4 +69,11 @@ public class BoardTest extends TestCase {
 		assertEquals(b.isPassedPawn(38), true);
 		assertEquals(b.isPassedPawn(40), false);
 	}
+
+	public void testAdjacentColumnBug() {
+		Board b = new Board();
+		b.setFen("7k/8/2p5/1P6/8/8/8/7K w - - 0 0");
+		System.out.print(b);
+		assertEquals(b.isPassedPawn(38), false);
+	}
 }
