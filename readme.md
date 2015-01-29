@@ -92,6 +92,7 @@ Version 0.9: Fixes evaluator bugs
 * Reordered some logic in the ExperimentalEvaluator
 * Fixed a bug in the detection of the 2 bishop bonus
 * Fixed another bug in the detection of candidate passer pawns
+* Bug in the detection of the adjacent columns found by Yonathan Maalo
 * Some improvements in the HTML5 interface
 
 Version 0.8: Build system and GWT modifications
