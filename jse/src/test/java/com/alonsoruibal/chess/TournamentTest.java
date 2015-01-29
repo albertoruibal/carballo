@@ -11,11 +11,6 @@ import com.alonsoruibal.chess.search.SearchStatusInfo;
  * Test tournament using the Noomen Test Suite
  */
 public class TournamentTest extends EpdTest implements SearchObserver {
-
-	//	static final int GAME_TIME_PER_PLAYER = 30 * 1000; // in milliseconds
-//	static final int GAME_TIME_PER_PLAYER = 1 * 60 * 1000; // in milliseconds
-//	static final int GAME_TIME_PER_PLAYER = 5 * 1000; // in milliseconds
-//	static final int GAME_TIME_PER_PLAYER = 3 * 1000; // in milliseconds
 	static final int GAME_TIME_PER_PLAYER = 1000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
 	static final int SLEEP = 0; //1000; // Do not touch
@@ -35,48 +30,12 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	public void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
-		config1.setElo(2100);
-//		config1.setEvaluator("experimentalnew");
-//		config1.setExtensionsSingular(0);
-//		setElo(config1, 1800);
-		//config1.setAspirationWindowSizes("10");
-		//config1.setExtensionsRecapture(0);
-		//config.setExtensionsSingular(0);
-
 		Config config2 = new Config();
 		config2.setBook(new FileBook("/book_small.bin"));
-		config2.setElo(2000);
 
-//		config2.setExtensionsMateThreat(1);
-//		config2.setExtensionsRecapture(0);
-//		config2.setExtensionsSingular(0);
-//		config2.setNullMoveMargin(300);
-//		config2.setFutilityMargin(300);
-//		config2.setAggressiveFutilityMargin(500);
-//		config2.setRazoringMargin(900);
-
-//		config2.setEvaluator("complete");
-//		config2.setStaticNullMove(false);
-//		config2.setExtensionsSingular(2);
-//		setElo(config2, 1700);
-		//config2.setContemptFactor(150);
-		//config2.setExtensionsSingular(2);
-//		config2.setFutility(false);
-//		config2.setAggressiveFutility(false);
-//		config2.setRazoring(false);
-//		config2.setRand(50);
-//		config2.setExtensionsCheck(0);
-//		config2.setExtensionsMateThreat(0);
-//		config2.setEvalAttacks(0);
-//		config2.setEvalCenter(0);
-//		config2.setEvalKingSafety(0);
-//		config2.setEvalMobility(0);
-//		config2.setEvalPassedPawns(0);
-//		config2.setEvalPawnStructure(0);
-//		config2.setEvalPositional(0);
-
-		//config1.setNullMoveMargin(500);
-		//config2.setNullMoveMargin(300);
+		// Change here the parameters in one of the chess engine to test the differences
+		// Example: config1.setElo(2000);
+		// ...
 
 		engine1 = new SearchEngine(config1);
 		engine2 = new SearchEngine(config2);
@@ -101,23 +60,17 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 			b = new Board();
 
 			// Each position is played two times alternating color
-			String positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2008.pgn"), pgnGameNumber >>> 1);
+			String positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
 			if (positionPgn == null) {
 				pgnGameNumber = 0;
-				positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2008.pgn"), pgnGameNumber >>> 1);
+				positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
 			} else {
 				pgnGameNumber++;
 			}
 
-//			System.out.println(engine1Whites + " Using pgn:\n" + positionPgn);
-
 			pgn.setBoard(b, positionPgn);
 			pgn.setBoard(engine1.getBoard(), positionPgn);
 			pgn.setBoard(engine2.getBoard(), positionPgn);
-
-			//b.startPosition();
-			//engine1.getBoard().startPosition();
-			//engine2.getBoard().startPosition();
 
 			engine1.setObserver(this);
 			engine2.setObserver(this);
