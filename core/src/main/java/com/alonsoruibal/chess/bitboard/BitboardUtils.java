@@ -43,7 +43,7 @@ public class BitboardUtils {
 	public static final long[] COLUMN = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
 	public static final long[] COLUMNS_ADJACENTS = { //
 			COLUMN[1], //
-			COLUMN[0] | COLUMN[1], //
+			COLUMN[0] | COLUMN[2], //
 			COLUMN[1] | COLUMN[3], //
 			COLUMN[2] | COLUMN[4], //
 			COLUMN[3] | COLUMN[5], //
