@@ -237,18 +237,18 @@ public class SearchEngine implements Runnable {
 	 * Calculates the extension of a move in the actual position (with the move
 	 * done)
 	 */
-	private int extensions(int move, boolean mateThreat, boolean pv) {
+	private int extensions(int move, boolean mateThreat) {
 		int ext = 0;
 
 		if (board.getCheck()) {
-			ext += pv ? config.getExtensionsCheck() : config.getExtensionsCheck() >> 1;
+			ext += config.getExtensionsCheck();
 		}
 		if (Move.getPieceMoved(move) == Move.PAWN) {
 			if (Move.isPawnPush(move)) {
 				ext += config.getExtensionsPawnPush();
 			}
 			if (board.isPassedPawn(Move.getToIndex(move))) {
-				ext += pv ? config.getExtensionsPassedPawn() : config.getExtensionsPassedPawn() >> 1;
+				ext += config.getExtensionsPassedPawn();
 			}
 		}
 		if (mateThreat) {
@@ -651,7 +651,7 @@ public class SearchEngine implements Runnable {
 					continue;
 				}
 
-				extension += extensions(move, mateThreat, false);
+				extension += extensions(move, mateThreat);
 
 				// Check singular reply extension
 				if (singularMoveExtension //
