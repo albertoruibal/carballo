@@ -177,16 +177,20 @@ public class MoveIterator {
 			myKingIndex = BitboardUtils.square2Index(square);
 			if (!board.getCheck() &&
 					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 1), board.getTurn())
-					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 2), board.getTurn()))
+					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 2), board.getTurn())) {
 				addNonCapturesAndBadPromos(Move.KING, myKingIndex, myKingIndex - 2, 0, false, Move.TYPE_KINGSIDE_CASTLING);
+			}
 		}
 		if ((((all & (board.getTurn() ? 0x70L : 0x7000000000000000L)) == 0 &&
 				(board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))) {
-			if (myKingIndex == -1) myKingIndex = BitboardUtils.square2Index(square);
+			if (myKingIndex == -1) {
+				myKingIndex = BitboardUtils.square2Index(square);
+			}
 			if (!board.getCheck() &&
 					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 1), board.getTurn())
-					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 2), board.getTurn()))
+					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 2), board.getTurn())) {
 				addNonCapturesAndBadPromos(Move.KING, myKingIndex, myKingIndex + 2, 0, false, Move.TYPE_QUEENSIDE_CASTLING);
+			}
 		}
 	}
 
@@ -252,9 +256,10 @@ public class MoveIterator {
 			int score = sortInfo.getMoveScore(move);
 			if (moveType == Move.TYPE_PROMOTION_KNIGHT ||
 					moveType == Move.TYPE_PROMOTION_ROOK ||
-					moveType == Move.TYPE_PROMOTION_BISHOP) score -= SCORE_UNDERPROMOTION;
+					moveType == Move.TYPE_PROMOTION_BISHOP) {
+				score -= SCORE_UNDERPROMOTION;
+			}
 
-//			System.out.println("* " + score + " - " + Move.toStringExt(move));
 			nonCaptures[nonCaptureIndex] = move;
 			nonCapturesScores[nonCaptureIndex] = score;
 			nonCaptureIndex++;
@@ -267,11 +272,17 @@ public class MoveIterator {
 			// Score captures
 			int pieceCaptured = 0;
 
-			if ((to & board.knights) != 0) pieceCaptured = Move.KNIGHT;
-			else if ((to & board.bishops) != 0) pieceCaptured = Move.BISHOP;
-			else if ((to & board.rooks) != 0) pieceCaptured = Move.ROOK;
-			else if ((to & board.queens) != 0) pieceCaptured = Move.QUEEN;
-			else if (capture) pieceCaptured = Move.PAWN;
+			if ((to & board.knights) != 0) {
+				pieceCaptured = Move.KNIGHT;
+			} else if ((to & board.bishops) != 0) {
+				pieceCaptured = Move.BISHOP;
+			} else if ((to & board.rooks) != 0) {
+				pieceCaptured = Move.ROOK;
+			} else if ((to & board.queens) != 0) {
+				pieceCaptured = Move.QUEEN;
+			} else if (capture) {
+				pieceCaptured = Move.PAWN;
+			}
 
 			int see = 0;
 
@@ -287,7 +298,9 @@ public class MoveIterator {
 				}
 
 				if (see > 0 || moveType == Move.TYPE_PROMOTION_QUEEN) {
-					if (moveType == Move.TYPE_PROMOTION_QUEEN) score += SCORE_PROMOTION_QUEEN;
+					if (moveType == Move.TYPE_PROMOTION_QUEEN) {
+						score += SCORE_PROMOTION_QUEEN;
+					}
 					goodCaptures[goodCaptureIndex] = move;
 					goodCapturesScores[goodCaptureIndex] = score;
 					goodCaptureIndex++;
@@ -417,7 +430,6 @@ public class MoveIterator {
 				}
 				break;
 		}
-
 		return 0;
 	}
 }

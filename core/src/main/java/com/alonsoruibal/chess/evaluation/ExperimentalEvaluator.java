@@ -314,7 +314,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40
 		};
 
-		// initialize attacks with pawn attacks
+		// Initialize attacks with pawn attacks
 		int[] attacks = {
 				PAWN_ATTACKS_KNIGHT * BitboardUtils.popCount(pawnAttacks[0] & board.knights & board.blacks) + //
 						PAWN_ATTACKS_BISHOP * BitboardUtils.popCount(pawnAttacks[0] & board.bishops & board.blacks) + //

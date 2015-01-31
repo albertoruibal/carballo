@@ -615,14 +615,12 @@ public class Board {
 			}
 
 			long moveMask = from | to; // Move is as easy as xor with this mask
-			// (exceptions are in captures,
-			// promotions and passant captures)
+			// (exceptions are in captures, promotions and passant captures)
 
 			// Is it is a capture, remove pieces in destination square
 			if (capture) {
 				fiftyMovesRule = 0;
-				// Passant Pawn captures remove captured pawn, put the pawn in
-				// to
+				// Passant Pawn captures remove captured pawn, put the pawn in to
 				int toIndexCapture = toIndex;
 				if (moveType == Move.TYPE_PASSANT) {
 					to = (getTurn() ? (to >>> 8) : (to << 8));
@@ -785,7 +783,7 @@ public class Board {
 	}
 
 	/**
-	 * Checks is a state is valid Basically, not entering own king in check
+	 * It checks if a state is valid basically, not entering own king in check
 	 */
 	private boolean isValid(boolean turn) {
 		return (!bbAttacks.isSquareAttacked(this, kings & getOthers(), !turn));
