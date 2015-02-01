@@ -30,7 +30,7 @@ public class CompleteEvaluator extends Evaluator {
 	public final static int PAWN = 100;
 	public final static int KNIGHT = 325;
 	public final static int BISHOP = 325;
-	public final static int BISHOP_PAIR = 50; // Bonus by having two bishops
+	public final static int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
 	public final static int ROOK = 500;
 	public final static int QUEEN = 975;
 
@@ -301,8 +301,9 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 					// Doubled pawn detection
-					if ((BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] & board.pawns & mines) != square)
+					if ((BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank] & board.pawns & mines) != square) {
 						pawnStructure[color] += PAWN_DOUBLED;
+					}
 
 					// Blocked Pawn
 //					boolean blocked = ((isWhite ? (square<< 8)  : (square >>> 8)) & others) != 0;
@@ -314,11 +315,12 @@ public class CompleteEvaluator extends Evaluator {
 
 					// Passed Pawn
 					if (((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) &
-							(isWhite ? BitboardUtils.RANKS_UPWARDS[rank] : BitboardUtils.RANKS_DOWNWARDS[rank])
+							(BitboardUtils.RANKS_FORWARD[color][rank])
 							& board.pawns & others) == 0) {
 						passedPawns[color] += PAWN_PASSER[(isWhite ? rank : 7 - rank)];
-						if ((square & pawnAttacks[color]) != 0)
+						if ((square & pawnAttacks[color]) != 0) {
 							passedPawns[color] += PAWN_PASSER_SUPPORT[(isWhite ? rank : 7 - rank)];
+						}
 						passedPawns[color] += PAWN_PASSER_KING_D[(isWhite ? rank : 7 - rank)] * BitboardUtils.distance(index, BitboardUtils.square2Index(board.kings & others));
 					}
 
@@ -361,18 +363,21 @@ public class CompleteEvaluator extends Evaluator {
 									// Checks advancing two squares if in initial position
 									if (((isWhite ? BitboardUtils.RANK[1] : BitboardUtils.RANK[6]) & square) != 0) {
 										auxLong = (isWhite ? square << 16 : square >>> 16) & ~pawnAttacks[1 - color] & ~all;
-										if ((auxLong & pawnAttacks[color]) != 0) weak = false;
+										if ((auxLong & pawnAttacks[color]) != 0) {
+											weak = false;
+										}
 									}
 								}
 							}
 						}
 					}
-					if (weak) pawnStructure[color] += PAWN_WEAK;
+					if (weak) {
+						pawnStructure[color] += PAWN_WEAK;
+					}
 //					if (weak) {
 //						System.out.println("weak pawn: \n" + board.toString());
 //						System.out.println("square: \n" + BitboardUtils.toString(square));
 //					}
-
 
 				} else if ((square & board.knights) != 0) {
 					material[color] += KNIGHT + knightKaufBonus[color];
@@ -391,10 +396,11 @@ public class CompleteEvaluator extends Evaluator {
 
 					// Knight outpost: no opposite pawns can attack the square and is defended by one of our pawns
 					if (((BitboardUtils.COLUMNS_ADJACENTS[column] &
-							(isWhite ? BitboardUtils.RANKS_UPWARDS[rank] : BitboardUtils.RANKS_DOWNWARDS[rank])
-							& board.pawns & others) == 0) &&
-							(((isWhite ? bbAttacks.pawnDownwards[index] : bbAttacks.pawnUpwards[index]) & board.pawns & mines) != 0))
+							BitboardUtils.RANKS_FORWARD[color][rank] &
+							board.pawns & others) == 0) &&
+							(((isWhite ? bbAttacks.pawnDownwards[index] : bbAttacks.pawnUpwards[index]) & board.pawns & mines) != 0)) {
 						positional[color] += KNIGTH_OUTPOST[pcsqIndex];
+					}
 
 				} else if ((square & board.bishops) != 0) {
 					material[color] += BISHOP;
@@ -414,13 +420,15 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
-					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0)
+					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
+					}
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 
-					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0)
+					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
+					}
 
 				} else if ((square & board.rooks) != 0) {
 					material[color] += ROOK + rookKaufBonus[color];
@@ -431,8 +439,9 @@ public class CompleteEvaluator extends Evaluator {
 					mobility[color] += ROOK_M * auxInt;
 
 					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
-					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0)
+					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
+					}
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += ROOK_ATTACKS_KING;
@@ -445,10 +454,11 @@ public class CompleteEvaluator extends Evaluator {
 						positional[color] += ROOK_CONNECT;
 					}
 					pieceAttacks = BitboardUtils.COLUMN[column];
-					if ((pieceAttacks & board.pawns) == 0)
+					if ((pieceAttacks & board.pawns) == 0) {
 						positional[color] += ROOK_COLUMN_OPEN;
-					else if ((pieceAttacks & board.pawns & mines) == 0)
+					} else if ((pieceAttacks & board.pawns & mines) == 0) {
 						positional[color] += ROOK_COLUMN_SEMIOPEN;
+					}
 
 				} else if ((square & board.queens) != 0) {
 					center[color] += queenIndexValue[pcsqIndex];
@@ -486,7 +496,9 @@ public class CompleteEvaluator extends Evaluator {
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
 		// opening=> gamephase = 255 / ending => gamephase ~= 0
 		int gamePhase = ((material[0] + material[1]) << 8) / 5000;
-		if (gamePhase > 256) gamePhase = 256; // Security		
+		if (gamePhase > 256) {
+			gamePhase = 256; // Security
+		}
 
 		int value = 0;
 		// First Material
