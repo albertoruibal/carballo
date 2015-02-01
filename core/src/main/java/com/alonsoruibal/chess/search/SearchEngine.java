@@ -400,13 +400,15 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		// If we have more depths than needed...
+		// If we have more depths than possible...
 		if (board.getMoveNumber() - initialPly >= MAX_DEPTH) {
 			System.out.println("Quiescence exceeds depth qsdepth=" + qsdepth);
 			System.out.println(board.toString());
 			for (int i = 0; i < board.getMoveNumber(); i++) {
-				System.out.println(Move.toStringExt(board.moveHistory[i]));
+				System.out.print(Move.toStringExt(board.moveHistory[i]));
+				System.out.print(" ");
 			}
+			System.out.println();
 			return eval;
 		}
 
@@ -506,7 +508,7 @@ public class SearchEngine implements Runnable {
 			ttScore = tt.getScore();
 		}
 
-		if (depthRemaining < PLY) {
+		if (depthRemaining < PLY || board.getMoveNumber() - initialPly >= MAX_DEPTH - 1) {
 			return quiescentSearch(0, alpha, beta);
 		}
 
