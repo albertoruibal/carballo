@@ -34,6 +34,9 @@ import java.io.InputStreamReader;
  * @author rui
  */
 public class EpdTest extends TestCase {
+	/**
+	 * Logger for this class
+	 */
 	private static final Logger logger = Logger.getLogger("EpdTest");
 
 	Config config;
