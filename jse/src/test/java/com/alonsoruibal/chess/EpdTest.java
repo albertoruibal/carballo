@@ -34,15 +34,13 @@ import java.io.InputStreamReader;
  * @author rui
  */
 public class EpdTest extends TestCase {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("EpdTest");
 
 	Config config;
 	SearchEngine search;
 
 	int solved;
+	int fails;
 	int total;
 	int totalTime;
 	int lctPoints;
@@ -117,9 +115,10 @@ public class EpdTest extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		fails = total - solved;
 		logger.debug("***** Positions not Solved:");
 		logger.debug(notSolved.toString());
-		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms");
+		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms (" + fails + " fails)");
 		return totalTime;
 	}
 

@@ -9,6 +9,7 @@ public class WinAtChessTest extends EpdTest {
 
 		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
 		int solved1 = getSolved();
+		assertTrue(fails <= 10);
 
 //		search.getConfig().setExtensionsPassedPawn(0);
 //		search.getConfig().setExtensionsPawnPush(2);
@@ -39,6 +40,5 @@ public class WinAtChessTest extends EpdTest {
 //		logger.debug("Config4 = " + solved4);
 //		logger.debug("Config5 = " + solved5);
 //		logger.debug("Config6 = " + solved6);
-		assertTrue(solved1 >= 280);
 	}
 }
