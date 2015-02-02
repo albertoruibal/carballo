@@ -25,9 +25,6 @@ import java.util.Random;
  * @author Alberto Alonso Ruibal
  */
 public class SearchEngine implements Runnable {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("SearchEngine");
 
 	public static final int MAX_DEPTH = 64;

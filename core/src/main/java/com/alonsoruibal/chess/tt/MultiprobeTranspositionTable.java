@@ -107,10 +107,12 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 				notPvIndex = i;
 			}
 		}
-		if (index == -1 && oldGenerationIndex != -1)
+		if (index == -1 && oldGenerationIndex != -1) {
 			index = oldGenerationIndex;
-		if (index == -1 && notPvIndex != -1)
+		}
+		if (index == -1 && notPvIndex != -1) {
 			index = notPvIndex;
+		}
 		if (index == -1) {
 			return;
 			// Do not overwrite unless a PV node
