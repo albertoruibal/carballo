@@ -239,6 +239,9 @@ public class SearchEngine implements Runnable {
 
 		if (board.getCheck()) {
 			ext += config.getExtensionsCheck();
+			if (ext >= PLY) {
+				return PLY;
+			}
 		}
 		if (Move.getPieceMoved(move) == Move.PAWN) {
 			if (Move.isPawnPush(move)) {
@@ -247,20 +250,25 @@ public class SearchEngine implements Runnable {
 			if (board.isPassedPawn(Move.getToIndex(move))) {
 				ext += config.getExtensionsPassedPawn();
 			}
+			if (ext >= PLY) {
+				return PLY;
+			}
 		}
 		if (mateThreat) {
 			ext += config.getExtensionsMateThreat();
+			if (ext >= PLY) {
+				return PLY;
+			}
 		}
 		if (ext < config.getExtensionsRecapture() && board.getLastMoveIsRecapture()) {
 			int seeValue = board.see(move);
 			int capturedPieceValue = pieceValue(board.getPieceAt(Move.getToSquare(move)));
 			if (seeValue > capturedPieceValue - 50) {
-				ext = config.getExtensionsRecapture();
+				ext += config.getExtensionsRecapture();
 			}
 		}
-
-		if (ext > PLY) {
-			ext = PLY;
+		if (ext >= PLY) {
+			return PLY;
 		}
 		return ext;
 	}
