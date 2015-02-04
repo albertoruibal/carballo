@@ -22,6 +22,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	Config config;
 
 	public boolean debug = false;
+	public StringBuffer debugSB;
 
 	public ExperimentalEvaluator(Config config) {
 		this.config = config;
@@ -126,11 +127,11 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int PINNED_PIECE = oe(25, 35);
 
 	// Tempo
-	private final static int TEMPO = 9; // Add to moving side score
+	public final static int TEMPO = 9; // Add to moving side score
 
 	private final static long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
-	private final static int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // kNight outpost attacks squares Near King or other opposite pieces Pawn Undefended 
+	private final static int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
 			0, 0, 0, 0, 0, 0, 0, 0, //
 			0, 0, 0, 0, 0, 0, 0, 0, //
 			0, 0, 0, 0, 0, 0, 0, 0, //
@@ -253,6 +254,11 @@ public class ExperimentalEvaluator extends Evaluator {
 //	}
 
 	public int evaluate(Board board) {
+		if (debug) {
+			debugSB = new StringBuffer();
+			debugSB.append("\n" + board.toString() + "\n");
+		}
+
 		int[] pawnMaterial = {0, 0};
 		pawnMaterial[0] = PAWN * BitboardUtils.popCount(board.pawns & board.whites);
 		pawnMaterial[1] = PAWN * BitboardUtils.popCount(board.pawns & board.blacks);
@@ -411,6 +417,19 @@ public class ExperimentalEvaluator extends Evaluator {
 									board.pawns & mines) == 0;
 
 					//logger.debug("PAWN isolated = " + isolated + " backwards = " + backwards + " doubled = " + doubled + " opposed = " + opposed + " passed = " + passed + " candidate = " + candidate);
+					if (debug) {
+						debugSB.append("PAWN " + //
+										index + //
+										(color == 0 ? " WHITE " : " BLACK ") + //
+										(isolated ? "isolated " : "") + //
+										(doubled ? "doubled " : "") + //
+										(opposed ? "opposed " : "") + //
+										(passed ? "passed " : "") + //
+										(candidate ? "candidate " : "") + //
+										(backwards ? "backwards " : "") + //
+										"\n"
+						);
+					}
 
 					// No pawns in front
 					if (opposed) {
@@ -722,8 +741,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
 
 		if (debug) {
-			logger.debug("\n" + board.toString());
-			logger.debug(board.getFen());
+			logger.debug(debugSB);
 
 			logger.debug("materialValue          = " + (material[0] - material[1]));
 			logger.debug("pawnMaterialValue      = " + (pawnMaterial[0] - pawnMaterial[1]));
