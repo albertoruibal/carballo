@@ -43,8 +43,9 @@ public class SearchEngine implements Runnable {
 
 	private Config config;
 
-	// time to think to
-	private long thinkTo = 0;
+	// Think limits
+	private long thinkToTime = 0;
+	private long thinkToNodes = 0;
 
 	private Board board;
 	private SearchObserver observer;
@@ -370,7 +371,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
-		if (System.currentTimeMillis() > thinkTo && foundOneMove) {
+		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
 		qsPositionCounter++;
@@ -430,6 +431,15 @@ public class SearchEngine implements Runnable {
 			if (board.doMove(move, false)) {
 				validOperations = true;
 
+				// Necessary because TT move can be a no promotion or capture
+				if (!checkEvasion //
+						&& !(board.getCheck() //
+						&& generateChecks) //
+						&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
+					board.undoMove();
+					continue;
+				}
+
 				// Futility pruning
 				if (!board.getCheck()
 						&& !checkEvasion
@@ -445,14 +455,6 @@ public class SearchEngine implements Runnable {
 						board.undoMove();
 						continue;
 					}
-				}
-
-				// Necessary because TT move can be a no promotion or capture
-				if (!checkEvasion && !(board.getCheck() //
-						&& generateChecks) //
-						&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
-					board.undoMove();
-					continue;
 				}
 
 				score = -quiescentSearch(qsdepth + 1, -beta, -alpha);
@@ -477,7 +479,7 @@ public class SearchEngine implements Runnable {
 	 * Search Root, PV and null window
 	 */
 	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws SearchFinishedException {
-		if (System.currentTimeMillis() > thinkTo && foundOneMove) {
+		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
 		if (nodeType == NODE_PV || nodeType == NODE_ROOT) {
@@ -824,7 +826,14 @@ public class SearchEngine implements Runnable {
 		pv = null;
 
 		initialPly = board.getMoveNumber();
-		thinkTo = startTime + searchParameters.calculateMoveTime(board);
+
+		if (searchParameters.getNodes() > 0) {
+			thinkToTime = Long.MAX_VALUE;
+			thinkToNodes = searchParameters.getNodes();
+		} else {
+			thinkToTime = startTime + searchParameters.calculateMoveTime(board);
+			thinkToNodes = Long.MAX_VALUE;
+		}
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
@@ -972,7 +981,8 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void stop() {
-		thinkTo = 0;
+		thinkToTime = 0;
+		thinkToNodes = 0;
 	}
 
 	/**
