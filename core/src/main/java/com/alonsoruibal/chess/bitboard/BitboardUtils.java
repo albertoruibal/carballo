@@ -86,6 +86,16 @@ public class BitboardUtils {
 			RANK[7], //
 			0 //
 	};
+	public static final long[] RANK_AND_UPWARDS = { //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[4] | RANK[5] | RANK[6] | RANK[7], //
+			RANK[5] | RANK[6] | RANK[7], //
+			RANK[6] | RANK[7], //
+			RANK[7], //
+	};
 	public static final long[] RANKS_DOWNWARDS = { //
 			0, //
 			RANK[0], //
@@ -96,10 +106,21 @@ public class BitboardUtils {
 			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5], //
 			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] //
 	};
+	public static final long[] RANK_AND_DOWNWARDS = { //
+			RANK[0], //
+			RANK[0] | RANK[1], //
+			RANK[0] | RANK[1] | RANK[2], //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3], //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4], //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5], //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6], //
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7] //
+	};
 
 	// Ranks fordward in pawn direction
 	public static final long[][] RANKS_FORWARD = {RANKS_UPWARDS, RANKS_DOWNWARDS};
 	public static final long[][] RANKS_BACKWARD = {RANKS_DOWNWARDS, RANKS_UPWARDS};
+	public static final long[][] RANK_AND_BACKWARD = {RANK_AND_DOWNWARDS, RANK_AND_UPWARDS};
 
 	public static final String[] squareNames = changeEndianArray64(new String[] //
 			{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", //
@@ -159,8 +180,9 @@ public class BitboardUtils {
 		long i = A8;
 		while (i != 0) {
 			sb.append(((b & i) != 0 ? "1 " : "0 "));
-			if ((i & b_r) != 0)
+			if ((i & b_r) != 0) {
 				sb.append("\n");
+			}
 			i >>>= 1;
 		}
 		return sb.toString();
@@ -194,8 +216,9 @@ public class BitboardUtils {
 	 * @return
 	 */
 	public static int popCount(long x) {
-		if (x == 0)
+		if (x == 0) {
 			return 0;
+		}
 		final long k1 = 0x5555555555555555L;
 		final long k2 = 0x3333333333333333L;
 		final long k4 = 0x0f0f0f0f0f0f0f0fL;
@@ -226,8 +249,9 @@ public class BitboardUtils {
 
 	public static int algebraic2Index(String name) {
 		for (int i = 0; i < 64; i++) {
-			if (name.equals(squareNames[i]))
+			if (name.equals(squareNames[i])) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -235,8 +259,9 @@ public class BitboardUtils {
 	public static long algebraic2Square(String name) {
 		long aux = H1;
 		for (int i = 0; i < 64; i++) {
-			if (name.equals(squareNames[i]))
+			if (name.equals(squareNames[i])) {
 				return aux;
+			}
 			aux <<= 1;
 		}
 		return 0;
@@ -257,6 +282,23 @@ public class BitboardUtils {
 		return 0;
 	}
 
+	public static int getRankLsb(long square) {
+		for (int rank = 0; rank <= 7; rank++) {
+			if ((RANK[rank] & square) != 0) {
+				return rank;
+			}
+		}
+		return 0;
+	}
+
+	public static int getRankMsb(long square) {
+		for (int rank = 7; rank >= 0; rank--) {
+			if ((RANK[rank] & square) != 0) {
+				return rank;
+			}
+		}
+		return 0;
+	}
 
 	public static int getColumnOfIndex(int index) {
 		return 7 - index & 7;
@@ -271,6 +313,16 @@ public class BitboardUtils {
 	 */
 	public static long lsb(long board) {
 		return board & (-board);
+	}
+
+	public static long msb(long board) {
+		board |= board >> 32;
+		board |= board >> 16;
+		board |= board >> 8;
+		board |= board >> 4;
+		board |= board >> 2;
+		board |= board >> 1;
+		return (board >> 1) + 1;
 	}
 
 	/**
