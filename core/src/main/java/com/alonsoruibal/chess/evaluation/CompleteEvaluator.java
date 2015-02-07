@@ -22,9 +22,6 @@ import java.util.Arrays;
  * @author rui
  */
 public class CompleteEvaluator extends Evaluator {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("CompleteEvaluator");
 
 	public final static int PAWN = 100;
@@ -133,12 +130,12 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int[] KingRank = {+1, +0, -2, -3, -4, -5, -6, -7};
 
 	// Values are rotated for whites, so when white is playing is like shown in the code
-	private final static int[] pawnIndexValue = new int[64];
-	private final static int[] knightIndexValue = new int[64];
-	private final static int[] bishopIndexValue = new int[64];
-	private final static int[] rookIndexValue = new int[64];
-	private final static int[] queenIndexValue = new int[64];
-	private final static int[] kingIndexValue = new int[64];
+	public final static int[] pawnIndexValue = new int[64];
+	public final static int[] knightIndexValue = new int[64];
+	public final static int[] bishopIndexValue = new int[64];
+	public final static int[] rookIndexValue = new int[64];
+	public final static int[] queenIndexValue = new int[64];
+	public final static int[] kingIndexValue = new int[64];
 
 	Config config;
 
@@ -182,36 +179,7 @@ public class CompleteEvaluator extends Evaluator {
 		pawnIndexValue[28] += oe(25, 0); // D4
 		pawnIndexValue[35] += oe(10, 0); // E5
 		pawnIndexValue[36] += oe(10, 0); // D5
-
-//		logger.debug("***PAWN");
-//		printPcsq(pawnIndexValue);
-//		logger.debug("***KNIGHT");
-//		printPcsq(knightIndexValue);
-//		logger.debug("***BISHOP");
-//		printPcsq(bishopIndexValue);
-//		logger.debug("***ROOK");
-//		printPcsq(rookIndexValue);
-//		logger.debug("***QUEEN");
-//		printPcsq(queenIndexValue);
-//		logger.debug("***KING");
-//		printPcsq(kingIndexValue);
-//		logger.debug("PCSQ tables generated");
 	}
-
-//	private static void printPcsq(int pcsq[]) {
-//		StringBuffer sb = new StringBuffer();
-//		for (int i = 0; i<64; i++) {
-//			String aux = "     " + pcsq[i];
-//			aux = aux.substring(aux.length()-5);
-//			sb.append(aux);
-//			if (i % 8 != 7) {
-//				sb.append(",");
-//			} else {
-//				sb.append("\n");
-//			}
-//		}
-//		logger.debug(sb.toString());
-//	}
 
 	private int[] bishopCount = {0, 0};
 	private long[] superiorPieceAttacked = {0, 0};
