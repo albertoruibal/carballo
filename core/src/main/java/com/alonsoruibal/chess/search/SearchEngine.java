@@ -7,6 +7,8 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
+import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator09;
+import com.alonsoruibal.chess.evaluation.ExperimentalEvaluatorB;
 import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movesort.MoveIterator;
@@ -46,6 +48,7 @@ public class SearchEngine implements Runnable {
 	// Think limits
 	private long thinkToTime = 0;
 	private long thinkToNodes = 0;
+	private long thinkToDepth = 0;
 
 	private Board board;
 	private SearchObserver observer;
@@ -66,7 +69,7 @@ public class SearchEngine implements Runnable {
 
 	long startTime;
 
-	// For performance Benching
+	// For performance benching
 	private long positionCounter;
 	private long pvPositionCounter;
 	private long qsPositionCounter;
@@ -157,6 +160,10 @@ public class SearchEngine implements Runnable {
 			evaluator = new CompleteEvaluator(config);
 		} else if ("experimental".equals(evaluatorName)) {
 			evaluator = new ExperimentalEvaluator(config);
+		} else if ("experimentalb".equals(evaluatorName)) {
+			evaluator = new ExperimentalEvaluatorB(config);
+		} else if ("experimental09".equals(evaluatorName)) {
+			evaluator = new ExperimentalEvaluator09(config);
 		}
 
 		int size = BitboardUtils.square2Index((long) config.getTranspositionTableSize()) + 16;
@@ -408,13 +415,13 @@ public class SearchEngine implements Runnable {
 
 		// If we have more depths than possible...
 		if (board.getMoveNumber() - initialPly >= MAX_DEPTH) {
-			System.out.println("Quiescence exceeds depth qsdepth=" + qsdepth);
-			System.out.println(board.toString());
-			for (int i = 0; i < board.getMoveNumber(); i++) {
-				System.out.print(Move.toStringExt(board.moveHistory[i]));
-				System.out.print(" ");
-			}
-			System.out.println();
+//			System.out.println("Quiescence exceeds depth qsdepth=" + qsdepth);
+//			System.out.println(board.toString());
+//			for (int i = 0; i < board.getMoveNumber(); i++) {
+//				System.out.print(Move.toStringExt(board.moveHistory[i]));
+//				System.out.print(" ");
+//			}
+//			System.out.println();
 			return eval;
 		}
 
@@ -827,12 +834,19 @@ public class SearchEngine implements Runnable {
 
 		initialPly = board.getMoveNumber();
 
+		thinkToTime = Long.MAX_VALUE;
+		thinkToNodes = Long.MAX_VALUE;
+		thinkToDepth = Long.MAX_VALUE;
+
+		long moveTime = searchParameters.calculateMoveTime(board);
+		if (moveTime > 0) {
+			thinkToTime = startTime + moveTime;
+		}
 		if (searchParameters.getNodes() > 0) {
-			thinkToTime = Long.MAX_VALUE;
 			thinkToNodes = searchParameters.getNodes();
-		} else {
-			thinkToTime = startTime + searchParameters.calculateMoveTime(board);
-			thinkToNodes = Long.MAX_VALUE;
+		}
+		if (searchParameters.getDepth() > 0) {
+			thinkToDepth = searchParameters.getDepth();
 		}
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
@@ -917,7 +931,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth++;
-		if (depth == MAX_DEPTH) {
+		if (depth == MAX_DEPTH || depth > thinkToDepth) {
 			throw new SearchFinishedException();
 		}
 	}
@@ -983,6 +997,7 @@ public class SearchEngine implements Runnable {
 	public void stop() {
 		thinkToTime = 0;
 		thinkToNodes = 0;
+		thinkToDepth = 0;
 	}
 
 	/**
