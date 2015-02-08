@@ -832,15 +832,18 @@ public class SearchEngine implements Runnable {
 		thinkToNodes = Long.MAX_VALUE;
 		thinkToDepth = Long.MAX_VALUE;
 
-		long moveTime = searchParameters.calculateMoveTime(board);
-		if (moveTime > 0) {
-			thinkToTime = startTime + moveTime;
-		}
+		boolean searchLimitSet = false;
 		if (searchParameters.getNodes() > 0) {
 			thinkToNodes = searchParameters.getNodes();
+			searchLimitSet = true;
 		}
 		if (searchParameters.getDepth() > 0) {
 			thinkToDepth = searchParameters.getDepth();
+			searchLimitSet = true;
+		}
+		long moveTime = searchParameters.calculateMoveTime(board);
+		if (moveTime > 0 || !searchLimitSet) {
+			thinkToTime = startTime + moveTime;
 		}
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
