@@ -7,8 +7,6 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator09;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluatorB;
 import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movesort.MoveIterator;
@@ -160,10 +158,6 @@ public class SearchEngine implements Runnable {
 			evaluator = new CompleteEvaluator(config);
 		} else if ("experimental".equals(evaluatorName)) {
 			evaluator = new ExperimentalEvaluator(config);
-		} else if ("experimentalb".equals(evaluatorName)) {
-			evaluator = new ExperimentalEvaluatorB(config);
-		} else if ("experimental09".equals(evaluatorName)) {
-			evaluator = new ExperimentalEvaluator09(config);
 		}
 
 		int size = BitboardUtils.square2Index((long) config.getTranspositionTableSize()) + 16;
