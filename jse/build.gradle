@@ -39,3 +39,15 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
 jar {
     manifest.attributes("Main-Class": "com.alonsoruibal.chess.uci.Uci")
 }
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+task fastTest(type: Test) {
+    useJUnit {
+        excludeCategories 'com.alonsoruibal.chess.SlowTest'
+    }
+}

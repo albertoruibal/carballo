@@ -5,20 +5,23 @@ import com.alonsoruibal.chess.hash.ZobristKeyFen;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test zobrish keys
  * Also test that after board.setfen(x), x==board.getFen();
  */
-public class ZobristKeyTest extends TestCase {
+public class ZobristKeyTest {
 
 	/**
 	 * Test that the zobrish key of the board is equal than the obtained with fen
 	 * making random legal moves
 	 */
+	@Test
 	public void testBoardZobrishKey() {
 		Board board = new Board();
 		MoveGenerator movegen = new LegalMoveGenerator();
@@ -42,6 +45,7 @@ public class ZobristKeyTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testZobrishKey1() {
 		Board board = new Board();
 		board.startPosition();
@@ -53,6 +57,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x463b96181691fc9cL);
 	}
 
+	@Test
 	public void testZobrishKey2() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
@@ -61,6 +66,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x823c9b50fd114196L);
 	}
 
+	@Test
 	public void testZobrishKey3() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2");
@@ -69,6 +75,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x0756b94461c50fb0L);
 	}
 
+	@Test
 	public void testZobrishKey4() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1pppp/8/3pP3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2");
@@ -77,6 +84,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x662fafb965db29d4L);
 	}
 
+	@Test
 	public void testZobrishKey5() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
@@ -85,6 +93,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x22a48b5a8e47ff78L);
 	}
 
+	@Test
 	public void testZobrishKey6() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPPKPPP/RNBQ1BNR b kq - 0 3");
@@ -93,6 +102,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x652a607ca3f242c1L);
 	}
 
+	@Test
 	public void testZobrishKey7() {
 		Board board = new Board();
 		board.setFen("rnbq1bnr/ppp1pkpp/8/3pPp2/8/8/PPPPKPPP/RNBQ1BNR w - - 0 4");
@@ -101,6 +111,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x00fdd303c946bdd9L);
 	}
 
+	@Test
 	public void testZobrishKey8() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/p1pppppp/8/8/PpP4P/8/1P1PPPP1/RNBQKBNR b KQkq c3 0 3");
@@ -109,6 +120,7 @@ public class ZobristKeyTest extends TestCase {
 		assertEquals(result, 0x3c8123ea7b067637L);
 	}
 
+	@Test
 	public void testZobrishKey9() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/p1pppppp/8/8/P6P/R1p5/1P1PPPP1/1NBQKBNR b Kkq - 0 4");

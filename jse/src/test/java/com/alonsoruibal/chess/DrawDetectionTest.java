@@ -2,17 +2,17 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.search.SearchEngine;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.InputStream;
 
-public class DrawDetectionTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-	@Override
-	protected void setUp() throws Exception {
 
-	}
+public class DrawDetectionTest {
 
+	@Test
 	public void test3FoldDraw() {
 		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());
@@ -27,6 +27,7 @@ public class DrawDetectionTest extends TestCase {
 		assertTrue(se.getBoard().isDraw());
 	}
 
+	@Test
 	public void test3FoldDrawNo() {
 		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());

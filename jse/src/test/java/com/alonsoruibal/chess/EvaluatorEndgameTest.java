@@ -3,21 +3,24 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class EvaluatorEndgameTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
-	Evaluator evaluator;
+public class EvaluatorEndgameTest {
+
+	ExperimentalEvaluator evaluator;
 	String fen;
 	Board board = new Board();
 
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		evaluator = new ExperimentalEvaluator(new Config());
-		((ExperimentalEvaluator) evaluator).debug = true;
+		evaluator.debug = true;
 	}
 
+	@Test
 	public void testKXK() {
 		String fen1 = "6k1/8/4K3/8/R7/8/8/8 w - - 0 0";
 		board.setFen(fen1);
@@ -26,6 +29,7 @@ public class EvaluatorEndgameTest extends TestCase {
 		assertTrue("Does not indentify a KNOWN_WIN", value > Evaluator.KNOWN_WIN);
 	}
 
+	@Test
 	public void testKNBK() {
 		String fen1 = "7k/8/4K3/8/NB6/8/8/8 w - - 0 0";
 		String fen2 = "k7/8/3K4/8/NB6/8/8/8 w - - 0 0";
@@ -41,6 +45,22 @@ public class EvaluatorEndgameTest extends TestCase {
 		assertTrue("It does not drive the king to the right corner", value1 > value2);
 	}
 
+	@Test
+	public void testPawnAfterPromotionIsBetter() {
+		String fen1 = "1Q6/2K5/7k/8/8/8/8/8 w - - 0 0";
+		String fen2 = "8/1PK5/7k/8/8/8/8/8 w - - 0 0";
+		board.setFen(fen1);
+		System.out.println(board);
+		int value1 = evaluator.evaluate(board);
+		board.setFen(fen2);
+		System.out.println(board);
+		int value2 = evaluator.evaluate(board);
+		System.out.println("value1 = " + value1);
+		System.out.println("value2 = " + value2);
+		assertTrue("Pawn after promotion must be better", value1 > value2);
+	}
+
+	@Test
 	public void testKPK() {
 		int value;
 		fen = "8/5k1P/8/8/8/7K/8/8 w - - 0 0";

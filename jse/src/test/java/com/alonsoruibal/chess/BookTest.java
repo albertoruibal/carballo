@@ -2,10 +2,13 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.book.FileBook;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class BookTest extends TestCase {
+import static org.junit.Assert.assertTrue;
 
+public class BookTest {
+
+	@Test
 	public void testBook() {
 		int count = 0;
 		Board board = new Board();

@@ -1,21 +1,27 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.book.FileBook;
+import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
 
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 /**
  * Test tournament using the Noomen Test Suite
  */
-public class TournamentTest extends EpdTest implements SearchObserver {
-	static final int GAME_TIME_PER_PLAYER = 1000; // in milliseconds
+public class TournamentTest implements SearchObserver {
+	static final int GAME_TIME_PER_PLAYER = 5000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
-	static final int SLEEP = 0; //1000; // Do not touch
-	static final int SLEEP2 = 0;
-	static final int GAMES = 20 * 60; // Test suite is based on 30 games and they are played with whites and blacks, so we make it four times
+	static final int THINK_TO_DEPTH = 3; // if > 0, it establishes a depth limit, used with 3 or 6 to make fast tournaments it is useful to fast test evaluator changes
+	static final int SLEEP = 100;
+	static final int GAMES = 20 * 60; // Test suite is based on 30 games and they are played with whites and blacks, so we make x60 times
+
+	ExperimentalEvaluator experimentalEvaluator;
 
 	SearchEngine engine1;
 	SearchEngine engine2;
@@ -27,15 +33,34 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 	SearchParameters params;
 	long lastTime;
 
+	long doubledPawns = 0;
+	long isolatedPawns = 0;
+	long backwardsPawns = 0;
+	long passedPawns = 0;
+	long[] doubledPawnsResult = new long[3];
+	long[] isolatedPawnsResult = new long[3];
+	long[] backwardsPawnsResult = new long[3];
+	long[] passedPawnsResult = new long[3];
+
+	@Test
+	@Category(SlowTest.class)
 	public void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
 		Config config2 = new Config();
 		config2.setBook(new FileBook("/book_small.bin"));
 
+		experimentalEvaluator = new ExperimentalEvaluator(config1);
+		experimentalEvaluator.debug = true;
+
 		// Change here the parameters in one of the chess engine to test the differences
 		// Example: config1.setElo(2000);
 		// ...
+//		config1.setEvalPassedPawns(0);
+//		config2.setEvalPassedPawns(0);
+//		config1.setEvalPawnStructure(0);
+//		config2.setEvalPawnStructure(0);
+//		config1.setEvaluator("experimental09");
 
 		engine1 = new SearchEngine(config1);
 		engine2 = new SearchEngine(config2);
@@ -79,6 +104,11 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 			btime = GAME_TIME_PER_PLAYER;
 
 			endGame = 0;
+			doubledPawns = 0;
+			isolatedPawns = 0;
+			backwardsPawns = 0;
+			passedPawns = 0;
+
 			go();
 
 			//System.out.println("move "+(j+1)+": " + Move.toStringExt(bestMove));
@@ -96,11 +126,23 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 			double percentage = (score / total);
 			double eloDifference = -400 * Math.log(1 / percentage - 1) / Math.log(10);
 
-			System.out.println("At: " + (i + 1) + " draws: " + wins[0] + "  engine1: " + wins[1] + " engine2: " + wins[2] + " elodif: " + eloDifference + " pointspercentage=" + (percentage * 100));
+			System.out.println("At: " + (i + 1) + " draws: " + wins[0] + " engine1: " + wins[1] + " engine2: " + wins[2] + " elodif: " + String.format("%.2f", eloDifference) + " pointspercentage=" + String.format("%.2f", (percentage * 100)));
+			System.out.println(" Doubled   draws: " + doubledPawnsResult[0] + " engine1: " + doubledPawnsResult[1] + " engine2: " + doubledPawnsResult[2]);
+			System.out.println(" Isolated  draws: " + isolatedPawnsResult[0] + " engine1: " + isolatedPawnsResult[1] + " engine2: " + isolatedPawnsResult[2]);
+			System.out.println(" Backwards draws: " + backwardsPawnsResult[0] + " engine1: " + backwardsPawnsResult[1] + " engine2: " + backwardsPawnsResult[2]);
+			System.out.println(" Passed    draws: " + passedPawnsResult[0] + " engine1: " + passedPawnsResult[1] + " engine2: " + passedPawnsResult[2]);
 		}
 	}
 
 	private void go() {
+		// Analyze position
+		experimentalEvaluator.evaluate(b);
+		String debugString = experimentalEvaluator.debugSB.toString();
+		doubledPawns += ExperimentalEvaluatorTest.countSubstring("doubled ", debugString);
+		isolatedPawns += ExperimentalEvaluatorTest.countSubstring("isolated ", debugString);
+		backwardsPawns += ExperimentalEvaluatorTest.countSubstring("backwards ", debugString);
+		passedPawns += ExperimentalEvaluatorTest.countSubstring("passed ", debugString);
+
 		endGame = b.isEndGame();
 
 		// if time is up
@@ -112,26 +154,35 @@ public class TournamentTest extends EpdTest implements SearchObserver {
 			endGame = 1;
 		}
 
-		if (endGame == 1) {
-			if (engine1Whites) wins[1]++;
-			else wins[2]++;
-		} else if (endGame == -1) {
-			if (engine1Whites) wins[2]++;
-			else wins[1]++;
-		} else if (endGame == 99) {
-			wins[0]++;
+		if (endGame != 0) {
+			int index = -1;
+			if (endGame == 99) {
+				index = 0;
+			} else if (endGame == 1) {
+				if (engine1Whites) {
+					index = 1;
+				} else {
+					index = 2;
+				}
+			} else if (endGame == -1) {
+				if (engine1Whites) {
+					index = 2;
+				} else {
+					index = 1;
+				}
+			}
+			wins[index]++;
+
+			doubledPawnsResult[index] += doubledPawns;
+			isolatedPawnsResult[index] += isolatedPawns;
+			backwardsPawnsResult[index] += backwardsPawns;
+			passedPawnsResult[index] += passedPawns;
 		} else {
 			params.setWtime(wtime);
 			params.setWinc(MOVE_TIME_INC);
 			params.setBtime(btime);
 			params.setBinc(MOVE_TIME_INC);
-
-			// Delay
-			try {
-				Thread.sleep(SLEEP2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			params.setDepth(THINK_TO_DEPTH);
 
 			lastTime = System.currentTimeMillis();
 

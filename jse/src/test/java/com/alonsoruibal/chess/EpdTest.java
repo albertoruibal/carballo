@@ -5,8 +5,6 @@ import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
-import junit.framework.TestCase;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +31,7 @@ import java.io.InputStreamReader;
  *
  * @author rui
  */
-public class EpdTest extends TestCase {
+public class EpdTest {
 	/**
 	 * Logger for this class
 	 */
@@ -60,15 +58,11 @@ public class EpdTest extends TestCase {
 		return lctPoints;
 	}
 
-	@Override
-
-	protected void setUp() throws Exception {
+	long processEpdFile(InputStream is, int timeLimit) {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
-	}
 
-	long processEpdFile(InputStream is, int timeLimit) {
 		totalTime = 0;
 		lctPoints = 0;
 		solved = 0;
@@ -83,7 +77,9 @@ public class EpdTest extends TestCase {
 				// TODO use strtok
 				int i0 = line.indexOf(" am ");
 				int i1 = line.indexOf(" bm ");
-				if (i0 < 0 || i1 < i0) i0 = i1;
+				if (i0 < 0 || i1 < i0) {
+					i0 = i1;
+				}
 
 				int i2 = line.indexOf(";", i1 + 4);
 				int timeSolved = testPosition(line.substring(0, i0), line.substring(i1 + 4, i2), timeLimit);
@@ -99,19 +95,28 @@ public class EpdTest extends TestCase {
 				 *    * 0 points, if not found with in 10 minutes
 				 */
 				if (timeSolved < timeLimit) {
-					if (0 <= timeSolved && timeSolved < 10000) lctPoints += 30;
-					else if (10000 <= timeSolved && timeSolved < 30000) lctPoints += 25;
-					else if (30000 <= timeSolved && timeSolved < 90000) lctPoints += 20;
-					else if (90000 <= timeSolved && timeSolved < 210000) lctPoints += 15;
-					else if (210000 <= timeSolved && timeSolved < 390000) lctPoints += 10;
-					else if (390000 <= timeSolved && timeSolved < 600000) lctPoints += 5;
+					if (0 <= timeSolved && timeSolved < 10000) {
+						lctPoints += 30;
+					} else if (10000 <= timeSolved && timeSolved < 30000) {
+						lctPoints += 25;
+					} else if (30000 <= timeSolved && timeSolved < 90000) {
+						lctPoints += 20;
+					} else if (90000 <= timeSolved && timeSolved < 210000) {
+						lctPoints += 15;
+					} else if (210000 <= timeSolved && timeSolved < 390000) {
+						lctPoints += 10;
+					} else if (390000 <= timeSolved && timeSolved < 600000) {
+						lctPoints += 5;
+					}
 				} else {
 					notSolved.append(line);
 					notSolved.append("\n");
 				}
 
 				total++;
-				if (timeSolved < timeLimit) solved++;
+				if (timeSolved < timeLimit) {
+					solved++;
+				}
 				logger.debug("Status: " + solved + " positions solved of " + total + " in " + totalTime + "Ms (lctPoints=" + lctPoints + ")");
 				logger.debug("");
 			}

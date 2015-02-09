@@ -3,13 +3,16 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Do some move generation tests from http://chessprogramming.wikispaces.com/Perft+Results
  * Takes a looooong time
  */
-public class MoveGenerationTest extends TestCase {
+public class MoveGenerationTest {
 	private static final int DEPTH = 7;
 
 	MoveGenerator legalMovegen = new LegalMoveGenerator();
@@ -41,6 +44,8 @@ public class MoveGenerationTest extends TestCase {
 		}
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testInitialPosition() {
 		reset();
 		System.out.println("TEST INITIAL POSITION");
@@ -56,6 +61,8 @@ public class MoveGenerationTest extends TestCase {
 		assertEquals(checkMates[5], 10828);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition2() {
 		reset();
 		System.out.println("TEST POSITION 2");
@@ -71,6 +78,8 @@ public class MoveGenerationTest extends TestCase {
 		assertEquals(checkMates[4], 30171);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition3() {
 		reset();
 		System.out.println("TEST POSITION 3");
@@ -87,6 +96,8 @@ public class MoveGenerationTest extends TestCase {
 		assertEquals(checkMates[6], 87);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition4() {
 		reset();
 		System.out.println("TEST POSITION 4");
@@ -103,6 +114,8 @@ public class MoveGenerationTest extends TestCase {
 		assertEquals(checkMates[5], 81076);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition5() {
 		reset();
 		System.out.println("TEST POSITION 5");
@@ -126,11 +139,19 @@ public class MoveGenerationTest extends TestCase {
 				if ((moveCount[depth] % 100000) == 0) {
 					System.out.println("movecount[" + depth + "]=" + moveCount[depth]);
 				}
-				if (Move.isCapture(move)) captures[depth]++;
-				if (Move.getMoveType(move) == Move.TYPE_PASSANT) passantCaptures[depth]++;
+				if (Move.isCapture(move)) {
+					captures[depth]++;
+				}
+				if (Move.getMoveType(move) == Move.TYPE_PASSANT) {
+					passantCaptures[depth]++;
+				}
 				if (Move.getMoveType(move) == Move.TYPE_KINGSIDE_CASTLING
-						|| Move.getMoveType(move) == Move.TYPE_QUEENSIDE_CASTLING) castles[depth]++;
-				if (Move.isPromotion(move)) promotions[depth]++;
+						|| Move.getMoveType(move) == Move.TYPE_QUEENSIDE_CASTLING) {
+					castles[depth]++;
+				}
+				if (Move.isPromotion(move)) {
+					promotions[depth]++;
+				}
 				if (board.getCheck()) {
 					checks[depth]++;
 				}
@@ -142,5 +163,18 @@ public class MoveGenerationTest extends TestCase {
 			}
 			board.undoMove();
 		}
+	}
+
+	@Test
+	public void testWeirdError() {
+		int legalMoves[] = new int[256];
+		Board board = new Board();
+		int legalMoveCount;
+
+		// board.setFen("rnbqk1nr/pppp1ppp/8/4p3/1b1P4/7N/PPP1PPPP/RNBQKB1R w QKqk - 2 0");
+		// legalMoveCount = board.getLegalMoves(legalMoves);
+		board.setFen("r1bqkbnr/pppp1ppp/n7/4p3/3P4/7N/PPP1PPPP/RNBQKB1R w QKqk - 2 0");
+		legalMoveCount = board.getLegalMoves(legalMoves);
+		assertEquals(legalMoveCount, 29);
 	}
 }

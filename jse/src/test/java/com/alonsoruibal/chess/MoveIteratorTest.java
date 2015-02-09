@@ -5,12 +5,16 @@ import com.alonsoruibal.chess.movegen.MoveGenerator;
 import com.alonsoruibal.chess.movesort.MoveIterator;
 import com.alonsoruibal.chess.movesort.SortInfo;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoveIteratorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+
+public class MoveIteratorTest {
 	private static final int DEPTH = 7;
 
 	Board board = new Board();
@@ -41,6 +45,8 @@ public class MoveIteratorTest extends TestCase {
 		}
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testInitialPosition() {
 		reset();
 		System.out.println("TEST INITIAL POSITION");
@@ -56,6 +62,8 @@ public class MoveIteratorTest extends TestCase {
 		assertEquals(checkMates[5], 10828);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition2() {
 		reset();
 		System.out.println("TEST POSITION 2");
@@ -71,6 +79,8 @@ public class MoveIteratorTest extends TestCase {
 		assertEquals(checkMates[4], 30171);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition3() {
 		reset();
 		System.out.println("TEST POSITION 3");
@@ -87,6 +97,8 @@ public class MoveIteratorTest extends TestCase {
 		assertEquals(checkMates[6], 87);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition4() {
 		reset();
 		System.out.println("TEST POSITION 4");
@@ -103,6 +115,8 @@ public class MoveIteratorTest extends TestCase {
 		assertEquals(checkMates[5], 81076);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPosition5() {
 		reset();
 		System.out.println("TEST POSITION 5");
@@ -146,15 +160,19 @@ public class MoveIteratorTest extends TestCase {
 					if ((moveCount[depth] % 100000) == 0) {
 						System.out.println("movecount[" + depth + "]=" + moveCount[depth]);
 					}
-					if (Move.isCapture(move))
+					if (Move.isCapture(move)) {
 						captures[depth]++;
-					if (Move.getMoveType(move) == Move.TYPE_PASSANT)
+					}
+					if (Move.getMoveType(move) == Move.TYPE_PASSANT) {
 						passantCaptures[depth]++;
+					}
 					if (Move.getMoveType(move) == Move.TYPE_KINGSIDE_CASTLING
-							|| Move.getMoveType(move) == Move.TYPE_QUEENSIDE_CASTLING)
+							|| Move.getMoveType(move) == Move.TYPE_QUEENSIDE_CASTLING) {
 						castles[depth]++;
-					if (Move.isPromotion(move))
+					}
+					if (Move.isPromotion(move)) {
 						promotions[depth]++;
+					}
 					if (board.getCheck()) {
 						checks[depth]++;
 						// logger.debug("\n"+board);

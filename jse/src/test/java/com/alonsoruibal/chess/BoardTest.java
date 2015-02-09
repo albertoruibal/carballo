@@ -1,21 +1,26 @@
 package com.alonsoruibal.chess;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class BoardTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
+public class BoardTest {
+
+	@Test
 	public void testMoveNumber1() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
 		assertEquals(b.moveNumber, 0);
 	}
 
+	@Test
 	public void testMoveNumber2() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b QKqk - 0 1");
 		assertEquals(b.moveNumber, 1);
 	}
 
+	@Test
 	public void testMoveNumber3() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
@@ -24,6 +29,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.moveNumber, 1);
 	}
 
+	@Test
 	public void testUndo() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -34,6 +40,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.getFen(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
+	@Test
 	public void testCastling() {
 		// Must keep history after castling
 		Board b = new Board();
@@ -42,6 +49,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.initialMoveNumber, 9);
 	}
 
+	@Test
 	public void testDrawDetection() {
 		Board b = new Board();
 		b.setFen("7k/8/8/8/8/8/8/7K w - - 0 0");
@@ -54,6 +62,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.isDraw(), false);
 	}
 
+	@Test
 	public void testPassedPawn() {
 		Board b = new Board();
 		// Position from http://en.wikipedia.org/wiki/Passed_pawn
@@ -70,6 +79,7 @@ public class BoardTest extends TestCase {
 		assertEquals(b.isPassedPawn(40), false);
 	}
 
+	@Test
 	public void testAdjacentColumnBug() {
 		Board b = new Board();
 		b.setFen("7k/8/2p5/1P6/8/8/8/7K w - - 0 0");

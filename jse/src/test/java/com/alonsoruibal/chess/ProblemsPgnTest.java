@@ -2,9 +2,10 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.log.Logger;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-public class ProblemsPgnTest extends TestCase {
+public class ProblemsPgnTest {
 	private static final Logger logger = Logger.getLogger("ProblemsPgnTest");
 
 	public void processPgnFile(String file, int count) {
@@ -19,6 +20,8 @@ public class ProblemsPgnTest extends TestCase {
 		}
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testProblems() {
 		try {
 			processPgnFile("/problems_easy.pgn", 311);

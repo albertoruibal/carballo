@@ -12,18 +12,21 @@ import com.alonsoruibal.chess.movegen.MoveGenerator;
 import com.alonsoruibal.chess.movesort.MoveIterator;
 import com.alonsoruibal.chess.movesort.SortInfo;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Helps searching for bottlenecks
  */
-public class PerformanceTest extends TestCase {
+public class PerformanceTest {
 
-	Evaluator experimentalEvaluator, completeEvaluator;
+
 	MoveGenerator movegen;
 	MoveGenerator legalMovegen;
 	Board testBoards[];
-
 
 	String tests[] = {
 			"4r1k1/p1pb1ppp/Qbp1r3/8/1P6/2Pq1B2/R2P1PPP/2B2RK1 b - - ",
@@ -55,10 +58,8 @@ public class PerformanceTest extends TestCase {
 			"2rq1rk1/pb3ppp/1p2pn2/4N3/1b1PPB2/4R1P1/P4PBP/R2Q2K1 w - - "
 	};
 
-	@Override
-	protected void setUp() throws Exception {
-		experimentalEvaluator = new ExperimentalEvaluator(new Config());
-		completeEvaluator = new CompleteEvaluator(new Config());
+	@Before
+	public void setUp() throws Exception {
 		movegen = new MagicMoveGenerator();
 		legalMovegen = new LegalMoveGenerator();
 		// To initialize static things 
@@ -71,8 +72,11 @@ public class PerformanceTest extends TestCase {
 		}
 	}
 
+	@Test
+	@Category(SlowTest.class)
+	public void testCompleteEvaluatorPerf() {
+		Evaluator completeEvaluator = new CompleteEvaluator(new Config());
 
-	public void testEvaluatorPerf() {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
@@ -87,7 +91,11 @@ public class PerformanceTest extends TestCase {
 		assertTrue(pps > 100000);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testExperimentalEvaluatorPerf() {
+		Evaluator experimentalEvaluator = new ExperimentalEvaluator(new Config());
+
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
@@ -102,6 +110,8 @@ public class PerformanceTest extends TestCase {
 		assertTrue(pps > 100000);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testSimplifiedEvaluatorPerf() {
 		SimplifiedEvaluator simplifiedEvaluator = new SimplifiedEvaluator();
 		long t1 = System.currentTimeMillis();
@@ -118,6 +128,8 @@ public class PerformanceTest extends TestCase {
 		assertTrue(pps > 100000);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testPseudoLegalMoveGenPerf() {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
@@ -134,6 +146,8 @@ public class PerformanceTest extends TestCase {
 		System.out.println("Positions with Pseudo legal moves generated per second = " + pps);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testMoveIteratorNewPerf() {
 		SortInfo sortInfo = new SortInfo();
 		MoveIterator moveIterator = new MoveIterator(testBoards[0], sortInfo, 0);
@@ -155,6 +169,8 @@ public class PerformanceTest extends TestCase {
 		System.out.println("Positions with all moves generated, sorted and transversed per second = " + pps);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testDoMovePerf() {
 		long t1 = System.currentTimeMillis();
 		long moveCount = 0;
@@ -164,7 +180,9 @@ public class PerformanceTest extends TestCase {
 			int moveIndex = movegen.generateMoves(testBoards[j], moves, 0);
 			for (int k = 0; k < moveIndex; k++) {
 				for (int i = 0; i < 10000; i++) {
-					if (testBoards[j].doMove(moves[k])) testBoards[j].undoMove();
+					if (testBoards[j].doMove(moves[k])) {
+						testBoards[j].undoMove();
+					}
 					moveCount++;
 				}
 			}
@@ -173,6 +191,8 @@ public class PerformanceTest extends TestCase {
 		System.out.println("Moves done/undone per second = " + (1000 * moveCount / (t2 - t1 + 1)));
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testLegalMoveGenPerf() {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
@@ -189,6 +209,8 @@ public class PerformanceTest extends TestCase {
 		System.out.println("Positions with legal moves generated per second = " + pps);
 	}
 
+	@Test
+	@Category(SlowTest.class)
 	public void testZobrishKeyPerf() {
 		long t1 = System.currentTimeMillis();
 		long keys = 0;
@@ -202,5 +224,4 @@ public class PerformanceTest extends TestCase {
 		long pps = 1000 * keys / (t2 - t1 + 1);
 		System.out.println("keys generated per second = " + pps);
 	}
-
 }

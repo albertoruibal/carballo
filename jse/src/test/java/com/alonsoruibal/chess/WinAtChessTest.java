@@ -2,11 +2,17 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.log.Logger;
 
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import static org.junit.Assert.assertTrue;
+
 public class WinAtChessTest extends EpdTest {
 	private static final Logger logger = Logger.getLogger("WinAtChessTest");
 
+	@Test
+	@Category(SlowTest.class)
 	public void testWinAtChess() {
-
 		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 5000);
 		int solved1 = getSolved();
 		assertTrue(fails <= 10);

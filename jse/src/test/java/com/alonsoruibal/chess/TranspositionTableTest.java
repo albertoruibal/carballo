@@ -3,11 +3,13 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.tt.MultiprobeTranspositionTable;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TranspositionTableTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
+public class TranspositionTableTest {
 
+	@Test
 	public void testTraspositionTable() {
 		Board b = new Board();
 		b.startPosition();
@@ -24,5 +26,4 @@ public class TranspositionTableTest extends TestCase {
 		assertEquals(score, tt.getScore());
 		assertEquals(depthAnalyzed, tt.getDepthAnalyzed());
 	}
-
 }

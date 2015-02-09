@@ -3,20 +3,25 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.evaluation.KPKBitbase;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class KPKBitbaseTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class KPKBitbaseTest {
 
 	KPKBitbase kpkBitbase;
 	Board board = new Board();
 	String fen;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BitboardAttacks.getInstance();
 		kpkBitbase = new KPKBitbase();
 	}
 
+	@Test
 	public void testPawnPromotion() {
 		fen = "8/5k1P/8/8/8/7K/8/8 w - - 0 0";
 		board.setFen(fen);
@@ -29,6 +34,7 @@ public class KPKBitbaseTest extends TestCase {
 		assertTrue("Pawn captured after promotion", kpkBitbase.probe(board) == false);
 	}
 
+	@Test
 	public void testKingCapturesPawn() {
 		fen = "8/6kP/8/8/8/7K/8/8 b - - 0 0";
 		board.setFen(fen);
@@ -56,6 +62,7 @@ public class KPKBitbaseTest extends TestCase {
 		assertFalse("White king captures promoted piece", kpkBitbase.probe(board));
 	}
 
+	@Test
 	public void testPositions() {
 		// Panno vs. Najdorf
 		fen = "8/1k6/8/8/8/7K/7P/8 w - - 0 0";
