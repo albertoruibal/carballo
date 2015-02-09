@@ -28,6 +28,7 @@ public class SearchEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger("SearchEngine");
 
 	public static final int MAX_DEPTH = 64;
+	public static final int VALUE_IS_MATE = Evaluator.VICTORY - MAX_DEPTH;
 	private static final int PLY = 2;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int RAZOR_DEPTH = 4 * PLY;
@@ -56,11 +57,11 @@ public class SearchEngine implements Runnable {
 	private MoveIterator[] moveIterators;
 
 	private long bestMoveTime; // For testing suites
-	private int bestMoveScore; // For testing suites
+	private int bestMoveScore;
 	private int globalBestMove, ponderMove;
 	private String pv;
 
-	private int initialPly; // Inital Ply of search
+	private int initialPly; // Initial Ply for search
 	private int depth;
 	private int score;
 	private int[] aspWindows;
@@ -228,7 +229,7 @@ public class SearchEngine implements Runnable {
 	 * Decides when we are going to allow null move Don't do null move in king
 	 * and pawn endings
 	 */
-	private boolean boardAllowNullMove() {
+	private boolean boardAllowsNullMove() {
 		return !board.getCheck() && (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
 	}
 
@@ -534,7 +535,7 @@ public class SearchEngine implements Runnable {
 				&& ttMove == 0 //
 				&& allowNullMove // Not when last was a null move
 				&& depthRemaining < RAZOR_DEPTH //
-				&& !valueIsMate(beta) //
+				&& Math.abs(beta) < VALUE_IS_MATE //
 				&& eval < beta - config.getRazoringMargin() //
 				// No pawns on 7TH
 				&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) {
@@ -552,9 +553,9 @@ public class SearchEngine implements Runnable {
 		if (nodeType == NODE_NULL //
 				&& config.getStaticNullMove() //
 				&& allowNullMove //
-				&& boardAllowNullMove() //
+				&& boardAllowsNullMove() //
 				&& depthRemaining < RAZOR_DEPTH //
-				&& !valueIsMate(beta) //
+				&& Math.abs(beta) < VALUE_IS_MATE //
 				&& eval >= beta + config.getFutilityMargin()) {
 			return eval - config.getFutilityMargin();
 		}
@@ -564,9 +565,9 @@ public class SearchEngine implements Runnable {
 		if (nodeType == NODE_NULL //
 				&& config.getNullMove() //
 				&& allowNullMove //
-				&& boardAllowNullMove() //
+				&& boardAllowsNullMove() //
 				&& depthRemaining > 3 * PLY //
-				&& !valueIsMate(beta) //
+				&& Math.abs(beta) < VALUE_IS_MATE //
 				&& eval > beta - (depthRemaining >= 4 * PLY ? config.getNullMoveMargin() : 0)) {
 
 			nullMoveProbe++;
@@ -578,7 +579,7 @@ public class SearchEngine implements Runnable {
 			score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
 			board.undoMove();
 			if (score >= beta) {
-				if (valueIsMate(score)) {
+				if (score >= VALUE_IS_MATE) {
 					score = beta;
 				}
 
@@ -1019,10 +1020,6 @@ public class SearchEngine implements Runnable {
 
 	private int valueMateIn(int depth) {
 		return Evaluator.VICTORY - depth;
-	}
-
-	boolean valueIsMate(int value) {
-		return value <= valueMatedIn(MAX_DEPTH) || value >= valueMateIn(MAX_DEPTH);
 	}
 
 	public TranspositionTable getTT() {
