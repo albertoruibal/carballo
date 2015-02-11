@@ -555,6 +555,13 @@ public class Board {
 		return '.';
 	}
 
+	public char getCapturedPiece(int plyBefore) {
+		if (moveNumber > plyBefore) {
+			return Character.toLowerCase(capturedPieces[moveNumber - plyBefore]);
+		}
+		return '.';
+	}
+
 	public boolean doMove(int move) {
 		return doMove(move, true);
 	}

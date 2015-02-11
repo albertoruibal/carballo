@@ -234,7 +234,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Calculates the extension of a move in the actual position (with the move done)
 	 */
-	private int extensions(int move, boolean mateThreat) {
+	private int extensions(int move, boolean mateThreat, int lastMoveSee) {
 		int ext = 0;
 
 		if (board.getCheck()) {
@@ -260,10 +260,9 @@ public class SearchEngine implements Runnable {
 				return PLY;
 			}
 		}
-		if (ext < config.getExtensionsRecapture() && board.getLastMoveIsRecapture()) {
-			int seeValue = board.see(move);
-			int capturedPieceValue = pieceValue(board.getPieceAt(Move.getToSquare(move)));
-			if (seeValue > capturedPieceValue - 50) {
+		if (board.getLastMoveIsRecapture()) {
+			int firstCapturedPieceValue = pieceValue(board.getCapturedPiece(2));
+			if (lastMoveSee >= firstCapturedPieceValue - 50) {
 				ext += config.getExtensionsRecapture();
 			}
 		}
@@ -647,7 +646,7 @@ public class SearchEngine implements Runnable {
 					continue;
 				}
 
-				int extension = extensions(move, mateThreat);
+				int extension = extensions(move, mateThreat, moveIterator.getLastMoveSee());
 
 				// Check singular move extension
 				if (nodeType != NODE_ROOT //
