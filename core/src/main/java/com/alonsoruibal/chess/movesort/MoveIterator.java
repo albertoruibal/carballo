@@ -32,6 +32,7 @@ public class MoveIterator {
 
 	private Board board;
 	private int ttMove;
+	private int lastMoveSee;
 	private int killer1;
 	private int killer2;
 	private boolean foundKiller1;
@@ -50,10 +51,13 @@ public class MoveIterator {
 	private long[] attacks = new long[64]; // Stores slider pieces attacks
 
 	public int[] goodCaptures = new int[256]; // Stores captures and queen promotions
+	public int[] goodCapturesSee = new int[256];
 	public int[] goodCapturesScores = new int[256];
 	public int[] badCaptures = new int[256]; // Stores captures and queen promotions
+	public int[] badCapturesSee = new int[256];
 	public int[] badCapturesScores = new int[256];
 	public int[] equalCaptures = new int[256]; // Stores captures and queen promotions
+	public int[] equalCapturesSee = new int[256];
 	public int[] equalCapturesScores = new int[256];
 	public int[] nonCaptures = new int[256]; // Stores non captures and underpromotions
 	public int[] nonCapturesScores = new int[256];
@@ -302,15 +306,18 @@ public class MoveIterator {
 						score += SCORE_PROMOTION_QUEEN;
 					}
 					goodCaptures[goodCaptureIndex] = move;
+					goodCapturesSee[goodCaptureIndex] = see;
 					goodCapturesScores[goodCaptureIndex] = score;
 					goodCaptureIndex++;
 				} else {
 					equalCaptures[equalCaptureIndex] = move;
+					equalCapturesSee[equalCaptureIndex] = see;
 					equalCapturesScores[equalCaptureIndex] = score;
 					equalCaptureIndex++;
 				}
 			} else {
 				badCaptures[badCaptureIndex] = move;
+				badCapturesSee[badCaptureIndex] = see;
 				badCapturesScores[badCaptureIndex] = see;
 				badCaptureIndex++;
 			}
@@ -337,6 +344,7 @@ public class MoveIterator {
 		killer2 = sortInfo.killerMove2[depth];
 
 		phase = 0;
+		lastMoveSee = 0;
 		goodCaptureIndex = 0;
 		badCaptureIndex = 0;
 		equalCaptureIndex = 0;
@@ -349,6 +357,9 @@ public class MoveIterator {
 			case PHASE_TT:
 				phase++;
 				if (ttMove != 0) {
+					if (Move.isCapture(ttMove)) {
+						lastMoveSee = board.see(ttMove);
+					}
 					return ttMove;
 				}
 			case PHASE_GEN_CAPTURES:
@@ -365,6 +376,7 @@ public class MoveIterator {
 				}
 				if (bestIndex != -1) {
 					goodCapturesScores[bestIndex] = SCORE_LOWEST;
+					lastMoveSee = goodCapturesSee[bestIndex];
 					return goodCaptures[bestIndex];
 				}
 				phase++;
@@ -379,6 +391,7 @@ public class MoveIterator {
 				}
 				if (bestIndex != -1) {
 					equalCapturesScores[bestIndex] = SCORE_LOWEST;
+					lastMoveSee = equalCapturesSee[bestIndex];
 					return equalCaptures[bestIndex];
 				}
 				phase++;
@@ -390,6 +403,7 @@ public class MoveIterator {
 					return 0;
 				}
 
+				lastMoveSee = 0;
 				generateNonCaptures();
 			case PHASE_KILLER1:
 				phase++;
@@ -426,10 +440,15 @@ public class MoveIterator {
 				}
 				if (bestIndex != -1) {
 					badCapturesScores[bestIndex] = SCORE_LOWEST;
+					lastMoveSee = badCapturesSee[bestIndex];
 					return badCaptures[bestIndex];
 				}
 				break;
 		}
 		return 0;
+	}
+
+	public int getLastMoveSee() {
+		return lastMoveSee;
 	}
 }
