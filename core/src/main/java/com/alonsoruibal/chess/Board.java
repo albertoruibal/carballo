@@ -525,23 +525,32 @@ public class Board {
 	}
 
 	/**
-	 * Recapture for extensions: only if the value of the captured piece is
-	 * similar and we recapture in the same square
-	 *
-	 * @return
+	 * Recapture for extensions: only if the value of the captured piece is similar
+	 * and the recapture is in the same square
 	 */
 	public boolean getLastMoveIsRecapture() {
-		if (moveNumber > 1 && Move.getToIndex(moveHistory[moveNumber - 1]) == Move.getToIndex(moveHistory[moveNumber - 2])
-				&& capturedPieces[moveNumber - 1] != '.' && capturedPieces[moveNumber - 2] != '.') {
-			char captured1 = Character.toLowerCase(capturedPieces[moveNumber - 1]);
-			char captured2 = Character.toLowerCase(capturedPieces[moveNumber - 2]);
-			if (captured1 == 'n') {
-				captured1 = 'b'; // Converts knights in bishops
+		if (moveNumber > 1) {
+			int move1 = moveHistory[moveNumber - 1];
+			int move2 = moveHistory[moveNumber - 2];
+			if (!Move.isCapture(move1) || !Move.isCapture(move2) || //
+					Move.getToIndex(move1) != Move.getToIndex(move2)) {
+				return false;
 			}
-			if (captured2 == 'n') {
-				captured2 = 'b';
+			char captured1 = capturedPieces[moveNumber - 1];
+			char captured2 = capturedPieces[moveNumber - 2];
+			if (captured1 == '.' || captured2 == '.') {
+				return false;
 			}
-			if (captured1 == captured2) {
+			char capturedLC1 = Character.toLowerCase(captured1);
+			char capturedLC2 = Character.toLowerCase(captured2);
+			// Converts knights in bishops
+			if (capturedLC1 == 'n') {
+				capturedLC1 = 'b';
+			}
+			if (capturedLC2 == 'n') {
+				capturedLC2 = 'b';
+			}
+			if (capturedLC1 == capturedLC2) {
 				return true;
 			}
 		}
