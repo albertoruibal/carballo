@@ -125,18 +125,16 @@ public class SearchEngine implements Runnable {
 			moveIterators[i] = new MoveIterator(board, sortInfo, i);
 		}
 
-		pvReductionMatrix = new int[MAX_DEPTH][64];
-		nonPvReductionMatrix = new int[MAX_DEPTH][64];
+		pvReductionMatrix = new int[64][64];
+		nonPvReductionMatrix = new int[64][64];
 		// Init our reduction lookup tables
-		for (int depth = 1; depth < MAX_DEPTH; depth++) { // OnePly = 1
+		for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) { // OnePly = 2
 			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
-
-				double pvRed = 0.5 + Math.log(depth) * Math.log(moveNumber) / 6.0;
-				double nonPVRed = 0.5 + Math.log(depth) * Math.log(moveNumber) / 3.0;
-				pvReductionMatrix[depth][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
-				nonPvReductionMatrix[depth][moveNumber] = (int) (nonPVRed >= 1.0 ? Math.floor(nonPVRed * PLY) : 0);
-				// System.out.println(i + " " + j + " " +
-				// pvReductionMatrix[i][j] + " " + nonPvReductionMatrix[i][j]);
+				double pvRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 6.0;
+				double nonPVRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 3.0;
+				pvReductionMatrix[depthRemaining][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
+				nonPvReductionMatrix[depthRemaining][moveNumber] = (int) (nonPVRed >= 1.0 ? Math.floor(nonPVRed * PLY) : 0);
+				// System.out.println(depthRemaining + " " + moveNumber + " " + pvReductionMatrix[depthRemaining][moveNumber] + " " + nonPvReductionMatrix[depthRemaining][moveNumber]);
 			}
 		}
 
@@ -193,8 +191,9 @@ public class SearchEngine implements Runnable {
 	}
 
 	private int getReduction(int nodeType, int depth, int movecount) {
-		return nodeType == NODE_PV || nodeType == NODE_ROOT ? pvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)] : nonPvReductionMatrix[Math
-				.min(depth / PLY, 63)][Math.min(movecount, 63)];
+		return nodeType == NODE_PV || nodeType == NODE_ROOT ? //
+				pvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)] : //
+				nonPvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)];
 	}
 
 	public void setObserver(SearchObserver observer) {
@@ -226,16 +225,14 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Decides when we are going to allow null move Don't do null move in king
-	 * and pawn endings
+	 * Decides when we are going to allow null move Don't do null move in king and pawn endings
 	 */
 	private boolean boardAllowsNullMove() {
-		return !board.getCheck() && (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
+		return (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
 	}
 
 	/**
-	 * Calculates the extension of a move in the actual position (with the move
-	 * done)
+	 * Calculates the extension of a move in the actual position (with the move done)
 	 */
 	private int extensions(int move, boolean mateThreat) {
 		int ext = 0;
@@ -303,8 +300,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Also changes sign to score depending of turn usetTT requires to do a
-	 * previous search on TT
+	 * Also changes sign to score depending of turn usetTT requires to do a previous search on TT
 	 */
 	private int eval(boolean foundTT, boolean refine) {
 		ttEvalProbe++;
@@ -504,6 +500,8 @@ public class SearchEngine implements Runnable {
 
 		int ttMove = 0;
 		int ttScore = 0;
+		int ttNodeType = 0;
+		int ttDepthAnalyzed = 0;
 		int score = 0;
 
 		ttProbe++;
@@ -515,127 +513,117 @@ public class SearchEngine implements Runnable {
 			}
 			ttMove = tt.getBestMove();
 			ttScore = tt.getScore();
+			ttNodeType = tt.getNodeType();
+			ttDepthAnalyzed = tt.getDepthAnalyzed();
 		}
 
 		if (depthRemaining < PLY || board.getMoveNumber() - initialPly >= MAX_DEPTH - 1) {
 			return quiescentSearch(0, alpha, beta);
 		}
 
-		int eval = -Evaluator.VICTORY;
-
-		// Do a static eval
-		if (!board.getCheck()) {
-			eval = eval(foundTT, true);
-		}
-
-		// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
-		if (nodeType == NODE_NULL //
-				&& config.getRazoring() //
-				&& !board.getCheck() //
-				&& ttMove == 0 //
-				&& allowNullMove // Not when last was a null move
-				&& depthRemaining < RAZOR_DEPTH //
-				&& Math.abs(beta) < VALUE_IS_MATE //
-				&& eval < beta - config.getRazoringMargin() //
-				// No pawns on 7TH
-				&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) {
-			razoringProbe++;
-
-			int rbeta = beta - config.getRazoringMargin();
-			int v = quiescentSearch(0, rbeta - 1, rbeta);
-			if (v < rbeta) {
-				razoringHit++;
-				return v;
-			}
-		}
-
-		// Static null move pruning
-		if (nodeType == NODE_NULL //
-				&& config.getStaticNullMove() //
-				&& allowNullMove //
-				&& boardAllowsNullMove() //
-				&& depthRemaining < RAZOR_DEPTH //
-				&& Math.abs(beta) < VALUE_IS_MATE //
-				&& eval >= beta + config.getFutilityMargin()) {
-			return eval - config.getFutilityMargin();
-		}
-
-		// Null move pruning and mate threat detection
 		boolean mateThreat = false;
-		if (nodeType == NODE_NULL //
-				&& config.getNullMove() //
-				&& allowNullMove //
-				&& boardAllowsNullMove() //
-				&& depthRemaining > 3 * PLY //
-				&& Math.abs(beta) < VALUE_IS_MATE //
-				&& eval > beta - (depthRemaining >= 4 * PLY ? config.getNullMoveMargin() : 0)) {
-
-			nullMoveProbe++;
-			board.doMove(0, false);
-			int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
-			if (eval - beta > CompleteEvaluator.PAWN) {
-				R++;
-			}
-			score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
-			board.undoMove();
-			if (score >= beta) {
-				if (score >= VALUE_IS_MATE) {
-					score = beta;
-				}
-
-				// Verification search on initial depths
-				if (depthRemaining < 6 * PLY //
-						|| search(NODE_NULL, depthRemaining - 5 * PLY, beta - 1, beta, false, 0) >= beta) {
-					nullMoveHit++;
-					return score;
-				}
-			} else {
-				// Detect mate threat to exit
-				if (score < (-Evaluator.VICTORY + 100)) {
-					mateThreat = true;
-				}
-			}
-		}
-
-		// Internal Iterative Deepening
-		if (config.getIid() //
-				&& ttMove == 0 //
-				&& depthRemaining >= iidDepth[nodeType] //
-				&& allowNullMove //
-				&& !board.getCheck() //
-				&& (nodeType != NODE_NULL || eval > beta - config.getIidMargin()) //
-				&& excludedMove == 0) {
-			int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
-			search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
-			if (tt.search(board, false)) {
-				ttMove = tt.getBestMove();
-			}
-		}
-
-		// Singular Move
-		boolean singularMoveExtension = nodeType != NODE_ROOT //
-				&& ttMove != 0 //
-				&& config.getExtensionsSingular() > 0 //
-				&& depthRemaining >= singularMoveDepth[nodeType] //
-				&& tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH // ???
-				&& tt.getDepthAnalyzed() >= depthRemaining - 3 * PLY //
-				&& Math.abs(ttScore) < Evaluator.KNOWN_WIN;
-
-		// Futility pruning
 		boolean futilityPrune = false;
-		if (nodeType == NODE_NULL //
-				&& !board.getCheck()) {
-			if (depthRemaining <= PLY) { // at frontier nodes
-				if (config.getFutility() //
-						&& eval < beta - config.getFutilityMargin()) {
-					futilityHit++;
-					futilityPrune = true;
+
+		if (!board.getCheck()) {
+			// Do a static eval
+			int eval = eval(foundTT, true);
+
+			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
+			if (nodeType == NODE_NULL //
+					&& config.getRazoring() //
+					&& ttMove == 0 //
+					&& allowNullMove // Not when last was a null move
+					&& depthRemaining < RAZOR_DEPTH //
+					&& Math.abs(beta) < VALUE_IS_MATE //
+					&& eval < beta - config.getRazoringMargin() //
+					// No pawns on 7TH
+					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) {
+				razoringProbe++;
+
+				int rbeta = beta - config.getRazoringMargin();
+				int v = quiescentSearch(0, rbeta - 1, rbeta);
+				if (v < rbeta) {
+					razoringHit++;
+					return v;
 				}
-			} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-				if (config.getAggressiveFutility() //
-						&& eval < beta - config.getAggressiveFutilityMargin()) {
-					aggressiveFutilityHit++;
-					futilityPrune = true;
+			}
+
+			// Static null move pruning
+			if (nodeType == NODE_NULL //
+					&& config.getStaticNullMove() //
+					&& allowNullMove //
+					&& depthRemaining < RAZOR_DEPTH //
+					&& Math.abs(beta) < VALUE_IS_MATE //
+					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
+					&& eval >= beta + config.getFutilityMargin() //
+					&& boardAllowsNullMove()) {
+				return eval - config.getFutilityMargin();
+			}
+
+			// Null move pruning and mate threat detection
+			if (nodeType == NODE_NULL //
+					&& config.getNullMove() //
+					&& allowNullMove //
+					&& depthRemaining > 3 * PLY //
+					&& Math.abs(beta) < VALUE_IS_MATE //
+					&& eval > beta - (depthRemaining >= 4 * PLY ? config.getNullMoveMargin() : 0) //
+					&& boardAllowsNullMove()) {
+
+				nullMoveProbe++;
+				board.doMove(0, false);
+				int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
+				if (eval - beta > CompleteEvaluator.PAWN) {
+					R++;
+				}
+				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
+				board.undoMove();
+				if (score >= beta) {
+					if (score >= VALUE_IS_MATE) {
+						score = beta;
+					}
+
+					// Verification search on initial depths
+					if (depthRemaining < 6 * PLY //
+							|| search(NODE_NULL, depthRemaining - 5 * PLY, beta - 1, beta, false, 0) >= beta) {
+						nullMoveHit++;
+						return score;
+					}
+				} else {
+					// Detect mate threat to exit
+					if (score < (-Evaluator.VICTORY + 100)) {
+						mateThreat = true;
+					}
+				}
+			}
+
+			// Internal Iterative Deepening
+			if (config.getIid() //
+					&& ttMove == 0 //
+					&& depthRemaining >= iidDepth[nodeType] //
+					&& allowNullMove //
+					&& (nodeType != NODE_NULL || eval > beta - config.getIidMargin()) //
+					&& excludedMove == 0) {
+				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
+				search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
+				if (tt.search(board, false)) {
+					ttMove = tt.getBestMove();
+				}
+			}
+
+			// Futility pruning
+			if (nodeType == NODE_NULL) {
+				if (depthRemaining <= PLY) { // at frontier nodes
+					if (config.getFutility() //
+							&& eval < beta - config.getFutilityMargin()) {
+						futilityHit++;
+						futilityPrune = true;
+					}
+				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
+					if (config.getAggressiveFutility() //
+							&& eval < beta - config.getAggressiveFutilityMargin()) {
+						aggressiveFutilityHit++;
+						futilityPrune = true;
+					}
 				}
 			}
 		}
@@ -650,9 +638,6 @@ public class SearchEngine implements Runnable {
 		int move, bestMove = 0;
 
 		while ((move = moveIterator.next()) != 0) {
-			int extension = 0;
-			int reduction = 0;
-
 			// Operations are pseudo-legal, doMove checks if they lead to a valid state
 			if (board.doMove(move, false)) {
 				validOperations = true;
@@ -662,13 +647,19 @@ public class SearchEngine implements Runnable {
 					continue;
 				}
 
-				extension += extensions(move, mateThreat);
+				int extension = extensions(move, mateThreat);
 
-				// Check singular reply extension
-				if (singularMoveExtension //
+				// Check singular move extension
+				if (nodeType != NODE_ROOT //
 						&& move == ttMove //
-						&& extension < PLY //
-						&& excludedMove == 0) {
+						&& extension < PLY
+						&& excludedMove == 0 //
+						&& config.getExtensionsSingular() > 0 //
+						&& depthRemaining >= singularMoveDepth[nodeType] //
+						&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH // ???
+						&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
+						&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
+
 					singularExtensionProbe++;
 					board.undoMove();
 					int seBeta = ttScore - config.getSingularExtensionMargin();
@@ -685,7 +676,7 @@ public class SearchEngine implements Runnable {
 
 				boolean importantMove = nodeType == NODE_ROOT //
 						|| extension != 0 //
-						|| Move.isCapture(move) //
+						|| Move.isCapture(move) // Include ALL captures
 						|| Move.isPromotion(move) //
 						|| Move.isCastling(move) //
 						|| checkEvasion //
@@ -699,13 +690,6 @@ public class SearchEngine implements Runnable {
 					continue;
 				}
 
-				// Late move reductions (LMR)
-				if (config.getLmr() //
-						&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
-						&& !importantMove) {
-					reduction += getReduction(nodeType, depthRemaining, movesDone);
-				}
-
 				movesDone++;
 
 				int lowBound = (alpha > bestScore ? alpha : bestScore);
@@ -715,6 +699,14 @@ public class SearchEngine implements Runnable {
 				} else {
 					// Try searching null window
 					boolean doFullSearch = true;
+
+					// Late move reductions (LMR)
+					int reduction = 0;
+					if (config.getLmr() //
+							&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
+							&& !importantMove) {
+						reduction += getReduction(nodeType, depthRemaining, movesDone);
+					}
 
 					if (reduction > 0) {
 						score = -search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
@@ -791,25 +783,25 @@ public class SearchEngine implements Runnable {
 
 	private void searchStats() {
 		logger.debug("Positions PV      = " + pvPositionCounter + " " //
-				+ (100.0 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+				+ String.format("%.2f", 100.0 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("Positions QS      = " + qsPositionCounter + " " //
-				+ (100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+				+ String.format("%.2f", 100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("Positions Null    = " + positionCounter + " " //
-				+ (100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
+				+ String.format("%.2f", 100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		logger.debug("PV Cut            = " + pvCutNodes + " " + String.format("%.2f", 100.0 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
-		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
+		logger.debug("Null Cut          = " + nullCutNodes + " " + String.format("%.2f", 100.0 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
 		logger.debug("Null All          = " + nullAllNodes);
-		logger.debug("Asp Win      Hits = " + (100.0 * aspirationWindowHit / aspirationWindowProbe) + "%");
-		logger.debug("TT Eval      Hits = " + ttEvalHit + " " + (100.0 * ttEvalHit / ttEvalProbe) + "%");
-		logger.debug("TT PV        Hits = " + ttPvHit + " " + (100.0 * ttPvHit / ttProbe) + "%");
-		logger.debug("TT LB        Hits = " + ttProbe + " " + (100.0 * ttLBHit / ttProbe) + "%");
-		logger.debug("TT UB        Hits = " + ttUBHit + " " + (100.0 * ttUBHit / ttProbe) + "%");
+		logger.debug("Asp Win      Hits = " + String.format("%.2f", 100.0 * aspirationWindowHit / aspirationWindowProbe) + "%");
+		logger.debug("TT Eval      Hits = " + ttEvalHit + " " + String.format("%.2f", 100.0 * ttEvalHit / ttEvalProbe) + "%");
+		logger.debug("TT PV        Hits = " + ttPvHit + " " + String.format("%.2f", 100.0 * ttPvHit / ttProbe) + "%");
+		logger.debug("TT LB        Hits = " + ttProbe + " " + String.format("%.2f", 100.0 * ttLBHit / ttProbe) + "%");
+		logger.debug("TT UB        Hits = " + ttUBHit + " " + String.format("%.2f", 100.0 * ttUBHit / ttProbe) + "%");
 		logger.debug("Futility     Hits = " + futilityHit);
 		logger.debug("Agg.Futility Hits = " + aggressiveFutilityHit);
-		logger.debug("Null Move    Hits = " + nullMoveHit + " " + (100.0 * nullMoveHit / nullMoveProbe) + "%");
-		logger.debug("Razoring     Hits = " + razoringHit + " " + (100.0 * razoringHit / razoringProbe) + "%");
-		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100.0 * singularExtensionHit / singularExtensionProbe) + "%");
+		logger.debug("Null Move    Hits = " + nullMoveHit + " " + String.format("%.2f", 100.0 * nullMoveHit / nullMoveProbe) + "%");
+		logger.debug("Razoring     Hits = " + razoringHit + " " + String.format("%.2f", 100.0 * razoringHit / razoringProbe) + "%");
+		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + String.format("%.2f", 100.0 * singularExtensionHit / singularExtensionProbe) + "%");
 	}
 
 	public void newRun() throws SearchFinishedException {
