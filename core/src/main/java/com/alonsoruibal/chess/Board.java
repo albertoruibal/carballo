@@ -985,15 +985,14 @@ public class Board {
 	 * @return
 	 */
 	public boolean isMoveLegal(int move) {
-		boolean moveOk = false;
 		generateLegalMoves();
 		for (int i = 0; i < legalMoveCount; i++) {
 			// logger.debug(Move.toStringExt(legalMoves[i]));
 			if (move == legalMoves[i]) {
-				moveOk = true;
+				return true;
 			}
 		}
-		return moveOk;
+		return false;
 	}
 
 	/**
