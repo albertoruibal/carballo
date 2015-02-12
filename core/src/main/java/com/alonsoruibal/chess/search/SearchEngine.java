@@ -317,17 +317,14 @@ public class SearchEngine implements Runnable {
 				// System.exit(-1);
 				// }
 				int score = tt.getScore();
-				if (!board.getTurn()) {
-					score = -score;
-				}
 				return score;
 			}
 		}
 		int score = evaluator.evaluate(board);
-		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
 		if (!board.getTurn()) {
 			score = -score;
 		}
+		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
 		if (foundTT && refine) {
 			// Refine Value with TT
 			switch (tt.getNodeType()) {
@@ -490,9 +487,11 @@ public class SearchEngine implements Runnable {
 			return evaluateDraw();
 		}
 
+		int distanceToInitialPly = board.getMoveNumber() - initialPly;
+
 		// Mate distance pruning
-		alpha = Math.max(valueMatedIn(board.getMoveNumber() - initialPly), alpha);
-		beta = Math.min(valueMateIn(board.getMoveNumber() - initialPly + 1), beta);
+		alpha = Math.max(valueMatedIn(distanceToInitialPly), alpha);
+		beta = Math.min(valueMateIn(distanceToInitialPly + 1), beta);
 		if (alpha >= beta) {
 			return alpha;
 		}
@@ -516,7 +515,7 @@ public class SearchEngine implements Runnable {
 			ttDepthAnalyzed = tt.getDepthAnalyzed();
 		}
 
-		if (depthRemaining < PLY || board.getMoveNumber() - initialPly >= MAX_DEPTH - 1) {
+		if (depthRemaining < PLY || distanceToInitialPly >= MAX_DEPTH - 1) {
 			return quiescentSearch(0, alpha, beta);
 		}
 
@@ -588,8 +587,8 @@ public class SearchEngine implements Runnable {
 						return score;
 					}
 				} else {
-					// Detect mate threat to exit
-					if (score < (-Evaluator.VICTORY + 100)) {
+					// Detect mate threat
+					if (score <= -VALUE_IS_MATE) {
 						mateThreat = true;
 					}
 				}
@@ -627,7 +626,7 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
+		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
 		moveIterator.genMoves(ttMove);
 
 		int movesDone = 0;
@@ -651,7 +650,7 @@ public class SearchEngine implements Runnable {
 				// Check singular move extension
 				if (nodeType != NODE_ROOT //
 						&& move == ttMove //
-						&& extension < PLY
+						&& extension < PLY //
 						&& excludedMove == 0 //
 						&& config.getExtensionsSingular() > 0 //
 						&& depthRemaining >= singularMoveDepth[nodeType] //
@@ -680,7 +679,7 @@ public class SearchEngine implements Runnable {
 						|| Move.isCastling(move) //
 						|| checkEvasion //
 						|| move == ttMove //
-						|| sortInfo.isKiller(move, board.getMoveNumber() - initialPly);
+						|| sortInfo.isKiller(move, distanceToInitialPly + 1);
 
 				if (futilityPrune //
 						&& bestScore > -Evaluator.KNOWN_WIN //
@@ -746,7 +745,8 @@ public class SearchEngine implements Runnable {
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
 			if (excludedMove == 0) {
-				sortInfo.betaCutoff(bestMove, board.getMoveNumber() - initialPly);
+				// TODO use absolute move number
+				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {
 				nullCutNodes++;
@@ -914,8 +914,8 @@ public class SearchEngine implements Runnable {
 			observer.info(info);
 		}
 
-		// if mate found exit
-		if ((score < -Evaluator.VICTORY + 1000) || (score > Evaluator.VICTORY - 1000)) {
+		// If mate found exit
+		if ((score <= -VALUE_IS_MATE) || (score >= VALUE_IS_MATE)) {
 			throw new SearchFinishedException();
 		}
 
@@ -990,8 +990,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Is better to end before Not necessary to change sign after Takes into
-	 * account the contempt factor
+	 * Is better to end before Not necessary to change sign
 	 */
 	public int evaluateEndgame() {
 		if (board.getCheck()) {
