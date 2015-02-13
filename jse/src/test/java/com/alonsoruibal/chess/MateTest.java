@@ -22,13 +22,11 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
 	public void testBasic1() {
 		testPosition("6k1/8/6K1/8/8/8/8/R7 w", "a1a8");
 	}
 
 	@Test
-	@Category(SlowTest.class)
 	public void testBasic2() {
 		testPosition("5rk1/5ppp/8/8/8/4PQ2/r1q2PPP/RR4K1 b", "c2b2");
 	}
@@ -125,7 +123,7 @@ public class MateTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testMate10() {
-		// 10.- Posicion taken from "How computers play chess"
+		// 10.- Position taken from "How computers play chess"
 		// posic110
 		// White to play and mate in 9: 1. Qg7-b2 
 		testPosition("7K/6Q1/8/8/8/3k4/8/8 w", "g7b2");
