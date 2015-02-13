@@ -265,9 +265,9 @@ public class SearchEngine implements Runnable {
 			if (lastMoveSee >= firstCapturedPieceValue - 50) {
 				ext += config.getExtensionsRecapture();
 			}
-		}
-		if (ext >= PLY) {
-			return PLY;
+			if (ext >= PLY) {
+				return PLY;
+			}
 		}
 		return ext;
 	}
