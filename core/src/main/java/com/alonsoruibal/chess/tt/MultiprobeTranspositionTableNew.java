@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.search.SearchEngine;
 
 import java.util.Arrays;
 
@@ -13,9 +14,6 @@ import java.util.Arrays;
  * @author rui
  */
 public class MultiprobeTranspositionTableNew extends TranspositionTable {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTableNew");
 
 	private final static int MAX_PROBES = 4;
@@ -29,9 +27,11 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 	private long info;
 	private byte generation;
 
+	private int score;
+
 	/**
-	 * Whe must indicate the number in bits of the size example: 23 => 2^23 are
-	 * 8 million entries
+	 * Whe must indicate the number in bits of the size
+	 * Example: 23 => 2^23 are 8 million entries
 	 *
 	 * @param sizeBits
 	 */
@@ -46,13 +46,23 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 		logger.debug("Created Multiprobe transposition table New, size = " + size + " entries " + size * 16 / (1024 * 1024) + "MB");
 	}
 
-	public boolean search(Board board, boolean exclusion) {
+	public boolean search(Board board, int distanceToInitialPly, boolean exclusion) {
 		info = 0;
+		score = 0;
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits)) & ~0x03;
 		// Verifies that is really this board
 		for (index = startIndex; index < startIndex + MAX_PROBES && index < size; index++) {
 			if (keys[index] == board.getKey2()) {
 				info = infos[index];
+				score = (short) ((info >>> 48) & 0xffff);
+
+				// Fix Mate score with the real distance to the root
+				if (score >= SearchEngine.VALUE_IS_MATE) {
+					score -= distanceToInitialPly;
+				} else if (score <= -SearchEngine.VALUE_IS_MATE) {
+					score += distanceToInitialPly;
+				}
+
 				return true;
 			}
 		}
@@ -76,7 +86,7 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 	}
 
 	public int getScore() {
-		return (short) ((info >>> 48) & 0xffff);
+		return score;
 	}
 
 	/**
@@ -97,12 +107,14 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 								// || (getDepthAnalyzed() == depthAnalyzed &&
 								// getNodeType() == TYPE_EXACT_SCORE && nodeType !=
 								// TYPE_EXACT_SCORE)
-						))
+						)) {
 					return; // Never replace with eval values or lower depth or
+				}
 				// exact scores with other nodetypes
 				index = i;
-				if (keys[i] == key2 && bestMove == 0)
+				if (keys[i] == key2 && bestMove == 0) {
 					bestMove = getBestMove(); // Keep best move when replacing
+				}
 				// and no move
 				break;
 			}
@@ -113,8 +125,9 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 				break;
 			}
 		}
-		if (index == -1)
+		if (index == -1) {
 			return; // No slot found
+		}
 
 		keys[index] = key2;
 		info = (bestMove & 0x1fffff) | ((nodeType & 0xf) << 21) | (((long) (generation & 0xff)) << 32) | (((long) (depthAnalyzed & 0xff)) << 40)

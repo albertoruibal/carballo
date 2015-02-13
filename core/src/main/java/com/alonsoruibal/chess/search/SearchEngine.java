@@ -370,9 +370,11 @@ public class SearchEngine implements Runnable {
 		}
 		qsPositionCounter++;
 
+		int distanceToInitialPly = board.getMoveNumber() - initialPly;
+
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
-			return evaluateDraw();
+			return evaluateDraw(distanceToInitialPly);
 		}
 
 		int eval = -Evaluator.VICTORY;
@@ -380,7 +382,7 @@ public class SearchEngine implements Runnable {
 		boolean pv = beta - alpha > 1;
 
 		ttProbe++;
-		boolean foundTT = tt.search(board, false);
+		boolean foundTT = tt.search(board, distanceToInitialPly, false);
 		if (foundTT) {
 			if (!pv && canUseTT(0, alpha, beta)) {
 				return tt.getScore();
@@ -463,7 +465,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		if (board.getCheck() && !validOperations) {
-			return valueMatedIn(board.getMoveNumber() - initialPly);
+			return valueMatedIn(distanceToInitialPly);
 		}
 
 		return alpha;
@@ -482,12 +484,12 @@ public class SearchEngine implements Runnable {
 			positionCounter++;
 		}
 
+		int distanceToInitialPly = board.getMoveNumber() - initialPly;
+
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
-			return evaluateDraw();
+			return evaluateDraw(distanceToInitialPly);
 		}
-
-		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		// Mate distance pruning
 		alpha = Math.max(valueMatedIn(distanceToInitialPly), alpha);
@@ -503,7 +505,7 @@ public class SearchEngine implements Runnable {
 		int score = 0;
 
 		ttProbe++;
-		boolean foundTT = tt.search(board, excludedMove != 0);
+		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != 0);
 		if (foundTT) {
 			if (nodeType != NODE_ROOT //
 					&& canUseTT(depthRemaining, alpha, beta)) {
@@ -600,10 +602,11 @@ public class SearchEngine implements Runnable {
 					&& depthRemaining >= iidDepth[nodeType] //
 					&& allowNullMove //
 					&& (nodeType != NODE_NULL || eval > beta - config.getIidMargin()) //
-					&& excludedMove == 0) {
+					&& excludedMove == 0  // TODO test to remove
+					) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
-				if (tt.search(board, false)) {
+				if (tt.search(board, distanceToInitialPly, false)) {
 					ttMove = tt.getBestMove();
 				}
 			}
@@ -648,13 +651,14 @@ public class SearchEngine implements Runnable {
 				int extension = extensions(move, mateThreat, moveIterator.getLastMoveSee());
 
 				// Check singular move extension
+				// It also detects singular replies
 				if (nodeType != NODE_ROOT //
 						&& move == ttMove //
 						&& extension < PLY //
 						&& excludedMove == 0 //
 						&& config.getExtensionsSingular() > 0 //
 						&& depthRemaining >= singularMoveDepth[nodeType] //
-						&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH // ???
+						&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
 						&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
 						&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
@@ -739,12 +743,16 @@ public class SearchEngine implements Runnable {
 
 		// Checkmate or stalemate
 		if (excludedMove == 0 && !validOperations) {
-			bestScore = evaluateEndgame();
+			bestScore = evaluateEndgame(distanceToInitialPly);
+		}
+		// Fix score for excluded moves
+		if (bestScore == -Evaluator.VICTORY) {
+			bestScore = valueMatedIn(distanceToInitialPly);
 		}
 
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
-			if (excludedMove == 0) {
+			if (excludedMove == 0 && validOperations) {
 				// TODO use absolute move number
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
@@ -761,8 +769,8 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		// Save in the transposition Table
-		tt.save(board, (byte) depthRemaining, bestMove, bestScore, alpha, beta, excludedMove != 0);
+		// Save in the transposition table
+		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, excludedMove != 0);
 
 		return bestScore;
 	}
@@ -871,8 +879,7 @@ public class SearchEngine implements Runnable {
 
 			score = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
 
-			// logger.debug("alpha = " + alpha + ", beta = " + beta
-			// + ", score=" + score);
+			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", score=" + score);
 
 			if (score <= alpha) {
 				failLowCount++;
@@ -914,8 +921,8 @@ public class SearchEngine implements Runnable {
 			observer.info(info);
 		}
 
-		// If mate found exit
-		if ((score <= -VALUE_IS_MATE) || (score >= VALUE_IS_MATE)) {
+		// If mate found and time is not infinite, exit
+		if ((thinkToTime != Long.MAX_VALUE) && ((score <= -VALUE_IS_MATE) || (score > VALUE_IS_MATE))) {
 			throw new SearchFinishedException();
 		}
 
@@ -947,15 +954,14 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Gets the principal variation and the best move from the transposition
-	 * table
+	 * Gets the principal variation and the best move from the transposition table
 	 */
 	private void getPv() {
 		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
 		int i = 0;
 		while (i < 256) {
-			if (tt.search(board, false)) {
+			if (tt.search(board, i, false)) {
 				if (keys.contains(board.getKey())) {
 					break;
 				}
@@ -990,26 +996,26 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Is better to end before Not necessary to change sign
+	 * Is better to end before. Not necessary to change sign
 	 */
-	public int evaluateEndgame() {
+	public int evaluateEndgame(int distanceToInitialPly) {
 		if (board.getCheck()) {
-			return valueMatedIn(board.getMoveNumber() - initialPly);
+			return valueMatedIn(distanceToInitialPly);
 		} else {
-			return evaluateDraw();
+			return evaluateDraw(distanceToInitialPly);
 		}
 	}
 
-	public int evaluateDraw() {
-		return ((board.getMoveNumber() - initialPly) & 1) == 0 ? -config.getContemptFactor() : config.getContemptFactor();
+	public int evaluateDraw(int distanceToInitialPly) {
+		return (distanceToInitialPly & 1) == 0 ? -config.getContemptFactor() : config.getContemptFactor();
 	}
 
-	private int valueMatedIn(int depth) {
-		return -Evaluator.VICTORY + depth;
+	private int valueMatedIn(int distanceToInitialPly) {
+		return -Evaluator.VICTORY + distanceToInitialPly;
 	}
 
-	private int valueMateIn(int depth) {
-		return Evaluator.VICTORY - depth;
+	private int valueMateIn(int distanceToInitialPly) {
+		return Evaluator.VICTORY - distanceToInitialPly;
 	}
 
 	public TranspositionTable getTT() {

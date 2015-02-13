@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.search.SearchEngine;
 
 import java.util.Arrays;
 
@@ -13,9 +14,6 @@ import java.util.Arrays;
  * @author rui
  */
 public class MultiprobeTranspositionTable extends TranspositionTable {
-	/**
-	 * Logger for this class
-	 */
 	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
 
 	private final static int MAX_PROBES = 4;
@@ -29,9 +27,11 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 	private long info;
 	private byte generation;
 
+	private int score;
+
 	/**
-	 * Whe must indicate the number in bits of the size example: 23 => 2^23 are
-	 * 8 million entries
+	 * Whe must indicate the number in bits of the size
+	 * Example: 23 => 2^23 are 8 million entries
 	 *
 	 * @param sizeBits
 	 */
@@ -46,13 +46,22 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 		logger.debug("Created Multiprobe transposition table, size = " + size + " entries " + size * 16 / (1024 * 1024) + "MB");
 	}
 
-	public boolean search(Board board, boolean exclusion) {
+	public boolean search(Board board, int distanceToInitialPly, boolean exclusion) {
 		info = 0;
+		score = 0;
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
-		// Verifies that is really this board
+		// Verifies that it is really this board
 		for (index = startIndex; index < startIndex + MAX_PROBES && index < size; index++) {
 			if (keys[index] == board.getKey2()) {
 				info = infos[index];
+				score = (short) ((info >>> 48) & 0xffff);
+
+				// Fix mate score with the real distance to the initial PLY
+				if (score >= SearchEngine.VALUE_IS_MATE) {
+					score -= distanceToInitialPly;
+				} else if (score <= -SearchEngine.VALUE_IS_MATE) {
+					score += distanceToInitialPly;
+				}
 				return true;
 			}
 		}
@@ -76,11 +85,11 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 	}
 
 	public int getScore() {
-		return (short) ((info >>> 48) & 0xffff);
+		return score;
 	}
 
 	/**
-	 * In case of collision overwrites replace the eldest keep pv nodes
+	 * In case of collision overwrites replace the eldest. It must keep PV nodes
 	 */
 	public void set(Board board, int nodeType, int bestMove, int score, byte depthAnalyzed, boolean exclusion) {
 		long key2 = board.getKey2();
