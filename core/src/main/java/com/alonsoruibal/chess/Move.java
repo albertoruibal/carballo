@@ -73,7 +73,7 @@ public class Move {
 		return (move & (0x1 << 15)) != 0;
 	}
 
-	// Pawn push to 7th/8th rank
+	// Pawn push to 7 or 8th rank
 	public static boolean isPawnPush(int move) {
 		return Move.getPieceMoved(move) == PAWN && (Move.getToIndex(move) < 16 || Move.getToIndex(move) > 47);
 	}
@@ -85,6 +85,12 @@ public class Move {
 		return Move.getMoveType(move) >= TYPE_PROMOTION_QUEEN;
 	}
 
+	/**
+	 * Is capture or promotion
+	 *
+	 * @param move
+	 * @return
+	 */
 	public static boolean isTactical(int move) {
 		return (Move.isCapture(move) || Move.isPromotion(move));
 	}
@@ -320,11 +326,10 @@ public class Move {
 	 *
 	 * @param board
 	 * @param move
-	 * @param legalMoves
-	 * @param legalMoveCount
 	 * @return
 	 */
-	public static String toSan(Board board, int move, int legalMoves[], int legalMoveCount) {
+	public static String toSan(Board board, int move) {
+		board.generateLegalMoves();
 		if (move == 0 || move == -1)
 			return "none";
 		if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING)
@@ -339,8 +344,8 @@ public class Move {
 		boolean disambiguate = false;
 		boolean colEqual = false;
 		boolean rowEqual = false;
-		for (int i = 0; i < legalMoveCount; i++) {
-			int move2 = legalMoves[i];
+		for (int i = 0; i < board.legalMoveCount; i++) {
+			int move2 = board.legalMoves[i];
 			if (getToIndex(move) == getToIndex(move2) && getFromIndex(move) != getFromIndex(move2) && getPieceMoved(move) == getPieceMoved(move2)) {
 				disambiguate = true;
 				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8))

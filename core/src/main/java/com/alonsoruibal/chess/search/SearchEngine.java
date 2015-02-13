@@ -234,7 +234,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Calculates the extension of a move in the actual position (with the move done)
 	 */
-	private int extensions(int move, boolean mateThreat, int lastMoveSee) {
+	private int extensions(int move, boolean mateThreat, int moveSee) {
 		int ext = 0;
 
 		if (board.getCheck()) {
@@ -262,7 +262,7 @@ public class SearchEngine implements Runnable {
 		}
 		if (board.getLastMoveIsRecapture()) {
 			int firstCapturedPieceValue = pieceValue(board.getCapturedPiece(2));
-			if (lastMoveSee >= firstCapturedPieceValue - 50) {
+			if (moveSee >= firstCapturedPieceValue - 50) {
 				ext += config.getExtensionsRecapture();
 			}
 			if (ext >= PLY) {
@@ -439,7 +439,6 @@ public class SearchEngine implements Runnable {
 				// Futility pruning
 				if (!board.getCheck()
 						&& !checkEvasion
-						&& !Move.isPromotion(move)
 						&& !Move.isPawnPush(move)
 						&& !pv
 						&& (((board.queens | board.rooks) & board.getMines()) != 0 || (BitboardUtils.popCount(board.bishops | board.knights) & board.getMines()) > 1)) {
@@ -732,6 +731,33 @@ public class SearchEngine implements Runnable {
 				if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
 					bestMove = move;
 					bestScore = score;
+
+					if (nodeType == NODE_ROOT) {
+						long time = System.currentTimeMillis();
+
+						// update best move time
+						if (globalBestMove != move) {
+							bestMoveTime = time - startTime;
+						}
+						globalBestMove = move;
+						bestMoveScore = score;
+						foundOneMove = true;
+
+						getPv(move);
+
+						SearchStatusInfo info = new SearchStatusInfo();
+						info.setDepth(depth);
+						info.setTime(time - startTime);
+						info.setPv(pv);
+						info.setScore(score);
+						info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+						info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
+						logger.debug(info.toString());
+
+						if (observer != null) {
+							observer.info(info);
+						}
+					}
 				}
 
 				// alpha/beta cut (fail high)
@@ -848,14 +874,14 @@ public class SearchEngine implements Runnable {
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
-			logger.debug("Searching Move in Book");
+			logger.debug("Searching move in book");
 			int bookMove = config.getBook().getMove(board);
 			if (bookMove != 0) {
 				globalBestMove = bookMove;
-				logger.debug("Found Move in Book");
+				logger.debug("Move found in book");
 				throw new SearchFinishedException();
 			} else {
-				logger.debug("NOT Found Move in Book");
+				logger.debug("Move NOT found in book");
 				board.setOutBookMove(board.getMoveNumber());
 			}
 		}
@@ -895,32 +921,6 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		long time = System.currentTimeMillis();
-		long oldBestMove = globalBestMove;
-		getPv();
-		if (globalBestMove != 0) {
-			foundOneMove = true;
-		}
-
-		// update best move time
-		if (oldBestMove != globalBestMove) {
-			bestMoveTime = time - startTime;
-		}
-		bestMoveScore = score;
-
-		SearchStatusInfo info = new SearchStatusInfo();
-		info.setDepth(depth);
-		info.setTime(time - startTime);
-		info.setPv(pv);
-		info.setScore(score);
-		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
-		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
-		logger.debug(info.toString());
-
-		if (observer != null) {
-			observer.info(info);
-		}
-
 		// If mate found and time is not infinite, exit
 		if ((thinkToTime != Long.MAX_VALUE) && ((score <= -VALUE_IS_MATE) || (score > VALUE_IS_MATE))) {
 			throw new SearchFinishedException();
@@ -954,12 +954,15 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Gets the principal variation and the best move from the transposition table
+	 * Gets the principal variation from the transposition table
 	 */
-	private void getPv() {
+	private void getPv(int firstMove) {
 		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
-		int i = 0;
+		board.doMove(firstMove);
+		sb.append(Move.toSan(board, firstMove));
+
+		int i = 1;
 		while (i < 256) {
 			if (tt.search(board, i, false)) {
 				if (keys.contains(board.getKey())) {
@@ -969,19 +972,26 @@ public class SearchEngine implements Runnable {
 				if (tt.getBestMove() == 0) {
 					break;
 				}
-				if (i == 0) {
-					globalBestMove = tt.getBestMove();
-				} else if (i == 1) {
+				if (i == 1) {
 					ponderMove = tt.getBestMove();
 				}
-				sb.append(Move.toString(tt.getBestMove()));
 				sb.append(" ");
+				sb.append(Move.toSan(board, tt.getBestMove()));
 				i++;
 				board.doMove(tt.getBestMove(), false);
+				if (board.getCheck()) {
+					if (board.isMate()) {
+						sb.append("#");
+						break;
+					} else {
+						sb.append("+");
+					}
+				}
 			} else {
 				break;
 			}
 		}
+
 		// Now undo moves
 		for (int j = 0; j < i; j++) {
 			board.undoMove();

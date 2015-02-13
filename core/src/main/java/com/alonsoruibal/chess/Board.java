@@ -498,8 +498,7 @@ public class Board {
 		// Move.toStringExt(move) + " fillinfo=" + fillInfo);
 
 		if (fillInfo) {
-			generateLegalMoves();
-			sanMoves.put(moveNumber, Move.toSan(this, move, legalMoves, legalMoveCount));
+			sanMoves.put(moveNumber, Move.toSan(this, move));
 		}
 
 		moveHistory[moveNumber] = move;
@@ -998,7 +997,7 @@ public class Board {
 	/**
 	 * Generates legal moves for the position when not already generated
 	 */
-	private void generateLegalMoves() {
+	void generateLegalMoves() {
 		if ((key[0] != legalMovesKey[0]) || (key[1] != legalMovesKey[1])) {
 			legalMoveCount = legalMoveGenerator.generateMoves(this, legalMoves, 0);
 			legalMovesKey[0] = key[0];
