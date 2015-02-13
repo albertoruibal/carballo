@@ -4,11 +4,9 @@ import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 
 public abstract class Evaluator {
-
-	public final static int VICTORY = Short.MAX_VALUE - 1;
-
+	public final static int VICTORY = 30000;
+	public final static int KNOWN_WIN = 20000;
 	public final static int DRAW = 0;
-	public final static int KNOWN_WIN = 10000;
 
 	public BitboardAttacks bbAttacks;
 
