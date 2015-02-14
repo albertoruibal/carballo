@@ -959,8 +959,8 @@ public class SearchEngine implements Runnable {
 	private void getPv(int firstMove) {
 		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
-		board.doMove(firstMove);
 		sb.append(Move.toSan(board, firstMove));
+		board.doMove(firstMove);
 
 		int i = 1;
 		while (i < 256) {
@@ -977,8 +977,8 @@ public class SearchEngine implements Runnable {
 				}
 				sb.append(" ");
 				sb.append(Move.toSan(board, tt.getBestMove()));
-				i++;
 				board.doMove(tt.getBestMove(), false);
+				i++;
 				if (board.getCheck()) {
 					if (board.isMate()) {
 						sb.append("#");
