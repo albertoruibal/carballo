@@ -25,10 +25,10 @@ public class Config {
 	public final static int DEFAULT_IID_MARGIN = 300;
 	public final static boolean DEFAULT_LMR = true;
 	public final static int DEFAULT_EXTENSIONS_CHECK = 2; // 2 = 1 PLY
-	public final static int DEFAULT_EXTENSIONS_MATE_THREAT = 1;
-	public final static int DEFAULT_EXTENSIONS_PAWN_PUSH = 1;
-	public final static int DEFAULT_EXTENSIONS_PASSED_PAWN = 1;
-	public final static int DEFAULT_EXTENSIONS_RECAPTURE = 2;
+	public final static int DEFAULT_EXTENSIONS_MATE_THREAT = 2;
+	public final static int DEFAULT_EXTENSIONS_PAWN_PUSH = 0;
+	public final static int DEFAULT_EXTENSIONS_PASSED_PAWN = 0;
+	public final static int DEFAULT_EXTENSIONS_RECAPTURE = 0;
 	public final static int DEFAULT_EXTENSIONS_SINGULAR = 2;
 	public final static int DEFAULT_SINGULAR_EXTENSION_MARGIN = 50;
 	public final static boolean DEFAULT_ASPIRATION_WINDOW = true;

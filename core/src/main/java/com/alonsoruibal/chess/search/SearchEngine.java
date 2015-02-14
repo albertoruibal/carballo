@@ -237,14 +237,15 @@ public class SearchEngine implements Runnable {
 	private int extensions(int move, boolean mateThreat, int moveSee) {
 		int ext = 0;
 
-		if (board.getCheck()) {
+		if (board.getCheck()
+				&& moveSee >= 0) {
 			ext += config.getExtensionsCheck();
 			if (ext >= PLY) {
 				return PLY;
 			}
 		}
 		if (Move.getPieceMoved(move) == Move.PAWN) {
-			if (Move.isPawnPush(move)) {
+			if (Move.isPawnPush678(move)) {
 				ext += config.getExtensionsPawnPush();
 			}
 			if (board.isPassedPawn(Move.getToIndex(move))) {
@@ -439,7 +440,7 @@ public class SearchEngine implements Runnable {
 				// Futility pruning
 				if (!board.getCheck()
 						&& !checkEvasion
-						&& !Move.isPawnPush(move)
+						&& !Move.isPawnPush678(move)
 						&& !pv
 						&& (((board.queens | board.rooks) & board.getMines()) != 0 || (BitboardUtils.popCount(board.bishops | board.knights) & board.getMines()) > 1)) {
 					int futilityValue = eval + lastCapturedPieceValue(board) + config.getFutilityMarginQS();
@@ -678,8 +679,9 @@ public class SearchEngine implements Runnable {
 				boolean importantMove = nodeType == NODE_ROOT //
 						|| extension != 0 //
 						|| Move.isCapture(move) // Include ALL captures
-						|| Move.isPromotion(move) //
+						|| Move.isPawnPush678(move) //
 						|| Move.isCastling(move) //
+						|| board.getCheck() //
 						|| checkEvasion //
 						|| move == ttMove //
 						|| sortInfo.isKiller(move, distanceToInitialPly + 1);
