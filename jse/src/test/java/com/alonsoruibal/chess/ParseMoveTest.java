@@ -42,4 +42,12 @@ public class ParseMoveTest {
 		assertEquals("Ng8-e7", Move.toStringExt(Move.getFromString(b, "Ne7", true)));
 	}
 
+	@Test
+	public void testBugSanGg6() {
+		Board b = new Board();
+		b.setFen("R7/3p3p/8/3P2P1/3k4/1p5p/1P1NKP1P/7q w - -");
+		int move = Move.getFromString(b, "g6", true);
+		b.doMove(move);
+		assertEquals("Converts move g6 as gg6 if the move is done, and it must return none if the move is not legal", "none", Move.toSan(b, move));
+	}
 }

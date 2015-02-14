@@ -78,6 +78,16 @@ public class Move {
 		return Move.getPieceMoved(move) == PAWN && (Move.getToIndex(move) < 16 || Move.getToIndex(move) > 47);
 	}
 
+	// Pawn push to 6, 7 or 8th rank
+	public static boolean isPawnPush678(int move) {
+		return Move.getPieceMoved(move) == PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 40 : Move.getToIndex(move) < 24);
+	}
+
+	// Pawn push to 5, 6, 7 or 8th rank
+	public static boolean isPawnPush5678(int move) {
+		return Move.getPieceMoved(move) == PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 32 : Move.getToIndex(move) < 32);
+	}
+
 	/**
 	 * Checks if this move is a promotion
 	 */
@@ -116,15 +126,17 @@ public class Move {
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o")
 				.replaceAll("O", "o");
 		if ("ooo".equals(move)) {
-			if (board.getTurn())
+			if (board.getTurn()) {
 				move = "e1c1";
-			else
+			} else {
 				move = "e8c8";
+			}
 		} else if ("oo".equals(move)) {
-			if (board.getTurn())
+			if (board.getTurn()) {
 				move = "e1g1";
-			else
+			} else {
 				move = "e8g8";
+			}
 		}
 		char promo = move.charAt(move.length() - 1);
 		switch (Character.toLowerCase(promo)) {
@@ -142,8 +154,9 @@ public class Move {
 				break;
 		}
 		// If promotion, remove the last char
-		if (moveType != 0)
+		if (moveType != 0) {
 			move = move.substring(0, move.length() - 1);
+		}
 
 		// To is always the last 2 characters
 		toIndex = BitboardUtils.algebraic2Index(move.substring(move.length() - 2, move.length()));
@@ -188,11 +201,13 @@ public class Move {
 		if (move.length() == 3) { // now disambiaguate
 			char disambiguate = move.charAt(0);
 			int i = "abcdefgh".indexOf(disambiguate);
-			if (i >= 0)
+			if (i >= 0) {
 				from &= BitboardUtils.COLUMN[i];
+			}
 			int j = "12345678".indexOf(disambiguate);
-			if (j >= 0)
+			if (j >= 0) {
 				from &= BitboardUtils.RANK[j];
+			}
 		}
 		if (move.length() == 4) { // was algebraic complete e2e4 (=UCI!)
 			from = BitboardUtils.algebraic2Square(move.substring(0, 2));
@@ -223,22 +238,24 @@ public class Move {
 					moveType = TYPE_PROMOTION_QUEEN;
 				}
 			}
-			if ((myFrom & board.bishops) != 0)
+			if ((myFrom & board.bishops) != 0) {
 				pieceMoved = BISHOP;
-			else if ((myFrom & board.knights) != 0)
+			} else if ((myFrom & board.knights) != 0) {
 				pieceMoved = KNIGHT;
-			else if ((myFrom & board.rooks) != 0)
+			} else if ((myFrom & board.rooks) != 0) {
 				pieceMoved = ROOK;
-			else if ((myFrom & board.queens) != 0)
+			} else if ((myFrom & board.queens) != 0) {
 				pieceMoved = QUEEN;
-			else if ((myFrom & board.kings) != 0) {
+			} else if ((myFrom & board.kings) != 0) {
 				pieceMoved = KING;
 				// Only if origin square is king's initial square TODO FRC
 				if (fromIndex == 3 || fromIndex == 3 + (8 * 7)) {
-					if (toIndex == (fromIndex + 2))
+					if (toIndex == (fromIndex + 2)) {
 						moveType = TYPE_QUEENSIDE_CASTLING;
-					if (toIndex == (fromIndex - 2))
+					}
+					if (toIndex == (fromIndex - 2)) {
 						moveType = TYPE_KINGSIDE_CASTLING;
+					}
 				}
 			}
 
@@ -266,8 +283,9 @@ public class Move {
 	 * @return
 	 */
 	public static String toString(int move) {
-		if (move == 0 || move == -1)
+		if (move == 0 || move == -1) {
 			return "none";
+		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
@@ -322,7 +340,7 @@ public class Move {
 	}
 
 	/**
-	 * Des not append + or #
+	 * It does not append + or #
 	 *
 	 * @param board
 	 * @param move
@@ -330,29 +348,36 @@ public class Move {
 	 */
 	public static String toSan(Board board, int move) {
 		board.generateLegalMoves();
-		if (move == 0 || move == -1)
-			return "none";
-		if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING)
-			return "O-O";
-		else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING)
-			return "O-O-O";
 
-		StringBuilder sb = new StringBuilder();
-		if (getPieceMoved(move) != Move.PAWN)
-			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
-
+		boolean isLegal = false;
 		boolean disambiguate = false;
 		boolean colEqual = false;
 		boolean rowEqual = false;
 		for (int i = 0; i < board.legalMoveCount; i++) {
 			int move2 = board.legalMoves[i];
-			if (getToIndex(move) == getToIndex(move2) && getFromIndex(move) != getFromIndex(move2) && getPieceMoved(move) == getPieceMoved(move2)) {
+			if (move == move2) {
+				isLegal = true;
+			} else if (getToIndex(move) == getToIndex(move2) && (getPieceMoved(move) == getPieceMoved(move2))) {
 				disambiguate = true;
-				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8))
+				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8)) {
 					colEqual = true;
-				if ((getFromIndex(move) / 8) == (getFromIndex(move2) / 8))
+				}
+				if ((getFromIndex(move) / 8) == (getFromIndex(move2) / 8)) {
 					rowEqual = true;
+				}
 			}
+		}
+		if (move == 0 || move == -1 || !isLegal) {
+			return "none";
+		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
+			return "O-O";
+		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
+			return "O-O-O";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		if (getPieceMoved(move) != Move.PAWN) {
+			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
 		}
 		String fromSq = BitboardUtils.index2Algebraic(Move.getFromIndex(move));
 
@@ -388,7 +413,6 @@ public class Move {
 				sb.append("R");
 				break;
 		}
-
 		return sb.toString();
 	}
 
