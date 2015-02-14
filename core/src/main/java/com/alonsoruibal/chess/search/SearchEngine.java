@@ -678,11 +678,11 @@ public class SearchEngine implements Runnable {
 
 				boolean importantMove = nodeType == NODE_ROOT //
 						|| extension != 0 //
-						|| Move.isCapture(move) // Include ALL captures
-						|| Move.isPawnPush678(move) //
-						|| Move.isCastling(move) //
-						|| board.getCheck() //
 						|| checkEvasion //
+						|| board.getCheck() //
+						|| Move.isCapture(move) // Include ALL captures
+						|| Move.isPawnPush678(move) // Includes promotions
+						|| Move.isCastling(move)
 						|| move == ttMove //
 						|| sortInfo.isKiller(move, distanceToInitialPly + 1);
 
