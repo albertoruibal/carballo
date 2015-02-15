@@ -226,9 +226,9 @@ public class SearchStatusInfo {
 	}
 
 	public void setScore(int score) {
-		if ((score < -Evaluator.VICTORY + 100) || (score > Evaluator.VICTORY - 100)) {
+		if ((score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE)) {
 			int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
-			if ((x & 1) != 0) {
+			if ((x & 1) != 0) { // TODO revise
 				scoreMate = (x >> 1) + 1;
 			} else {
 				scoreMate = x >> 1;
@@ -247,6 +247,10 @@ public class SearchStatusInfo {
 		if (depth != 0) {
 			sb.append("depth ");
 			sb.append(depth);
+		}
+		if (selDepth != 0) {
+			sb.append(" seldepth ");
+			sb.append(selDepth);
 		}
 		if (scoreMate != null) {
 			sb.append(" score mate ");

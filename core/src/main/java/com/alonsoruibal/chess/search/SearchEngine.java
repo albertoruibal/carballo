@@ -63,6 +63,7 @@ public class SearchEngine implements Runnable {
 
 	private int initialPly; // Initial Ply for search
 	private int depth;
+	private int selDepth;
 	private int score;
 	private int[] aspWindows;
 
@@ -478,13 +479,18 @@ public class SearchEngine implements Runnable {
 		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
+
+		int distanceToInitialPly = board.getMoveNumber() - initialPly;
+
 		if (nodeType == NODE_PV || nodeType == NODE_ROOT) {
 			pvPositionCounter++;
+
+			if (distanceToInitialPly > selDepth) {
+				selDepth = distanceToInitialPly;
+			}
 		} else {
 			positionCounter++;
 		}
-
-		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
 		if (board.isDraw()) {
@@ -749,6 +755,7 @@ public class SearchEngine implements Runnable {
 
 						SearchStatusInfo info = new SearchStatusInfo();
 						info.setDepth(depth);
+						info.setSelDepth(selDepth);
 						info.setTime(time - startTime);
 						info.setPv(pv);
 						info.setScore(score);
@@ -781,7 +788,7 @@ public class SearchEngine implements Runnable {
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
 			if (excludedMove == 0 && validOperations) {
-				// TODO use absolute move number
+				// TODO test use absolute move number
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {
@@ -895,6 +902,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void runStepped() throws SearchFinishedException {
+		selDepth = 0;
 		int failHighCount = 0;
 		int failLowCount = 0;
 		int initialScore = score;
@@ -904,7 +912,6 @@ public class SearchEngine implements Runnable {
 		// Iterate aspiration windows
 		while (true) {
 			aspirationWindowProbe++;
-
 			score = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
 
 			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", score=" + score);
