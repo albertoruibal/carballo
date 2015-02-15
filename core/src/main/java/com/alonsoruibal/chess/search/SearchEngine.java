@@ -301,26 +301,14 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Also changes sign to score depending of turn usetTT requires to do a previous search on TT
+	 * It also changes the sign to the score depending of the turn
 	 */
 	private int eval(boolean foundTT, boolean refine) {
 		ttEvalProbe++;
 
-		if (foundTT) {
-			if (tt.getNodeType() == TranspositionTable.TYPE_EVAL) {
-				ttEvalHit++;
-				// // uncomment to test if eval tt is Working
-				// if (evaluator.evaluate(board) !=
-				// tt.getScore()) {
-				// System.out.println("Error Garrafal!!!");
-				// System.out.println(tt.getScore());
-				// System.out.println(evaluator.evaluate(board));
-				// System.out.println(board.toString());
-				// System.exit(-1);
-				// }
-				int score = tt.getScore();
-				return score;
-			}
+		if (foundTT && (tt.getNodeType() == TranspositionTable.TYPE_EVAL)) {
+			ttEvalHit++;
+			return tt.getScore();
 		}
 		int score = evaluator.evaluate(board);
 		if (!board.getTurn()) {
@@ -328,7 +316,7 @@ public class SearchEngine implements Runnable {
 		}
 		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
 		if (foundTT && refine) {
-			// Refine Value with TT
+			// Refine value with TT
 			switch (tt.getNodeType()) {
 				case TranspositionTable.TYPE_FAIL_LOW:
 					if (tt.getScore() > score) {
