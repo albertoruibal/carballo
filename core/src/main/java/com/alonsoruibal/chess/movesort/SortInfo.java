@@ -32,9 +32,10 @@ public class SortInfo {
 	 * we are informed of the score produced by the move at any level
 	 */
 	public void betaCutoff(int move, int depth) {
-
 		// removes captures and promotions from killers
-		if (move == 0 || Move.isTactical(move)) return;
+		if (move == 0 || Move.isTactical(move)) {
+			return;
+		}
 
 		if (move != killerMove1[depth]) {
 			killerMove2[depth] = killerMove1[depth];
