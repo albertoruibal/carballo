@@ -64,7 +64,7 @@ public class SearchEngine implements Runnable {
 	private int initialPly; // Initial Ply for search
 	private int depth;
 	private int selDepth;
-	private int score;
+	private int rootScore;
 	private int[] aspWindows;
 
 	long startTime;
@@ -884,7 +884,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		score = eval(false, false);
+		rootScore = eval(false, false);
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
@@ -893,22 +893,22 @@ public class SearchEngine implements Runnable {
 		selDepth = 0;
 		int failHighCount = 0;
 		int failLowCount = 0;
-		int initialScore = score;
+		int initialScore = rootScore;
 		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY);
 		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY);
 
 		// Iterate aspiration windows
 		while (true) {
 			aspirationWindowProbe++;
-			score = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
+			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
 
 			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", score=" + score);
 
-			if (score <= alpha) {
+			if (rootScore <= alpha) {
 				failLowCount++;
 				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY) ? initialScore
 						- aspWindows[failLowCount] : -Evaluator.VICTORY);
-			} else if (score >= beta) {
+			} else if (rootScore >= beta) {
 				failHighCount++;
 				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY) ? initialScore
 						+ aspWindows[failHighCount] : Evaluator.VICTORY);
@@ -919,7 +919,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// If mate found and time is not infinite, exit
-		if ((thinkToTime != Long.MAX_VALUE) && ((score <= -VALUE_IS_MATE) || (score > VALUE_IS_MATE))) {
+		if ((thinkToTime != Long.MAX_VALUE) && ((rootScore <= -VALUE_IS_MATE) || (rootScore > VALUE_IS_MATE))) {
 			throw new SearchFinishedException();
 		}
 
