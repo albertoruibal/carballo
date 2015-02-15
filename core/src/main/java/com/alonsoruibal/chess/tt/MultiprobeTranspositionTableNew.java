@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 
@@ -32,11 +33,9 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 	/**
 	 * Whe must indicate the number in bits of the size
 	 * Example: 23 => 2^23 are 8 million entries
-	 *
-	 * @param sizeBits
 	 */
-	public MultiprobeTranspositionTableNew(int sizeBits) {
-		this.sizeBits = sizeBits;
+	public MultiprobeTranspositionTableNew(int sizeMb) {
+		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];
@@ -50,19 +49,18 @@ public class MultiprobeTranspositionTableNew extends TranspositionTable {
 		info = 0;
 		score = 0;
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits)) & ~0x03;
-		// Verifies that is really this board
+		// Verifies that it is really this board
 		for (index = startIndex; index < startIndex + MAX_PROBES && index < size; index++) {
 			if (keys[index] == board.getKey2()) {
 				info = infos[index];
 				score = (short) ((info >>> 48) & 0xffff);
 
-				// Fix Mate score with the real distance to the root
+				// Fix mate score with the real distance to the initial PLY
 				if (score >= SearchEngine.VALUE_IS_MATE) {
 					score -= distanceToInitialPly;
 				} else if (score <= -SearchEngine.VALUE_IS_MATE) {
 					score += distanceToInitialPly;
 				}
-
 				return true;
 			}
 		}

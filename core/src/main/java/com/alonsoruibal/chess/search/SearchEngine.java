@@ -160,13 +160,8 @@ public class SearchEngine implements Runnable {
 			evaluator = new ExperimentalEvaluator(config);
 		}
 
-		int size = BitboardUtils.square2Index((long) config.getTranspositionTableSize()) + 16;
-
 		logger.debug("Creating TT");
-
-		// tt = new TwoTierTranspositionTable(size);
-		// tt = new MultiprobeTranspositionTableNew(size);
-		tt = new MultiprobeTranspositionTable(size);
+		tt = new MultiprobeTranspositionTable(config.getTranspositionTableSize());
 
 		initialized = true;
 		logger.debug(config.toString());

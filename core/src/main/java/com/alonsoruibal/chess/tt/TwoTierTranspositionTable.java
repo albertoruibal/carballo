@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 
@@ -34,11 +35,9 @@ public class TwoTierTranspositionTable extends TranspositionTable {
 	/**
 	 * Whe must indicate the number in bits of the size
 	 * Example: 23 => 2^23 are 8 million entries
-	 *
-	 * @param sizeBits
 	 */
-	public TwoTierTranspositionTable(int sizeBits) {
-		this.sizeBits = sizeBits;
+	public TwoTierTranspositionTable(int sizeMb) {
+		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];

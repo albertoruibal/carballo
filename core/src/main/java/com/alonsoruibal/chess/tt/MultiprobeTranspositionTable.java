@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 
@@ -32,18 +33,16 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 	/**
 	 * Whe must indicate the number in bits of the size
 	 * Example: 23 => 2^23 are 8 million entries
-	 *
-	 * @param sizeBits
 	 */
-	public MultiprobeTranspositionTable(int sizeBits) {
-		this.sizeBits = sizeBits;
+	public MultiprobeTranspositionTable(int sizeMb) {
+		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];
 
 		generation = 0;
 		index = -1;
-		logger.debug("Created Multiprobe transposition table, size = " + size + " entries " + size * 16 / (1024 * 1024) + "MB");
+		logger.debug("Created Multiprobe transposition table, size = " + size + " entries " + size * 16.0 / (1024 * 1024) + " MBytes");
 	}
 
 	public boolean search(Board board, int distanceToInitialPly, boolean exclusion) {
@@ -102,13 +101,14 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];
 
-			// TODO do not replace PVs
-			//if (keys[i] == 0 || (keys[i] == key2 && (getGeneration() != generation || getDepthAnalyzed() <= depthAnalyzed))) {
-			if (keys[i] == 0 || (keys[i] == key2)) {
+			// Replace an empty TT position or the position with the same score type
+			if (keys[i] == 0) {
+				index = i;
+				break;
+			} else if (keys[i] == key2) {
 				index = i;
 				break;
 			}
-
 			if (oldGenerationIndex == -1 && getGeneration() != generation) {
 				oldGenerationIndex = i;
 			}
@@ -124,11 +124,7 @@ public class MultiprobeTranspositionTable extends TranspositionTable {
 		}
 		if (index == -1) {
 			return;
-			// Do not overwrite unless a PV node
-//			if (nodeType != TYPE_EXACT_SCORE) return;
-//			index = startIndex;
 		}
-
 		keys[index] = key2;
 		info = (bestMove & 0x1fffff) | ((nodeType & 0xf) << 21) | (((long) (generation & 0xff)) << 32) | (((long) (depthAnalyzed & 0xff)) << 40)
 				| (((long) (score & 0xffff)) << 48);
