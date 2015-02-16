@@ -14,7 +14,7 @@ public class Config {
 	// For manual testing
 	public boolean experimental = false;
 
-	// Default values are static field to be used also from UCIEngine
+	// Default values are static fields used also from UCIEngine
 	public final static boolean DEFAULT_USE_BOOK = true;
 	public final static int DEFAULT_BOOK_KNOWGLEDGE = 100;
 	public final static String DEFAULT_EVALUATOR = "experimental";
@@ -73,7 +73,7 @@ public class Config {
 	private int extensionsSingular = DEFAULT_EXTENSIONS_SINGULAR;
 	private int singularExtensionMargin = DEFAULT_SINGULAR_EXTENSION_MARGIN;
 	private boolean aspirationWindow = DEFAULT_ASPIRATION_WINDOW;
-	private int[] aspirationWindowSizes; // It is initialized in constructor
+	private int[] aspirationWindowSizes; // It is initialized in the constructor
 	private int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
 	private boolean futility = DEFAULT_FUTILITY;
 	private int futilityMargin = DEFAULT_FUTILITY_MARGIN;
