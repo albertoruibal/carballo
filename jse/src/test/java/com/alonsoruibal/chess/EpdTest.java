@@ -3,7 +3,9 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
+import com.alonsoruibal.chess.search.SearchStatusInfo;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -31,11 +33,11 @@ import java.io.InputStreamReader;
  *
  * @author rui
  */
-public class EpdTest {
-	/**
-	 * Logger for this class
-	 */
+public class EpdTest implements SearchObserver {
 	private static final Logger logger = Logger.getLogger("EpdTest");
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
 
 	Config config;
 	SearchEngine search;
@@ -46,12 +48,14 @@ public class EpdTest {
 	int totalTime;
 	int lctPoints;
 
+	int solutionMoves[];
+	boolean solutionFound;
+
+	int bestMove;
+	int bestMoveTime;
+
 	public int getSolved() {
 		return solved;
-	}
-
-	public int getTotalTime() {
-		return totalTime;
 	}
 
 	public int getLctPoints() {
@@ -62,6 +66,7 @@ public class EpdTest {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
+		search.setObserver(this);
 
 		totalTime = 0;
 		lctPoints = 0;
@@ -131,32 +136,54 @@ public class EpdTest {
 	}
 
 	private int testPosition(String fen, String movesString, int timeLimit) {
-		int time = 0;
+		bestMove = 0;
+		solutionFound = false;
+
 		search.clear();
 		search.getBoard().setFen(fen);
 		String movesStringArray[] = movesString.split(" ");
-		int moves[] = new int[movesStringArray.length];
-		for (int i = 0; i < moves.length; i++) {
-			moves[i] = Move.getFromString(search.getBoard(), movesStringArray[i], true);
+		solutionMoves = new int[movesStringArray.length];
+		for (int i = 0; i < solutionMoves.length; i++) {
+			solutionMoves[i] = Move.getFromString(search.getBoard(), movesStringArray[i], true);
 		}
 		logger.debug("Lets see if " + movesString + " are found");
 
 		search.go(SearchParameters.get(timeLimit));
 
-		boolean found = false;
-
-		for (int move : moves) {
-			if (move == search.getBestMove()) {
-				logger.debug("Best move found in " + search.getBestMoveTime() + "Ms :D " + Move.toStringExt(move));
-				time += search.getBestMoveTime();
-				found = true;
-			}
-		}
-		if (!found) {
+		if (solutionFound) {
+			logger.debug("Best move found in " + bestMoveTime + " Ms :D " + Move.toStringExt(bestMove));
+			return bestMoveTime;
+		} else {
 			logger.debug("Best move not found :( " + Move.toStringExt(search.getBestMove()) + " != " + movesString);
 			return timeLimit;
 		}
+	}
 
-		return time;
+	@Override
+	public void info(SearchStatusInfo info) {
+		if (bestMove != search.getBestMove()) {
+			bestMove = search.getBestMove();
+			bestMoveTime = (int) info.getTime();
+		}
+
+		boolean found = false;
+		for (int move : solutionMoves) {
+			if (move == search.getBestMove()) {
+				found = true;
+				break;
+			}
+		}
+		solutionFound = found;
+
+		if (found) {
+			logger.debug(ANSI_GREEN + info.toString() + ANSI_RESET);
+		} else {
+			logger.debug(ANSI_RED + info.toString() + ANSI_RESET);
+		}
+	}
+
+	@Override
+	public void bestMove(int bestMove, int ponder) {
+
 	}
 }

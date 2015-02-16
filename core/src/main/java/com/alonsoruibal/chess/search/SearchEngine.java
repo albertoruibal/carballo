@@ -56,7 +56,6 @@ public class SearchEngine implements Runnable {
 	private SortInfo sortInfo;
 	private MoveIterator[] moveIterators;
 
-	private long bestMoveTime; // For testing suites
 	private int bestMoveScore;
 	private int globalBestMove, ponderMove;
 	private String pv;
@@ -78,7 +77,7 @@ public class SearchEngine implements Runnable {
 	private long nullCutNodes;
 	private long nullAllNodes;
 
-	// aspiration window
+	// Aspiration window
 	private static long aspirationWindowProbe = 0;
 	private static long aspirationWindowHit = 0;
 
@@ -202,10 +201,6 @@ public class SearchEngine implements Runnable {
 
 	public int getBestMove() {
 		return globalBestMove;
-	}
-
-	public long getBestMoveTime() {
-		return bestMoveTime;
 	}
 
 	public long getBestMoveScore() {
@@ -726,10 +721,6 @@ public class SearchEngine implements Runnable {
 					if (nodeType == NODE_ROOT) {
 						long time = System.currentTimeMillis();
 
-						// update best move time
-						if (globalBestMove != move) {
-							bestMoveTime = time - startTime;
-						}
 						globalBestMove = move;
 						bestMoveScore = score;
 						foundOneMove = true;
@@ -744,10 +735,11 @@ public class SearchEngine implements Runnable {
 						info.setScore(score);
 						info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
 						info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
-						logger.debug(info.toString());
 
 						if (observer != null) {
 							observer.info(info);
+						} else {
+							logger.debug(info.toString());
 						}
 					}
 				}
@@ -839,7 +831,6 @@ public class SearchEngine implements Runnable {
 		positionCounter = 0;
 		pvPositionCounter = 0;
 		qsPositionCounter = 0;
-		bestMoveTime = 0;
 		globalBestMove = 0;
 		ponderMove = 0;
 		pv = null;
@@ -879,7 +870,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		rootScore = eval(false, false);
+		rootScore = eval(tt.search(board, 0, false), false);
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
