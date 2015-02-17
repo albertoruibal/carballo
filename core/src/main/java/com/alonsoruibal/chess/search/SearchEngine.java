@@ -292,28 +292,28 @@ public class SearchEngine implements Runnable {
 	/**
 	 * It also changes the sign to the score depending of the turn
 	 */
-	private int eval(boolean foundTT, boolean refine) {
+	private int eval(boolean foundTT) {
 		ttEvalProbe++;
 
-		int score;
+		int eval;
 		if (foundTT) {
 			ttEvalHit++;
-			// TODO refine is not being used
-			//score = tt.getEval();
 			return tt.getEval();
-		} else {
-			score = evaluator.evaluate(board);
-			if (!board.getTurn()) {
-				score = -score;
-			}
-			tt.set(board, TranspositionTable.TYPE_EVAL, 0, 0, (byte) 0, score, false);
 		}
-//		if (foundTT && refine &&
-//				(((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() > score)) ||
-//						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() < score)))) {
-//			return tt.getScore();
-//		}
-		return score;
+		eval = evaluator.evaluate(board);
+		if (!board.getTurn()) {
+			eval = -eval;
+		}
+		tt.set(board, TranspositionTable.TYPE_EVAL, 0, 0, (byte) 0, eval, false);
+		return eval;
+	}
+
+	int refineEval(boolean foundTT, int eval) {
+		if (foundTT && (((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
+				((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
+			return tt.getScore();
+		}
+		return eval;
 	}
 
 	private int lastCapturedPieceValue(Board board) {
@@ -370,11 +370,13 @@ public class SearchEngine implements Runnable {
 
 		int bestScore = alpha;
 		int bestMove = 0;
+		int staticEval = 0;
 		int eval = -Evaluator.VICTORY;
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
-			eval = eval(foundTT, true);
+			staticEval = eval(foundTT);
+			eval = refineEval(foundTT, staticEval);
 
 			if (eval > bestScore) {
 				bestScore = eval;
@@ -382,7 +384,7 @@ public class SearchEngine implements Runnable {
 			// Evaluation functions increase alpha and can originate beta cutoffs
 			if (bestScore >= beta) {
 				if (!foundTT) {
-					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, 0, bestScore, (byte) 0, eval, false);
+					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, 0, bestScore, (byte) 0, staticEval, false);
 				}
 				return bestScore;
 			}
@@ -456,7 +458,7 @@ public class SearchEngine implements Runnable {
 		if (board.getCheck() && !validOperations) {
 			return valueMatedIn(distanceToInitialPly);
 		}
-		tt.save(board, distanceToInitialPly, 0, bestMove, bestScore, alpha, beta, eval, false);
+		tt.save(board, distanceToInitialPly, 0, bestMove, bestScore, alpha, beta, staticEval, false);
 
 		return bestScore;
 	}
@@ -518,12 +520,15 @@ public class SearchEngine implements Runnable {
 
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
-		int eval = -Evaluator.VICTORY;
+		int staticEval = -Evaluator.VICTORY;
 
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
-			eval = eval(evalTT, true);
+			staticEval = eval(evalTT);
+			int eval = staticEval;
+			// TODO refine does not improve things here
+			//int eval = refineEval(foundTT, staticEval);
 
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
@@ -569,7 +574,7 @@ public class SearchEngine implements Runnable {
 				board.doMove(0, false);
 				int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
 				if (eval - beta > CompleteEvaluator.PAWN) {
-					R++;
+					R++; // TODO TEST adding PLY
 				}
 				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
 				board.undoMove();
@@ -799,7 +804,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Save in the transposition table
-		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, eval, excludedMove != 0);
+		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != 0);
 
 		return bestScore;
 	}
@@ -889,7 +894,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		rootScore = eval(tt.search(board, 0, false), false);
+		rootScore = eval(tt.search(board, 0, false));
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
