@@ -520,15 +520,14 @@ public class SearchEngine implements Runnable {
 
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
+		int futilityValue = -Evaluator.VICTORY;
 		int staticEval = -Evaluator.VICTORY;
 
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = eval(evalTT);
-			int eval = staticEval;
-			// TODO refine does not improve things here
-			//int eval = refineEval(foundTT, staticEval);
+			int eval = refineEval(foundTT, staticEval);
 
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
@@ -597,13 +596,13 @@ public class SearchEngine implements Runnable {
 				}
 			}
 
-			// Internal Iterative Deepening
+			// Internal Iterative Deepening (IID)
 			// Do a reduced move to search for a ttMove that will improve sorting
 			if (config.getIid() //
 					&& ttMove == 0 //
 					&& depthRemaining >= iidDepth[nodeType] //
 					&& allowNullMove //
-					&& (nodeType != NODE_NULL || eval > beta - config.getIidMargin()) //
+					&& (nodeType != NODE_NULL || staticEval + config.getIidMargin() > beta) //
 					&& excludedMove == 0) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
@@ -616,7 +615,7 @@ public class SearchEngine implements Runnable {
 			if (nodeType == NODE_NULL) {
 				if (depthRemaining <= PLY) { // at frontier nodes
 					if (config.getFutility()) {
-						int futilityValue = eval + config.getFutilityMargin();
+						futilityValue = staticEval + config.getFutilityMargin();
 						if (futilityValue < beta) {
 							futilityHit++;
 							futilityPrune = true;
@@ -624,7 +623,7 @@ public class SearchEngine implements Runnable {
 					}
 				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
 					if (config.getAggressiveFutility()) {
-						int futilityValue = eval + config.getAggressiveFutilityMargin();
+						futilityValue = staticEval + config.getAggressiveFutilityMargin();
 						if (futilityValue < beta) {
 							aggressiveFutilityHit++;
 							futilityPrune = true;
@@ -695,9 +694,11 @@ public class SearchEngine implements Runnable {
 						&& bestScore > -Evaluator.KNOWN_WIN //
 						&& !importantMove) {
 					board.undoMove();
-//					if (bestScore < futilityValue) {
-//						bestScore = futilityValue;
-//					}
+					if (futilityValue <= alpha) {
+						if (futilityValue > bestScore) {
+							bestScore = futilityValue;
+						}
+					}
 					continue;
 				}
 
