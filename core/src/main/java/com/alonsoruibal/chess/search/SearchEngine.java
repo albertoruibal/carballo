@@ -328,7 +328,6 @@ public class SearchEngine implements Runnable {
 	}
 
 	private int pieceValue(char piece) {
-		int capturedPieceValue = 0;
 		switch (Character.toLowerCase(piece)) {
 			case 'p':
 				return CompleteEvaluator.PAWN;
@@ -341,7 +340,7 @@ public class SearchEngine implements Runnable {
 			case 'q':
 				return CompleteEvaluator.QUEEN;
 		}
-		return capturedPieceValue;
+		return 0;
 	}
 
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
@@ -407,10 +406,8 @@ public class SearchEngine implements Runnable {
 			if (board.doMove(move, false)) {
 				validOperations = true;
 
-				// Necessary because TT move can be a no promotion or capture
 				if (!checkEvasion //
-						&& !(board.getCheck() //
-						&& generateChecks) //
+						&& !(board.getCheck() && generateChecks) // Necessary because TT move can be a no promotion or capture
 						&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
 					board.undoMove();
 					continue;
@@ -520,8 +517,7 @@ public class SearchEngine implements Runnable {
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& eval < beta - config.getRazoringMargin() //
-					// No pawns on 7TH
-					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) {
+					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
 				int rbeta = beta - config.getRazoringMargin();
@@ -532,14 +528,14 @@ public class SearchEngine implements Runnable {
 				}
 			}
 
-			// Static null move pruning
+			// Static null move pruning or futility pruning in parent node
 			if (nodeType == NODE_NULL //
 					&& config.getStaticNullMove() //
 					&& allowNullMove //
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
-					&& eval >= beta + config.getFutilityMargin() //
+					&& eval - config.getFutilityMargin() >= beta //
 					&& boardAllowsNullMove()) {
 				return eval - config.getFutilityMargin();
 			}
@@ -581,13 +577,13 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Internal Iterative Deepening
+			// Do a reduced move to search for a ttMove that will improve sorting
 			if (config.getIid() //
 					&& ttMove == 0 //
 					&& depthRemaining >= iidDepth[nodeType] //
 					&& allowNullMove //
 					&& (nodeType != NODE_NULL || eval > beta - config.getIidMargin()) //
-					&& excludedMove == 0  // TODO test to remove
-					) {
+					&& excludedMove == 0) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
 				if (tt.search(board, distanceToInitialPly, false)) {
@@ -598,16 +594,20 @@ public class SearchEngine implements Runnable {
 			// Futility pruning
 			if (nodeType == NODE_NULL) {
 				if (depthRemaining <= PLY) { // at frontier nodes
-					if (config.getFutility() //
-							&& eval < beta - config.getFutilityMargin()) {
-						futilityHit++;
-						futilityPrune = true;
+					if (config.getFutility()) {
+						int futilityValue = eval + config.getFutilityMargin();
+						if (futilityValue < beta) {
+							futilityHit++;
+							futilityPrune = true;
+						}
 					}
 				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-					if (config.getAggressiveFutility() //
-							&& eval < beta - config.getAggressiveFutilityMargin()) {
-						aggressiveFutilityHit++;
-						futilityPrune = true;
+					if (config.getAggressiveFutility()) {
+						int futilityValue = eval + config.getAggressiveFutilityMargin();
+						if (futilityValue < beta) {
+							aggressiveFutilityHit++;
+							futilityPrune = true;
+						}
 					}
 				}
 			}
@@ -948,13 +948,10 @@ public class SearchEngine implements Runnable {
 		int i = 1;
 		while (i < 256) {
 			if (tt.search(board, i, false)) {
-				if (keys.contains(board.getKey())) {
+				if (tt.getBestMove() == 0 || keys.contains(board.getKey())) {
 					break;
 				}
 				keys.add(board.getKey());
-				if (tt.getBestMove() == 0) {
-					break;
-				}
 				if (i == 1) {
 					ponderMove = tt.getBestMove();
 				}
