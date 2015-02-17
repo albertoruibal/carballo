@@ -11,7 +11,6 @@ import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movesort.MoveIterator;
 import com.alonsoruibal.chess.movesort.SortInfo;
-import com.alonsoruibal.chess.tt.MultiprobeTranspositionTable;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import java.util.ArrayList;
@@ -160,7 +159,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		logger.debug("Creating TT");
-		tt = new MultiprobeTranspositionTable(config.getTranspositionTableSize());
+		tt = new TranspositionTable(config.getTranspositionTableSize());
 
 		initialized = true;
 		logger.debug(config.toString());
@@ -296,30 +295,24 @@ public class SearchEngine implements Runnable {
 	private int eval(boolean foundTT, boolean refine) {
 		ttEvalProbe++;
 
-		if (foundTT && (tt.getNodeType() == TranspositionTable.TYPE_EVAL)) {
+		int score;
+		if (foundTT) {
 			ttEvalHit++;
-			return tt.getScore();
-		}
-		int score = evaluator.evaluate(board);
-		if (!board.getTurn()) {
-			score = -score;
-		}
-		tt.set(board, TranspositionTable.TYPE_EVAL, 0, score, (byte) 0, false);
-		if (foundTT && refine) {
-			// Refine value with TT
-			switch (tt.getNodeType()) {
-				case TranspositionTable.TYPE_FAIL_LOW:
-					if (tt.getScore() > score) {
-						score = tt.getScore();
-					}
-					break;
-				case TranspositionTable.TYPE_FAIL_HIGH:
-					if (tt.getScore() < score) {
-						score = tt.getScore();
-					}
-					break;
+			// TODO refine is not being used
+			//score = tt.getEval();
+			return tt.getEval();
+		} else {
+			score = evaluator.evaluate(board);
+			if (!board.getTurn()) {
+				score = -score;
 			}
+			tt.set(board, TranspositionTable.TYPE_EVAL, 0, 0, (byte) 0, score, false);
 		}
+//		if (foundTT && refine &&
+//				(((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() > score)) ||
+//						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() < score)))) {
+//			return tt.getScore();
+//		}
 		return score;
 	}
 
@@ -356,33 +349,47 @@ public class SearchEngine implements Runnable {
 			return evaluateDraw(distanceToInitialPly);
 		}
 
-		int eval = -Evaluator.VICTORY;
-		int score;
-		boolean pv = beta - alpha > 1;
+		// Mate distance pruning
+		alpha = Math.max(valueMatedIn(distanceToInitialPly), alpha);
+		beta = Math.min(valueMateIn(distanceToInitialPly + 1), beta);
+		if (alpha >= beta) {
+			return alpha;
+		}
+
+		boolean isPv = beta - alpha > 1;
+		int ttMove = 0;
 
 		ttProbe++;
 		boolean foundTT = tt.search(board, distanceToInitialPly, false);
 		if (foundTT) {
-			if (!pv && canUseTT(0, alpha, beta)) {
+			if (!isPv && canUseTT(0, alpha, beta)) {
 				return tt.getScore();
 			}
+			ttMove = tt.getBestMove();
 		}
+
+		int bestScore = alpha;
+		int bestMove = 0;
+		int eval = -Evaluator.VICTORY;
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
 			eval = eval(foundTT, true);
 
-			// Evaluation functions increase alpha and can originate beta cutoffs
-			if (eval >= beta) {
-				return eval;
+			if (eval > bestScore) {
+				bestScore = eval;
 			}
-			if (eval > alpha) {
-				alpha = eval;
+			// Evaluation functions increase alpha and can originate beta cutoffs
+			if (bestScore >= beta) {
+				if (!foundTT) {
+					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, 0, bestScore, (byte) 0, eval, false);
+				}
+				return bestScore;
 			}
 		}
 
 		// If we have more depths than possible...
-		if (board.getMoveNumber() - initialPly >= MAX_DEPTH) {
+		if (distanceToInitialPly >= MAX_DEPTH) {
 //			System.out.println("Quiescence exceeds depth qsdepth=" + qsdepth);
 //			System.out.println(board.toString());
 //			for (int i = 0; i < board.getMoveNumber(); i++) {
@@ -390,16 +397,20 @@ public class SearchEngine implements Runnable {
 //				System.out.print(" ");
 //			}
 //			System.out.println();
-			return eval;
+			if (board.getCheck()) {
+				return evaluateDraw(distanceToInitialPly);
+			} else {
+				return eval;
+			}
 		}
 
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
 		// Generate checks for PV on PLY 0
-		boolean generateChecks = pv && (qsdepth == 0);
+		boolean generateChecks = isPv && (qsdepth == 0);
 
-		MoveIterator moveIterator = moveIterators[board.getMoveNumber() - initialPly];
-		moveIterator.genMoves(0, true, generateChecks);
+		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
+		moveIterator.genMoves(ttMove, true, generateChecks);
 		int move;
 
 		while ((move = moveIterator.next()) != 0) {
@@ -414,25 +425,27 @@ public class SearchEngine implements Runnable {
 				}
 
 				// Futility pruning
-				if (!board.getCheck()
-						&& !checkEvasion
-						&& !Move.isPawnPush678(move)
-						&& !pv
-						&& (((board.queens | board.rooks) & board.getMines()) != 0 || (BitboardUtils.popCount(board.bishops | board.knights) & board.getMines()) > 1)) {
+				if (!checkEvasion //
+						&& !board.getCheck() //
+						&& !isPv //
+						&& move != ttMove //
+						&& !Move.isPawnPush678(move) // TODO test if necessary
+						&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
 					int futilityValue = eval + lastCapturedPieceValue(board) + config.getFutilityMarginQS();
-					if (futilityValue < alpha) {
-						// if (futilityValue > bestValue) bestValue =
-						// futilityValue; //TODO
-						// System.out.println("PRUNE!");
+					if (futilityValue < beta) {
+						if (futilityValue > bestScore) {
+							bestScore = futilityValue;
+						}
 						board.undoMove();
 						continue;
 					}
 				}
 
-				score = -quiescentSearch(qsdepth + 1, -beta, -alpha);
+				int score = -quiescentSearch(qsdepth + 1, -beta, -bestScore);
 				board.undoMove();
-				if (score > alpha) {
-					alpha = score;
+				if (score > bestScore) {
+					bestScore = score;
+					bestMove = move;
 					if (score >= beta) {
 						break;
 					}
@@ -443,8 +456,9 @@ public class SearchEngine implements Runnable {
 		if (board.getCheck() && !validOperations) {
 			return valueMatedIn(distanceToInitialPly);
 		}
+		tt.save(board, distanceToInitialPly, 0, bestMove, bestScore, alpha, beta, eval, false);
 
-		return alpha;
+		return bestScore;
 	}
 
 	/**
@@ -504,10 +518,12 @@ public class SearchEngine implements Runnable {
 
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
+		int eval = -Evaluator.VICTORY;
 
 		if (!board.getCheck()) {
-			// Do a static eval
-			int eval = eval(foundTT, true);
+			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
+			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
+			eval = eval(evalTT, true);
 
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
@@ -674,6 +690,9 @@ public class SearchEngine implements Runnable {
 						&& bestScore > -Evaluator.KNOWN_WIN //
 						&& !importantMove) {
 					board.undoMove();
+//					if (bestScore < futilityValue) {
+//						bestScore = futilityValue;
+//					}
 					continue;
 				}
 
@@ -780,7 +799,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Save in the transposition table
-		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, excludedMove != 0);
+		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, eval, excludedMove != 0);
 
 		return bestScore;
 	}

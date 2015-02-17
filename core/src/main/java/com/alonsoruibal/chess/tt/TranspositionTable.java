@@ -1,34 +1,113 @@
 package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.Evaluator;
+import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
 
-public abstract class TranspositionTable {
+import java.util.Arrays;
+
+/**
+ * Transposition table using two keys and multiprobe
+ * <p/>
+ * Uses part of the board's zobrish key (shifted) as the index
+ *
+ * @author rui
+ */
+public class TranspositionTable {
+	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
 
 	public final static int TYPE_EXACT_SCORE = 1;
 	public final static int TYPE_FAIL_LOW = 2;
 	public final static int TYPE_FAIL_HIGH = 3;
 	public final static int TYPE_EVAL = 4;
 
-	/**
-	 * Returns true if key matches with key stored
-	 */
-	public abstract boolean search(Board board, int distanceToInitialPly, boolean exclusion);
+	private final static int MAX_PROBES = 4;
 
-	public abstract int getBestMove();
+	public long[] keys;
+	public long[] infos;
+	public short[] evals;
 
-	public abstract int getNodeType();
+	private int index;
+	private int size;
+	private long info;
+	private byte generation;
 
-	public abstract byte getGeneration();
+	private int score;
+	private int sizeBits;
 
-	public abstract boolean isMyGeneration();
+	public TranspositionTable(int sizeMb) {
+		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
+		size = 1 << sizeBits;
+		keys = new long[size];
+		infos = new long[size];
+		evals = new short[size];
 
-	public abstract byte getDepthAnalyzed();
+		generation = 0;
+		index = -1;
+		logger.debug("Created Multiprobe transposition table, size = " + size + " slots " + size * 18.0 / (1024 * 1024) + " MBytes");
+	}
 
-	public abstract int getScore();
+	public void clear() {
+		Arrays.fill(keys, 0);
+	}
 
-	public void save(Board board, int distanceToInitialPly, int depthAnalyzed, int bestMove, int score, int lowerBound, int upperBound, boolean exclusion) {
+	public boolean search(Board board, int distanceToInitialPly, boolean exclusion) {
+		info = 0;
+		score = 0;
+		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
+		// Verifies that it is really this board
+		for (index = startIndex; index < startIndex + MAX_PROBES && index < size; index++) {
+			if (keys[index] == board.getKey2()) {
+				info = infos[index];
+				score = (short) ((info >>> 48) & 0xffff);
+
+				// Fix mate score with the real distance to the initial PLY
+				if (score >= SearchEngine.VALUE_IS_MATE) {
+					score -= distanceToInitialPly;
+				} else if (score <= -SearchEngine.VALUE_IS_MATE) {
+					score += distanceToInitialPly;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int getBestMove() {
+		return (int) (info & 0x1fffff);
+	}
+
+	public int getNodeType() {
+		return (int) ((info >>> 21) & 0xf);
+	}
+
+	public byte getGeneration() {
+		return (byte) ((info >>> 32) & 0xff);
+	}
+
+	public byte getDepthAnalyzed() {
+		return (byte) ((info >>> 40) & 0xff);
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public int getEval() {
+		return evals[index];
+	}
+
+	public void newGeneration() {
+		generation++;
+	}
+
+	public boolean isMyGeneration() {
+		return getGeneration() == generation;
+	}
+
+	public void save(Board board, int distanceToInitialPly, int depthAnalyzed, int bestMove, int score, int lowerBound, int upperBound, int eval, boolean exclusion) {
 		// Fix mate score with the real distance to mate from the current PLY, not from the initial PLY
 		int fixedScore = score;
 		if (score >= SearchEngine.VALUE_IS_MATE) {
@@ -39,23 +118,86 @@ public abstract class TranspositionTable {
 
 		if (fixedScore > Evaluator.VICTORY || fixedScore < -Evaluator.VICTORY) {
 			System.out.println("The TT score fixed is outside the limits: " + fixedScore);
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.exit(-1);
 		}
 
 		if (score <= lowerBound) {
-			set(board, TranspositionTable.TYPE_FAIL_LOW, bestMove, fixedScore, (byte) depthAnalyzed, exclusion);
+			set(board, TYPE_FAIL_LOW, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
 		} else if (score >= upperBound) {
-			set(board, TranspositionTable.TYPE_FAIL_HIGH, bestMove, fixedScore, (byte) depthAnalyzed, exclusion);
+			set(board, TYPE_FAIL_HIGH, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
 		} else {
-			set(board, TranspositionTable.TYPE_EXACT_SCORE, bestMove, fixedScore, (byte) depthAnalyzed, exclusion);
+			set(board, TYPE_EXACT_SCORE, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
 		}
 	}
 
-	public abstract void set(Board board, int nodeType, int bestMove,
-							 int score, byte depthAnalyzed, boolean exclusion);
+	/**
+	 * In case of collision overwrites the eldest. It must keep PV nodes
+	 */
+	public void set(Board board, int nodeType, int bestMove, int score, int depthAnalyzed, int eval, boolean exclusion) {
+		long key2 = board.getKey2();
+		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
 
-	// called at the start of each search
-	public abstract void newGeneration();
+		// Verifies that it is really this board
+		int oldGenerationIndex = -1; // first index of an old generation entry
+		int notPvIndex = -1; // first index of an not PV entry
+		index = -1;
+		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
+			info = infos[i];
 
-	public abstract void clear();
+			// Replace an empty TT position or the position with the same score type
+			if (keys[i] == 0) {
+				index = i;
+				break;
+				// Replace the same position
+			} else if (keys[i] == key2) {
+				index = i;
+				// Update only evaluation value
+//				if (getNodeType() != TYPE_EVAL && nodeType == TranspositionTable.TYPE_EVAL) {
+//					logger.debug("No debería haber almacenado la eval si ya la tenía en la TT " + getEval() + " ?= " + eval);
+//					evals[i] = (short) eval;
+//					try {
+//						throw new Exception();
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//					return;
+//				}
+				// Do not override PV nodes
+//				if (getNodeType() == TYPE_EXACT_SCORE && nodeType != TYPE_EXACT_SCORE && getGeneration() == generation) {
+//					return;
+//				}
+				// Keep best moves
+//				if (bestMove == 0) {
+//					bestMove = getBestMove();
+//				}
+				break;
+			}
+			if (oldGenerationIndex == -1 && getGeneration() != generation) {
+				oldGenerationIndex = i;
+			}
+			if (notPvIndex == -1 && getNodeType() != TYPE_EXACT_SCORE) {
+				notPvIndex = i;
+			}
+		}
+		if (index == -1 && notPvIndex != -1) {
+			index = notPvIndex;
+		} else if (index == -1 && oldGenerationIndex != -1) {
+			index = oldGenerationIndex;
+		} else if (index == -1) {
+			// TT FULL
+			return;
+		}
 
+		keys[index] = key2;
+		info = (bestMove & 0x1fffff) | ((nodeType & 0xf) << 21) | (((long) (generation & 0xff)) << 32) | (((long) (depthAnalyzed & 0xff)) << 40)
+				| (((long) (score & 0xffff)) << 48);
+
+		infos[index] = info;
+		evals[index] = (short) eval;
+	}
 }
