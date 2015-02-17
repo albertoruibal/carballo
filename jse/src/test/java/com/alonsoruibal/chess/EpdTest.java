@@ -35,9 +35,6 @@ import java.io.InputStreamReader;
  */
 public class EpdTest implements SearchObserver {
 	private static final Logger logger = Logger.getLogger("EpdTest");
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_GREEN = "\u001B[32m";
 
 	Config config;
 	SearchEngine search;
@@ -176,9 +173,9 @@ public class EpdTest implements SearchObserver {
 		solutionFound = found;
 
 		if (found) {
-			logger.debug(ANSI_GREEN + info.toString() + ANSI_RESET);
+			logger.debug(TestColors.ANSI_GREEN + info.toString() + TestColors.ANSI_RESET);
 		} else {
-			logger.debug(ANSI_RED + info.toString() + ANSI_RESET);
+			logger.debug(TestColors.ANSI_RED + info.toString() + TestColors.ANSI_RESET);
 		}
 	}
 
