@@ -15,19 +15,18 @@ import java.io.InputStreamReader;
 
 /**
  * UCI Interface TODO ponder
- *
- * @author rui
  */
 public class Uci implements SearchObserver {
 
+	Config config;
 	SearchEngineThreaded engine;
 
 	boolean needsReload = true;
 
 	public Uci() {
 		Logger.noLog = true; // Disable logging
-		engine = new SearchEngineThreaded(new Config());
-		engine.getConfig().setBook(new FileBook("/book_small.bin"));
+		config = new Config();
+		config.setBook(new FileBook("/book_small.bin"));
 	}
 
 	void loop() {
@@ -93,80 +92,88 @@ public class Uci implements SearchObserver {
 					String value = tokens[index++];
 
 					if ("Hash".equals(name)) {
-						engine.getConfig().setTranspositionTableSize(Integer.parseInt(value));
+						config.setTranspositionTableSize(Integer.parseInt(value));
 					} else if ("OwnBook".equals(name)) {
-						engine.getConfig().setUseBook(Boolean.parseBoolean(value));
+						config.setUseBook(Boolean.parseBoolean(value));
 					} else if ("NullMove".equals(name)) {
-						engine.getConfig().setNullMove(Boolean.parseBoolean(value));
+						config.setNullMove(Boolean.parseBoolean(value));
 					} else if ("NullMoveMargin".equals(name)) {
-						engine.getConfig().setNullMoveMargin(Integer.parseInt(value));
+						config.setNullMoveMargin(Integer.parseInt(value));
 					} else if ("StaticNullMove".equals(name)) {
-						engine.getConfig().setStaticNullMove(Boolean.parseBoolean(value));
+						config.setStaticNullMove(Boolean.parseBoolean(value));
 					} else if ("IID".equals(name)) {
-						engine.getConfig().getIid(Boolean.parseBoolean(value));
+						config.getIid(Boolean.parseBoolean(value));
 					} else if ("IIDMargin".equals(name)) {
-						engine.getConfig().setIidMargin(Integer.parseInt(value));
+						config.setIidMargin(Integer.parseInt(value));
 					} else if ("ExtensionsCheck".equals(name)) {
-						engine.getConfig().setExtensionsCheck(Integer.parseInt(value));
+						config.setExtensionsCheck(Integer.parseInt(value));
 					} else if ("ExtensionsPawnPush".equals(name)) {
-						engine.getConfig().setExtensionsPawnPush(Integer.parseInt(value));
+						config.setExtensionsPawnPush(Integer.parseInt(value));
 					} else if ("ExtensionsPassedPawn".equals(name)) {
-						engine.getConfig().setExtensionsPassedPawn(Integer.parseInt(value));
+						config.setExtensionsPassedPawn(Integer.parseInt(value));
 					} else if ("ExtensionsMateThreat".equals(name)) {
-						engine.getConfig().setExtensionsMateThreat(Integer.parseInt(value));
+						config.setExtensionsMateThreat(Integer.parseInt(value));
 					} else if ("ExtensionsRecapture".equals(name)) {
-						engine.getConfig().setExtensionsRecapture(Integer.parseInt(value));
+						config.setExtensionsRecapture(Integer.parseInt(value));
 					} else if ("ExtensionsSingular".equals(name)) {
-						engine.getConfig().setExtensionsSingular(Integer.parseInt(value));
+						config.setExtensionsSingular(Integer.parseInt(value));
 					} else if ("SingularExtensionMargin".equals(name)) {
-						engine.getConfig().setSingularExtensionMargin(Integer.parseInt(value));
+						config.setSingularExtensionMargin(Integer.parseInt(value));
 					} else if ("Evaluator".equals(name)) {
-						engine.getConfig().setEvaluator(value);
+						config.setEvaluator(value);
 					} else if ("AspirationWindow".equals(name)) {
-						engine.getConfig().setAspirationWindow(Boolean.parseBoolean(value));
+						config.setAspirationWindow(Boolean.parseBoolean(value));
 					} else if ("AspirationWindowSizes".equals(name)) {
-						engine.getConfig().setAspirationWindowSizes(value);
+						config.setAspirationWindowSizes(value);
 					} else if ("Futility".equals(name)) {
-						engine.getConfig().setFutility(Boolean.parseBoolean(value));
+						config.setFutility(Boolean.parseBoolean(value));
 					} else if ("FutilityMargin".equals(name)) {
-						engine.getConfig().setFutilityMargin(Integer.parseInt(value));
+						config.setFutilityMargin(Integer.parseInt(value));
 					} else if ("AggressiveFutility".equals(name)) {
-						engine.getConfig().setAggressiveFutility(Boolean.parseBoolean(value));
+						config.setAggressiveFutility(Boolean.parseBoolean(value));
 					} else if ("AggressiveFutilityMargin".equals(name)) {
-						engine.getConfig().setAggressiveFutilityMargin(Integer.parseInt(value));
+						config.setAggressiveFutilityMargin(Integer.parseInt(value));
 					} else if ("FutilityMarginQS".equals(name)) {
-						engine.getConfig().setFutilityMarginQS(Integer.parseInt(value));
+						config.setFutilityMarginQS(Integer.parseInt(value));
 					} else if ("Razoring".equals(name)) {
-						engine.getConfig().setRazoring(Boolean.parseBoolean(value));
+						config.setRazoring(Boolean.parseBoolean(value));
 					} else if ("RazoringMargin".equals(name)) {
-						engine.getConfig().setRazoringMargin(Integer.parseInt(value));
+						config.setRazoringMargin(Integer.parseInt(value));
 					} else if ("ContemptFactor".equals(name)) {
-						engine.getConfig().setContemptFactor(Integer.parseInt(value));
+						config.setContemptFactor(Integer.parseInt(value));
 					} else if ("EvalCenter".equals(name)) {
-						engine.getConfig().setEvalCenter(Integer.parseInt(value));
+						config.setEvalCenter(Integer.parseInt(value));
 					} else if ("EvalPositional".equals(name)) {
-						engine.getConfig().setEvalPositional(Integer.parseInt(value));
+						config.setEvalPositional(Integer.parseInt(value));
 					} else if ("EvalAttacks".equals(name)) {
-						engine.getConfig().setEvalAttacks(Integer.parseInt(value));
+						config.setEvalAttacks(Integer.parseInt(value));
 					} else if ("EvalMobility".equals(name)) {
-						engine.getConfig().setEvalMobility(Integer.parseInt(value));
+						config.setEvalMobility(Integer.parseInt(value));
 					} else if ("EvalPawnStructure".equals(name)) {
-						engine.getConfig().setEvalPawnStructure(Integer.parseInt(value));
+						config.setEvalPawnStructure(Integer.parseInt(value));
 					} else if ("EvalPassedPawns".equals(name)) {
-						engine.getConfig().setEvalPassedPawns(Integer.parseInt(value));
+						config.setEvalPassedPawns(Integer.parseInt(value));
 					} else if ("EvalKingSafety".equals(name)) {
-						engine.getConfig().setEvalKingSafety(Integer.parseInt(value));
+						config.setEvalKingSafety(Integer.parseInt(value));
 					} else if ("Rand".equals(name)) {
-						engine.getConfig().setRand(Integer.parseInt(value));
+						config.setRand(Integer.parseInt(value));
 					}
 					needsReload = true;
 
 				} else if ("isready".equals(command)) {
 					if (needsReload) {
-						engine.init();
+						engine = new SearchEngineThreaded(config);
 						engine.setObserver(this);
-						System.gc();
 						needsReload = false;
+						System.gc();
+					} else {
+						// Wait for the engine to finish searching
+						while (engine.isSearching()) {
+							try {
+								Thread.sleep(100);
+							} catch (Exception e) {
+							}
+						}
 					}
 					System.out.println("readyok");
 				} else if ("quit".equals(command)) {
@@ -208,6 +215,7 @@ public class Uci implements SearchObserver {
 
 				} else if ("ucinewgame".equals(command)) {
 					engine.getBoard().startPosition();
+					engine.clear();
 				} else if ("position".equals(command)) {
 					if (index < tokens.length) {
 						String arg1 = tokens[index++];
@@ -217,6 +225,9 @@ public class Uci implements SearchObserver {
 							// FEN string may have spaces
 							StringBuilder fenSb = new StringBuilder();
 							while (index < tokens.length) {
+								if ("moves".equals(tokens[index])) {
+									break;
+								}
 								fenSb.append(tokens[index++]);
 								if (index < tokens.length) {
 									fenSb.append(" ");
@@ -259,9 +270,6 @@ public class Uci implements SearchObserver {
 			sb.append(Move.toString(ponder));
 		}
 		System.out.println(sb.toString());
-		// TODO reset engine, a weird problem originates strange moves if engine
-		// is not reset
-		// engine.getTT().clear();
 	}
 
 	public void info(SearchStatusInfo info) {
