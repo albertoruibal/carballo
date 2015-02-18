@@ -31,6 +31,8 @@ public class SearchEngine implements Runnable {
 	private static final int PLY = 2;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int RAZOR_DEPTH = 4 * PLY;
+	private static final int[] SINGULAR_MOVE_DEPTH = {6 * PLY, 6 * PLY, 8 * PLY};
+	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
 
 	public static final int NODE_ROOT = 0;
 	public static final int NODE_PV = 1;
@@ -111,8 +113,6 @@ public class SearchEngine implements Runnable {
 	private Random random;
 
 	private int[][] pvReductionMatrix, nonPvReductionMatrix;
-	private int[] singularMoveDepth = {6 * PLY, 6 * PLY, 8 * PLY};
-	private int[] iidDepth = {5 * PLY, 5 * PLY, 8 * PLY};
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -602,12 +602,12 @@ public class SearchEngine implements Runnable {
 			// Do a reduced move to search for a ttMove that will improve sorting
 			if (config.getIid() //
 					&& ttMove == 0 //
-					&& depthRemaining >= iidDepth[nodeType] //
+					&& depthRemaining >= IID_DEPTH[nodeType] //
 					&& allowNullMove //
 					&& (nodeType != NODE_NULL || staticEval + config.getIidMargin() > beta) //
 					&& excludedMove == 0) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
-				search(nodeType, d, alpha, beta, true, 0); // TODO Allow null move ?
+				search(nodeType, d, alpha, beta, false, 0);
 				if (tt.search(board, distanceToInitialPly, false)) {
 					ttMove = tt.getBestMove();
 				}
@@ -663,7 +663,7 @@ public class SearchEngine implements Runnable {
 						&& extension < PLY //
 						&& excludedMove == 0 //
 						&& config.getExtensionsSingular() > 0 //
-						&& depthRemaining >= singularMoveDepth[nodeType] //
+						&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
 						&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
 						&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
 						&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
