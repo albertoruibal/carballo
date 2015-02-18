@@ -955,6 +955,9 @@ public class SearchEngine implements Runnable {
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
 		sb.append(Move.toSan(board, firstMove));
 		board.doMove(firstMove);
+		if (board.getCheck()) {
+			sb.append("+");
+		}
 
 		int i = 1;
 		while (i < 256) {
@@ -970,13 +973,12 @@ public class SearchEngine implements Runnable {
 				sb.append(Move.toSan(board, tt.getBestMove()));
 				board.doMove(tt.getBestMove(), false);
 				i++;
+				if (board.isMate()) {
+					sb.append("#");
+					break;
+				}
 				if (board.getCheck()) {
-					if (board.isMate()) {
-						sb.append("#");
-						break;
-					} else {
-						sb.append("+");
-					}
+					sb.append("+");
 				}
 			} else {
 				break;
