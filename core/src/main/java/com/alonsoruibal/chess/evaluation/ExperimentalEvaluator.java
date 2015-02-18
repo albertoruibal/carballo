@@ -218,40 +218,31 @@ public class ExperimentalEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
-		int[] pawnMaterial = {0, 0};
-		pawnMaterial[0] = PAWN * BitboardUtils.popCount(board.pawns & board.whites);
-		pawnMaterial[1] = PAWN * BitboardUtils.popCount(board.pawns & board.blacks);
+		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
+		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
+		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
+		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
+		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
+		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
+		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
+		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
+		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
+		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
 
-		int[] material = {0, 0};
-		material[0] = KNIGHT * BitboardUtils.popCount(board.knights & board.whites) + //
-				BISHOP * BitboardUtils.popCount(board.bishops & board.whites) + //
-				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
-						(board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0) + //
-				ROOK * BitboardUtils.popCount(board.rooks & board.whites) + //
-				QUEEN * BitboardUtils.popCount(board.queens & board.whites);
-
-		material[1] = KNIGHT * BitboardUtils.popCount(board.knights & board.blacks) + //
-				BISHOP * BitboardUtils.popCount(board.bishops & board.blacks) + //
-				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
-						(board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0) + //
-				ROOK * BitboardUtils.popCount(board.rooks & board.blacks) + //
-				QUEEN * BitboardUtils.popCount(board.queens & board.blacks);
-
-		// Endgame detection
-		if ((material[1] == 0 && material[0] == 0 && pawnMaterial[1] == 0 && pawnMaterial[0] == PAWN) || //
-				(material[0] == 0 && material[1] == 0 && pawnMaterial[0] == 0 && pawnMaterial[1] == PAWN)) {
-			return Endgame.endgameKPK(board, pawnMaterial);
+		int endGameValue = Endgame.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
+		if (endGameValue != Evaluator.NO_VALUE) {
+			return endGameValue;
 		}
-		if ((material[1] == 0 && pawnMaterial[1] == 0 && material[0] >= ROOK) || //
-				(material[0] == 0 && pawnMaterial[0] == 0 && material[1] >= ROOK)) {
-			if (board.pawns == 0 && board.rooks == 0 && board.queens == 0 && //
-					BitboardUtils.popCount(board.bishops) == 1 && BitboardUtils.popCount(board.knights) == 1) {
-				return Endgame.endgameKBNK(board, pawnMaterial, material);
-			}
-			if (board.rooks != 0 || board.queens != 0) {
-				return Endgame.endgameKXK(board, pawnMaterial, material);
-			}
-		}
+
+		int[] pawnMaterial = {PAWN * whitePawns, PAWN * blackPawns};
+		int[] material = {
+				KNIGHT * whiteKnights + BISHOP * whiteBishops + ROOK * whiteRooks + QUEEN * whiteQueens + //
+						((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
+								(board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0), //
+				KNIGHT * blackKnights + BISHOP * blackBishops + ROOK * blackRooks + QUEEN * blackQueens + //
+						((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
+								(board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0) //
+		};
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray, auxLong, auxLong2;

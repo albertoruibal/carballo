@@ -36,26 +36,50 @@ public class Endgame {
 		kpkBitbase = new KPKBitbase();
 	}
 
-	// One side does not have pieces, drives the king to the corners and try to approximate the kings
-	public static int endgameKXK(Board board, int[] pawnMaterial, int[] material) {
-		boolean whiteDominant = (material[0] == 0 ? false : true);
+	public static int endGameValue(Board board, int whitePawns, int blackPawns, int whiteKnights, int blackKnights, int whiteBishops, int blackBishops, int whiteRooks, int blackRooks, int whiteQueens, int blackQueens) {
+		// Endgame detection
 
+		int whiteNoPawnMaterial = whiteKnights + whiteBishops + whiteRooks + whiteQueens;
+		int blackNoPawnMaterial = blackKnights + blackBishops + blackRooks + blackQueens;
+		int whiteMaterial = whiteNoPawnMaterial + whitePawns;
+		int blackMaterial = blackNoPawnMaterial + blackPawns;
+
+		if ((blackMaterial == 0 && whiteNoPawnMaterial == 0 && whitePawns == 1) || //
+				(whiteMaterial == 0 && blackNoPawnMaterial == 0 && blackPawns == 1)) {
+			return Endgame.endgameKPK(board, whiteMaterial > blackMaterial);
+		}
+		if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 2) || //
+				(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 2)) {
+			return Evaluator.DRAW; // KNNk is draw
+		}
+		if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 1 && whiteBishops == 1) || //
+				(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
+			return Endgame.endgameKBNK(board, whiteMaterial > blackMaterial);
+		}
+		if (blackMaterial == 0 && (whiteBishops >= 2 || whiteRooks > 0 || whiteQueens > 0) || //
+				whiteMaterial == 0 && (whiteBishops >= 2 || blackRooks > 0 || blackQueens > 0)) {
+			return Endgame.endgameKXK(board, whiteMaterial > blackMaterial, whiteKnights + blackKnights, whiteBishops + blackBishops, whiteRooks + blackRooks, whiteQueens + blackQueens);
+		}
+		return Evaluator.NO_VALUE;
+	}
+
+	// One side does not have pieces, drives the king to the corners and try to approximate the kings
+	private static int endgameKXK(Board board, boolean whiteDominant, int knights, int bishops, int rooks, int queens) {
 		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
 		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
-		int value = closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] +//
+		int value = Evaluator.KNOWN_WIN +
+				knights * ExperimentalEvaluator.KNIGHT +
+				bishops * ExperimentalEvaluator.BISHOP +
+				rooks * ExperimentalEvaluator.ROOK +
+				queens * ExperimentalEvaluator.QUEEN +
+				closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] +//
 				(whiteDominant ? toCorners[blackKingIndex] : toCorners[whiteKingIndex]);
 
-		if ((board.queens != 0) || (board.rooks != 0) || ((board.bishops != 0) && (board.knights) != 0) || (BitboardUtils.popCount(board.bishops) >= 2)) {
-			value += Evaluator.KNOWN_WIN;
-		}
-
-		return (whiteDominant ? value : -value) + pawnMaterial[0] + material[0] - pawnMaterial[1] - material[1];
+		return (whiteDominant ? value : -value);
 	}
 
 	// NB vs K must drive the king to the corner of the color of the bishop
-	public static int endgameKBNK(Board board, int[] pawnMaterial, int[] material) {
-		boolean whiteDominant = (material[0] == 0 ? false : true);
-
+	private static int endgameKBNK(Board board, boolean whiteDominant) {
 		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
 		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
 
@@ -67,16 +91,16 @@ public class Endgame {
 		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] + //
 				(whiteDominant ? toColorCorners[blackKingIndex] : toColorCorners[whiteKingIndex]);
 
-		return (whiteDominant ? value : -value) + pawnMaterial[0] + material[0] - pawnMaterial[1] - material[1];
+		return (whiteDominant ? value : -value);
 	}
 
-	public static int endgameKPK(Board board, int[] pawnMaterial) {
+	private static int endgameKPK(Board board, boolean whiteDominant) {
 		if (!kpkBitbase.probe(board)) {
 			return Evaluator.DRAW;
 		}
 
-		boolean whiteDominant = (board.whites & board.pawns) != 0;
-		return whiteDominant ? Evaluator.KNOWN_WIN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
-				-Evaluator.KNOWN_WIN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns))) + pawnMaterial[0] - pawnMaterial[1];
+		return whiteDominant ?
+				Evaluator.KNOWN_WIN + ExperimentalEvaluator.PAWN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
+				-Evaluator.KNOWN_WIN - ExperimentalEvaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
 	}
 }

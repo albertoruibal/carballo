@@ -212,8 +212,8 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testBishopBonus() {
-		String fen1 = "3BB2k/8/8/8/8/8/8/7K w QKqk - 0 0";
-		String fen2 = "2B1B2k/8/8/8/8/8/8/7K w QKqk - 0 0";
+		String fen1 = "3BB2k/8/8/8/8/8/p7/7K w QKqk - 0 0";
+		String fen2 = "2B1B2k/8/8/8/8/8/p7/7K w QKqk - 0 0";
 		Board board = new Board();
 		board.setFen(fen1);
 		int value1 = evaluator.evaluate(board);
