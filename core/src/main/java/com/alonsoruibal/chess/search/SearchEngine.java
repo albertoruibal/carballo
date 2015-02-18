@@ -292,7 +292,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * It also changes the sign to the score depending of the turn
 	 */
-	private int eval(boolean foundTT) {
+	public int eval(boolean foundTT) {
 		ttEvalProbe++;
 
 		int eval;
@@ -308,7 +308,7 @@ public class SearchEngine implements Runnable {
 		return eval;
 	}
 
-	int refineEval(boolean foundTT, int eval) {
+	public int refineEval(boolean foundTT, int eval) {
 		if (foundTT && (((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
 				((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
 			return tt.getScore();
