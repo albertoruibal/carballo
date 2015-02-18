@@ -16,8 +16,8 @@ import org.junit.experimental.categories.Category;
 public class TournamentTest implements SearchObserver {
 	static final int GAME_TIME_PER_PLAYER = 5000; // in milliseconds
 	static final int MOVE_TIME_INC = 0; // in milliseconds
-	static final int THINK_TO_DEPTH = 0; // if > 0, it establishes a depth limit, used with 3 or 6 to make fast tournaments it is useful to fast test evaluator changes
-	static final int THINK_TO_NODES = 0; // When making changes in the search engine, is better to make tests limiting the search nodes
+	static final int THINK_TO_DEPTH = Integer.MAX_VALUE; // if > 0, it establishes a depth limit, used with 3 or 6 to make fast tournaments it is useful to fast test evaluator changes
+	static final int THINK_TO_NODES = Integer.MAX_VALUE; // When making changes in the search engine, is better to make tests limiting the search nodes
 	static final int SLEEP = 100;
 	static final int TEST_SIZE = 60;
 	static final int GAMES = 20 * TEST_SIZE; // Test suite is based on 30 games and they are played with whites and blacks, so we make x60 times
@@ -43,10 +43,11 @@ public class TournamentTest implements SearchObserver {
 		// Change here the parameters in one of the chess engines to test the differences
 		// Example: config1.setElo(2000);
 		// ...
-//		config1.setEvalPassedPawns(0);
-//		config2.setEvalPassedPawns(0);
-//		config1.setEvalPawnStructure(0);
-//		config2.setEvalPawnStructure(0);
+//		config1.setRazoringMargin(600);
+//		config2.setRazoringMargin(900);
+
+		config1.setSingularExtensionMargin(40);
+		config2.setSingularExtensionMargin(50);
 
 		engine1 = new SearchEngine(config1);
 		engine2 = new SearchEngine(config2);

@@ -23,7 +23,7 @@ public class SearchParameters {
 	// Search for mate in mate moves
 	int mate;
 	// Search movetime seconds
-	int moveTime;
+	int moveTime = Integer.MAX_VALUE;
 	// Think infinite
 	boolean infinite;
 
@@ -126,7 +126,7 @@ public class SearchParameters {
 		if (infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
 			return Long.MAX_VALUE;
 		}
-		if (moveTime != 0) {
+		if (moveTime != Integer.MAX_VALUE) {
 			return startTime + moveTime;
 		}
 
