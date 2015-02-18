@@ -17,14 +17,14 @@ public class SearchParameters {
 	// Moves to the next time control
 	int movesToGo;
 	// Analize x plyes only
-	int depth;
+	int depth = Integer.MAX_VALUE;
 	// Search only this number of nodes
-	int nodes;
-	// seatch for mate in mate moves
+	int nodes = Integer.MAX_VALUE;
+	// Search for mate in mate moves
 	int mate;
-	// search movetime seconds
+	// Search movetime seconds
 	int moveTime;
-	// think infinite
+	// Think infinite
 	boolean infinite;
 
 	boolean ponder;
@@ -122,12 +122,12 @@ public class SearchParameters {
 	 *
 	 * @return
 	 */
-	public long calculateMoveTime(Board board) {
-		if (infinite) {
-			return 999999999;
+	public long calculateMoveTime(Board board, long startTime) {
+		if (infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
+			return Long.MAX_VALUE;
 		}
 		if (moveTime != 0) {
-			return moveTime;
+			return startTime + moveTime;
 		}
 
 		int calctime = 0;
@@ -141,7 +141,7 @@ public class SearchParameters {
 			}
 		}
 		logger.debug("Thinking for " + calctime + "Ms");
-		return calctime;
+		return startTime + calctime;
 	}
 
 	public static SearchParameters get(int moveTime) {

@@ -45,8 +45,8 @@ public class SearchEngine implements Runnable {
 
 	// Think limits
 	private long thinkToTime = 0;
-	private long thinkToNodes = 0;
-	private long thinkToDepth = 0;
+	private int thinkToNodes = 0;
+	private int thinkToDepth = 0;
 
 	private Board board;
 	private SearchObserver observer;
@@ -862,23 +862,9 @@ public class SearchEngine implements Runnable {
 
 		initialPly = board.getMoveNumber();
 
-		thinkToTime = Long.MAX_VALUE;
-		thinkToNodes = Long.MAX_VALUE;
-		thinkToDepth = Long.MAX_VALUE;
-
-		boolean searchLimitSet = false;
-		if (searchParameters.getNodes() > 0) {
-			thinkToNodes = searchParameters.getNodes();
-			searchLimitSet = true;
-		}
-		if (searchParameters.getDepth() > 0) {
-			thinkToDepth = searchParameters.getDepth();
-			searchLimitSet = true;
-		}
-		long moveTime = searchParameters.calculateMoveTime(board);
-		if (moveTime > 0 || !searchLimitSet) {
-			thinkToTime = startTime + moveTime;
-		}
+		thinkToNodes = searchParameters.getNodes();
+		thinkToDepth = searchParameters.getDepth();
+		thinkToTime = searchParameters.calculateMoveTime(board, startTime);
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
