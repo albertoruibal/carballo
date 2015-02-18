@@ -309,7 +309,9 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int refineEval(boolean foundTT, int eval) {
-		if (foundTT && (((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
+		if (foundTT &&
+				((tt.getNodeType() == TranspositionTable.TYPE_EXACT_SCORE) ||
+						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
 				((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
 			return tt.getScore();
 		}
