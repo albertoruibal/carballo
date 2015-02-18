@@ -116,15 +116,8 @@ public class TranspositionTable {
 			fixedScore -= distanceToInitialPly;
 		}
 
-		if (fixedScore > Evaluator.VICTORY || fixedScore < -Evaluator.VICTORY) {
-			System.out.println("The TT score fixed is outside the limits: " + fixedScore);
-			try {
-				throw new Exception();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			System.exit(-1);
-		}
+		assert fixedScore >= -Evaluator.VICTORY && fixedScore <= Evaluator.VICTORY;
+		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.VICTORY;
 
 		if (score <= lowerBound) {
 			set(board, TYPE_FAIL_LOW, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
@@ -149,32 +142,9 @@ public class TranspositionTable {
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];
 
-			// Replace an empty TT position or the position with the same score type
-			if (keys[i] == 0) {
+			// Replace an empty TT position or the same position
+			if (keys[i] == 0 || keys[i] == key2) {
 				index = i;
-				break;
-				// Replace the same position
-			} else if (keys[i] == key2) {
-				index = i;
-				// Update only evaluation value
-//				if (getNodeType() != TYPE_EVAL && nodeType == TranspositionTable.TYPE_EVAL) {
-//					logger.debug("No debería haber almacenado la eval si ya la tenía en la TT " + getEval() + " ?= " + eval);
-//					evals[i] = (short) eval;
-//					try {
-//						throw new Exception();
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//					return;
-//				}
-				// Do not override PV nodes
-//				if (getNodeType() == TYPE_EXACT_SCORE && nodeType != TYPE_EXACT_SCORE && getGeneration() == generation) {
-//					return;
-//				}
-				// Keep best moves
-//				if (bestMove == 0) {
-//					bestMove = getBestMove();
-//				}
 				break;
 			}
 			if (oldGenerationIndex == -1 && getGeneration() != generation) {
