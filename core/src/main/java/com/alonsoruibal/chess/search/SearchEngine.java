@@ -956,11 +956,8 @@ public class SearchEngine implements Runnable {
 	private void getPv(int firstMove) {
 		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
-		sb.append(Move.toSan(board, firstMove));
+		sb.append(Move.toString(firstMove));
 		board.doMove(firstMove);
-		if (board.getCheck()) {
-			sb.append("+");
-		}
 
 		int i = 1;
 		while (i < 256) {
@@ -973,15 +970,11 @@ public class SearchEngine implements Runnable {
 					ponderMove = tt.getBestMove();
 				}
 				sb.append(" ");
-				sb.append(Move.toSan(board, tt.getBestMove()));
+				sb.append(Move.toString(tt.getBestMove()));
 				board.doMove(tt.getBestMove(), false);
 				i++;
 				if (board.isMate()) {
-					sb.append("#");
 					break;
-				}
-				if (board.getCheck()) {
-					sb.append("+");
 				}
 			} else {
 				break;
