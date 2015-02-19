@@ -833,25 +833,25 @@ public class SearchEngine implements Runnable {
 
 	private void searchStats() {
 		logger.debug("Positions PV      = " + pvPositionCounter + " " //
-				+ String.format("%.2f", 100.0 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+				+ (100 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("Positions QS      = " + qsPositionCounter + " " //
-				+ String.format("%.2f", 100.0 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+				+ (100 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
 		logger.debug("Positions Null    = " + positionCounter + " " //
-				+ String.format("%.2f", 100.0 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-		logger.debug("PV Cut            = " + pvCutNodes + " " + String.format("%.2f", 100.0 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
+				+ (100 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
-		logger.debug("Null Cut          = " + nullCutNodes + " " + String.format("%.2f", 100.0 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
+		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
 		logger.debug("Null All          = " + nullAllNodes);
-		logger.debug("Asp Win      Hits = " + String.format("%.2f", 100.0 * aspirationWindowHit / aspirationWindowProbe) + "%");
-		logger.debug("TT Eval      Hits = " + ttEvalHit + " " + String.format("%.2f", 100.0 * ttEvalHit / ttEvalProbe) + "%");
-		logger.debug("TT PV        Hits = " + ttPvHit + " " + String.format("%.2f", 100.0 * ttPvHit / ttProbe) + "%");
-		logger.debug("TT LB        Hits = " + ttProbe + " " + String.format("%.2f", 100.0 * ttLBHit / ttProbe) + "%");
-		logger.debug("TT UB        Hits = " + ttUBHit + " " + String.format("%.2f", 100.0 * ttUBHit / ttProbe) + "%");
+		logger.debug("Asp Win      Hits = " + (100 * aspirationWindowHit / aspirationWindowProbe) + "%");
+		logger.debug("TT Eval      Hits = " + ttEvalHit + " " + (100 * ttEvalHit / ttEvalProbe) + "%");
+		logger.debug("TT PV        Hits = " + ttPvHit + " " + (1000000 * ttPvHit / ttProbe) + " per 10^6");
+		logger.debug("TT LB        Hits = " + ttProbe + " " + (100 * ttLBHit / ttProbe) + "%");
+		logger.debug("TT UB        Hits = " + ttUBHit + " " + (100 * ttUBHit / ttProbe) + "%");
 		logger.debug("Futility     Hits = " + futilityHit);
 		logger.debug("Agg.Futility Hits = " + aggressiveFutilityHit);
-		logger.debug("Null Move    Hits = " + nullMoveHit + " " + String.format("%.2f", 100.0 * nullMoveHit / nullMoveProbe) + "%");
-		logger.debug("Razoring     Hits = " + razoringHit + " " + String.format("%.2f", 100.0 * razoringHit / razoringProbe) + "%");
-		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + String.format("%.2f", 100.0 * singularExtensionHit / singularExtensionProbe) + "%");
+		logger.debug("Null Move    Hits = " + nullMoveHit + " " + (100 * nullMoveHit / nullMoveProbe) + "%");
+		logger.debug("Razoring     Hits = " + razoringHit + " " + (100 * razoringHit / razoringProbe) + "%");
+		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100 * singularExtensionHit / singularExtensionProbe) + "%");
 	}
 
 	public void newRun() throws SearchFinishedException {
