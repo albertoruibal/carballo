@@ -41,7 +41,7 @@ public class Board {
 	public int fiftyMovesRule = 0;
 	public int initialMoveNumber = 0;
 	public int moveNumber = 0;
-	public int outBookMove = 0;
+	public int outBookMove = Integer.MAX_VALUE;
 	public long[] key = {0, 0};
 
 	public String initialFen;
@@ -399,7 +399,7 @@ public class Board {
 			initialFen = fen;
 			initialMoveNumber = fenMoveNumber;
 			moveNumber = fenMoveNumber;
-			outBookMove = 9999;
+			outBookMove = Integer.MAX_VALUE;
 
 			whites = tmpWhites;
 			blacks = tmpBlacks;
@@ -423,6 +423,10 @@ public class Board {
 			// and save history
 			resetHistory();
 			saveHistory(0, false);
+		} else {
+			if (moveNumber < outBookMove) {
+				outBookMove = Integer.MAX_VALUE;
+			}
 		}
 	}
 
