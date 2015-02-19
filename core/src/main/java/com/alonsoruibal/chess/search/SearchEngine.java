@@ -538,9 +538,14 @@ public class SearchEngine implements Runnable {
 					&& allowNullMove // Not when last was a null move
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval < beta - config.getRazoringMargin() //
+					&& eval + config.getRazoringMargin() < beta //
 					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
+
+				if (depthRemaining <= PLY) {
+					razoringHit++;
+					return quiescentSearch(0, alpha, beta);
+				}
 
 				int rbeta = beta - config.getRazoringMargin();
 				int v = quiescentSearch(0, rbeta - 1, rbeta);
@@ -902,7 +907,7 @@ public class SearchEngine implements Runnable {
 			aspirationWindowProbe++;
 			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
 
-			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", score=" + score);
+			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", rootScore=" + rootScore);
 
 			if (rootScore <= alpha) {
 				failLowCount++;
