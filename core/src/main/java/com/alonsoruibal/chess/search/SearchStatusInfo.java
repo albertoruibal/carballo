@@ -279,6 +279,10 @@ public class SearchStatusInfo {
 			sb.append(" time ");
 			sb.append(time);
 		}
+		if (hashFull != 0) {
+			sb.append(" hashfull ");
+			sb.append(hashFull);
+		}
 		if (nps != 0) {
 			sb.append(" nps ");
 			sb.append(nps);

@@ -33,6 +33,7 @@ public class TranspositionTable {
 	private int size;
 	private long info;
 	private byte generation;
+	private int entriesOccupied;
 
 	private int score;
 	private int sizeBits;
@@ -43,6 +44,7 @@ public class TranspositionTable {
 		keys = new long[size];
 		infos = new long[size];
 		evals = new short[size];
+		entriesOccupied = 0;
 
 		generation = 0;
 		index = -1;
@@ -50,6 +52,7 @@ public class TranspositionTable {
 	}
 
 	public void clear() {
+		entriesOccupied = 0;
 		Arrays.fill(keys, 0);
 	}
 
@@ -137,13 +140,17 @@ public class TranspositionTable {
 
 		// Verifies that it is really this board
 		int oldGenerationIndex = -1; // first index of an old generation entry
-		int notPvIndex = -1; // first index of an not PV entry
+		int notPvIndex = -1; // first index of a not PV entry
 		index = -1;
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];
 
 			// Replace an empty TT position or the same position
-			if (keys[i] == 0 || keys[i] == key2) {
+			if (keys[i] == 0) {
+				entriesOccupied++;
+				index = i;
+				break;
+			} else if (keys[i] == key2) {
 				index = i;
 				break;
 			}
@@ -169,5 +176,9 @@ public class TranspositionTable {
 
 		infos[index] = info;
 		evals[index] = (short) eval;
+	}
+
+	public int getHashFull() {
+		return (int) (1000L * entriesOccupied / size);
 	}
 }
