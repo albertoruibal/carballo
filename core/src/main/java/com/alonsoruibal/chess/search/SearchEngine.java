@@ -759,7 +759,7 @@ public class SearchEngine implements Runnable {
 						info.setSelDepth(selDepth);
 						info.setTime(time - startTime);
 						info.setPv(pv);
-						info.setScore(score);
+						info.setScore(score, alpha, beta);
 						info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
 						info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
 

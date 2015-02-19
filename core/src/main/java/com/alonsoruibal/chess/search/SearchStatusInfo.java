@@ -79,6 +79,8 @@ public class SearchStatusInfo {
 	int multiPv;
 	Integer scoreMate;
 	Integer scoreCp;
+	Integer scoreLowerBound;
+	Integer scoreUpperBound;
 	String currMove;
 	int currMoveNumber;
 	int hashFull;
@@ -225,14 +227,18 @@ public class SearchStatusInfo {
 		this.currLine = currLine;
 	}
 
-	public void setScore(int score) {
+	public void setScore(int score, int alpha, int beta) {
 		if ((score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE)) {
 			int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
-			if ((x & 1) != 0) { // TODO revise
+			if ((x & 1) != 0) {
 				scoreMate = (x >> 1) + 1;
 			} else {
 				scoreMate = x >> 1;
 			}
+		} else if (score <= alpha) {
+			scoreLowerBound = score;
+		} else if (score >= beta) {
+			scoreUpperBound = score;
 		} else {
 			scoreCp = score;
 		}
@@ -255,6 +261,12 @@ public class SearchStatusInfo {
 		if (scoreMate != null) {
 			sb.append(" score mate ");
 			sb.append(scoreMate);
+		} else if (scoreLowerBound != null) {
+			sb.append(" score lowerbound ");
+			sb.append(scoreLowerBound);
+		} else if (scoreUpperBound != null) {
+			sb.append(" score upperbound ");
+			sb.append(scoreUpperBound);
 		} else if (scoreCp != null) {
 			sb.append(" score cp ");
 			sb.append(scoreCp);
