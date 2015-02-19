@@ -79,8 +79,8 @@ public class SearchStatusInfo {
 	int multiPv;
 	Integer scoreMate;
 	Integer scoreCp;
-	Integer scoreLowerBound;
-	Integer scoreUpperBound;
+	boolean lowerBound;
+	boolean upperBound;
 	String currMove;
 	int currMoveNumber;
 	int hashFull;
@@ -235,13 +235,11 @@ public class SearchStatusInfo {
 			} else {
 				scoreMate = x >> 1;
 			}
-		} else if (score <= alpha) {
-			scoreLowerBound = score;
-		} else if (score >= beta) {
-			scoreUpperBound = score;
 		} else {
 			scoreCp = score;
 		}
+		upperBound = score <= alpha;
+		lowerBound = score >= beta;
 	}
 
 	/**
@@ -261,15 +259,14 @@ public class SearchStatusInfo {
 		if (scoreMate != null) {
 			sb.append(" score mate ");
 			sb.append(scoreMate);
-		} else if (scoreLowerBound != null) {
-			sb.append(" score lowerbound ");
-			sb.append(scoreLowerBound);
-		} else if (scoreUpperBound != null) {
-			sb.append(" score upperbound ");
-			sb.append(scoreUpperBound);
 		} else if (scoreCp != null) {
 			sb.append(" score cp ");
 			sb.append(scoreCp);
+			if (lowerBound) {
+				sb.append(" lowerbound");
+			} else if (upperBound) {
+				sb.append(" upperbound");
+			}
 		}
 		if (nodes != 0) {
 			sb.append(" nodes ");
