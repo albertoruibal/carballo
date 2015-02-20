@@ -17,10 +17,10 @@ import com.alonsoruibal.chess.log.Logger;
 public class ExperimentalEvaluator extends Evaluator {
 	private static final Logger logger = Logger.getLogger("ExperimentalEvaluator");
 
-	private Config config;
-
 	public boolean debug = false;
 	public StringBuffer debugSB;
+
+	private Config config;
 
 	public ExperimentalEvaluator(Config config) {
 		this.config = config;
