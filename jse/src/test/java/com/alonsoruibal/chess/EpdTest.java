@@ -43,6 +43,7 @@ public class EpdTest implements SearchObserver {
 	int fails;
 	int total;
 	int totalTime;
+	long totalNodes;
 	int lctPoints;
 
 	int solutionMoves[];
@@ -50,6 +51,7 @@ public class EpdTest implements SearchObserver {
 
 	int bestMove;
 	int bestMoveTime;
+	long bestMoveNodes;
 
 	public int getSolved() {
 		return solved;
@@ -63,9 +65,11 @@ public class EpdTest implements SearchObserver {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
+		search.debug = true;
 		search.setObserver(this);
 
 		totalTime = 0;
+		totalNodes = 0;
 		lctPoints = 0;
 		solved = 0;
 		total = 0;
@@ -119,7 +123,7 @@ public class EpdTest implements SearchObserver {
 				if (timeSolved < timeLimit) {
 					solved++;
 				}
-				logger.debug("Status: " + solved + " positions solved of " + total + " in " + totalTime + "Ms (lctPoints=" + lctPoints + ")");
+				logger.debug("Status: " + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (lctPoints=" + lctPoints + ")");
 				logger.debug("");
 			}
 		} catch (Exception e) {
@@ -128,7 +132,7 @@ public class EpdTest implements SearchObserver {
 		fails = total - solved;
 		logger.debug("***** Positions not Solved:");
 		logger.debug(notSolved.toString());
-		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms (" + fails + " fails)");
+		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
 		return totalTime;
 	}
 
@@ -148,7 +152,8 @@ public class EpdTest implements SearchObserver {
 		search.go(SearchParameters.get(timeLimit));
 
 		if (solutionFound) {
-			logger.debug("Best move found in " + bestMoveTime + " Ms :D " + Move.toStringExt(bestMove));
+			logger.debug("Best move found in " + bestMoveTime + "Ms and " + bestMoveNodes + " nodes :D " + Move.toStringExt(bestMove));
+			totalNodes += bestMoveNodes;
 			return bestMoveTime;
 		} else {
 			logger.debug("Best move not found :( " + Move.toStringExt(search.getBestMove()) + " != " + movesString);
@@ -161,6 +166,7 @@ public class EpdTest implements SearchObserver {
 		if (bestMove != search.getBestMove()) {
 			bestMove = search.getBestMove();
 			bestMoveTime = (int) info.getTime();
+			bestMoveNodes = info.getNodes();
 		}
 
 		boolean found = false;
