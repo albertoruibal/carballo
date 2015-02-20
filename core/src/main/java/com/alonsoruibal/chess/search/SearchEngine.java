@@ -14,7 +14,6 @@ import com.alonsoruibal.chess.movesort.SortInfo;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -37,6 +36,8 @@ public class SearchEngine implements Runnable {
 	public static final int NODE_ROOT = 0;
 	public static final int NODE_PV = 1;
 	public static final int NODE_NULL = 2;
+
+	public boolean debug = false;
 
 	private SearchParameters searchParameters;
 
@@ -141,13 +142,10 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void init() {
-		logger.debug(new Date());
 		initialized = false;
 
 		board.startPosition();
 		sortInfo.clear();
-
-		logger.debug("Creating Evaluator");
 
 		String evaluatorName = config.getEvaluator();
 		if ("simplified".equals(evaluatorName)) {
@@ -158,11 +156,12 @@ public class SearchEngine implements Runnable {
 			evaluator = new ExperimentalEvaluator(config);
 		}
 
-		logger.debug("Creating TT");
 		tt = new TranspositionTable(config.getTranspositionTableSize());
 
 		initialized = true;
-		logger.debug(config.toString());
+		if (debug) {
+			logger.debug(config.toString());
+		}
 	}
 
 	public void clear() {
@@ -842,16 +841,28 @@ public class SearchEngine implements Runnable {
 		logger.debug("PV All            = " + pvAllNodes);
 		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
 		logger.debug("Null All          = " + nullAllNodes);
-		logger.debug("Asp Win      Hits = " + (100 * aspirationWindowHit / aspirationWindowProbe) + "%");
-		logger.debug("TT Eval      Hits = " + ttEvalHit + " " + (100 * ttEvalHit / ttEvalProbe) + "%");
-		logger.debug("TT PV        Hits = " + ttPvHit + " " + (1000000 * ttPvHit / ttProbe) + " per 10^6");
-		logger.debug("TT LB        Hits = " + ttProbe + " " + (100 * ttLBHit / ttProbe) + "%");
-		logger.debug("TT UB        Hits = " + ttUBHit + " " + (100 * ttUBHit / ttProbe) + "%");
+		if (aspirationWindowProbe > 0) {
+			logger.debug("Asp Win      Hits = " + (100 * aspirationWindowHit / aspirationWindowProbe) + "%");
+		}
+		if (ttEvalProbe > 0) {
+			logger.debug("TT Eval      Hits = " + ttEvalHit + " " + (100 * ttEvalHit / ttEvalProbe) + "%");
+		}
+		if (ttProbe > 0) {
+			logger.debug("TT PV        Hits = " + ttPvHit + " " + (1000000 * ttPvHit / ttProbe) + " per 10^6");
+			logger.debug("TT LB        Hits = " + ttProbe + " " + (100 * ttLBHit / ttProbe) + "%");
+			logger.debug("TT UB        Hits = " + ttUBHit + " " + (100 * ttUBHit / ttProbe) + "%");
+		}
 		logger.debug("Futility     Hits = " + futilityHit);
 		logger.debug("Agg.Futility Hits = " + aggressiveFutilityHit);
-		logger.debug("Null Move    Hits = " + nullMoveHit + " " + (100 * nullMoveHit / nullMoveProbe) + "%");
-		logger.debug("Razoring     Hits = " + razoringHit + " " + (100 * razoringHit / razoringProbe) + "%");
-		logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100 * singularExtensionHit / singularExtensionProbe) + "%");
+		if (nullMoveProbe > 0) {
+			logger.debug("Null Move    Hits = " + nullMoveHit + " " + (100 * nullMoveHit / nullMoveProbe) + "%");
+		}
+		if (razoringProbe > 0) {
+			logger.debug("Razoring     Hits = " + razoringHit + " " + (100 * razoringHit / razoringProbe) + "%");
+		}
+		if (singularExtensionProbe > 0) {
+			logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100 * singularExtensionHit / singularExtensionProbe) + "%");
+		}
 	}
 
 	public void newRun() throws SearchFinishedException {
@@ -937,7 +948,9 @@ public class SearchEngine implements Runnable {
 	public void finishRun() {
 		// puts the board in the initial position
 		board.undoMove(initialPly);
-		searchStats();
+		if (debug) {
+			searchStats();
+		}
 		searching = false;
 		if (observer != null) {
 			observer.bestMove(globalBestMove, ponderMove);
