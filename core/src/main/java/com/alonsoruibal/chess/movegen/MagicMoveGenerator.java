@@ -30,7 +30,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 		mines = board.getMines();
 		others = board.getOthers();
 
-		byte index = 0;
+		int index = 0;
 		long square = 0x1L;
 		while (square != 0) {
 			if (board.getTurn() == ((square & board.whites) != 0)) {

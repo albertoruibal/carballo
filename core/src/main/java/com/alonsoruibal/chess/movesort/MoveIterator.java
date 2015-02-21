@@ -140,7 +140,7 @@ public class MoveIterator {
 		mines = board.getMines();
 		others = board.getOthers();
 
-		byte index = 0;
+		int index = 0;
 		long square = 0x1L;
 		while (square != 0) {
 			if (board.getTurn() == ((square & board.whites) != 0)) {
@@ -174,7 +174,7 @@ public class MoveIterator {
 		}
 
 		square = board.kings & mines; // my king
-		byte myKingIndex = -1;
+		int myKingIndex = -1;
 		// Castling: disabled when in check or squares attacked
 		if ((((all & (board.getTurn() ? 0x06L : 0x0600000000000000L)) == 0 &&
 				(board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling())))) {
