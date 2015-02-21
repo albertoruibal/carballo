@@ -205,6 +205,10 @@ public class SearchEngine implements Runnable {
 		return bestMoveScore;
 	}
 
+	public long getNodes() {
+		return positionCounter + pvPositionCounter + qsPositionCounter;
+	}
+
 	public Config getConfig() {
 		return config;
 	}

@@ -10,6 +10,7 @@ import com.alonsoruibal.chess.search.SearchStatusInfo;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * Estimate ELO with BS2850, BT2450, BT2630 test suites:
@@ -53,6 +54,9 @@ public class EpdTest implements SearchObserver {
 	int bestMoveTime;
 	long bestMoveNodes;
 
+	ArrayList<Integer> allBestMoveTimes;
+	ArrayList<Long> allBestMoveNodes;
+
 	public int getSolved() {
 		return solved;
 	}
@@ -67,6 +71,9 @@ public class EpdTest implements SearchObserver {
 		search = new SearchEngine(config);
 		search.debug = true;
 		search.setObserver(this);
+
+		allBestMoveTimes = new ArrayList<Integer>();
+		allBestMoveNodes = new ArrayList<Long>();
 
 		totalTime = 0;
 		totalNodes = 0;
@@ -129,11 +136,27 @@ public class EpdTest implements SearchObserver {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		fails = total - solved;
 		logger.debug("***** Positions not Solved:");
 		logger.debug(notSolved.toString());
 		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
+
+		logger.debug("TEST    TIME   NODES");
+		for (int i = 0; i < allBestMoveTimes.size(); i++) {
+			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allBestMoveTimes.get(i), 8) + padNumberLeft(allBestMoveNodes.get(i), 8));
+		}
 		return totalTime;
+	}
+
+	private String padNumberRight(long number, int totalChars) {
+		String out = String.valueOf(number);
+		return out + "        ".substring(0, totalChars - out.length());
+	}
+
+	private String padNumberLeft(long number, int totalChars) {
+		String out = String.valueOf(number);
+		return "        ".substring(0, totalChars - out.length()) + out;
 	}
 
 	private int testPosition(String fen, String movesString, int timeLimit) {
@@ -154,9 +177,13 @@ public class EpdTest implements SearchObserver {
 		if (solutionFound) {
 			logger.debug("Best move found in " + bestMoveTime + "Ms and " + bestMoveNodes + " nodes :D " + Move.toStringExt(bestMove));
 			totalNodes += bestMoveNodes;
+			allBestMoveNodes.add(bestMoveNodes);
+			allBestMoveTimes.add(bestMoveTime);
 			return bestMoveTime;
 		} else {
 			logger.debug("Best move not found :( " + Move.toStringExt(search.getBestMove()) + " != " + movesString);
+			allBestMoveNodes.add(search.getNodes());
+			allBestMoveTimes.add(timeLimit);
 			return timeLimit;
 		}
 	}
