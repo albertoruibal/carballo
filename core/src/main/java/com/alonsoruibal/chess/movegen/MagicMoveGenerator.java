@@ -71,7 +71,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 		}
 
 		square = board.kings & mines; // my king
-		byte myKingIndex = -1;
+		int myKingIndex = -1;
 		// Castling: disabled when in check or squares attacked
 		if ((((all & (board.getTurn() ? 0x06L : 0x0600000000000000L)) == 0 &&
 				(board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling())))) {
