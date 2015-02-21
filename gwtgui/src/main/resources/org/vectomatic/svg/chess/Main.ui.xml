@@ -62,6 +62,9 @@
                     </g:FlowPanel>
                 </g:SimplePanel>
             </g:east>
+            <g:south size="20">
+                <g:Label ui:field='thinkingArea'/>
+            </g:south>
         </g:DockLayoutPanel>
     </g:FocusPanel>
 </ui:UiBinder>

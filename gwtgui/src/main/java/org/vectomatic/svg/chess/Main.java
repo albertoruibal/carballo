@@ -109,6 +109,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	@UiField
 	TextArea historyArea;
 	@UiField
+	Label thinkingArea;
+	@UiField
 	Label currentPlayerValueLabel;
 	@UiField
 	HTML about;
@@ -312,7 +314,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * Unused carballo chess engine event handler
 	 */
 	public void info(SearchStatusInfo info) {
-		log(info.toString());
+		thinkingArea.setText(info.toString());
+		//log(info.toString());
 	}
 
 	/**
