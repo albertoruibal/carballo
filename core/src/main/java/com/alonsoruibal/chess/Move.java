@@ -10,7 +10,6 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
  * @author Alberto Alonso Ruibal
  */
 public class Move {
-	// private static final Logger logger = Logger.getLogger(Move.class.toString());
 
 	// Move pieces ordered by value
 	public static final int PAWN = 1;
@@ -24,7 +23,7 @@ public class Move {
 	public static final int TYPE_KINGSIDE_CASTLING = 1;
 	public static final int TYPE_QUEENSIDE_CASTLING = 2;
 	public static final int TYPE_PASSANT = 3;
-	// promotions must be always >= TYPE_PROMOTION_QUEEN
+	// Promotions must be always >= TYPE_PROMOTION_QUEEN
 	public static final int TYPE_PROMOTION_QUEEN = 4;
 	public static final int TYPE_PROMOTION_KNIGHT = 5;
 	public static final int TYPE_PROMOTION_BISHOP = 6;
