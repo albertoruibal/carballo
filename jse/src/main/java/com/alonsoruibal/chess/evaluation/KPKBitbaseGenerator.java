@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Derived from Stockfish bitbase.cpp
  */
-public class KPKBitbaseCalculator {
+public class KPKBitbaseGenerator {
 	private static final Logger logger = Logger.getLogger("KPKBitbase");
 
 	// There are 24 possible pawn squares: the first 4 files and ranks from 2 to 7
@@ -163,7 +163,7 @@ public class KPKBitbaseCalculator {
 
 	public static void main(String args[]) {
 		// Prints bitbase in java array format
-		KPKBitbaseCalculator kpkBitbase = new KPKBitbaseCalculator();
+		KPKBitbaseGenerator kpkBitbase = new KPKBitbaseGenerator();
 		kpkBitbase.init();
 
 		for (int i = 0; i < kpkBitbase.bitbase.length; i++) {
