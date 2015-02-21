@@ -1,4 +1,0 @@
-/*
- * Code converted with Sharpen
- * 
- */
