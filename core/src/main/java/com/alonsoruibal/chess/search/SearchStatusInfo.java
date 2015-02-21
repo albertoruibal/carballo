@@ -77,8 +77,7 @@ public class SearchStatusInfo {
 	long nodes;
 	String pv;
 	int multiPv;
-	Integer scoreMate;
-	Integer scoreCp;
+	int score;
 	boolean lowerBound;
 	boolean upperBound;
 	String currMove;
@@ -139,20 +138,12 @@ public class SearchStatusInfo {
 		this.multiPv = multiPv;
 	}
 
-	public Integer getScoreMate() {
-		return scoreMate;
+	public int getScore() {
+		return score;
 	}
 
-	public void setScoreMate(Integer scoreMate) {
-		this.scoreMate = scoreMate;
-	}
-
-	public int getScoreCp() {
-		return scoreCp;
-	}
-
-	public void setScoreCp(int score) {
-		this.scoreCp = score;
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public String getCurrMove() {
@@ -228,16 +219,7 @@ public class SearchStatusInfo {
 	}
 
 	public void setScore(int score, int alpha, int beta) {
-		if ((score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE)) {
-			int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
-			if ((x & 1) != 0) {
-				scoreMate = (x >> 1) + 1;
-			} else {
-				scoreMate = x >> 1;
-			}
-		} else {
-			scoreCp = score;
-		}
+		this.score = score;
 		upperBound = score <= alpha;
 		lowerBound = score >= beta;
 	}
@@ -256,17 +238,22 @@ public class SearchStatusInfo {
 			sb.append(" seldepth ");
 			sb.append(selDepth);
 		}
-		if (scoreMate != null) {
+		if ((score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE)) {
 			sb.append(" score mate ");
-			sb.append(scoreMate);
-		} else if (scoreCp != null) {
-			sb.append(" score cp ");
-			sb.append(scoreCp);
-			if (lowerBound) {
-				sb.append(" lowerbound");
-			} else if (upperBound) {
-				sb.append(" upperbound");
+			int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
+			if ((x & 1) != 0) {
+				sb.append((x >> 1) + 1);
+			} else {
+				sb.append(x >> 1);
 			}
+		} else {
+			sb.append(" score cp ");
+			sb.append(score);
+		}
+		if (lowerBound) {
+			sb.append(" lowerbound");
+		} else if (upperBound) {
+			sb.append(" upperbound");
 		}
 		if (nodes != 0) {
 			sb.append(" nodes ");
