@@ -26,7 +26,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 		bbAttacks = BitboardAttacks.getInstance();
 
 		moveIndex = mIndex;
-		all = board.getAll(); // only for clearity
+		all = board.getAll();
 		mines = board.getMines();
 		others = board.getOthers();
 
