@@ -1,40 +1,39 @@
 Carballo Chess Engine
 =====================
 
-Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java and C#
+Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java
 chess engine with Applet and GWT (HTML5) interfaces. It is used in the Mobialia Chess apps.
 
 It's organized into modules:
 
 * Core: the chess engine
-* JSE: the Java Standard Edition version with the UCI interface and unit tests
-* Applet: the applet code, it depends on Core and Jse
+* JSE: the Java Standard Edition version with the UCI interface and JUnit tests
 * GWT: components needed for the GWT GUI
 * GWTGUI: an HTML5 interface developed by Lukas Laag, it depends on Core and GWT
-* CSharp: a conversion of the Core source code to C# using Sharpen
+* Applet: the applet code, it depends on Core and Jse (deprecated)
+
+The Core and the UCI interface are converted to C# in the project http://github.com/albertoruibal/carballo_cs
 
 Links:
 
-* Source code: https://github.com/albertoruibal/carballo
 * GWT interface: http://www.mobialia.com/webchessgwt
-* Applet interface: http://www.mobialia.com/webchess
-* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci.tgz
+* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.0.tgz
+* Source code: https://github.com/albertoruibal/carballo
 
 It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
 
 Features
 ========
 
-* Simple and clear code
+* UCI interface for chess GUIs like Arena
 * It includes a great GWT interface by Lukas Laag
-* Also a Java Applet GUI
-* JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
+* It also has a Java Applet GUI (deprecated)
 * Based on Bitboards
-* State-of-the-art magic bitboard move generator (doubles the basic move generator speed!), also code for magic number generation
+* Magic bitboard move generator, it also includes code for magic number generation
 * PVS searcher
 * Iterative deepening
 * Aspiration window, moves only one border of the window if falls out
-* Transposition Table (TT) with Zobrist Keys (two zobrist keys per board, to avoid collisions) and multiprobe/two tier
+* Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
 * Quiescent search with only good captures (according to SEE) and limited check generation
 * Move sorting: two killer move slots, SEE, MVV/LVA and history heuristic
 * Also Internal Iterative Deepening to improve sorting
@@ -46,11 +45,10 @@ Features
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parameterizable evaluator (only for the complete &amp; experimental evaluators)
 * Contempt factor
-* UCI interface with lots of UCI options (for chess GUIs like Arena)
-* The core of the chess engine was converted to C# using Sharpen
+* JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
 
-It scores 2522 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
-It also solves 290 positions of the 300 WinAtChess test (at 5 seconds each).
+It scores 2540 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
+It also solves 295 positions of the 300 WinAtChess test (at 5 seconds each).
 His real strength is about 2200 ELO points, you can check his tournament ranking at http://www.computerchess.org.uk/ccrl/
 
 Authors
@@ -78,14 +76,28 @@ Build the GWT interface:
 cd gwtgui
 gradle compileGwt
 ```
-Build the Applet interface:
-```
-cd applet
-gradle proguard
-```
 
 History
 =======
+
+Version 1.0: Lots of fixes, small advances in test results: 295 in WAC and 2540 in BT2630.
+
+* New Transposition Table with a separated slot for the eval values
+* Now uses the TT in quiescence search
+* Fix mate values before inserting them in the TT, now the mate problems are solved with the right distance to the mate
+* Fixes to futility pruning in quiescence search
+* New pawn classification in the ExperimentalEvaluator
+* Now the PV line is shown every time that a move is found in the root node
+* Now the PV is shown in SAN notation
+* Implemented UCI seldepth, lowerbound, upperbound and hashfull
+* Implemented the depth and node limit for the search
+* Enabled the endgame knowledge
+* In the search, assume that pawn pushes are to the 6th, 7th or 8th rank
+* Extend only checks with positive SSE
+* Disable by default the recapture and pawn extensions, set the mate threat extension to one full PLY
+* Fix recapture extension (now disabled by default)
+* Tests migrated to the JUnit 4 format with annotations, and created a "fastTest" gradle task to run only the fast tests
+* C# code separated in another GitHub project
 
 Version 0.9: Fixes evaluator bugs
 
