@@ -84,12 +84,12 @@ Run fast tests:
 ```
 gradle fastTest
 ```
-Run Win at Chess Tests:
+Run Win at Chess tests:
 ```
 cd jse
 gradle -Dtest.single=WinAtChessTest cleanTest test
 ```
-Run BT2630 Tests:
+Run BT2630 tests:
 ```
 cd jse
 gradle -Dtest.single=BT2630Test cleanTest test
