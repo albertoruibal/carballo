@@ -142,21 +142,21 @@ public class EpdTest implements SearchObserver {
 		logger.debug(notSolved.toString());
 		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
 
-		logger.debug("TEST    TIME   NODES");
+		logger.debug("TEST    TIME       NODES");
 		for (int i = 0; i < allBestMoveTimes.size(); i++) {
-			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allBestMoveTimes.get(i), 8) + padNumberLeft(allBestMoveNodes.get(i), 8));
+			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allBestMoveTimes.get(i), 8) + padNumberLeft(allBestMoveNodes.get(i), 12));
 		}
 		return totalTime;
 	}
 
 	private String padNumberRight(long number, int totalChars) {
 		String out = String.valueOf(number);
-		return out + "        ".substring(0, totalChars - out.length());
+		return out + "            ".substring(0, totalChars - out.length());
 	}
 
 	private String padNumberLeft(long number, int totalChars) {
 		String out = String.valueOf(number);
-		return "        ".substring(0, totalChars - out.length()) + out;
+		return "            ".substring(0, totalChars - out.length()) + out;
 	}
 
 	private int testPosition(String fen, String movesString, int timeLimit) {
