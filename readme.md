@@ -40,7 +40,7 @@ Features
 * Fractional Extensions: check, pawn push and passed pawns, mate threat, recapture (2 = 1PLY)
 * Reductions: Late Move Reductions (LMR)
 * Pruning: Null Move Pruning, Static Null Move Pruning, Futility Pruning and Aggressive Futility Pruning
-* Polyglot Opening Book support; in the code I include Fruit's Small Book
+* Polyglot Opening Book support; in the code it includes Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parameterizable evaluator (only for the complete &amp; experimental evaluators)
@@ -75,6 +75,24 @@ Build the GWT interface:
 ```
 cd gwtgui
 gradle compileGwt
+```
+
+Testing
+=======
+
+Run fast tests:
+```
+gradle fastTest
+```
+Run Win at Chess Tests:
+```
+cd jse
+gradle -Dtest.single=WinAtChessTest cleanTest test
+```
+Run BT2630 Tests:
+```
+cd jse
+gradle -Dtest.single=BT2630Test cleanTest test
 ```
 
 History
