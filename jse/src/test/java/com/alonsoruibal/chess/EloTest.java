@@ -3,8 +3,6 @@ package com.alonsoruibal.chess;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.junit.Assert.assertTrue;
-
 public class EloTest extends EpdTest {
 
 	@Test
@@ -23,16 +21,6 @@ public class EloTest extends EpdTest {
 		double timeSeconds = time / 1000;
 		double elo = 2450 - (timeSeconds / 30);
 		System.out.println("BT2450 Elo = " + elo);
-	}
-
-	@Test
-	@Category(SlowTest.class)
-	public void testBT2630() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/bt2630.epd"), 15 * 60000);
-		double timeSeconds = time / 1000;
-		double elo = 2630 - (timeSeconds / 30);
-		System.out.println("BT2630 Elo = " + elo);
-		assertTrue("BT2630 ELO is " + elo + ", lower than 2470", elo > 2470);
 	}
 
 	@Test
