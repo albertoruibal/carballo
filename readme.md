@@ -48,7 +48,7 @@ Features
 * JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
 
 It scores 2540 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
-It also solves 295 positions of the 300 WinAtChess test (at 5 seconds each).
+It also solves 294 positions of the 300 WinAtChess test (at 5 seconds each).
 His real strength is about 2200 ELO points, you can check his tournament ranking at http://www.computerchess.org.uk/ccrl/
 
 Authors
