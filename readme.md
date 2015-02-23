@@ -98,7 +98,7 @@ gradle -Dtest.single=BT2630Test cleanTest test
 History
 =======
 
-Version 1.0: Lots of fixes, small advances in test results: 295 in WAC and 2540 in BT2630.
+Version 1.0: Lots of fixes, small advances in test results: 294 in WAC and 2540 in BT2630.
 
 * New Transposition Table with a separated slot for the eval values
 * Now uses the TT in quiescence search
@@ -106,7 +106,6 @@ Version 1.0: Lots of fixes, small advances in test results: 295 in WAC and 2540 
 * Fixes to futility pruning in quiescence search
 * New pawn classification in the ExperimentalEvaluator
 * Now the PV line is shown every time that a move is found in the root node
-* Now the PV is shown in SAN notation
 * Implemented UCI seldepth, lowerbound, upperbound and hashfull
 * Implemented the depth and node limit for the search
 * Enabled the endgame knowledge
