@@ -142,7 +142,7 @@ public class CompleteEvaluator extends Evaluator {
 	public final static int[] kingIndexValue = new int[64];
 
 	static {
-		// Initialize Piece square values Fruit/Toga style 
+		// Initialize Piece square values Fruit/Toga style
 		int i;
 
 		for (i = 0; i < 64; i++) {
@@ -157,7 +157,7 @@ public class CompleteEvaluator extends Evaluator {
 			kingIndexValue[i] = KingColumn[column] * KingColumnValue + KingRank[rank] * KingRankValue + KingLine[column] * KingCenterValue + KingLine[rank] * KingCenterValue;
 		}
 
-		knightIndexValue[56] += KnightTrappedValue; // H8 
+		knightIndexValue[56] += KnightTrappedValue; // H8
 		knightIndexValue[63] += KnightTrappedValue; // A8
 
 		for (i = 0; i < 8; i++) {
@@ -182,8 +182,6 @@ public class CompleteEvaluator extends Evaluator {
 	public boolean debug = false;
 	public StringBuffer debugSB;
 
-	private int[] bishopCount = {0, 0};
-
 	private int[] pawnMaterial = {0, 0};
 	private int[] material = {0, 0};
 	private int[] center = {0, 0};
@@ -206,9 +204,6 @@ public class CompleteEvaluator extends Evaluator {
 	// Squares surrounding King
 	private long[] squaresNearKing = {0, 0};
 
-	private int[] knightKaufBonus = {0, 0};
-	private int[] rookKaufBonus = {0, 0};
-
 	public CompleteEvaluator(Config config) {
 		this.config = config;
 	}
@@ -221,17 +216,41 @@ public class CompleteEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
+		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
+		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
+		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
+		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
+		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
+		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
+		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
+		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
+		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
+		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
+
+		int endGameValue = EndgameEvaluator.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
+		if (endGameValue != Evaluator.NO_VALUE) {
+			return endGameValue;
+		}
+
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray;
-		int auxInt;
 
-		bishopCount[0] = 0;
-		bishopCount[1] = 0;
+		// From material imbalances (Larry Kaufmann):
+		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
+		// for each pawn above five of the side being valued, with the opposite adjustment for each pawn short of five
+		int knightKaufBonusWhite = KNIGHT_KAUF_BONUS * (whitePawns - 5);
+		int knightKaufBonusBlack = KNIGHT_KAUF_BONUS * (blackPawns - 5);
+		int rookKaufBonusWhite = ROOK_KAUF_BONUS * (whitePawns - 5);
+		int rookKaufBonusBlack = ROOK_KAUF_BONUS * (blackPawns - 5);
 
-		pawnMaterial[0] = 0;
-		pawnMaterial[1] = 0;
-		material[0] = 0;
-		material[1] = 0;
+		pawnMaterial[0] = PAWN * whitePawns;
+		pawnMaterial[1] = PAWN * blackPawns;
+		material[0] = KNIGHT * (whiteKnights + knightKaufBonusWhite) + BISHOP * whiteBishops + ROOK * (whiteRooks + rookKaufBonusWhite) + QUEEN * whiteQueens + //
+				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
+						(board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+		material[1] = KNIGHT * (blackKnights + knightKaufBonusBlack) + BISHOP * blackBishops + ROOK * (blackRooks + rookKaufBonusBlack) + QUEEN * blackQueens + //
+				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
+						(board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 
 		center[0] = 0;
 		center[1] = 0;
@@ -263,16 +282,6 @@ public class CompleteEvaluator extends Evaluator {
 		// Squares surrounding King
 		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)];
 		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)];
-
-		// From material imbalances (Larry Kaufmann):
-		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
-		// for each pawn above five of the side being valued, with the opposite adjustment for each pawn short of five
-		int whitePawnsCount = BitboardUtils.popCount(board.pawns & board.whites);
-		int blackPawnsCount = BitboardUtils.popCount(board.pawns & board.blacks);
-		knightKaufBonus[0] = KNIGHT_KAUF_BONUS * (whitePawnsCount - 5);
-		knightKaufBonus[1] = KNIGHT_KAUF_BONUS * (blackPawnsCount - 5);
-		rookKaufBonus[0] = ROOK_KAUF_BONUS * (whitePawnsCount - 5);
-		rookKaufBonus[1] = ROOK_KAUF_BONUS * (blackPawnsCount - 5);
 
 		// first build attacks info
 		int index;
@@ -319,7 +328,6 @@ public class CompleteEvaluator extends Evaluator {
 				pieceAttacks = attacksFromSquare[index];
 
 				if ((square & board.pawns) != 0) {
-					pawnMaterial[color] += PAWN;
 					center[color] += pawnIndexValue[pcsqIndex];
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
@@ -430,11 +438,9 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.knights) != 0) {
-					material[color] += KNIGHT + knightKaufBonus[color];
 					center[color] += knightIndexValue[pcsqIndex];
 
-					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - KNIGHT_M_UNITS;
-					mobility[color] += KNIGHT_M * auxInt;
+					mobility[color] += KNIGHT_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - KNIGHT_M_UNITS);
 
 					if ((pieceAttacks & squaresNearKing[color]) != 0) {
 						kingSafety[color] += KNIGHT_ATTACKS_KING;
@@ -452,15 +458,9 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.bishops) != 0) {
-					material[color] += BISHOP;
-					if (++bishopCount[color] == 2) {
-						material[color] += BISHOP_PAIR;
-					}
-
 					center[color] += bishopIndexValue[pcsqIndex];
 
-					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - BISHOP_M_UNITS;
-					mobility[color] += BISHOP_M * auxInt;
+					mobility[color] += BISHOP_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - BISHOP_M_UNITS);
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += BISHOP_ATTACKS_KING;
@@ -479,11 +479,9 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.rooks) != 0) {
-					material[color] += ROOK + rookKaufBonus[color];
 					center[color] += rookIndexValue[pcsqIndex];
 
-					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS;
-					mobility[color] += ROOK_M * auxInt;
+					mobility[color] += ROOK_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS);
 
 					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
@@ -509,10 +507,8 @@ public class CompleteEvaluator extends Evaluator {
 
 				} else if ((square & board.queens) != 0) {
 					center[color] += queenIndexValue[pcsqIndex];
-					material[color] += QUEEN;
 
-					auxInt = BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - QUEEN_M_UNITS;
-					mobility[color] += QUEEN_M * auxInt;
+					mobility[color] += QUEEN_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - QUEEN_M_UNITS);
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += QUEEN_ATTACKS_KING;
