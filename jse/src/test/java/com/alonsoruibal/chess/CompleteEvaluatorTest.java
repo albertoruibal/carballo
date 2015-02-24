@@ -2,7 +2,6 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 
 import org.junit.Before;
@@ -22,20 +21,19 @@ public class CompleteEvaluatorTest {
 
 	@Test
 	public void printAllPcsq() {
-		ExperimentalEvaluator experimentalEvaluator = new ExperimentalEvaluator(new Config());
+		CompleteEvaluator evaluator = new CompleteEvaluator(new Config());
 		logger.debug("***PAWN");
-		printPcsq(experimentalEvaluator.pawnIndexValue);
+		printPcsq(evaluator.pawnIndexValue);
 		logger.debug("***KNIGHT");
-		printPcsq(experimentalEvaluator.knightIndexValue);
+		printPcsq(evaluator.knightIndexValue);
 		logger.debug("***BISHOP");
-		printPcsq(experimentalEvaluator.bishopIndexValue);
+		printPcsq(evaluator.bishopIndexValue);
 		logger.debug("***ROOK");
-		printPcsq(experimentalEvaluator.rookIndexValue);
+		printPcsq(evaluator.rookIndexValue);
 		logger.debug("***QUEEN");
-		printPcsq(experimentalEvaluator.queenIndexValue);
+		printPcsq(evaluator.queenIndexValue);
 		logger.debug("***KING");
-		printPcsq(experimentalEvaluator.kingIndexValue);
-		logger.debug("PCSQ tables generated");
+		printPcsq(evaluator.kingIndexValue);
 	}
 
 	private static void printPcsq(int pcsq[]) {
