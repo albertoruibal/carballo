@@ -20,7 +20,7 @@ public class CompleteEvaluatorTest {
 	}
 
 	@Test
-	public void printAllPcsq() {
+	public void printPcsq() {
 		CompleteEvaluator evaluator = new CompleteEvaluator(new Config());
 		logger.debug("***PAWN");
 		printPcsq(evaluator.pawnIndexValue);
