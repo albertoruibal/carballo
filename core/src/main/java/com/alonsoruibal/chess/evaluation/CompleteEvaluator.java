@@ -245,10 +245,10 @@ public class CompleteEvaluator extends Evaluator {
 
 		pawnMaterial[0] = PAWN * whitePawns;
 		pawnMaterial[1] = PAWN * blackPawns;
-		material[0] = KNIGHT * (whiteKnights + knightKaufBonusWhite) + BISHOP * whiteBishops + ROOK * (whiteRooks + rookKaufBonusWhite) + QUEEN * whiteQueens + //
+		material[0] = (KNIGHT + knightKaufBonusWhite) * whiteKnights + BISHOP * whiteBishops + (ROOK + rookKaufBonusWhite) * whiteRooks + QUEEN * whiteQueens + //
 				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
 						(board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
-		material[1] = KNIGHT * (blackKnights + knightKaufBonusBlack) + BISHOP * blackBishops + ROOK * (blackRooks + rookKaufBonusBlack) + QUEEN * blackQueens + //
+		material[1] = (KNIGHT + knightKaufBonusBlack) * blackKnights + BISHOP * blackBishops + (ROOK + rookKaufBonusBlack) * blackRooks + QUEEN * blackQueens + //
 				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
 						(board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 
@@ -594,6 +594,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("value                  = " + value);
 		}
 
+		assert Math.abs(value) < Evaluator.VICTORY;
 		return value;
 	}
 }
