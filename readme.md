@@ -98,6 +98,12 @@ gradle -Dtest.single=BT2630Test cleanTest test
 History
 =======
 
+Version 1.1:
+
+* The UCI interface was ignoring all the UCI options
+* Do not allocate memory inside ExperimentalEvaluator.evaluate()
+* Added the new pawn and endgame logic to the CompleteEvaluator (ExperimentalEvaluator continues as the default)
+
 Version 1.0: Lots of fixes, small advances in test results: 294 in WAC and 2520 in BT2630.
 
 * New Transposition Table with a separated slot for the eval values
