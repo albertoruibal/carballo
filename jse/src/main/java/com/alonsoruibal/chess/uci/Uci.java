@@ -39,7 +39,7 @@ public class Uci implements SearchObserver {
 				String command = tokens[index++].toLowerCase();
 
 				if ("uci".equals(command)) {
-					System.out.println("id name Carballo Chess Engine v1.0");
+					System.out.println("id name Carballo Chess Engine v1.1");
 					System.out.println("id author Alberto Alonso Ruibal");
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
@@ -81,7 +81,7 @@ public class Uci implements SearchObserver {
 					System.out.println("uciok");
 
 				} else if ("setoption".equals(command)) {
-
+					index++; // Skip name
 					// get the option name without spaces
 					StringBuilder nameSB = new StringBuilder();
 					String tok;
