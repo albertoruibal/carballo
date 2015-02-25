@@ -17,7 +17,7 @@ The Core and the UCI interface are converted to C# in the project http://github.
 Links:
 
 * GWT interface: http://www.mobialia.com/webchessgwt
-* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.0.tgz
+* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.1.tgz
 * Source code: https://github.com/albertoruibal/carballo
 
 It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
