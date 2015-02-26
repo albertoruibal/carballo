@@ -307,7 +307,7 @@ public class SearchEngine implements Runnable {
 		if (!board.getTurn()) {
 			eval = -eval;
 		}
-		tt.set(board, TranspositionTable.TYPE_EVAL, 0, 0, (byte) 0, eval, false);
+		tt.set(board, TranspositionTable.TYPE_EVAL, Move.NONE, 0, 0, eval, false);
 		return eval;
 	}
 
@@ -363,19 +363,23 @@ public class SearchEngine implements Runnable {
 
 		boolean isPv = beta - alpha > 1;
 		int ttMove = 0;
+		// Generate checks for PV on PLY 0
+		boolean generateChecks = isPv && (qsdepth == 0);
+		// If we generate check, the entry in the TT has depthAnalyzed=1, because is better than without checks (depthAnalyzed=0)
+		int ttDepth = generateChecks ? TranspositionTable.DEPTH_QS_CHECKS : TranspositionTable.DEPTH_QS_NO_CHECKS;
 
 		ttProbe++;
 		boolean foundTT = tt.search(board, distanceToInitialPly, false);
 		if (foundTT) {
-			if (!isPv && canUseTT(0, alpha, beta)) {
+			if (!isPv && canUseTT(ttDepth, alpha, beta)) {
 				return tt.getScore();
 			}
 			ttMove = tt.getBestMove();
 		}
 
 		int bestScore = alpha;
-		int bestMove = 0;
-		int staticEval = 0;
+		int bestMove = Move.NONE;
+		int staticEval = Evaluator.NO_VALUE;
 		int eval = -Evaluator.VICTORY;
 
 		// Do not allow stand pat when in check
@@ -389,7 +393,7 @@ public class SearchEngine implements Runnable {
 			// Evaluation functions increase alpha and can originate beta cutoffs
 			if (bestScore >= beta) {
 				if (!foundTT) {
-					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, 0, bestScore, (byte) 0, staticEval, false);
+					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, Move.NONE, bestScore, TranspositionTable.DEPTH_QS_CHECKS, staticEval, false);
 				}
 				return bestScore;
 			}
@@ -413,8 +417,6 @@ public class SearchEngine implements Runnable {
 
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
-		// Generate checks for PV on PLY 0
-		boolean generateChecks = isPv && (qsdepth == 0);
 
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
 		moveIterator.genMoves(ttMove, true, generateChecks);
@@ -463,7 +465,7 @@ public class SearchEngine implements Runnable {
 		if (board.getCheck() && !validOperations) {
 			return valueMatedIn(distanceToInitialPly);
 		}
-		tt.save(board, distanceToInitialPly, 0, bestMove, bestScore, alpha, beta, staticEval, false);
+		tt.save(board, distanceToInitialPly, ttDepth, bestMove, bestScore, alpha, beta, staticEval, false);
 
 		return bestScore;
 	}
@@ -500,7 +502,7 @@ public class SearchEngine implements Runnable {
 			return alpha;
 		}
 
-		int ttMove = 0;
+		int ttMove = Move.NONE;
 		int ttScore = 0;
 		int ttNodeType = 0;
 		int ttDepthAnalyzed = 0;
@@ -650,7 +652,7 @@ public class SearchEngine implements Runnable {
 		boolean validOperations = false;
 		boolean checkEvasion = board.getCheck();
 		int bestScore = -Evaluator.VICTORY;
-		int move, bestMove = 0;
+		int move, bestMove = Move.NONE;
 
 		while ((move = moveIterator.next()) != 0) {
 			// Operations are pseudo-legal, doMove checks if they lead to a valid state
@@ -816,7 +818,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Save in the transposition table
-		tt.save(board, distanceToInitialPly, (byte) depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != 0);
+		tt.save(board, distanceToInitialPly, depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != 0);
 
 		return bestScore;
 	}
@@ -879,8 +881,8 @@ public class SearchEngine implements Runnable {
 		positionCounter = 0;
 		pvPositionCounter = 0;
 		qsPositionCounter = 0;
-		globalBestMove = 0;
-		ponderMove = 0;
+		globalBestMove = Move.NONE;
+		ponderMove = Move.NONE;
 		pv = null;
 
 		initialPly = board.getMoveNumber();

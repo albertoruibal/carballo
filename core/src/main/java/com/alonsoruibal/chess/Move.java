@@ -10,6 +10,8 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
  * @author Alberto Alonso Ruibal
  */
 public class Move {
+	// Predefined moves
+	public static final int NONE = 0;
 
 	// Move pieces ordered by value
 	public static final int PAWN = 1;
@@ -47,13 +49,6 @@ public class Move {
 
 	public static long getFromSquare(int move) {
 		return 0x1L << ((move >>> 6) & 0x3f);
-	}
-
-	/**
-	 * square index in a 64*64 array (12 bits)
-	 */
-	public static int getFromToIndex(int move) {
-		return move & 0xfff;
 	}
 
 	public static int getPieceMoved(int move) {

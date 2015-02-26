@@ -18,10 +18,13 @@ import java.util.Arrays;
 public class TranspositionTable {
 	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
 
+	public final static int DEPTH_QS_CHECKS = 1;
+	public final static int DEPTH_QS_NO_CHECKS = 0;
+
+	public final static int TYPE_EVAL = 0;
 	public final static int TYPE_EXACT_SCORE = 1;
 	public final static int TYPE_FAIL_LOW = 2;
 	public final static int TYPE_FAIL_HIGH = 3;
-	public final static int TYPE_EVAL = 4;
 
 	private final static int MAX_PROBES = 4;
 
@@ -120,7 +123,7 @@ public class TranspositionTable {
 		}
 
 		assert fixedScore >= -Evaluator.VICTORY && fixedScore <= Evaluator.VICTORY;
-		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.VICTORY;
+		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.VICTORY || eval == Evaluator.NO_VALUE;
 
 		if (score <= lowerBound) {
 			set(board, TYPE_FAIL_LOW, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
