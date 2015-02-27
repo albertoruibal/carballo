@@ -837,12 +837,14 @@ public class SearchEngine implements Runnable {
 	}
 
 	private void searchStats() {
-		logger.debug("Positions PV      = " + pvPositionCounter + " " //
-				+ (100 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-		logger.debug("Positions QS      = " + qsPositionCounter + " " //
-				+ (100 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-		logger.debug("Positions Null    = " + positionCounter + " " //
-				+ (100 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		if ((positionCounter + pvPositionCounter + qsPositionCounter) > 0) {
+			logger.debug("Positions PV      = " + pvPositionCounter + " " //
+					+ (100 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+			logger.debug("Positions QS      = " + qsPositionCounter + " " //
+					+ (100 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+			logger.debug("Positions Null    = " + positionCounter + " " //
+					+ (100 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
+		}
 		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
 		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
