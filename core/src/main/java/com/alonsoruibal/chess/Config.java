@@ -413,14 +413,19 @@ public class Config {
 
 	@Override
 	public String toString() {
-		return "Config [aggressiveFutility=" + aggressiveFutility + ", aggressiveFutilityMargin=" + aggressiveFutilityMargin + ", aspirationWindow="
-				+ aspirationWindow + ", aspirationWindowSizes=" + Arrays.toString(aspirationWindowSizes) + ", book=" + book + ", contemptFactor="
-				+ contemptFactor + ", evalKingSafety=" + evalKingSafety + ", evalMobility=" + evalMobility + ", evalPassedPawns=" + evalPassedPawns
-				+ ", evalPawnStructure=" + evalPawnStructure + ", evaluator=" + evaluator + ", extensionsCheck=" + extensionsCheck + ", extensionsMateThreat="
-				+ extensionsMateThreat + ", extensionsPawnPush=" + extensionsPawnPush + ", extensionsPassedPawn=" + extensionsPassedPawn
-				+ ", extensionsRecapture=" + extensionsRecapture + ", extensionsSingular=" + extensionsSingular + ", singularExtensionMargin="
-				+ singularExtensionMargin + ", futility=" + futility + ", futilityMargin=" + futilityMargin + ", iid=" + iid + ", lmr=" + lmr + ", nullMove="
-				+ nullMove + ", nullMoveMargin=" + nullMoveMargin + ", staticNullMove=" + staticNullMove + ", razoring=" + razoring + ", razoringMargin="
-				+ razoringMargin + ", transpositionTableSize=" + transpositionTableSize + ", useBook=" + useBook + "]";
+		return "------------------ Config ---------------------------------------------------------------------\n" +
+				"Book              " + useBook + " (" + book + ")\n" +
+				"TT Size           " + transpositionTableSize + "\n" +
+				"Aspiration Window " + aspirationWindow + " " + Arrays.toString(aspirationWindowSizes) + "\n" +
+				"Extensions:       Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Recapture=" + extensionsRecapture + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
+				"Razoring          " + razoring + " (" + razoringMargin + ")\n" +
+				"Null Move         " + nullMove + " (" + nullMoveMargin + ")\n" +
+				"Fut. Pruning      " + futility + " (" + futilityMargin + ") QS: (" + futilityMarginQS + ")\n" +
+				"Agg. Futility     " + aggressiveFutility + " (" + aggressiveFutilityMargin + ")\n" +
+				"Static Null Move  " + staticNullMove + "\n" +
+				"IID               " + iid + " (" + iidMargin + ")\n" +
+				"LMR               " + lmr + "\n" +
+				"Evaluator         " + evaluator + " KingSafety=" + evalKingSafety + " Mobility=" + evalMobility + " PassedPawns=" + evalPassedPawns + " PawnStructure=" + evalPawnStructure + "\n" +
+				"Contempt Factor   " + contemptFactor;
 	}
 }
