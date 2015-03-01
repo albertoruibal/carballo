@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.log.Logger;
@@ -32,9 +33,9 @@ public class TranspositionTable {
 	public long[] infos;
 	public short[] evals;
 
-	private int index;
 	private int size;
 	private long info;
+	private short eval;
 	private byte generation;
 	private int entriesOccupied;
 
@@ -50,8 +51,7 @@ public class TranspositionTable {
 		entriesOccupied = 0;
 
 		generation = 0;
-		index = -1;
-		logger.debug("Created Multiprobe transposition table, size = " + size + " slots " + size * 18.0 / (1024 * 1024) + " MBytes");
+		logger.debug("Created transposition table, size = " + size + " slots " + size * 18.0 / (1024 * 1024) + " MBytes");
 	}
 
 	public void clear() {
@@ -64,9 +64,10 @@ public class TranspositionTable {
 		score = 0;
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
 		// Verifies that it is really this board
-		for (index = startIndex; index < startIndex + MAX_PROBES && index < size; index++) {
-			if (keys[index] == board.getKey2()) {
-				info = infos[index];
+		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
+			if (keys[i] == board.getKey2()) {
+				info = infos[i];
+				eval = evals[i];
 				score = (short) ((info >>> 48) & 0xffff);
 
 				// Fix mate score with the real distance to the initial PLY
@@ -102,7 +103,7 @@ public class TranspositionTable {
 	}
 
 	public int getEval() {
-		return evals[index];
+		return eval;
 	}
 
 	public void newGeneration() {
@@ -134,51 +135,53 @@ public class TranspositionTable {
 		}
 	}
 
-	/**
-	 * In case of collision overwrites the eldest. It must keep PV nodes
-	 */
 	public void set(Board board, int nodeType, int bestMove, int score, int depthAnalyzed, int eval, boolean exclusion) {
 		long key2 = board.getKey2();
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
+		int replaceIndex = startIndex;
+		int replaceImportance = Integer.MAX_VALUE; // A higher value, so the first entry will be the default
 
-		// Verifies that it is really this board
-		int oldGenerationIndex = -1; // first index of an old generation entry
-		int notPvIndex = -1; // first index of a not PV entry
-		index = -1;
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];
 
-			// Replace an empty TT position or the same position
-			if (keys[i] == 0) {
+			if (keys[i] == 0) { // Replace an empty TT position
 				entriesOccupied++;
-				index = i;
+				replaceIndex = i;
 				break;
-			} else if (keys[i] == key2) {
-				index = i;
+			} else if (keys[i] == key2) { // Replace the same position
+				replaceIndex = i;
+				if (bestMove == Move.NONE) { // Keep previous best move
+					bestMove = getBestMove();
+				}
 				break;
 			}
-			if (oldGenerationIndex == -1 && getGeneration() != generation) {
-				oldGenerationIndex = i;
+
+			// Calculates a value with this TT entry importance
+			int entryImportance = (getNodeType() == TYPE_EXACT_SCORE ? 10 : 0) + // Bonus for the PV entries
+					255 - getGenerationDelta() + // The older the generation, the less importance
+					getDepthAnalyzed(); // The more depth, the more importance
+
+			// We will replace the less important entry
+			if (entryImportance < replaceImportance) {
+				replaceImportance = entryImportance;
+				replaceIndex = i;
 			}
-			if (notPvIndex == -1 && getNodeType() != TYPE_EXACT_SCORE) {
-				notPvIndex = i;
-			}
-		}
-		if (index == -1 && notPvIndex != -1) {
-			index = notPvIndex;
-		} else if (index == -1 && oldGenerationIndex != -1) {
-			index = oldGenerationIndex;
-		} else if (index == -1) {
-			// TT FULL
-			return;
 		}
 
-		keys[index] = key2;
+		keys[replaceIndex] = key2;
 		info = (bestMove & 0x1fffff) | ((nodeType & 0xf) << 21) | (((long) (generation & 0xff)) << 32) | (((long) (depthAnalyzed & 0xff)) << 40)
 				| (((long) (score & 0xffff)) << 48);
 
-		infos[index] = info;
-		evals[index] = (short) eval;
+		infos[replaceIndex] = info;
+		evals[replaceIndex] = (short) eval;
+	}
+
+	/**
+	 * Returns the difference between the current generation and the entry generation (max 255)
+	 */
+	private int getGenerationDelta() {
+		byte entryGeneration = (byte) ((info >>> 32) & 0xff);
+		return (generation >= entryGeneration ? generation - entryGeneration : 256 + generation - entryGeneration);
 	}
 
 	public int getHashFull() {
