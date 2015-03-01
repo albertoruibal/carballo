@@ -7,15 +7,11 @@ import com.alonsoruibal.chess.log.Logger;
 
 /**
  * Evaluation is done in centipawns
- * <p/>
+ *
  * Material imbalances from Larry KaufMan:
  * http://home.comcast.net/~danheisman/Articles/evaluation_of_material_imbalance.htm
- * <p/>
+ *
  * Piece/square values like Fruit/Toga
- * <p/>
- * TODO: pawn races
- * TODO: pawn storm
- * TODO: pinned pieces
  *
  * @author rui
  */
@@ -280,8 +276,8 @@ public class CompleteEvaluator extends Evaluator {
 		attacks[1] = 0;
 
 		// Squares surrounding King
-		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)];
-		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)];
+		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
+		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
 
 		// first build attacks info
 		int index;
@@ -467,7 +463,7 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[color]++;
 					}
 
-					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
 					}
@@ -483,7 +479,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += ROOK_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS);
 
-					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
 					}
@@ -515,8 +511,8 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[color]++;
 					}
 
-					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | bbAttacks.getBishopAttacks(index, all
-							& ~(pieceAttacks & others)))
+					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) |
+							bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)))
 							& ~pieceAttacks;
 					if ((pieceAttacksXray & board.kings & others) != 0) {
 						attacks[color] += PINNED_PIECE;
@@ -547,14 +543,17 @@ public class CompleteEvaluator extends Evaluator {
 		// Tempo
 		value += (board.getTurn() ? TEMPO : -TEMPO);
 
+		int supAttWhite = BitboardUtils.popCount(superiorPieceAttacked[0]);
+		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[1]);
+		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
+
 		int oe = config.getEvalCenter() * (center[0] - center[1])
 				+ config.getEvalPositional() * (positional[0] - positional[1])
-				+ config.getEvalAttacks() * (attacks[0] - attacks[1])
+				+ config.getEvalAttacks() * (attacks[0] - attacks[1] + hungPieces)
 				+ config.getEvalMobility() * (mobility[0] - mobility[1])
 				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
 				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
-				+ (config.getEvalKingSafety() / 8) * ((KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1])) // Divide by eight
-				+ config.getEvalAttacks() * ((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0));
+				+ (config.getEvalKingSafety() / 8) * ((KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1])); // Divide by eight
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
@@ -586,15 +585,15 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("kingSafetyValueO       = " + o(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 			logger.debug("kingSafetyValueE       = " + e(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 
-			logger.debug("HungPiecesO            = " + o((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0)));
-			logger.debug("HungPiecesE            = " + o((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0)));
+			logger.debug("HungPiecesO            = " + o(hungPieces));
+			logger.debug("HungPiecesE            = " + e(hungPieces));
 
 			logger.debug("gamePhase              = " + gamePhase);
 			logger.debug("tempo                  = " + (board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("value                  = " + value);
 		}
 
-		assert Math.abs(value) < Evaluator.VICTORY;
+		assert Math.abs(value) < Evaluator.KNOWN_WIN;
 		return value;
 	}
 }

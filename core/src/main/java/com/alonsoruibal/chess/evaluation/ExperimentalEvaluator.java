@@ -7,8 +7,7 @@ import com.alonsoruibal.chess.log.Logger;
 
 /**
  * Evaluation is done in centipawns
- * <p/>
- * TODO: hung pieces & x-ray attacks: revise
+ *
  * TODO: bishop / knights / rook traps: revise
  * TODO: test knights and bishops only forward mobility
  *
@@ -362,7 +361,6 @@ public class ExperimentalEvaluator extends Evaluator {
 				pieceAttacks = attacksFromSquare[index];
 
 				if ((square & board.pawns) != 0) {
-
 					center[color] += pawnIndexValue[pcsqIndex];
 
 					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
@@ -538,7 +536,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 
-					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
 					}
@@ -592,7 +590,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & board.queens;
 
-					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) & ~pieceAttacks;
+					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
 					}
@@ -665,8 +663,8 @@ public class ExperimentalEvaluator extends Evaluator {
 						attacks[color] += QUEEN_ATTACKS_PU;
 					}
 
-					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others)) | bbAttacks.getBishopAttacks(index, all
-							& ~(pieceAttacks & others)))
+					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) |
+							bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)))
 							& ~pieceAttacks;
 					if ((pieceAttacksXray & board.kings & others) != 0) {
 						attacks[color] += PINNED_PIECE;
@@ -708,15 +706,18 @@ public class ExperimentalEvaluator extends Evaluator {
 		// Tempo
 		value += (board.getTurn() ? TEMPO : -TEMPO);
 
+		int supAttWhite = BitboardUtils.popCount(superiorPieceAttacked[0]);
+		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[1]);
+		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
+
 		int oe = config.getEvalCenter() * (center[0] - center[1])
 				+ config.getEvalPositional() * (positional[0] - positional[1])
-				+ config.getEvalAttacks() * (attacks[0] - attacks[1])
+				+ config.getEvalAttacks() * (attacks[0] - attacks[1] + hungPieces)
 				+ config.getEvalMobility() * (mobility[0] - mobility[1])
 				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
 				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
 				+ config.getEvalKingSafety() * (kingDefense[0] - kingDefense[1])
-				+ config.getEvalKingSafety() * (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1])
-				+ config.getEvalAttacks() * ((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0));
+				+ config.getEvalKingSafety() * (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]);
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
@@ -751,14 +752,14 @@ public class ExperimentalEvaluator extends Evaluator {
 			logger.debug("kingDefenseO           = " + o(kingDefense[0] - kingDefense[1]));
 			logger.debug("kingDefenseE           = " + e(kingDefense[0] - kingDefense[1]));
 
-			logger.debug("HungPiecesO            = " + o((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0)));
-			logger.debug("HungPiecesE            = " + o((BitboardUtils.popCount(superiorPieceAttacked[0]) >= 2 ? HUNG_PIECES : 0) - (BitboardUtils.popCount(superiorPieceAttacked[1]) >= 2 ? HUNG_PIECES : 0)));
+			logger.debug("HungPiecesO            = " + o(hungPieces));
+			logger.debug("HungPiecesE            = " + e(hungPieces));
 
 			logger.debug("gamePhase              = " + gamePhase);
 			logger.debug("tempo                  = " + (board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("value                  = " + value);
 		}
-		assert Math.abs(value) < Evaluator.VICTORY;
+		assert Math.abs(value) < Evaluator.KNOWN_WIN;
 		return value;
 	}
 }
