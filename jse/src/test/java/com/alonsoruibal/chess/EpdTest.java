@@ -37,7 +37,6 @@ import java.util.ArrayList;
 public class EpdTest implements SearchObserver {
 	private static final Logger logger = Logger.getLogger("EpdTest");
 
-	Config config;
 	SearchEngine search;
 
 	int solved;
@@ -66,8 +65,14 @@ public class EpdTest implements SearchObserver {
 	}
 
 	long processEpdFile(InputStream is, int timeLimit) {
-		config = new Config();
+		Config config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
+
+		return processEpdFile(config, is, timeLimit);
+	}
+
+	long processEpdFile(Config config, InputStream is, int timeLimit) {
+		logger.debug(config);
 		search = new SearchEngine(config);
 		search.debug = true;
 		search.setObserver(this);
@@ -138,14 +143,15 @@ public class EpdTest implements SearchObserver {
 		}
 
 		fails = total - solved;
-		logger.debug("***** Positions not Solved:");
-		logger.debug(notSolved.toString());
-		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
 
 		logger.debug("TEST    TIME       NODES");
 		for (int i = 0; i < allBestMoveTimes.size(); i++) {
 			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allBestMoveTimes.get(i), 8) + padNumberLeft(allBestMoveNodes.get(i), 12));
 		}
+		logger.debug("***** Positions not Solved:");
+		logger.debug(notSolved.toString());
+		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
+
 		return totalTime;
 	}
 

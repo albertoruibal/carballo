@@ -26,41 +26,19 @@ public class EloTest extends EpdTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testLCTII() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/lctii.epd"), 10 * 60000);
-		double timeSeconds = time / 1000;
-		System.out.println("time in seconds = " + timeSeconds);
+		processEpdFile(this.getClass().getResourceAsStream("/lctii.epd"), 10 * 60000);
 		System.out.println("LCTII ELO = " + (1900 + getLctPoints()));
 	}
 
 	@Test
 	@Category(SlowTest.class)
-	public void testArasan() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/arasan.epd"), 30000);
-		double timeSeconds = time / 1000;
-		System.out.println("time in seconds = " + timeSeconds);
-	}
-
-	@Test
-	@Category(SlowTest.class)
 	public void testWinningChessSacrificesAndCombinations() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/wcsac.epd"), 5000);
-		double timeSeconds = time / 1000;
-		System.out.println("time in seconds = " + timeSeconds);
-	}
-
-	@Test
-	@Category(SlowTest.class)
-	public void testSilentButDeadly() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/silentbutdeadly.epd"), 5000);
-		double timeSeconds = time / 1000;
-		System.out.println("time in seconds = " + timeSeconds);
+		processEpdFile(this.getClass().getResourceAsStream("/wcsac.epd"), 5000);
 	}
 
 	@Test
 	@Category(SlowTest.class)
 	public void testECMGCP() {
-		long time = processEpdFile(this.getClass().getResourceAsStream("/ecmgcp.epd"), 10000);
-		double timeSeconds = time / 1000;
-		System.out.println("time in seconds = " + timeSeconds);
+		processEpdFile(this.getClass().getResourceAsStream("/ecmgcp.epd"), 10000);
 	}
 }
