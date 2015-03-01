@@ -23,7 +23,7 @@ public class ExperimentalEvaluatorTest {
 	}
 
 	@Test
-	public void printAllPcsq() {
+	public void printPcsq() {
 		ExperimentalEvaluator experimentalEvaluator = new ExperimentalEvaluator(new Config());
 		logger.debug("***PAWN");
 		printPcsq(experimentalEvaluator.pawnIndexValue);
@@ -37,7 +37,6 @@ public class ExperimentalEvaluatorTest {
 		printPcsq(experimentalEvaluator.queenIndexValue);
 		logger.debug("***KING");
 		printPcsq(experimentalEvaluator.kingIndexValue);
-		logger.debug("PCSQ tables generated");
 	}
 
 	private static void printPcsq(int pcsq[]) {
