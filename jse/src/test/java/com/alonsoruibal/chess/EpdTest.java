@@ -46,15 +46,16 @@ public class EpdTest implements SearchObserver {
 	long totalNodes;
 	int lctPoints;
 
-	int solutionMoves[];
+	int avoidMoves[];
+	int bestMoves[];
 	boolean solutionFound;
 
 	int bestMove;
-	int bestMoveTime;
-	long bestMoveNodes;
+	int solutionTime;
+	long solutionNodes;
 
-	ArrayList<Integer> allBestMoveTimes;
-	ArrayList<Long> allBestMoveNodes;
+	ArrayList<Integer> allSolutionTimes;
+	ArrayList<Long> allSolutionNodes;
 
 	public int getSolved() {
 		return solved;
@@ -77,8 +78,8 @@ public class EpdTest implements SearchObserver {
 		search.debug = true;
 		search.setObserver(this);
 
-		allBestMoveTimes = new ArrayList<Integer>();
-		allBestMoveNodes = new ArrayList<Long>();
+		allSolutionTimes = new ArrayList<Integer>();
+		allSolutionNodes = new ArrayList<Long>();
 
 		totalTime = 0;
 		totalNodes = 0;
@@ -93,14 +94,20 @@ public class EpdTest implements SearchObserver {
 			while ((line = br.readLine()) != null) {
 				logger.debug("Test = " + line);
 				// TODO use strtok
+				String avoidMovesString = null;
 				int i0 = line.indexOf(" am ");
+				if (i0 >= 0) {
+					int i2 = line.indexOf(";", i0 + 4);
+					avoidMovesString = line.substring(i0 + 4, i2);
+				}
+				String bestMovesString = null;
 				int i1 = line.indexOf(" bm ");
-				if (i0 < 0 || i1 < i0) {
-					i0 = i1;
+				if (i1 >= 0) {
+					int i2 = line.indexOf(";", i1 + 4);
+					bestMovesString = line.substring(i1 + 4, i2);
 				}
 
-				int i2 = line.indexOf(";", i1 + 4);
-				int timeSolved = testPosition(line.substring(0, i0), line.substring(i1 + 4, i2), timeLimit);
+				int timeSolved = testPosition(line.substring(0, (i0 != -1 ? i0 : i1)), avoidMovesString, bestMovesString, timeLimit);
 				totalTime += timeSolved;
 				
 				/* 
@@ -145,8 +152,8 @@ public class EpdTest implements SearchObserver {
 		fails = total - solved;
 
 		logger.debug("TEST    TIME       NODES");
-		for (int i = 0; i < allBestMoveTimes.size(); i++) {
-			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allBestMoveTimes.get(i), 8) + padNumberLeft(allBestMoveNodes.get(i), 12));
+		for (int i = 0; i < allSolutionTimes.size(); i++) {
+			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allSolutionTimes.get(i), 8) + padNumberLeft(allSolutionNodes.get(i), 12));
 		}
 		logger.debug("***** Positions not Solved:");
 		logger.debug(notSolved.toString());
@@ -165,31 +172,45 @@ public class EpdTest implements SearchObserver {
 		return "            ".substring(0, totalChars - out.length()) + out;
 	}
 
-	private int testPosition(String fen, String movesString, int timeLimit) {
+	private int[] parseMoves(String movesString) {
+		if (movesString == null) {
+			return new int[0];
+		}
+		String movesStringArray[] = movesString.split(" ");
+		int moves[] = new int[movesStringArray.length];
+		for (int i = 0; i < moves.length; i++) {
+			moves[i] = Move.getFromString(search.getBoard(), movesStringArray[i], true);
+		}
+		return moves;
+	}
+
+	private int testPosition(String fen, String avoidMovesString, String bestMovesString, int timeLimit) {
 		bestMove = 0;
 		solutionFound = false;
 
 		search.clear();
 		search.getBoard().setFen(fen);
-		String movesStringArray[] = movesString.split(" ");
-		solutionMoves = new int[movesStringArray.length];
-		for (int i = 0; i < solutionMoves.length; i++) {
-			solutionMoves[i] = Move.getFromString(search.getBoard(), movesStringArray[i], true);
+		avoidMoves = parseMoves(avoidMovesString);
+		if (avoidMovesString != null) {
+			logger.debug("Lets see if " + avoidMovesString + (avoidMoves.length > 1 ? " are " : " is ") + "avoided");
 		}
-		logger.debug("Lets see if " + movesString + " are found");
+		bestMoves = parseMoves(bestMovesString);
+		if (bestMovesString != null) {
+			logger.debug("Lets see if " + bestMovesString + (bestMoves.length > 1 ? " are " : " is ") + "found");
+		}
 
 		search.go(SearchParameters.get(timeLimit));
 
 		if (solutionFound) {
-			logger.debug("Best move found in " + bestMoveTime + "Ms and " + bestMoveNodes + " nodes :D " + Move.toStringExt(bestMove));
-			totalNodes += bestMoveNodes;
-			allBestMoveNodes.add(bestMoveNodes);
-			allBestMoveTimes.add(bestMoveTime);
-			return bestMoveTime;
+			logger.debug("Solution found in " + solutionTime + "Ms and " + solutionNodes + " nodes :D " + Move.toStringExt(bestMove));
+			totalNodes += solutionNodes;
+			allSolutionNodes.add(solutionNodes);
+			allSolutionTimes.add(solutionTime);
+			return solutionTime;
 		} else {
-			logger.debug("Best move not found :( " + Move.toStringExt(search.getBestMove()) + " != " + movesString);
-			allBestMoveNodes.add(search.getNodes());
-			allBestMoveTimes.add(timeLimit);
+			logger.debug("Solution not found, instead played: " + Move.toStringExt(search.getBestMove()));
+			allSolutionNodes.add(search.getNodes());
+			allSolutionTimes.add(timeLimit);
 			return timeLimit;
 		}
 	}
@@ -198,14 +219,20 @@ public class EpdTest implements SearchObserver {
 	public void info(SearchStatusInfo info) {
 		if (bestMove != search.getBestMove()) {
 			bestMove = search.getBestMove();
-			bestMoveTime = (int) info.getTime();
-			bestMoveNodes = info.getNodes();
+			solutionTime = (int) info.getTime();
+			solutionNodes = info.getNodes();
 		}
 
-		boolean found = false;
-		for (int move : solutionMoves) {
+		boolean found = bestMoves.length > 0 ? false : true;
+		for (int move : bestMoves) {
 			if (move == search.getBestMove()) {
 				found = true;
+				break;
+			}
+		}
+		for (int move : avoidMoves) {
+			if (move == search.getBestMove()) {
+				found = false;
 				break;
 			}
 		}
