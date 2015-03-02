@@ -227,6 +227,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	private long[] minorPiecesDefendedByPawns = {0, 0};
 
+	// Squares surrounding King
 	private long[] squaresNearKing = {0, 0};
 
 	public ExperimentalEvaluator(Config config) {
@@ -295,7 +296,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		pawnAttacks[0] = ((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7);
 		pawnAttacks[1] = ((board.pawns & board.blacks & ~BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~BitboardUtils.b_l) >>> 7);
 
-		// Square that pawn attacks or can attack by advancing
+		// Squares that pawns attack or can attack by advancing
 		pawnCanAttack[0] = pawnAttacks[0] | pawnAttacks[0] << 8 | pawnAttacks[0] << 16 | pawnAttacks[0] << 24 | pawnAttacks[0] << 32 | pawnAttacks[0] << 40;
 		pawnCanAttack[1] = pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40;
 
@@ -346,8 +347,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		}
 
 		square = 1;
-		index = 0;
-		while (square != 0) {
+		for (index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
 				boolean isWhite = ((board.whites & square) != 0);
 				int color = (isWhite ? 0 : 1);
@@ -497,7 +497,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 
-					// Knight Outpost: no opposite pawns can attack the square
+					// Knight outpost: no opposite pawns can attack the square
 					if ((square & OUTPOST_MASK[color] & ~pawnCanAttack[1 - color]) != 0) {
 						positional[color] += KNIGHT_OUTPOST;
 						// Defended by one of our pawns
@@ -557,8 +557,8 @@ public class ExperimentalEvaluator extends Evaluator {
 						auxLong = BitboardUtils.BLACK_SQUARES;
 					}
 
-					positional[color] += (BitboardUtils.popCount(auxLong & board.pawns & mines) + BitboardUtils.popCount(auxLong & board.pawns & mines) >>> 1) * BISHOP_PAWN_IN_COLOR;
-					positional[color] += (BitboardUtils.popCount(auxLong & board.pawns & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1) * BISHOP_FORWARD_P_PU;
+					positional[color] += BISHOP_PAWN_IN_COLOR * (BitboardUtils.popCount(auxLong & board.pawns & mines) + BitboardUtils.popCount(auxLong & board.pawns & mines) >>> 1)
+						+  BISHOP_FORWARD_P_PU * (BitboardUtils.popCount(auxLong & board.pawns & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1);
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
@@ -690,7 +690,6 @@ public class ExperimentalEvaluator extends Evaluator {
 				}
 			}
 			square <<= 1;
-			index++;
 		}
 
 		// Ponder opening and Endgame value depending of the non-pawn pieces:

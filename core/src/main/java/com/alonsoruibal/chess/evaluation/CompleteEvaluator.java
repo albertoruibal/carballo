@@ -40,20 +40,21 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int ROOK_M = oe(2, 4);
 	private final static int ROOK_COLUMN_OPEN = oe(25, 20); // No pawns in rook column
 	private final static int ROOK_COLUMN_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook column
-	private final static int ROOK_CONNECT = oe(20, 10); // Rook connects with other rook TODO???
+	private final static int ROOK_CONNECT = oe(20, 10); // Rook connects with other rook x 2
 	private final static int ROOK_KAUF_BONUS = -12;
 
 	// Queen
 	private final static int QUEEN_M_UNITS = 13;
 	private final static int QUEEN_M = oe(2, 4);
 
-	private final static int KING_PAWN_NEAR = oe(5, 0); // Protection: sums for each pawn near king (opening)
 	// King Safety: not in endgame!!!
 	private final static int PAWN_ATTACKS_KING = oe(1, 0);
 	private final static int KNIGHT_ATTACKS_KING = oe(4, 0);
 	private final static int BISHOP_ATTACKS_KING = oe(2, 0);
 	private final static int ROOK_ATTACKS_KING = oe(3, 0);
 	private final static int QUEEN_ATTACKS_KING = oe(5, 0);
+
+	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king (opening)
 
 	// Pawns
 	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
@@ -186,7 +187,7 @@ public class CompleteEvaluator extends Evaluator {
 	private int[] attacks = {0, 0};
 	private int[] kingAttackersCount = {0, 0};
 	private int[] kingSafety = {0, 0};
-	//	int kingDefense[] = {0,0};
+	private int[] kingDefense = {0, 0};
 	private int[] pawnStructure = {0, 0};
 	private int[] passedPawns = {0, 0};
 
@@ -196,6 +197,7 @@ public class CompleteEvaluator extends Evaluator {
 
 	// Squares attackeds by pawns
 	private long[] pawnAttacks = {0, 0};
+	private long[] pawnCanAttack = {0, 0};
 
 	// Squares surrounding King
 	private long[] squaresNearKing = {0, 0};
@@ -229,7 +231,7 @@ public class CompleteEvaluator extends Evaluator {
 		}
 
 		long all = board.getAll();
-		long pieceAttacks, pieceAttacksXray;
+		long pieceAttacks, pieceAttacksXray, auxLong;
 
 		// From material imbalances (Larry Kaufmann):
 		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
@@ -258,6 +260,8 @@ public class CompleteEvaluator extends Evaluator {
 		kingAttackersCount[1] = 0;
 		kingSafety[0] = 0;
 		kingSafety[1] = 0;
+		kingDefense[0] = 0;
+		kingDefense[1] = 0;
 		pawnStructure[0] = 0;
 		pawnStructure[1] = 0;
 		passedPawns[0] = 0;
@@ -271,6 +275,10 @@ public class CompleteEvaluator extends Evaluator {
 		// Squares attacked by pawns
 		pawnAttacks[0] = ((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7);
 		pawnAttacks[1] = ((board.pawns & board.blacks & ~BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~BitboardUtils.b_l) >>> 7);
+
+		// Squares that pawns attack or can attack by advancing
+		pawnCanAttack[0] = pawnAttacks[0] | pawnAttacks[0] << 8 | pawnAttacks[0] << 16 | pawnAttacks[0] << 24 | pawnAttacks[0] << 32 | pawnAttacks[0] << 40;
+		pawnCanAttack[1] = pawnAttacks[1] | pawnAttacks[1] >>> 8 | pawnAttacks[1] >>> 16 | pawnAttacks[1] >>> 24 | pawnAttacks[1] >>> 32 | pawnAttacks[1] >>> 40;
 
 		attacks[0] = 0;
 		attacks[1] = 0;
@@ -309,8 +317,7 @@ public class CompleteEvaluator extends Evaluator {
 		}
 
 		square = 1;
-		index = 0;
-		while (square != 0) {
+		for (index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
 				boolean isWhite = ((board.whites & square) != 0);
 				int color = (isWhite ? 0 : 1);
@@ -445,11 +452,8 @@ public class CompleteEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 
-					// Knight outpost: no opposite pawns can attack the square and is defended by one of our pawns
-					if (((BitboardUtils.COLUMNS_ADJACENTS[column] &
-							BitboardUtils.RANKS_FORWARD[color][rank] &
-							board.pawns & others) == 0) &&
-							(((isWhite ? bbAttacks.pawnDownwards[index] : bbAttacks.pawnUpwards[index]) & board.pawns & mines) != 0)) {
+					// Knight outpost: no opposite pawns can attack the square and it is defended by one of our pawns
+					if ((square & ~pawnCanAttack[1 - color] & pawnAttacks[color]) != 0) {
 						positional[color] += KNIGTH_OUTPOST[pcsqIndex];
 					}
 
@@ -463,12 +467,12 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[color]++;
 					}
 
+					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
+
 					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
 						attacks[color] += PINNED_PIECE;
 					}
-
-					superiorPieceAttacked[color] |= pieceAttacks & others & (board.rooks | board.queens);
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
@@ -479,11 +483,6 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += ROOK_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS);
 
-					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
-					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
-						attacks[color] += PINNED_PIECE;
-					}
-
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += ROOK_ATTACKS_KING;
 						kingAttackersCount[color]++;
@@ -491,13 +490,18 @@ public class CompleteEvaluator extends Evaluator {
 
 					superiorPieceAttacked[color] |= pieceAttacks & others & board.queens;
 
+					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
+					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
+						attacks[color] += PINNED_PIECE;
+					}
+
 					if ((pieceAttacks & mines & (board.rooks)) != 0) {
 						positional[color] += ROOK_CONNECT;
 					}
-					long columnAttacks = BitboardUtils.COLUMN[column];
-					if ((columnAttacks & board.pawns) == 0) {
+					auxLong = BitboardUtils.COLUMN[column];
+					if ((auxLong & board.pawns) == 0) {
 						positional[color] += ROOK_COLUMN_OPEN;
-					} else if ((columnAttacks & board.pawns & mines) == 0) {
+					} else if ((auxLong & board.pawns & mines) == 0) {
 						positional[color] += ROOK_COLUMN_SEMIOPEN;
 					}
 
@@ -520,14 +524,13 @@ public class CompleteEvaluator extends Evaluator {
 
 				} else if ((square & board.kings) != 0) {
 					center[color] += kingIndexValue[pcsqIndex];
-					// TODO
+
 					if ((square & (isWhite ? BitboardUtils.RANK[0] : BitboardUtils.RANK[7])) != 0) {
-						positional[color] += KING_PAWN_NEAR * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
+						kingDefense[color] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
 				}
 			}
 			square <<= 1;
-			index++;
 		}
 
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
@@ -553,6 +556,7 @@ public class CompleteEvaluator extends Evaluator {
 				+ config.getEvalMobility() * (mobility[0] - mobility[1])
 				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
 				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
+				+ config.getEvalKingSafety() * (kingDefense[0] - kingDefense[1])
 				+ (config.getEvalKingSafety() / 8) * ((KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1])); // Divide by eight
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
@@ -585,6 +589,9 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("kingSafetyValueO       = " + o(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 			logger.debug("kingSafetyValueE       = " + e(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 
+			logger.debug("kingDefenseO           = " + o(kingDefense[0] - kingDefense[1]));
+			logger.debug("kingDefenseE           = " + e(kingDefense[0] - kingDefense[1]));
+
 			logger.debug("HungPiecesO            = " + o(hungPieces));
 			logger.debug("HungPiecesE            = " + e(hungPieces));
 
@@ -592,7 +599,6 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("tempo                  = " + (board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("value                  = " + value);
 		}
-
 		assert Math.abs(value) < Evaluator.KNOWN_WIN;
 		return value;
 	}
