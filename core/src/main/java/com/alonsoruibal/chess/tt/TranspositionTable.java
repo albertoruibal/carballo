@@ -123,8 +123,8 @@ public class TranspositionTable {
 			fixedScore -= distanceToInitialPly;
 		}
 
-		assert fixedScore >= -Evaluator.VICTORY && fixedScore <= Evaluator.VICTORY;
-		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.VICTORY || eval == Evaluator.NO_VALUE;
+		assert fixedScore >= -Evaluator.VICTORY && fixedScore <= Evaluator.VICTORY : "Fixed TT score is outside limits";
+		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.VICTORY || eval == Evaluator.NO_VALUE : "Storing a eval value in the TT outside limits";
 
 		if (score <= lowerBound) {
 			set(board, TYPE_FAIL_LOW, bestMove, fixedScore, depthAnalyzed, eval, exclusion);

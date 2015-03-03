@@ -599,7 +599,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("tempo                  = " + (board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("value                  = " + value);
 		}
-		assert Math.abs(value) < Evaluator.KNOWN_WIN;
+		assert Math.abs(value) < Evaluator.KNOWN_WIN : "Eval is outside limits";
 		return value;
 	}
 }
