@@ -5,7 +5,14 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
  * For efficience Moves are int, this is a static class to threat with this
- * moves score is limited to 10 bits (positive) 1024 values
+ *
+ * Move format (18 bits):
+ * MTCPPPFFFFFFTTTTTT
+ * ------------^ To index (6 bits)
+ * ------^ From index (6 bits)
+ * ---^ Piece moved (3 bits)
+ * --^ Is capture (1 bit)
+ * ^ Move type (2 bits)
  *
  * @author Alberto Alonso Ruibal
  */
@@ -55,16 +62,12 @@ public class Move {
 		return ((move >>> 12) & 0x7);
 	}
 
-	public static boolean getCapture(int move) {
-		return ((move >>> 15) & 0x1) != 0;
+	public static boolean isCapture(int move) {
+		return (move & (0x1 << 15)) != 0;
 	}
 
 	public static int getMoveType(int move) {
 		return ((move >>> 16) & 0x7);
-	}
-
-	public static boolean isCapture(int move) {
-		return (move & (0x1 << 15)) != 0;
 	}
 
 	// Pawn push to 7 or 8th rank
@@ -314,7 +317,7 @@ public class Move {
 			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
-		sb.append(getCapture(move) ? 'x' : '-');
+		sb.append(isCapture(move) ? 'x' : '-');
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		switch (Move.getMoveType(move)) {
 			case TYPE_PROMOTION_QUEEN:
@@ -375,7 +378,7 @@ public class Move {
 		}
 		String fromSq = BitboardUtils.index2Algebraic(Move.getFromIndex(move));
 
-		if (getCapture(move) && getPieceMoved(move) == Move.PAWN) {
+		if (isCapture(move) && getPieceMoved(move) == Move.PAWN) {
 			disambiguate = true;
 		}
 
@@ -389,7 +392,7 @@ public class Move {
 			}
 		}
 
-		if (getCapture(move)) {
+		if (isCapture(move)) {
 			sb.append("x");
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));

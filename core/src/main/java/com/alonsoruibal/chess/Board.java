@@ -62,7 +62,7 @@ public class Board {
 	public char[] capturedPieces;
 	public int[] seeGain;
 
-	// Flags: must be changed only when Moving!!!
+	// Flags: must be changed only when moving
 	private static final long FLAG_TURN = 0x0001L;
 	private static final long FLAG_WHITE_DISABLE_KINGSIDE_CASTLING = 0x0002L;
 	private static final long FLAG_WHITE_DISABLE_QUEENSIDE_CASTLING = 0x0004L;
@@ -72,7 +72,7 @@ public class Board {
 	// Position on boarch in which is captured
 	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
-	// Thos the SEE SWAP algorithm
+	// For the SEE SWAP algorithm
 	private static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
 
 	BitboardAttacks bbAttacks;
@@ -101,7 +101,7 @@ public class Board {
 	}
 
 	/**
-	 * Also computes zobrish key
+	 * It also computes the zobrish key
 	 */
 	public void startPosition() {
 		setFen(FEN_START_POSITION);
@@ -116,9 +116,7 @@ public class Board {
 	}
 
 	/**
-	 * An alternative key to avoid collisions on tt
-	 *
-	 * @return
+	 * An alternative key to avoid collisions in the TT
 	 */
 	public long getKey2() {
 		return key[0] ^ ~key[1];
@@ -498,9 +496,6 @@ public class Board {
 	}
 
 	private void saveHistory(int move, boolean fillInfo) {
-		// logger.debug("saving History " + moveNumber + " " +
-		// Move.toStringExt(move) + " fillinfo=" + fillInfo);
-
 		if (fillInfo) {
 			sanMoves.put(moveNumber, Move.toSan(this, move));
 		}
@@ -601,7 +596,7 @@ public class Board {
 		int toIndex = Move.getToIndex(move);
 		int moveType = Move.getMoveType(move);
 		int pieceMoved = Move.getPieceMoved(move);
-		boolean capture = Move.getCapture(move);
+		boolean capture = Move.isCapture(move);
 		boolean turn = getTurn();
 		int color = (turn ? 0 : 1);
 
@@ -769,19 +764,6 @@ public class Board {
 		// Change turn
 		flags ^= FLAG_TURN;
 		key[0] ^= ZobristKey.whiteMove;
-
-		// // TODO remove
-		// long aux[] = ZobristKey.getKey(this);
-		// if (key[0] != aux[0] || key[1] != aux[1]) {
-		// System.out.println("Zobrist key Error");
-		// logger.debug("\n" + toString());
-		// logger.debug("Move = " + Move.toStringExt(move));
-		// Move.printMoves(moveHistory, 0, moveNumber);
-		// logger.debug("afterc: " + aux[0] + " " + aux[1]);
-		// logger.debug("after:  " + key[0] + " " + key[1]);
-		// System.exit(-1);
-		// key = aux;
-		// }
 
 		if (isValid(!turn)) {
 			setCheckFlags(!turn);
@@ -1006,7 +988,6 @@ public class Board {
 			legalMoveCount = legalMoveGenerator.generateMoves(this, legalMoves, 0);
 			legalMovesKey[0] = key[0];
 			legalMovesKey[1] = key[1];
-			// logger.debug("Generated " + legalMoveCount + " legal moves....");
 		}
 	}
 
