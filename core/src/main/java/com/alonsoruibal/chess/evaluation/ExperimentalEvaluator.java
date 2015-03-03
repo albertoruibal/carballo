@@ -33,7 +33,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int BISHOP_ATTACKS_PU_P = oe(3, 4);
 	private final static int BISHOP_ATTACKS_PU_K = oe(5, 5);
 	private final static int BISHOP_ATTACKS_RQ = oe(7, 10);
-	private final static int BISHOP_PAWN_IN_COLOR = oe(1, 1); // Sums for each of our pawns (or oppsite/2) in the bishop color
+	private final static int BISHOP_PAWN_IN_COLOR = oe(1, 1); // Sums for each of our pawns (or opposite/2) in the bishop color
 	private final static int BISHOP_FORWARD_P_PU = oe(0, 2); // Sums for each of the undefended opposite pawns forward
 	private final static int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
@@ -550,15 +550,15 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 
-					// Pawns in our color
+					// auxLong = pawns in bishop color
 					if ((square & BitboardUtils.WHITE_SQUARES) != 0) {
-						auxLong = BitboardUtils.WHITE_SQUARES;
+						auxLong = BitboardUtils.WHITE_SQUARES & board.pawns;
 					} else {
-						auxLong = BitboardUtils.BLACK_SQUARES;
+						auxLong = BitboardUtils.BLACK_SQUARES & board.pawns;
 					}
 
-					positional[color] += BISHOP_PAWN_IN_COLOR * (BitboardUtils.popCount(auxLong & board.pawns & mines) + BitboardUtils.popCount(auxLong & board.pawns & mines) >>> 1)
-						+  BISHOP_FORWARD_P_PU * (BitboardUtils.popCount(auxLong & board.pawns & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1);
+					positional[color] += BISHOP_PAWN_IN_COLOR * (BitboardUtils.popCount(auxLong & mines) + BitboardUtils.popCount(auxLong & others) >>> 1)
+						+  BISHOP_FORWARD_P_PU * (BitboardUtils.popCount(auxLong & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1);
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
