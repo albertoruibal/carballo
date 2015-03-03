@@ -261,7 +261,7 @@ public class MoveIterator {
 			if (moveType == Move.TYPE_PROMOTION_KNIGHT ||
 					moveType == Move.TYPE_PROMOTION_ROOK ||
 					moveType == Move.TYPE_PROMOTION_BISHOP) {
-				score -= SCORE_UNDERPROMOTION;
+				score = SCORE_UNDERPROMOTION;
 			}
 
 			nonCaptures[nonCaptureIndex] = move;
