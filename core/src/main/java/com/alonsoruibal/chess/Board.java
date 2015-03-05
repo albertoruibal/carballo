@@ -416,7 +416,7 @@ public class Board {
 
 			// Finally set zobrish key and check flags
 			key = ZobristKey.getKey(this);
-			setCheckFlags(getTurn());
+			setCheckFlags();
 
 			// and save history
 			resetHistory();
@@ -487,8 +487,9 @@ public class Board {
 		Arrays.fill(queensHistory, 0);
 		Arrays.fill(kingsHistory, 0);
 		Arrays.fill(flagsHistory, 0);
-		for (int i = 0; i < MAX_MOVES; i++)
+		for (int i = 0; i < MAX_MOVES; i++) {
 			Arrays.fill(keyHistory[i], 0);
+		}
 		Arrays.fill(fiftyMovesRuleHistory, 0);
 		Arrays.fill(capturedPieces, '.');
 		Arrays.fill(moveHistory, 0);
@@ -590,10 +591,11 @@ public class Board {
 		// Save history
 		saveHistory(move, fillInfo);
 
-		long from = Move.getFromSquare(move);
-		long to = Move.getToSquare(move);
 		int fromIndex = Move.getFromIndex(move);
 		int toIndex = Move.getToIndex(move);
+		long from = Move.getFromSquare(move);
+		long to = Move.getToSquare(move);
+		long moveMask = from | to; // Move is as easy as xor with this mask (exceptions are promotions, captures and en-passant captures)
 		int moveType = Move.getMoveType(move);
 		int pieceMoved = Move.getPieceMoved(move);
 		boolean capture = Move.isCapture(move);
@@ -615,26 +617,12 @@ public class Board {
 		flags &= ~FLAGS_PASSANT;
 
 		if (move != 0) {
-			if ((from & getMines()) == 0) {
-				logger.error("Origin square not valid");
-				logger.debug("\n" + toString());
-				logger.debug("Move = " + Move.toStringExt(move));
-				Move.printMoves(moveHistory, 0, moveNumber);
-				try {
-					throw new Exception();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			long moveMask = from | to; // Move is as easy as xor with this mask
-			// (exceptions are in captures, promotions and passant captures)
+			assert (from & getMines()) != 0 : "Origin square not valid";
 
 			// Is it is a capture, remove pieces in destination square
 			if (capture) {
 				fiftyMovesRule = 0;
-				// Passant Pawn captures remove captured pawn, put the pawn in to
+				// En-passant pawn captures remove captured pawn, put the pawn in to
 				int toIndexCapture = toIndex;
 				if (moveType == Move.TYPE_PASSANT) {
 					to = (getTurn() ? (to >>> 8) : (to << 8));
@@ -714,23 +702,24 @@ public class Board {
 					key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
 					break;
 				case Move.KING: // if castling, moves rooks too
-					long rookMask = 0;
+					long rookMoveMask = 0; // for the castling
 					switch (moveType) {
 						case Move.TYPE_KINGSIDE_CASTLING:
-							rookMask = (getTurn() ? 0x05L : 0x0500000000000000L);
+							rookMoveMask = (getTurn() ? 0x05L : 0x0500000000000000L);
 							key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 1];
 							break;
 						case Move.TYPE_QUEENSIDE_CASTLING:
-							rookMask = (getTurn() ? 0x90L : 0x9000000000000000L);
+							rookMoveMask = (getTurn() ? 0x90L : 0x9000000000000000L);
 							key[color] ^= ZobristKey.rook[color][toIndex - 1] ^ ZobristKey.rook[color][toIndex + 2];
 							break;
 					}
-					if (rookMask != 0) {
-						if (getTurn())
-							whites ^= rookMask;
-						else
-							blacks ^= rookMask;
-						rooks ^= rookMask;
+					if (rookMoveMask != 0) {
+						if (getTurn()) {
+							whites ^= rookMoveMask;
+						} else {
+							blacks ^= rookMoveMask;
+						}
+						rooks ^= rookMoveMask;
 					}
 					kings ^= moveMask;
 					key[color] ^= ZobristKey.king[color][fromIndex] ^ ZobristKey.king[color][toIndex];
@@ -765,8 +754,8 @@ public class Board {
 		flags ^= FLAG_TURN;
 		key[0] ^= ZobristKey.whiteMove;
 
-		if (isValid(!turn)) {
-			setCheckFlags(!turn);
+		if (isValid()) {
+			setCheckFlags();
 
 			if (fillInfo) {
 				generateLegalMoves();
@@ -784,15 +773,17 @@ public class Board {
 	}
 
 	/**
-	 * It checks if a state is valid basically, not entering own king in check
+	 * It checks if a state is valid basically, if the other king is not in check
 	 */
-	private boolean isValid(boolean turn) {
-		return (!bbAttacks.isSquareAttacked(this, kings & getOthers(), !turn));
+	private boolean isValid() {
+		return (!bbAttacks.isSquareAttacked(this, kings & getOthers(), !getTurn()));
 	}
 
-	private void setCheckFlags(boolean turn) {
-		// Set check flags
-		if (bbAttacks.isSquareAttacked(this, kings & getMines(), turn)) {
+	/**
+	 * Sets check flag if the own king is in check
+	 */
+	private void setCheckFlags() {
+		if (bbAttacks.isSquareAttacked(this, kings & getMines(), getTurn())) {
 			flags |= FLAG_CHECK;
 		} else {
 			flags &= ~FLAG_CHECK;
@@ -910,8 +901,9 @@ public class Board {
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
-			if ((fromSquare & mayXray) != 0)
+			if ((fromSquare & mayXray) != 0) {
 				attacks |= bbAttacks.getXrayAttacks(this, toIndex, all);
+			}
 
 			// Gets the next attacker
 			if ((fromCandidates = attacks & pawns & side) != 0) {
