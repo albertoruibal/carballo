@@ -251,22 +251,26 @@ public class MoveIterator {
 
 	private void addNonCapturesAndBadPromos(int pieceMoved, int fromIndex, int toIndex, long to, boolean capture, int moveType) {
 		int move = Move.genMove(fromIndex, toIndex, pieceMoved, capture, moveType);
-		if (move == killer1) {
-			foundKiller1 = true;
-		} else if (move == killer2) {
-			foundKiller2 = true;
-		} else if (move != ttMove) {
-			// Score non captures
-			int score = sortInfo.getMoveScore(move);
-			if (moveType == Move.TYPE_PROMOTION_KNIGHT ||
-					moveType == Move.TYPE_PROMOTION_ROOK ||
-					moveType == Move.TYPE_PROMOTION_BISHOP) {
-				score = SCORE_UNDERPROMOTION;
-			}
+		if (move != ttMove) {
+			if (move == killer1) {
+				foundKiller1 = true;
+			} else if (move == killer2) {
+				foundKiller2 = true;
+			} else if (move != ttMove) {
+				// Score non captures
+				int score;
+				if (moveType == Move.TYPE_PROMOTION_KNIGHT ||
+						moveType == Move.TYPE_PROMOTION_ROOK ||
+						moveType == Move.TYPE_PROMOTION_BISHOP) {
+					score = SCORE_UNDERPROMOTION;
+				} else {
+					score = sortInfo.getMoveScore(move);
+				}
 
-			nonCaptures[nonCaptureIndex] = move;
-			nonCapturesScores[nonCaptureIndex] = score;
-			nonCaptureIndex++;
+				nonCaptures[nonCaptureIndex] = move;
+				nonCapturesScores[nonCaptureIndex] = score;
+				nonCaptureIndex++;
+			}
 		}
 	}
 
