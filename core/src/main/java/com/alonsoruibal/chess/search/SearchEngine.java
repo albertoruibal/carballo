@@ -3,6 +3,7 @@ package com.alonsoruibal.chess.search;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
@@ -56,6 +57,7 @@ public class SearchEngine implements Runnable {
 	private Evaluator evaluator;
 	private TranspositionTable tt;
 	private SortInfo sortInfo;
+	private AttacksInfo[] attacksInfos;
 	private MoveIterator[] moveIterators;
 
 	private int bestMoveScore;
@@ -120,9 +122,12 @@ public class SearchEngine implements Runnable {
 		random = new Random();
 		board = new Board();
 		sortInfo = new SortInfo();
+		attacksInfos = new AttacksInfo[MAX_DEPTH];
 		moveIterators = new MoveIterator[MAX_DEPTH];
+
 		for (int i = 0; i < MAX_DEPTH; i++) {
-			moveIterators[i] = new MoveIterator(board, sortInfo, i);
+			attacksInfos[i] = new AttacksInfo();
+			moveIterators[i] = new MoveIterator(board, attacksInfos[i], sortInfo, i);
 		}
 
 		pvReductionMatrix = new int[64][64];
@@ -218,20 +223,20 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Decides when we are going to allow null move Don't do null move in king and pawn endings
+	 * Decides when we are going to allow null move. Don't do null move in king and pawn endings
 	 */
 	private boolean boardAllowsNullMove() {
 		return (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
 	}
 
 	/**
-	 * Calculates the extension of a move in the actual position (with the move done)
+	 * Calculates the extension of a move in the actual position
+	 * Now the move is not done
 	 */
 	private int extensions(int move, boolean mateThreat, int moveSee) {
 		int ext = 0;
 
-		if (board.getCheck()
-				&& moveSee >= 0) {
+		if (Move.isCheck(move) && moveSee >= 0) {
 			ext += config.getExtensionsCheck();
 			if (ext >= PLY) {
 				return PLY;
@@ -254,15 +259,16 @@ public class SearchEngine implements Runnable {
 				return PLY;
 			}
 		}
-		if (board.getLastMoveIsRecapture()) {
-			int firstCapturedPieceValue = pieceValue(board.getCapturedPiece(2));
-			if (moveSee >= firstCapturedPieceValue - 50) {
-				ext += config.getExtensionsRecapture();
-			}
-			if (ext >= PLY) {
-				return PLY;
-			}
-		}
+		// TODO revise
+//		if (board.getMoveIsRecapture(move)) {
+//			int firstCapturedPieceValue = pieceValue(board.getCapturedPiece(1));
+//			if (moveSee >= firstCapturedPieceValue - 50) {
+//				ext += config.getExtensionsRecapture();
+//			}
+//			if (ext >= PLY) {
+//				return PLY;
+//			}
+//		}
 		return ext;
 	}
 
@@ -295,7 +301,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * It also changes the sign to the score depending of the turn
 	 */
-	public int eval(boolean foundTT) {
+	public int evaluate(boolean foundTT, int distanceToInitialPly) {
 		ttEvalProbe++;
 
 		int eval;
@@ -303,7 +309,7 @@ public class SearchEngine implements Runnable {
 			ttEvalHit++;
 			return tt.getEval();
 		}
-		eval = evaluator.evaluate(board);
+		eval = evaluator.evaluate(board, attacksInfos[distanceToInitialPly]);
 		if (!board.getTurn()) {
 			eval = -eval;
 		}
@@ -315,7 +321,7 @@ public class SearchEngine implements Runnable {
 		if (foundTT &&
 				((tt.getNodeType() == TranspositionTable.TYPE_EXACT_SCORE) ||
 						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
-				((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
+						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
 			return tt.getScore();
 		}
 		return eval;
@@ -384,7 +390,7 @@ public class SearchEngine implements Runnable {
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
-			staticEval = eval(foundTT);
+			staticEval = evaluate(foundTT, distanceToInitialPly);
 			eval = refineEval(foundTT, staticEval);
 
 			if (eval > bestScore) {
@@ -400,16 +406,9 @@ public class SearchEngine implements Runnable {
 		}
 
 		// If we have more depths than possible...
-		if (distanceToInitialPly >= MAX_DEPTH) {
-//			System.out.println("Quiescence exceeds depth qsdepth=" + qsdepth);
-//			System.out.println(board.toString());
-//			for (int i = 0; i < board.getMoveNumber(); i++) {
-//				System.out.print(Move.toStringExt(board.moveHistory[i]));
-//				System.out.print(" ");
-//			}
-//			System.out.println();
+		if (distanceToInitialPly >= MAX_DEPTH - 1) {
 			if (board.getCheck()) {
-				return evaluateDraw(distanceToInitialPly);
+				return evaluateDraw(distanceToInitialPly); // Return a drawish score if we are in check
 			} else {
 				return eval;
 			}
@@ -422,42 +421,41 @@ public class SearchEngine implements Runnable {
 		moveIterator.genMoves(ttMove, true, generateChecks);
 		int move;
 
-		while ((move = moveIterator.next()) != 0) {
-			if (board.doMove(move, false)) {
-				validOperations = true;
+		while ((move = moveIterator.next()) != Move.NONE) {
+			validOperations = true;
 
-				if (!checkEvasion //
-						&& !(board.getCheck() && generateChecks) // Necessary because TT move can be a no promotion or capture
-						&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
-					board.undoMove();
+			if (!checkEvasion //
+					&& !(Move.isCheck(move) && generateChecks) // Necessary because TT move can be a no promotion or capture
+					&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) { // TODO revise PHASES or do this in the move gen
+				continue;
+			}
+
+			// Futility pruning
+			if (!checkEvasion //
+					&& !Move.isCheck(move) //
+					&& !isPv //
+					&& move != ttMove //
+					&& !Move.isPawnPush678(move) // TODO test if necessary
+					&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
+				int futilityValue = eval + lastCapturedPieceValue(board) + config.getFutilityMarginQS();
+				if (futilityValue < beta) {
+					if (futilityValue > bestScore) {
+						bestScore = futilityValue;
+					}
 					continue;
 				}
+			}
 
-				// Futility pruning
-				if (!checkEvasion //
-						&& !board.getCheck() //
-						&& !isPv //
-						&& move != ttMove //
-						&& !Move.isPawnPush678(move) // TODO test if necessary
-						&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
-					int futilityValue = eval + lastCapturedPieceValue(board) + config.getFutilityMarginQS();
-					if (futilityValue < beta) {
-						if (futilityValue > bestScore) {
-							bestScore = futilityValue;
-						}
-						board.undoMove();
-						continue;
-					}
-				}
+			board.doMove(move, false, false);
+			assert board.getCheck() == Move.isCheck(move) : "Check flag not generated properly";
 
-				int score = -quiescentSearch(qsdepth + 1, -beta, -bestScore);
-				board.undoMove();
-				if (score > bestScore) {
-					bestScore = score;
-					bestMove = move;
-					if (score >= beta) {
-						break;
-					}
+			int score = -quiescentSearch(qsdepth + 1, -beta, -bestScore);
+			board.undoMove();
+			if (score > bestScore) {
+				bestScore = score;
+				bestMove = move;
+				if (score >= beta) {
+					break;
 				}
 			}
 		}
@@ -533,7 +531,7 @@ public class SearchEngine implements Runnable {
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
-			staticEval = eval(evalTT);
+			staticEval = evaluate(evalTT, distanceToInitialPly);
 			int eval = refineEval(foundTT, staticEval);
 
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
@@ -582,7 +580,7 @@ public class SearchEngine implements Runnable {
 					&& boardAllowsNullMove()) {
 
 				nullMoveProbe++;
-				board.doMove(0, false);
+				board.doMove(0, false, false);
 				int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
 				if (eval - beta > CompleteEvaluator.PAWN) {
 					R++; // TODO TEST adding PLY
@@ -654,139 +652,136 @@ public class SearchEngine implements Runnable {
 		int bestScore = -Evaluator.VICTORY;
 		int move, bestMove = Move.NONE;
 
-		while ((move = moveIterator.next()) != 0) {
-			// Operations are pseudo-legal, doMove checks if they lead to a valid state
-			if (board.doMove(move, false)) {
-				validOperations = true;
+		while ((move = moveIterator.next()) != Move.NONE) {
+			validOperations = true;
 
-				if (move == excludedMove) {
-					board.undoMove();
-					continue;
-				}
+			if (move == excludedMove) {
+				continue;
+			}
 
-				int extension = extensions(move, mateThreat, moveIterator.getLastMoveSee());
+			int extension = extensions(move, mateThreat, moveIterator.getLastMoveSee());
 
-				// Check singular move extension
-				// It also detects singular replies
-				if (nodeType != NODE_ROOT //
-						&& move == ttMove //
-						&& extension < PLY //
-						&& excludedMove == 0 //
-						&& config.getExtensionsSingular() > 0 //
-						&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
-						&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
-						&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
-						&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
+			// Check singular move extension
+			// It also detects singular replies
+			if (nodeType != NODE_ROOT //
+					&& move == ttMove //
+					&& extension < PLY //
+					&& excludedMove == 0 //
+					&& config.getExtensionsSingular() > 0 //
+					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
+					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
+					&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
+					&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
-					singularExtensionProbe++;
-					board.undoMove();
-					int seBeta = ttScore - config.getSingularExtensionMargin();
-					int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
-					board.doMove(move);
-					if (excScore < seBeta) {
-						singularExtensionHit++;
-						extension += config.getExtensionsSingular();
-						if (extension > PLY) {
-							extension = PLY;
-						}
+				singularExtensionProbe++;
+				int seBeta = ttScore - config.getSingularExtensionMargin();
+				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
+				if (excScore < seBeta) {
+					singularExtensionHit++;
+					extension += config.getExtensionsSingular();
+					if (extension > PLY) {
+						extension = PLY;
 					}
-				}
-
-				boolean importantMove = nodeType == NODE_ROOT //
-						|| extension != 0 //
-						|| checkEvasion //
-						|| board.getCheck() //
-						|| Move.isCapture(move) // Include ALL captures
-						|| Move.isPawnPush678(move) // Includes promotions
-						|| Move.isCastling(move)
-						|| move == ttMove //
-						|| sortInfo.isKiller(move, distanceToInitialPly + 1);
-
-				if (futilityPrune //
-						&& bestScore > -Evaluator.KNOWN_WIN //
-						&& !importantMove) {
-					board.undoMove();
-					if (futilityValue <= alpha) {
-						if (futilityValue > bestScore) {
-							bestScore = futilityValue;
-						}
-					}
-					continue;
-				}
-
-				movesDone++;
-
-				int lowBound = (alpha > bestScore ? alpha : bestScore);
-				if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
-					// PV move not null searched
-					score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
-				} else {
-					// Try searching null window
-					boolean doFullSearch = true;
-
-					// Late move reductions (LMR)
-					int reduction = 0;
-					if (config.getLmr() //
-							&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
-							&& !importantMove) {
-						reduction += getReduction(nodeType, depthRemaining, movesDone);
-					}
-
-					if (reduction > 0) {
-						score = -search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
-						doFullSearch = (score > lowBound);
-					}
-					if (doFullSearch) {
-						score = -search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, 0);
-
-						// Finally search as PV if score on window
-						if ((nodeType == NODE_PV || nodeType == NODE_ROOT) //
-								&& score > lowBound //
-								&& (nodeType == NODE_ROOT || score < beta)) {
-							score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
-						}
-					}
-				}
-
-				board.undoMove();
-
-				// It tracks the best move and it also insert errors on the root node
-				if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
-					bestMove = move;
-					bestScore = score;
-
-					if (nodeType == NODE_ROOT) {
-						long time = System.currentTimeMillis();
-
-						globalBestMove = move;
-						bestMoveScore = score;
-						foundOneMove = true;
-
-						getPv(move);
-
-						SearchStatusInfo info = new SearchStatusInfo();
-						info.setDepth(depth);
-						info.setSelDepth(selDepth);
-						info.setTime(time - startTime);
-						info.setPv(pv);
-						info.setScore(score, alpha, beta);
-						info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
-						info.setHashFull(tt.getHashFull());
-						info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
-
-						if (observer != null) {
-							observer.info(info);
-						} else {
-							logger.debug(info.toString());
-						}
-					}
-				}
-
-				// alpha/beta cut (fail high)
-				if (score >= beta) {
-					break;
 				}
 			}
+
+			boolean importantMove = nodeType == NODE_ROOT //
+					|| extension != 0 //
+					|| checkEvasion //
+					|| Move.isCheck(move) //
+					|| Move.isCapture(move) // Include ALL captures
+					|| Move.isPawnPush678(move) // Includes promotions
+					|| Move.isCastling(move)
+					|| move == ttMove //
+					|| sortInfo.isKiller(move, distanceToInitialPly + 1);
+
+			if (futilityPrune //
+					&& bestScore > -Evaluator.KNOWN_WIN //
+					&& !importantMove) {
+				if (futilityValue <= alpha) {
+					if (futilityValue > bestScore) {
+						bestScore = futilityValue;
+					}
+				}
+				continue;
+			}
+
+			board.doMove(move, false, false);
+			assert board.getCheck() == Move.isCheck(move) : "Check flag not generated properly";
+
+			movesDone++;
+
+			int lowBound = (alpha > bestScore ? alpha : bestScore);
+			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
+				// PV move not null searched
+				score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+			} else {
+				// Try searching null window
+				boolean doFullSearch = true;
+
+				// Late move reductions (LMR)
+				int reduction = 0;
+				if (config.getLmr() //
+						&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
+						&& !importantMove) {
+					reduction += getReduction(nodeType, depthRemaining, movesDone);
+				}
+
+				if (reduction > 0) {
+					score = -search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
+					doFullSearch = (score > lowBound);
+				}
+				if (doFullSearch) {
+					score = -search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, 0);
+
+					// Finally search as PV if score on window
+					if ((nodeType == NODE_PV || nodeType == NODE_ROOT) //
+							&& score > lowBound //
+							&& (nodeType == NODE_ROOT || score < beta)) {
+						score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+					}
+				}
+			}
+
+			board.undoMove();
+
+			// It tracks the best move and it also insert errors on the root node
+			if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
+				bestMove = move;
+				bestScore = score;
+
+				if (nodeType == NODE_ROOT) {
+					long time = System.currentTimeMillis();
+
+					globalBestMove = move;
+					bestMoveScore = score;
+					foundOneMove = true;
+
+					getPv(move);
+
+					SearchStatusInfo info = new SearchStatusInfo();
+					info.setDepth(depth);
+					info.setSelDepth(selDepth);
+					info.setTime(time - startTime);
+					info.setPv(pv);
+					info.setScore(score, alpha, beta);
+					info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+					info.setHashFull(tt.getHashFull());
+					info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
+
+					if (observer != null) {
+						observer.info(info);
+					} else {
+						logger.debug(info.toString());
+					}
+				}
+			}
+
+			// alpha/beta cut (fail high)
+			if (score >= beta) {
+				break;
+			}
+
 		}
 
 		// Checkmate or stalemate
@@ -800,8 +795,9 @@ public class SearchEngine implements Runnable {
 
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
-			if (excludedMove == 0 && validOperations) {
+			if (excludedMove == 0 && validOperations /*&& !board.getCheck()*/) {
 				// TODO test use absolute move number
+				// TODO TEST put/remove board.getCheck()
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {
@@ -908,7 +904,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		rootScore = eval(tt.search(board, 0, false));
+		rootScore = evaluate(tt.search(board, 0, false), 0);
 		tt.newGeneration();
 		aspWindows = config.getAspirationWindowSizes();
 	}
@@ -997,7 +993,7 @@ public class SearchEngine implements Runnable {
 				}
 				sb.append(" ");
 				sb.append(Move.toString(tt.getBestMove()));
-				board.doMove(tt.getBestMove(), false);
+				board.doMove(tt.getBestMove(), true, false);
 				i++;
 				if (board.isMate()) {
 					break;

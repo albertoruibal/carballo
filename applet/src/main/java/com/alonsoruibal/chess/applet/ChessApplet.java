@@ -251,7 +251,6 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 //		if (moves.size() == 0) {
 //			System.out.println("End Game");
 //		}
-		System.out.println("value=" + evaluator.evaluate(engine.getBoard()));
 		switch (engine.getBoard().isEndGame()) {
 		case 1 :
 			message.setText("White win");

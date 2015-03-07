@@ -1,5 +1,6 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
@@ -22,8 +23,6 @@ import static org.junit.Assert.assertTrue;
  * Helps searching for bottlenecks
  */
 public class PerformanceTest {
-
-
 	MoveGenerator movegen;
 	MoveGenerator legalMovegen;
 	Board testBoards[];
@@ -75,13 +74,14 @@ public class PerformanceTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testCompleteEvaluatorPerf() {
+		AttacksInfo attacksInfo = new AttacksInfo();
 		Evaluator completeEvaluator = new CompleteEvaluator(new Config());
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				completeEvaluator.evaluate(testBoard);
+				completeEvaluator.evaluate(testBoard, attacksInfo);
 				positions++;
 			}
 		}
@@ -94,13 +94,14 @@ public class PerformanceTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testExperimentalEvaluatorPerf() {
+		AttacksInfo attacksInfo = new AttacksInfo();
 		Evaluator experimentalEvaluator = new ExperimentalEvaluator(new Config());
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				experimentalEvaluator.evaluate(testBoard);
+				experimentalEvaluator.evaluate(testBoard, attacksInfo);
 				positions++;
 			}
 		}
@@ -113,12 +114,14 @@ public class PerformanceTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testSimplifiedEvaluatorPerf() {
+		AttacksInfo attacksInfo = new AttacksInfo();
+
 		SimplifiedEvaluator simplifiedEvaluator = new SimplifiedEvaluator();
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				simplifiedEvaluator.evaluate(testBoard);
+				simplifiedEvaluator.evaluate(testBoard, attacksInfo);
 				positions++;
 			}
 		}
@@ -148,9 +151,9 @@ public class PerformanceTest {
 
 	@Test
 	@Category(SlowTest.class)
-	public void testMoveIteratorNewPerf() {
+	public void testMoveIteratorNewNewPerf() {
 		SortInfo sortInfo = new SortInfo();
-		MoveIterator moveIterator = new MoveIterator(testBoards[0], sortInfo, 0);
+		MoveIterator moveIterator = new MoveIterator(testBoards[0], new AttacksInfo(), sortInfo, 0);
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;

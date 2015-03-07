@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 
 /**
  * Piece square values from Tomasz Michniewski, got from:
@@ -95,7 +96,7 @@ public class SimplifiedEvaluator extends Evaluator {
 	};
 
 
-	public int evaluate(Board board) {
+	public int evaluate(Board board, AttacksInfo attacksInfo) {
 		long all = board.getAll();
 
 		int materialValue[] = {0, 0};

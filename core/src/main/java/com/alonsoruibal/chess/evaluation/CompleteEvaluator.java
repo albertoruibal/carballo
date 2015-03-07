@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 
@@ -191,9 +192,7 @@ public class CompleteEvaluator extends Evaluator {
 	private int[] pawnStructure = {0, 0};
 	private int[] passedPawns = {0, 0};
 
-	private long[] attacksFromSquare = new long[64];
 	private long[] superiorPieceAttacked = {0, 0};
-	private long[] attackedSquares = {0, 0};
 
 	// Squares attackeds by pawns
 	private long[] pawnAttacks = {0, 0};
@@ -206,7 +205,7 @@ public class CompleteEvaluator extends Evaluator {
 		this.config = config;
 	}
 
-	public int evaluate(Board board) {
+	public int evaluate(Board board, AttacksInfo attacksInfo) {
 		if (debug) {
 			debugSB = new StringBuffer();
 			debugSB.append("\n");
@@ -229,9 +228,6 @@ public class CompleteEvaluator extends Evaluator {
 		if (endGameValue != Evaluator.NO_VALUE) {
 			return endGameValue;
 		}
-
-		long all = board.getAll();
-		long pieceAttacks, pieceAttacksXray, auxLong;
 
 		// From material imbalances (Larry Kaufmann):
 		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
@@ -269,8 +265,6 @@ public class CompleteEvaluator extends Evaluator {
 
 		superiorPieceAttacked[0] = 0;
 		superiorPieceAttacked[1] = 0;
-		attackedSquares[0] = 0;
-		attackedSquares[1] = 0;
 
 		// Squares attacked by pawns
 		pawnAttacks[0] = ((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7);
@@ -287,37 +281,12 @@ public class CompleteEvaluator extends Evaluator {
 		squaresNearKing[0] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
 		squaresNearKing[1] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
 
-		// first build attacks info
-		int index;
+		attacksInfo.build(board);
+
+		long all = board.getAll();
+		long pieceAttacks, pieceAttacksXray, auxLong;
 		long square = 1;
-		for (index = 0; index < 64; index++) {
-			if ((square & all) != 0) {
-				boolean isWhite = ((board.whites & square) != 0);
-				int color = (isWhite ? 0 : 1);
-
-				if ((square & board.pawns) != 0) {
-					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
-				} else if ((square & board.knights) != 0) {
-					pieceAttacks = bbAttacks.knight[index];
-				} else if ((square & board.bishops) != 0) {
-					pieceAttacks = bbAttacks.getBishopAttacks(index, all);
-				} else if ((square & board.rooks) != 0) {
-					pieceAttacks = bbAttacks.getRookAttacks(index, all);
-				} else if ((square & board.queens) != 0) {
-					pieceAttacks = bbAttacks.getRookAttacks(index, all) | bbAttacks.getBishopAttacks(index, all);
-				} else if ((square & board.kings) != 0) {
-					pieceAttacks = bbAttacks.king[index];
-				} else {
-					pieceAttacks = 0;
-				}
-				attackedSquares[color] |= pieceAttacks;
-				attacksFromSquare[index] = pieceAttacks;
-			}
-			square <<= 1;
-		}
-
-		square = 1;
-		for (index = 0; index < 64; index++) {
+		for (int index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
 				boolean isWhite = ((board.whites & square) != 0);
 				int color = (isWhite ? 0 : 1);
@@ -328,7 +297,7 @@ public class CompleteEvaluator extends Evaluator {
 				int rank = index >> 3;
 				int column = 7 - index & 7;
 
-				pieceAttacks = attacksFromSquare[index];
+				pieceAttacks = attacksInfo.attacksFromSquare[index];
 
 				if ((square & board.pawns) != 0) {
 					center[color] += pawnIndexValue[pcsqIndex];
@@ -401,8 +370,8 @@ public class CompleteEvaluator extends Evaluator {
 						long backColumn = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_BACKWARD[color][rank];
 						// If has has root/queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
-								((routeToPromotion & attackedSquares[1 - color]) | ((backColumn & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
-										~((routeToPromotion & attackedSquares[color]) | ((backColumn & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
+								((routeToPromotion & attacksInfo.attackedSquares[1 - color]) | ((backColumn & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
+										~((routeToPromotion & attacksInfo.attackedSquares[color]) | ((backColumn & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
 						long pushSquare = isWhite ? square << 8 : square >>> 8;
 						long pawnsLeft = BitboardUtils.ROWS_LEFT[column] & board.pawns;
 						long pawnsRight = BitboardUtils.ROWS_RIGHT[column] & board.pawns;

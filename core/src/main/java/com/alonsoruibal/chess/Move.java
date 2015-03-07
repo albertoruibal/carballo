@@ -7,11 +7,12 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
  * For efficience Moves are int, this is a static class to threat with this
  *
  * Move format (18 bits):
- * MTCPPPFFFFFFTTTTTT
- * ------------^ To index (6 bits)
- * ------^ From index (6 bits)
- * ---^ Piece moved (3 bits)
- * --^ Is capture (1 bit)
+ * MTXCPPPFFFFFFTTTTTT
+ * -------------^ To index (6 bits)
+ * -------^ From index (6 bits)
+ * ----^ Piece moved (3 bits)
+ * ---^ Is capture (1 bit)
+ * --^ Is check (1 bit)
  * ^ Move type (2 bits)
  *
  * @author Alberto Alonso Ruibal
@@ -38,8 +39,15 @@ public class Move {
 	public static final int TYPE_PROMOTION_BISHOP = 6;
 	public static final int TYPE_PROMOTION_ROOK = 7;
 
+	public static final int CHECK_MASK = 0x1 << 16;
+	public static final int CAPTURE_MASK = 0x1 << 15;
+
+	public static int genMove(int fromIndex, int toIndex, int pieceMoved, boolean capture, boolean check, int moveType) {
+		return toIndex | fromIndex << 6 | pieceMoved << 12 | (capture ? CAPTURE_MASK : 0) | (check ? CHECK_MASK : 0) | moveType << 17;
+	}
+
 	public static int genMove(int fromIndex, int toIndex, int pieceMoved, boolean capture, int moveType) {
-		return toIndex | fromIndex << 6 | pieceMoved << 12 | (capture ? 1 << 15 : 0) | moveType << 16;
+		return toIndex | fromIndex << 6 | pieceMoved << 12 | (capture ? CAPTURE_MASK : 0) | moveType << 17;
 	}
 
 	public static int getToIndex(int move) {
@@ -63,11 +71,15 @@ public class Move {
 	}
 
 	public static boolean isCapture(int move) {
-		return (move & (0x1 << 15)) != 0;
+		return (move & CAPTURE_MASK) != 0;
+	}
+
+	public static boolean isCheck(int move) {
+		return (move & CHECK_MASK) != 0;
 	}
 
 	public static int getMoveType(int move) {
-		return ((move >>> 16) & 0x7);
+		return ((move >>> 17) & 0x7);
 	}
 
 	// Pawn push to 7 or 8th rank
@@ -118,6 +130,7 @@ public class Move {
 		int toIndex;
 		int moveType = 0;
 		int pieceMoved = 0;
+		boolean check = move.indexOf("+") > 0 || move.indexOf("#") > 0;
 
 		// Ignore checks, captures indicators...
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o")
@@ -260,9 +273,9 @@ public class Move {
 			if ((to & (board.whites | board.blacks)) != 0) {
 				capture = true;
 			}
-			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, moveType);
+			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, check, moveType);
 			if (checkLegality) {
-				if (board.doMove(moveInt, false)) {
+				if (board.doMove(moveInt, true, false)) {
 					board.undoMove();
 					return moveInt;
 				}
@@ -307,9 +320,9 @@ public class Move {
 		if (move == 0 || move == -1) {
 			return "none";
 		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
-			return "O-O";
+			return Move.isCheck(move) ? "O-O+" : "O-O";
 		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
-			return "O-O-O";
+			return Move.isCheck(move) ? "O-O-O+" : "O-O-O";
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -332,6 +345,9 @@ public class Move {
 			case TYPE_PROMOTION_ROOK:
 				sb.append("r");
 				break;
+		}
+		if (isCheck(move)) {
+			sb.append("+");
 		}
 		return sb.toString();
 	}
@@ -367,9 +383,9 @@ public class Move {
 		if (move == 0 || move == -1 || !isLegal) {
 			return "none";
 		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
-			return "O-O";
+			return Move.isCheck(move) ? "O-O+" : "O-O";
 		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
-			return "O-O-O";
+			return Move.isCheck(move) ? "O-O-O+" : "O-O-O";
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -409,6 +425,9 @@ public class Move {
 			case TYPE_PROMOTION_ROOK:
 				sb.append("R");
 				break;
+		}
+		if (isCheck(move)) {
+			sb.append("+");
 		}
 		return sb.toString();
 	}

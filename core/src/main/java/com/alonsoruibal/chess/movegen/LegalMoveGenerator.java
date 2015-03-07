@@ -12,7 +12,7 @@ public class LegalMoveGenerator extends MagicMoveGenerator {
 		int lastIndex = super.generateMoves(board, moves, index);
 		int j = index;
 		for (int i = 0; i < lastIndex; i++) {
-			if (board.doMove(moves[i], false)) {
+			if (board.doMove(moves[i], true, false)) {
 				moves[j++] = moves[i];
 				board.undoMove();
 			}

@@ -16,8 +16,6 @@ import java.util.HashMap;
  * @author Alberto Alonso Ruibal
  */
 public class Board {
-	private static final Logger logger = Logger.getLogger("Board");
-
 	public static final int MAX_MOVES = 1024;
 	public static final String FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -527,30 +525,12 @@ public class Board {
 	 * Recapture for extensions: only if the value of the captured piece is similar
 	 * and the recapture is in the same square
 	 */
-	public boolean getLastMoveIsRecapture() {
+	public boolean getMoveIsRecapture(int move1) {
 		if (moveNumber > 1) {
-			int move1 = moveHistory[moveNumber - 1];
-			int move2 = moveHistory[moveNumber - 2];
+			int move2 = moveHistory[moveNumber - 1];
 			if (!Move.isCapture(move1) || !Move.isCapture(move2) || //
 					Move.getToIndex(move1) != Move.getToIndex(move2)) {
 				return false;
-			}
-			char captured1 = capturedPieces[moveNumber - 1];
-			char captured2 = capturedPieces[moveNumber - 2];
-			if (captured1 == '.' || captured2 == '.') {
-				return false;
-			}
-			char capturedLC1 = Character.toLowerCase(captured1);
-			char capturedLC2 = Character.toLowerCase(captured2);
-			// Converts knights in bishops
-			if (capturedLC1 == 'n') {
-				capturedLC1 = 'b';
-			}
-			if (capturedLC2 == 'n') {
-				capturedLC2 = 'b';
-			}
-			if (capturedLC1 == capturedLC2) {
-				return true;
 			}
 		}
 		return false;
@@ -571,17 +551,14 @@ public class Board {
 	}
 
 	public boolean doMove(int move) {
-		return doMove(move, true);
+		return doMove(move, true, true);
 	}
 
 	/**
 	 * Moves and also updates the board's zobrish key verify legality, if not
 	 * legal undo move and return false 0 is the null move
-	 *
-	 * @param move
-	 * @return
 	 */
-	public boolean doMove(int move, boolean fillInfo) {
+	public boolean doMove(int move, boolean verify, boolean fillInfo) {
 		// logger.debug("Before move: \n" + toString() + "\n " +
 		// Move.toStringExt(move));
 
@@ -754,22 +731,31 @@ public class Board {
 		flags ^= FLAG_TURN;
 		key[0] ^= ZobristKey.whiteMove;
 
-		if (isValid()) {
-			setCheckFlags();
+		if (verify) {
+			if (isValid()) {
+				setCheckFlags();
 
-			if (fillInfo) {
-				generateLegalMoves();
-				if (isMate()) { // Append # when mate
-					sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "#");
-				} else if (getCheck()) { // Append + when check
-					sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "+");
+				if (fillInfo) {
+					generateLegalMoves();
+					if (isMate()) { // Append # when mate
+						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "#");
+					} else if (getCheck()) { // Append + when check
+						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "+");
+					}
 				}
+			} else {
+				undoMove();
+				return false;
 			}
-			return true;
 		} else {
-			undoMove();
-			return false;
+			// Trust move check flag
+			if (Move.isCheck(move)) {
+				flags |= FLAG_CHECK;
+			} else {
+				flags &= ~FLAG_CHECK;
+			}
 		}
+		return true;
 	}
 
 	/**
@@ -863,9 +849,6 @@ public class Board {
 						(knights == 0 && BitboardUtils.popCount(bishops) == 1));
 	}
 
-	/**
-	 * The SWAP algorithm
-	 */
 	public int see(int move) {
 		int pieceCaptured = 0;
 		long to = Move.getToSquare(move);
@@ -885,6 +868,9 @@ public class Board {
 		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), pieceCaptured);
 	}
 
+	/**
+	 * The SWAP algorithm https://chessprogramming.wikispaces.com/SEE+-+The+Swap+Algorithm
+	 */
 	public int see(int fromIndex, int toIndex, int pieceMoved, int targetPiece) {
 		int d = 0;
 		long mayXray = pawns | bishops | rooks | queens; // not kings nor knights
@@ -922,6 +908,7 @@ public class Board {
 			fromSquare = BitboardUtils.lsb(fromCandidates);
 
 		} while (fromSquare != 0);
+
 		while (--d != 0) {
 			seeGain[d - 1] = -Math.max(-seeGain[d - 1], seeGain[d]);
 		}

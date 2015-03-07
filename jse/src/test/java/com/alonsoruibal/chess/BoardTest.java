@@ -3,6 +3,7 @@ package com.alonsoruibal.chess;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BoardTest {
 
@@ -85,5 +86,13 @@ public class BoardTest {
 		b.setFen("7k/8/2p5/1P6/8/8/8/7K w - - 0 0");
 		System.out.print(b);
 		assertEquals(b.isPassedPawn(38), false);
+	}
+
+	@Test
+	public void testCheckDetection() {
+		Board b = new Board();
+		b.setFen("4k3/8/8/8/8/2q5/1P6/4K3 w - - 0 1");
+		System.out.println(b.toString());
+		assertTrue("Position must be check", b.getCheck());
 	}
 }

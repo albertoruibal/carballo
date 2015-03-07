@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  * Do some move generation tests from http://chessprogramming.wikispaces.com/Perft+Results
  * Takes a looooong time
  */
-public class MoveGenerationTest {
+public class MoveGenerationPerftTest {
 	private static final int DEPTH = 7;
 
 	MoveGenerator legalMovegen = new LegalMoveGenerator();

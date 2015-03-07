@@ -1,20 +1,16 @@
 package com.alonsoruibal.chess;
 
-import com.alonsoruibal.chess.movegen.MagicMoveGenerator;
-import com.alonsoruibal.chess.movegen.MoveGenerator;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.movesort.MoveIterator;
 import com.alonsoruibal.chess.movesort.SortInfo;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 
-public class MoveIteratorTest {
+public class MoveIteratorPerftTest {
 	private static final int DEPTH = 7;
 
 	Board board = new Board();
@@ -130,31 +126,29 @@ public class MoveIteratorTest {
 	}
 
 	private void recursive(int depth, int depthRemaining) {
-		MoveGenerator moveGenerator = new MagicMoveGenerator();
-		int moves[] = new int[256];
-		//logger.debug("\n"+board);
-		int moveSize = moveGenerator.generateMoves(board, moves, 0);
-		List<Integer> moveList = new ArrayList<Integer>();
-		for (int i = 0; i < moveSize; i++) {
-			moveList.add(moves[i]);
-		}
+//		MoveGenerator moveGenerator = new MagicMoveGenerator();
+//		int moves[] = new int[256];
+//		//logger.debug("\n"+board);
+//		int moveSize = moveGenerator.generateMoves(board, moves, 0);
+//		List<Integer> moveList = new ArrayList<Integer>();
+//		for (int i = 0; i < moveSize; i++) {
+//			moveList.add(moves[i]);
+//		}
 
 		// Move.printMoves(moves, index);
-		MoveIterator moveIterator = new MoveIterator(board, new SortInfo(), depth);
+		MoveIterator moveIterator = new MoveIterator(board, new AttacksInfo(), new SortInfo(), depth);
 		moveIterator.genMoves(0);
-		int move = 0;
+		int move;
 		while ((move = moveIterator.next()) != 0) {
-			if (!moveList.contains(move)) {
-				System.out.println("\n" + board);
-				System.out.println("Move not found: " + Move.toStringExt(move));
-			} else {
-				moveList.remove((Integer) move);
-			}
+//			if (!moveList.contains(move)) {
+//				System.out.println("\n" + board);
+//				System.out.println("Move not found: " + Move.toStringExt(move));
+//			} else {
+//				moveList.remove((Integer) move);
+//			}
 
 			// logger.debug(depth + "->" + Move.toStringExt(move));
 			if (board.doMove(move)) {
-
-
 				if (depthRemaining > 0) {
 					moveCount[depth]++;
 					if ((moveCount[depth] % 100000) == 0) {
@@ -173,11 +167,11 @@ public class MoveIteratorTest {
 					if (Move.isPromotion(move)) {
 						promotions[depth]++;
 					}
-					if (board.getCheck()) {
+					if (Move.isCheck(move)) {
 						checks[depth]++;
 						// logger.debug("\n"+board);
 					}
-					if (board.isMate()) {
+					if (Move.isCheck(move) && board.isMate()) { // SLOW
 						checkMates[depth]++;
 					}
 
@@ -186,12 +180,12 @@ public class MoveIteratorTest {
 				board.undoMove();
 			}
 		}
-		if (moveList.size() > 0) {
-			System.out.println("\n" + board);
-			while (moveList.size() > 0) {
-				System.out.println("Move not generated: " + Move.toStringExt(moveList.get(0)));
-				moveList.remove(0);
-			}
-		}
+//		if (moveList.size() > 0) {
+//			System.out.println("\n" + board);
+//			while (moveList.size() > 0) {
+//				System.out.println("Move not generated: " + Move.toStringExt(moveList.get(0)));
+//				moveList.remove(0);
+//			}
+//		}
 	}
 }

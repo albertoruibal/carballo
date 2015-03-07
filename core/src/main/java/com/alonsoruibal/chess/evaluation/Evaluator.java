@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 
 public abstract class Evaluator {
@@ -18,7 +19,7 @@ public abstract class Evaluator {
 	/**
 	 * Board evaluator
 	 */
-	public abstract int evaluate(Board board);
+	public abstract int evaluate(Board board, AttacksInfo attacksInfo);
 
 	public static int oe(int opening, int endgame) {
 		return (((short) (opening)) << 16) + (short) (endgame);
