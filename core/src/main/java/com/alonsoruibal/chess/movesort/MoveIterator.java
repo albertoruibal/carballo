@@ -99,15 +99,15 @@ public class MoveIterator {
 		for (int index = 0; index < 64; index++) {
 			if ((square & mines) != 0) {
 				if ((square & board.rooks) != 0) { // Rook
-					generateCapturesFromAttacks(Move.ROOK, index, attacksInfo.attacksFromSquare[index] & others);
+					generateMovesFromAttacks(Move.ROOK, index, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateCapturesFromAttacks(Move.BISHOP, index, attacksInfo.attacksFromSquare[index] & others);
+					generateMovesFromAttacks(Move.BISHOP, index, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateCapturesFromAttacks(Move.QUEEN, index, attacksInfo.attacksFromSquare[index] & others);
+					generateMovesFromAttacks(Move.QUEEN, index, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.kings) != 0) { // King
-					generateCapturesFromAttacks(Move.KING, index, attacksInfo.attacksFromSquare[index] & others & ~attacksInfo.attackedSquares[turn ? 1 : 0]);
+					generateMovesFromAttacks(Move.KING, index, attacksInfo.attacksFromSquare[index] & others & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateCapturesFromAttacks(Move.KNIGHT, index, attacksInfo.attacksFromSquare[index] & others);
+					generateMovesFromAttacks(Move.KNIGHT, index, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.pawns) != 0) { // Pawns
 					if (turn) {
 						generatePawnCapturesOrGoodPromos(index, //
@@ -134,15 +134,15 @@ public class MoveIterator {
 		for (int index = 0; index < 64; index++) {
 			if ((square & mines) != 0) {
 				if ((square & board.rooks) != 0) { // Rook
-					generateNonCapturesFromAttacks(Move.ROOK, index, attacksInfo.attacksFromSquare[index] & ~all);
+					generateMovesFromAttacks(Move.ROOK, index, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateNonCapturesFromAttacks(Move.BISHOP, index, attacksInfo.attacksFromSquare[index] & ~all);
+					generateMovesFromAttacks(Move.BISHOP, index, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateNonCapturesFromAttacks(Move.QUEEN, index, attacksInfo.attacksFromSquare[index] & ~all);
+					generateMovesFromAttacks(Move.QUEEN, index, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.kings) != 0) { // King
-					generateNonCapturesFromAttacks(Move.KING, index, attacksInfo.attacksFromSquare[index] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0]);
+					generateMovesFromAttacks(Move.KING, index, attacksInfo.attacksFromSquare[index] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateNonCapturesFromAttacks(Move.KNIGHT, index, attacksInfo.attacksFromSquare[index] & ~all);
+					generateMovesFromAttacks(Move.KNIGHT, index, attacksInfo.attacksFromSquare[index] & ~all, false);
 				}
 				if ((square & board.pawns) != 0) { // Pawns excluding the already generated promos
 					if (turn) {
@@ -171,12 +171,12 @@ public class MoveIterator {
 
 	public void generateCheckEvasionCaptures() {
 		// King can capture one of the checking pieces if two pieces giving check
-		generateCapturesFromAttacks(Move.KING, attacksInfo.myKingIndex, others & attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~attacksInfo.attackedSquares[turn ? 1 : 0]);
+		generateMovesFromAttacks(Move.KING, attacksInfo.myKingIndex, others & attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
 
 		if (BitboardUtils.popCount(attacksInfo.piecesGivingCheck) == 1) {
 			long square = 1;
 			for (int index = 0; index < 64; index++) {
-				if ((square & mines) != 0) {
+				if ((square & mines) != 0 && (square & board.kings) == 0) {
 					if ((square & board.pawns) != 0) { // Pawns
 						long destinySquares = 0;
 						// Good promotion interposes to the check
@@ -198,13 +198,13 @@ public class MoveIterator {
 					} else {
 						if (((attacksInfo.attacksFromSquare[index] & attacksInfo.piecesGivingCheck)) != 0) {
 							if ((square & board.rooks) != 0) { // Rook
-								generateCapturesFromAttacks(Move.ROOK, index, attacksInfo.piecesGivingCheck);
+								generateMovesFromAttacks(Move.ROOK, index, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.bishops) != 0) { // Bishop
-								generateCapturesFromAttacks(Move.BISHOP, index, attacksInfo.piecesGivingCheck);
+								generateMovesFromAttacks(Move.BISHOP, index, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.queens) != 0) { // Queen
-								generateCapturesFromAttacks(Move.QUEEN, index, attacksInfo.piecesGivingCheck);
+								generateMovesFromAttacks(Move.QUEEN, index, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.knights) != 0) { // Knight
-								generateCapturesFromAttacks(Move.KNIGHT, index, attacksInfo.piecesGivingCheck);
+								generateMovesFromAttacks(Move.KNIGHT, index, attacksInfo.piecesGivingCheck, true);
 							}
 						}
 					}
@@ -215,11 +215,14 @@ public class MoveIterator {
 	}
 
 	public void generateCheckEvasionsNonCaptures() {
+		// Moving king (without captures)
+		generateMovesFromAttacks(Move.KING, attacksInfo.myKingIndex, attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
+
 		// Interpose: Cannot interpose with more than one piece giving check
 		if (BitboardUtils.popCount(attacksInfo.piecesGivingCheck) == 1) {
 			long square = 1;
 			for (int index = 0; index < 64; index++) {
-				if ((square & mines) != 0) {
+				if ((square & mines) != 0 && (square & board.kings) == 0) {
 					if ((square & board.pawns) != 0) {
 						long destinySquares;
 						if (turn) {
@@ -234,47 +237,33 @@ public class MoveIterator {
 						if (destinySquares != 0) {
 							generatePawnNonCapturesAndBadPromos(index, destinySquares);
 						}
-					} else if ((square & board.kings) != 0) {
-						// Moving king (without captures)
-						generateNonCapturesFromAttacks(Move.KING, index, attacksInfo.attacksFromSquare[index] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0]);
 					} else {
 						long destinySquares = attacksInfo.attacksFromSquare[index] & attacksInfo.interposeCheckSquares & ~all;
 						if (destinySquares != 0) {
 							if ((square & board.rooks) != 0) { // Rook
-								generateNonCapturesFromAttacks(Move.ROOK, index, destinySquares);
+								generateMovesFromAttacks(Move.ROOK, index, destinySquares, false);
 							} else if ((square & board.bishops) != 0) { // Bishop
-								generateNonCapturesFromAttacks(Move.BISHOP, index, destinySquares);
+								generateMovesFromAttacks(Move.BISHOP, index, destinySquares, false);
 							} else if ((square & board.queens) != 0) { // Queen
-								generateNonCapturesFromAttacks(Move.QUEEN, index, destinySquares);
+								generateMovesFromAttacks(Move.QUEEN, index, destinySquares, false);
 							} else if ((square & board.knights) != 0) { // Knight
-								generateNonCapturesFromAttacks(Move.KNIGHT, index, destinySquares);
+								generateMovesFromAttacks(Move.KNIGHT, index, destinySquares, false);
 							}
 						}
 					}
 				}
 				square <<= 1;
 			}
-		} else {
-			// Moving king (without captures)
-			generateNonCapturesFromAttacks(Move.KING, attacksInfo.myKingIndex, attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0]);
 		}
 	}
 
 	/**
 	 * Generates moves from an attack mask
 	 */
-	private void generateCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
+	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks, boolean capture) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
-			addMove(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, true, 0);
-			attacks ^= to;
-		}
-	}
-
-	private void generateNonCapturesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
-		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
-			addMove(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, false, 0);
+			addMove(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, capture, 0);
 			attacks ^= to;
 		}
 	}
