@@ -4,7 +4,7 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
- * For efficience Moves are int, this is a static class to threat with this
+ * For efficiency Moves are int, this is a static class to threat with this
  *
  * Move format (18 bits):
  * MTXCPPPFFFFFFTTTTTT
@@ -28,6 +28,9 @@ public class Move {
 	public static final int ROOK = 4;
 	public static final int QUEEN = 5;
 	public static final int KING = 6;
+
+	public static final String PIECE_LETTERS_LOWERCASE = " pnbrqk";
+	public static final String PIECE_LETTERS_UPPERCASE = " PNBRQK";
 
 	// Move Types
 	public static final int TYPE_KINGSIDE_CASTLING = 1;
@@ -102,6 +105,20 @@ public class Move {
 	 */
 	public static boolean isPromotion(int move) {
 		return Move.getMoveType(move) >= TYPE_PROMOTION_QUEEN;
+	}
+
+	public static int getPromotionPiece(int move) {
+		switch (getMoveType(move)) {
+			case TYPE_PROMOTION_QUEEN:
+				return QUEEN;
+			case TYPE_PROMOTION_ROOK:
+				return QUEEN;
+			case TYPE_PROMOTION_KNIGHT:
+				return QUEEN;
+			case TYPE_PROMOTION_BISHOP:
+				return QUEEN;
+		}
+		return 0;
 	}
 
 	/**
@@ -299,19 +316,8 @@ public class Move {
 		StringBuilder sb = new StringBuilder();
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
-		switch (Move.getMoveType(move)) {
-			case TYPE_PROMOTION_QUEEN:
-				sb.append("q");
-				break;
-			case TYPE_PROMOTION_KNIGHT:
-				sb.append("n");
-				break;
-			case TYPE_PROMOTION_BISHOP:
-				sb.append("b");
-				break;
-			case TYPE_PROMOTION_ROOK:
-				sb.append("r");
-				break;
+		if (isPromotion(move)) {
+			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPromotionPiece(move)));
 		}
 		return sb.toString();
 	}
@@ -327,24 +333,13 @@ public class Move {
 
 		StringBuilder sb = new StringBuilder();
 		if (getPieceMoved(move) != Move.PAWN) {
-			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
+			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPieceMoved(move)));
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(isCapture(move) ? 'x' : '-');
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
-		switch (Move.getMoveType(move)) {
-			case TYPE_PROMOTION_QUEEN:
-				sb.append("q");
-				break;
-			case TYPE_PROMOTION_KNIGHT:
-				sb.append("n");
-				break;
-			case TYPE_PROMOTION_BISHOP:
-				sb.append("b");
-				break;
-			case TYPE_PROMOTION_ROOK:
-				sb.append("r");
-				break;
+		if (isPromotion(move)) {
+			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPromotionPiece(move)));
 		}
 		if (isCheck(move)) {
 			sb.append("+");
@@ -390,7 +385,7 @@ public class Move {
 
 		StringBuilder sb = new StringBuilder();
 		if (getPieceMoved(move) != Move.PAWN) {
-			sb.append(" PNBRQK".charAt(getPieceMoved(move)));
+			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPieceMoved(move)));
 		}
 		String fromSq = BitboardUtils.index2Algebraic(Move.getFromIndex(move));
 
@@ -412,19 +407,8 @@ public class Move {
 			sb.append("x");
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
-		switch (Move.getMoveType(move)) {
-			case TYPE_PROMOTION_QUEEN:
-				sb.append("Q");
-				break;
-			case TYPE_PROMOTION_KNIGHT:
-				sb.append("N");
-				break;
-			case TYPE_PROMOTION_BISHOP:
-				sb.append("B");
-				break;
-			case TYPE_PROMOTION_ROOK:
-				sb.append("R");
-				break;
+		if (isPromotion(move)) {
+			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPromotionPiece(move)));
 		}
 		if (isCheck(move)) {
 			sb.append("+");
