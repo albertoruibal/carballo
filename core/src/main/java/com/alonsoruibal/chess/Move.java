@@ -73,6 +73,25 @@ public class Move {
 		return ((move >>> 12) & 0x7);
 	}
 
+	public static int getPieceCaptured(Board board, int move) {
+		if (getMoveType(move) == TYPE_PASSANT) {
+			return PAWN;
+		}
+		long toSquare = getToSquare(move);
+		if ((toSquare & board.pawns) != 0) {
+			return Move.PAWN;
+		} else if ((toSquare & board.knights) != 0) {
+			return Move.KNIGHT;
+		} else if ((toSquare & board.bishops) != 0) {
+			return Move.BISHOP;
+		} else if ((toSquare & board.rooks) != 0) {
+			return Move.ROOK;
+		} else if ((toSquare & board.queens) != 0) {
+			return Move.QUEEN;
+		}
+		return 0;
+	}
+
 	public static boolean isCapture(int move) {
 		return (move & CAPTURE_MASK) != 0;
 	}

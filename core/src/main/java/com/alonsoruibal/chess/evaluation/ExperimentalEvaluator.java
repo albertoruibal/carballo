@@ -24,6 +24,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	public final static int ROOK = 500;
 	public final static int QUEEN = 975;
 
+	public final static int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, 9999};
+
 	private final static int OPENING = 0;
 	private final static int ENDGAME = 1;
 

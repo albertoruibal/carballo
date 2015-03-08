@@ -57,7 +57,6 @@ public class Board {
 	public long[] kingsHistory;
 	public long[] flagsHistory;
 	public int[] fiftyMovesRuleHistory;
-	public char[] capturedPieces;
 	public int[] seeGain;
 
 	// Flags: must be changed only when moving
@@ -87,7 +86,6 @@ public class Board {
 		flagsHistory = new long[MAX_MOVES];
 		keyHistory = new long[MAX_MOVES][2];
 		fiftyMovesRuleHistory = new int[MAX_MOVES];
-		capturedPieces = new char[MAX_MOVES];
 
 		seeGain = new int[32];
 
@@ -489,7 +487,6 @@ public class Board {
 			Arrays.fill(keyHistory[i], 0);
 		}
 		Arrays.fill(fiftyMovesRuleHistory, 0);
-		Arrays.fill(capturedPieces, '.');
 		Arrays.fill(moveHistory, 0);
 		sanMoves.clear();
 	}
@@ -536,20 +533,6 @@ public class Board {
 		return false;
 	}
 
-	public char getLastCapturedPiece() {
-		if (moveNumber > 1) {
-			return Character.toLowerCase(capturedPieces[moveNumber - 1]);
-		}
-		return '.';
-	}
-
-	public char getCapturedPiece(int plyBefore) {
-		if (moveNumber > plyBefore) {
-			return Character.toLowerCase(capturedPieces[moveNumber - plyBefore]);
-		}
-		return '.';
-	}
-
 	public boolean doMove(int move) {
 		return doMove(move, true, true);
 	}
@@ -578,9 +561,6 @@ public class Board {
 		boolean capture = Move.isCapture(move);
 		boolean turn = getTurn();
 		int color = (turn ? 0 : 1);
-
-		char capturedPiece = getPieceAt(to);
-		capturedPieces[moveNumber] = capturedPiece;
 
 		// Count consecutive moves without capture or without pawn move
 		fiftyMovesRule++;
@@ -836,8 +816,6 @@ public class Board {
 			if (keyHistory[i][0] == key[0] && keyHistory[i][1] == key[1]) {
 				repetitions++;
 			}
-			// logger.debug("movenumber="+i+" key0=" + keyHistory[i][0] + " " +
-			// " key1=" + keyHistory[i][1] + " Repetitions="+repetitions);
 			if (repetitions >= 2) { // with the last one they are 3
 				return true;
 			}

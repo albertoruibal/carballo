@@ -327,26 +327,6 @@ public class SearchEngine implements Runnable {
 		return eval;
 	}
 
-	private int lastCapturedPieceValue(Board board) {
-		return pieceValue(board.getLastCapturedPiece());
-	}
-
-	private int pieceValue(char piece) {
-		switch (Character.toLowerCase(piece)) {
-			case 'p':
-				return CompleteEvaluator.PAWN;
-			case 'n':
-				return CompleteEvaluator.KNIGHT;
-			case 'b':
-				return CompleteEvaluator.BISHOP;
-			case 'r':
-				return CompleteEvaluator.ROOK;
-			case 'q':
-				return CompleteEvaluator.QUEEN;
-		}
-		return 0;
-	}
-
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
 		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			throw new SearchFinishedException();
@@ -419,14 +399,14 @@ public class SearchEngine implements Runnable {
 
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
 		moveIterator.genMoves(ttMove, true, generateChecks);
-		int move;
 
+		int move;
 		while ((move = moveIterator.next()) != Move.NONE) {
 			validOperations = true;
 
 			if (!checkEvasion //
 					&& !(Move.isCheck(move) && generateChecks) // Necessary because TT move can be a no promotion or capture
-					&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) { // TODO revise PHASES or do this in the move gen
+					&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
 				continue;
 			}
 
@@ -437,7 +417,7 @@ public class SearchEngine implements Runnable {
 					&& move != ttMove //
 					&& !Move.isPawnPush678(move) // TODO test if necessary
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
-				int futilityValue = eval + lastCapturedPieceValue(board) + config.getFutilityMarginQS();
+				int futilityValue = eval + ExperimentalEvaluator.PIECE_VALUES[Move.getPieceCaptured(board, move)] + config.getFutilityMarginQS();
 				if (futilityValue < beta) {
 					if (futilityValue > bestScore) {
 						bestScore = futilityValue;
@@ -781,7 +761,6 @@ public class SearchEngine implements Runnable {
 			if (score >= beta) {
 				break;
 			}
-
 		}
 
 		// Checkmate or stalemate
@@ -795,9 +774,7 @@ public class SearchEngine implements Runnable {
 
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
-			if (excludedMove == 0 && validOperations /*&& !board.getCheck()*/) {
-				// TODO test use absolute move number
-				// TODO TEST put/remove board.getCheck()
+			if (excludedMove == 0 && validOperations) {
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {

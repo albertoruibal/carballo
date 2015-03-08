@@ -305,78 +305,64 @@ public class MoveIterator {
 		}
 	}
 
-	private void addMove(int pieceMoved, int fromIndex, int toIndex, long squareCaptured, boolean capture, int moveType) {
+	private void addMove(int pieceMoved, int fromIndex, int toIndex, long toSquare, boolean capture, int moveType) {
 		int move = Move.genMove(fromIndex, toIndex, pieceMoved, capture, moveType);
-		if (move != ttMove) {
+		if (move == ttMove) {
+			return;
+		}
 
-			boolean underPromotion = (moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP);
+		int see = 0;
+		int pieceCaptured = 0;
 
-			if (capture || (moveType == Move.TYPE_PROMOTION_QUEEN)) {
-				int see = 0;
-				int score = 0;
-
-				if (capture) {
-					// Score captures
-					int pieceCaptured = 0;
-
-					if ((squareCaptured & board.knights) != 0) {
-						pieceCaptured = Move.KNIGHT;
-					} else if ((squareCaptured & board.bishops) != 0) {
-						pieceCaptured = Move.BISHOP;
-					} else if ((squareCaptured & board.rooks) != 0) {
-						pieceCaptured = Move.ROOK;
-					} else if ((squareCaptured & board.queens) != 0) {
-						pieceCaptured = Move.QUEEN;
-					} else if (capture) {
-						pieceCaptured = Move.PAWN;
-					}
-
-					see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
-					// Order GOOD captures by MVV/LVA (Hyatt dixit)
-					score = VICTIM_PIECE_VALUES[pieceCaptured] - AGGRESSOR_PIECE_VALUES[pieceMoved];
-				}
-
-				if (moveType == Move.TYPE_PROMOTION_QUEEN) {
-					score += SCORE_PROMOTION_QUEEN;
-				}
-
-				if (see >= 0 && !underPromotion) {
-					if (see > 0 || moveType == Move.TYPE_PROMOTION_QUEEN) {
-						goodCaptures[goodCaptureIndex] = move;
-						goodCapturesSee[goodCaptureIndex] = see;
-						goodCapturesScores[goodCaptureIndex] = score;
-						goodCaptureIndex++;
-					} else {
-						equalCaptures[equalCaptureIndex] = move;
-						equalCapturesSee[equalCaptureIndex] = see;
-						equalCapturesScores[equalCaptureIndex] = score;
-						equalCaptureIndex++;
-					}
-				} else {
-					badCaptures[badCaptureIndex] = move;
-					badCapturesSee[badCaptureIndex] = see;
-					badCapturesScores[badCaptureIndex] = see; // <---- !!!
-					badCaptureIndex++;
-				}
-			} else {
-				if (move == killer1) {
-					foundKiller1 = true;
-				} else if (move == killer2) {
-					foundKiller2 = true;
-				} else {
-					// Score non captures
-					int score;
-					if (underPromotion) {
-						score = SCORE_UNDERPROMOTION;
-					} else {
-						score = sortInfo.getMoveScore(move);
-					}
-
-					nonCaptures[nonCaptureIndex] = move;
-					nonCapturesScores[nonCaptureIndex] = score;
-					nonCaptureIndex++;
-				}
+		if (capture) {
+			pieceCaptured = Move.getPieceCaptured(board, move);
+			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
+			// Fix SEE for promotions TODO test
+//			see += Board.SEE_PIECE_VALUES[Move.getPiecePromoted(move)];
+		} else {
+			if (move == killer1) {
+				foundKiller1 = true;
+				return;
+			} else if (move == killer2) {
+				foundKiller2 = true;
+				return;
 			}
+		}
+
+		if (see < 0) {
+			badCaptures[badCaptureIndex] = move;
+			badCapturesSee[badCaptureIndex] = see;
+			badCapturesScores[badCaptureIndex] = see;
+			badCaptureIndex++;
+			return;
+		}
+
+		boolean underPromotion = moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP;
+
+		if ((capture || (moveType == Move.TYPE_PROMOTION_QUEEN)) & !underPromotion) {
+			// Order GOOD captures by MVV/LVA (Hyatt dixit)
+			int score = 0;
+			if (capture) {
+				score = VICTIM_PIECE_VALUES[pieceCaptured] - AGGRESSOR_PIECE_VALUES[pieceMoved];
+			}
+			if (moveType == Move.TYPE_PROMOTION_QUEEN) {
+				score += SCORE_PROMOTION_QUEEN;
+			}
+			if (see > 0 || (moveType == Move.TYPE_PROMOTION_QUEEN)) {
+				goodCaptures[goodCaptureIndex] = move;
+				goodCapturesSee[goodCaptureIndex] = see;
+				goodCapturesScores[goodCaptureIndex] = score;
+				goodCaptureIndex++;
+			} else {
+				equalCaptures[equalCaptureIndex] = move;
+				equalCapturesSee[equalCaptureIndex] = see;
+				equalCapturesScores[equalCaptureIndex] = score;
+				equalCaptureIndex++;
+			}
+		} else {
+			nonCaptures[nonCaptureIndex] = move;
+			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : sortInfo.getMoveScore(move);
+			nonCaptureIndex++;
 		}
 	}
 
@@ -474,7 +460,7 @@ public class MoveIterator {
 			newMyKingIndex = Move.getToIndex(move);
 		}
 
-		// Candidates to left the king in check after moving
+		// Candidates to leave the king in check after moving
 		if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
 				((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Move.KING)) { // Moving the king when the king is in check by a slider
 			// Regenerate bishop attacks to my king
