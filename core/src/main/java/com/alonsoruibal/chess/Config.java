@@ -28,7 +28,6 @@ public class Config {
 	public final static int DEFAULT_EXTENSIONS_MATE_THREAT = 2;
 	public final static int DEFAULT_EXTENSIONS_PAWN_PUSH = 0;
 	public final static int DEFAULT_EXTENSIONS_PASSED_PAWN = 0;
-	public final static int DEFAULT_EXTENSIONS_RECAPTURE = 0;
 	public final static int DEFAULT_EXTENSIONS_SINGULAR = 2;
 	public final static int DEFAULT_SINGULAR_EXTENSION_MARGIN = 50;
 	public final static boolean DEFAULT_ASPIRATION_WINDOW = true;
@@ -69,7 +68,6 @@ public class Config {
 	private int extensionsMateThreat = DEFAULT_EXTENSIONS_MATE_THREAT;
 	private int extensionsPawnPush = DEFAULT_EXTENSIONS_PAWN_PUSH;
 	private int extensionsPassedPawn = DEFAULT_EXTENSIONS_PASSED_PAWN;
-	private int extensionsRecapture = DEFAULT_EXTENSIONS_RECAPTURE;
 	private int extensionsSingular = DEFAULT_EXTENSIONS_SINGULAR;
 	private int singularExtensionMargin = DEFAULT_SINGULAR_EXTENSION_MARGIN;
 	private boolean aspirationWindow = DEFAULT_ASPIRATION_WINDOW;
@@ -279,14 +277,6 @@ public class Config {
 		this.extensionsPassedPawn = extensionsPassedPawn;
 	}
 
-	public int getExtensionsRecapture() {
-		return extensionsRecapture;
-	}
-
-	public void setExtensionsRecapture(int extensionsRecapture) {
-		this.extensionsRecapture = extensionsRecapture;
-	}
-
 	public int getExtensionsSingular() {
 		return extensionsSingular;
 	}
@@ -417,7 +407,7 @@ public class Config {
 				"Book              " + useBook + " (" + book + ")\n" +
 				"TT Size           " + transpositionTableSize + "\n" +
 				"Aspiration Window " + aspirationWindow + " " + Arrays.toString(aspirationWindowSizes) + "\n" +
-				"Extensions:       Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Recapture=" + extensionsRecapture + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
+				"Extensions:       Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
 				"Razoring          " + razoring + " (" + razoringMargin + ")\n" +
 				"Null Move         " + nullMove + " (" + nullMoveMargin + ")\n" +
 				"Fut. Pruning      " + futility + " (" + futilityMargin + ") QS: (" + futilityMarginQS + ")\n" +

@@ -259,16 +259,6 @@ public class SearchEngine implements Runnable {
 				return PLY;
 			}
 		}
-		// TODO revise
-//		if (board.getMoveIsRecapture(move)) {
-//			int firstCapturedPieceValue = pieceValue(board.getCapturedPiece(1));
-//			if (moveSee >= firstCapturedPieceValue - 50) {
-//				ext += config.getExtensionsRecapture();
-//			}
-//			if (ext >= PLY) {
-//				return PLY;
-//			}
-//		}
 		return ext;
 	}
 

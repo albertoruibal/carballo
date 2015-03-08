@@ -53,7 +53,6 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Extensions Pawn Push type spin default " + Config.DEFAULT_EXTENSIONS_PAWN_PUSH + " min 0 max 2");
 					System.out.println("option name Extensions Passed Pawn type spin default " + Config.DEFAULT_EXTENSIONS_PASSED_PAWN + " min 0 max 2");
 					System.out.println("option name Extensions Mate Threat type spin default " + Config.DEFAULT_EXTENSIONS_MATE_THREAT + " min 0 max 2");
-					System.out.println("option name Extensions Recapture type spin default " + Config.DEFAULT_EXTENSIONS_RECAPTURE + " min 0 max 2");
 					System.out.println("option name Extensions Singular type spin default " + Config.DEFAULT_EXTENSIONS_SINGULAR + " min 0 max 2");
 					System.out
 							.println("option name Singular Extension Margin type spin default " + Config.DEFAULT_SINGULAR_EXTENSION_MARGIN + " min 0 max 300");
@@ -113,8 +112,6 @@ public class Uci implements SearchObserver {
 						config.setExtensionsPassedPawn(Integer.parseInt(value));
 					} else if ("ExtensionsMateThreat".equals(name)) {
 						config.setExtensionsMateThreat(Integer.parseInt(value));
-					} else if ("ExtensionsRecapture".equals(name)) {
-						config.setExtensionsRecapture(Integer.parseInt(value));
 					} else if ("ExtensionsSingular".equals(name)) {
 						config.setExtensionsSingular(Integer.parseInt(value));
 					} else if ("SingularExtensionMargin".equals(name)) {

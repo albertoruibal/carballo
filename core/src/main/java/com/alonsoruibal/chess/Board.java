@@ -518,21 +518,6 @@ public class Board {
 		return moveHistory[moveNumber - 1];
 	}
 
-	/**
-	 * Recapture for extensions: only if the value of the captured piece is similar
-	 * and the recapture is in the same square
-	 */
-	public boolean getMoveIsRecapture(int move1) {
-		if (moveNumber > 1) {
-			int move2 = moveHistory[moveNumber - 1];
-			if (!Move.isCapture(move1) || !Move.isCapture(move2) || //
-					Move.getToIndex(move1) != Move.getToIndex(move2)) {
-				return false;
-			}
-		}
-		return false;
-	}
-
 	public boolean doMove(int move) {
 		return doMove(move, true, true);
 	}
