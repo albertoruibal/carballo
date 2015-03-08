@@ -107,7 +107,7 @@ public class Move {
 		return Move.getMoveType(move) >= TYPE_PROMOTION_QUEEN;
 	}
 
-	public static int getPromotionPiece(int move) {
+	public static int getPiecePromoted(int move) {
 		switch (getMoveType(move)) {
 			case TYPE_PROMOTION_QUEEN:
 				return QUEEN;
@@ -317,7 +317,7 @@ public class Move {
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		if (isPromotion(move)) {
-			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPromotionPiece(move)));
+			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPiecePromoted(move)));
 		}
 		return sb.toString();
 	}
@@ -339,7 +339,7 @@ public class Move {
 		sb.append(isCapture(move) ? 'x' : '-');
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		if (isPromotion(move)) {
-			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPromotionPiece(move)));
+			sb.append(PIECE_LETTERS_LOWERCASE.charAt(getPiecePromoted(move)));
 		}
 		if (isCheck(move)) {
 			sb.append("+");
@@ -408,7 +408,7 @@ public class Move {
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		if (isPromotion(move)) {
-			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPromotionPiece(move)));
+			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPiecePromoted(move)));
 		}
 		if (isCheck(move)) {
 			sb.append("+");
