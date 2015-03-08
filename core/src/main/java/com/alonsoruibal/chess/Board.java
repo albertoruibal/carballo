@@ -71,7 +71,7 @@ public class Board {
 	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
 	// For the SEE SWAP algorithm
-	private static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
+	public static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
 
 	BitboardAttacks bbAttacks;
 
@@ -874,7 +874,7 @@ public class Board {
 	public int see(int fromIndex, int toIndex, int pieceMoved, int targetPiece) {
 		int d = 0;
 		long mayXray = pawns | bishops | rooks | queens; // not kings nor knights
-		long fromSquare = 1 << fromIndex;
+		long fromSquare = 0x1L << fromIndex;
 		long all = getAll();
 		long attacks = bbAttacks.getIndexAttacks(this, toIndex);
 		long fromCandidates;
@@ -885,6 +885,7 @@ public class Board {
 			d++; // next depth and side
 			// speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
+			if (Math.max(-seeGain[d-1], seeGain[d]) < 0) break; // pruning does not influence the result
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
 			if ((fromSquare & mayXray) != 0) {

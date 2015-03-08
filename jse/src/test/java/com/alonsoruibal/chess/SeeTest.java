@@ -1,5 +1,7 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.bitboard.BitboardUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -55,4 +57,20 @@ public class SeeTest {
 		assertTrue(value == -225);
 	}
 
+
+	@Test
+	public void testNoOtherPiecesAttack() {
+		String fen = "rq2r1k1/5pp1/p7/5NP1/1p2P2P/8/PQ4K1/5R1R b - - 0 2";
+		Board board = new Board();
+		board.setFen(fen);
+		System.out.print(board);
+		int move = Move.getFromString(board, "Re8xe4", true);
+
+		System.out.println(Move.getFromIndex(move));
+
+
+		int value = board.see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.PAWN);
+		System.out.println("value = " + value);
+		assertTrue(value == 100);
+	}
 }
