@@ -3,7 +3,6 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.hash.ZobristKey;
-import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 
 import java.util.Arrays;
@@ -16,8 +15,6 @@ import java.util.HashMap;
  * @author Alberto Alonso Ruibal
  */
 public class Board {
-	private static final Logger logger = Logger.getLogger("Board");
-
 	public static final int MAX_MOVES = 1024;
 	public static final String FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -863,9 +860,6 @@ public class Board {
 						(knights == 0 && BitboardUtils.popCount(bishops) == 1));
 	}
 
-	/**
-	 * The SWAP algorithm
-	 */
 	public int see(int move) {
 		int pieceCaptured = 0;
 		long to = Move.getToSquare(move);
@@ -885,10 +879,13 @@ public class Board {
 		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), pieceCaptured);
 	}
 
+	/**
+	 * The SWAP algorithm https://chessprogramming.wikispaces.com/SEE+-+The+Swap+Algorithm
+	 */
 	public int see(int fromIndex, int toIndex, int pieceMoved, int targetPiece) {
 		int d = 0;
 		long mayXray = pawns | bishops | rooks | queens; // not kings nor knights
-		long fromSquare = 1 << fromIndex;
+		long fromSquare = 0x1L << fromIndex;
 		long all = getAll();
 		long attacks = bbAttacks.getIndexAttacks(this, toIndex);
 		long fromCandidates;
@@ -899,6 +896,9 @@ public class Board {
 			d++; // next depth and side
 			// speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
+			if (Math.max(-seeGain[d - 1], seeGain[d]) < 0) {
+				break; // pruning does not influence the result
+			}
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
 			if ((fromSquare & mayXray) != 0) {
@@ -922,6 +922,7 @@ public class Board {
 			fromSquare = BitboardUtils.lsb(fromCandidates);
 
 		} while (fromSquare != 0);
+
 		while (--d != 0) {
 			seeGain[d - 1] = -Math.max(-seeGain[d - 1], seeGain[d]);
 		}
