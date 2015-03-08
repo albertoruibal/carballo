@@ -112,11 +112,11 @@ public class Move {
 			case TYPE_PROMOTION_QUEEN:
 				return QUEEN;
 			case TYPE_PROMOTION_ROOK:
-				return QUEEN;
+				return ROOK;
 			case TYPE_PROMOTION_KNIGHT:
-				return QUEEN;
+				return KNIGHT;
 			case TYPE_PROMOTION_BISHOP:
-				return QUEEN;
+				return BISHOP;
 		}
 		return 0;
 	}
