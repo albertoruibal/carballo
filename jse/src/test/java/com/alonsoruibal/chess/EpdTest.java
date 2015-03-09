@@ -6,6 +6,7 @@ import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
+import com.alonsoruibal.chess.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -153,23 +154,13 @@ public class EpdTest implements SearchObserver {
 
 		logger.debug("TEST    TIME       NODES");
 		for (int i = 0; i < allSolutionTimes.size(); i++) {
-			logger.debug(padNumberRight(i + 1, 4) + padNumberLeft(allSolutionTimes.get(i), 8) + padNumberLeft(allSolutionNodes.get(i), 12));
+			logger.debug(StringUtils.padRight(String.valueOf(i + 1), 4) + StringUtils.padLeft(String.valueOf(allSolutionTimes.get(i)), 8) + StringUtils.padLeft(String.valueOf(allSolutionNodes.get(i)), 12));
 		}
 		logger.debug("***** Positions not Solved:");
 		logger.debug(notSolved.toString());
 		logger.debug("***** Result:" + solved + " positions solved of " + total + " in " + totalTime + "Ms and " + totalNodes + " nodes (" + fails + " fails)");
 
 		return totalTime;
-	}
-
-	private String padNumberRight(long number, int totalChars) {
-		String out = String.valueOf(number);
-		return out + "            ".substring(0, totalChars - out.length());
-	}
-
-	private String padNumberLeft(long number, int totalChars) {
-		String out = String.valueOf(number);
-		return "            ".substring(0, totalChars - out.length()) + out;
 	}
 
 	private int[] parseMoves(String movesString) {
