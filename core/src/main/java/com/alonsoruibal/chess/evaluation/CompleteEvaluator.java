@@ -32,7 +32,7 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int BISHOP_M = oe(5, 5); // Mobility units: this value is added for each destination square not occupied by one of our pieces
 	private final static int BISHOP_TRAPPED = oe(-100, -100);
 
-	// Bishops
+	// Knights
 	private final static int KNIGHT_M_UNITS = 4;
 	private final static int KNIGHT_M = oe(4, 4);
 	private final static int KNIGHT_KAUF_BONUS = 7;
