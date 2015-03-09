@@ -202,14 +202,6 @@ public class ExperimentalEvaluator extends Evaluator {
 			kingIndexValue[i] = oe(KingColumn[OPENING][column] + KingRank[OPENING][rank] + KingLine[OPENING][d] + KingLine[OPENING][e],
 					KingColumn[ENDGAME][column] + KingRank[ENDGAME][rank] + KingLine[ENDGAME][d] + KingLine[ENDGAME][e]);
 		}
-
-		// Pawn opening corrections
-		pawnIndexValue[19] += oe(10, 0); // E3
-		pawnIndexValue[20] += oe(10, 0); // D3
-		pawnIndexValue[27] += oe(25, 0); // E4
-		pawnIndexValue[28] += oe(25, 0); // D4
-		pawnIndexValue[35] += oe(10, 0); // E5
-		pawnIndexValue[36] += oe(10, 0); // D5
 	}
 
 	private Config config;
