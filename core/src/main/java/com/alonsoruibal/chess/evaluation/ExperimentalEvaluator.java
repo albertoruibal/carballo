@@ -5,10 +5,11 @@ import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.util.StringUtils;
 
 /**
  * Evaluation is done in centipawns
- *
+ * <p/>
  * TODO: bishop / knights / rook traps: revise
  * TODO: test knights and bishops only forward mobility
  *
@@ -258,8 +259,6 @@ public class ExperimentalEvaluator extends Evaluator {
 		if (endGameValue != Evaluator.NO_VALUE) {
 			return endGameValue;
 		}
-
-
 
 		pawnMaterial[0] = PAWN * whitePawns;
 		pawnMaterial[1] = PAWN * blackPawns;
@@ -531,7 +530,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 					positional[color] += BISHOP_PAWN_IN_COLOR * (BitboardUtils.popCount(auxLong & mines) + BitboardUtils.popCount(auxLong & others) >>> 1)
-						+  BISHOP_FORWARD_P_PU * (BitboardUtils.popCount(auxLong & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1);
+							+ BISHOP_FORWARD_P_PU * (BitboardUtils.popCount(auxLong & others & BitboardUtils.RANKS_FORWARD[color][rank]) >>> 1);
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
@@ -697,41 +696,25 @@ public class ExperimentalEvaluator extends Evaluator {
 		if (debug) {
 			logger.debug(debugSB);
 
-			logger.debug("materialValue          = " + (material[0] - material[1]));
-			logger.debug("pawnMaterialValue      = " + (pawnMaterial[0] - pawnMaterial[1]));
-
-			logger.debug("centerOpening          = " + o(center[0] - center[1]));
-			logger.debug("centerEndgame          = " + e(center[0] - center[1]));
-
-			logger.debug("positionalOpening      = " + o(positional[0] - positional[1]));
-			logger.debug("positionalEndgame      = " + e(positional[0] - positional[1]));
-
-			logger.debug("attacksO               = " + o(attacks[0] - attacks[1]));
-			logger.debug("attacksE               = " + e(attacks[0] - attacks[1]));
-
-			logger.debug("mobilityO              = " + o(mobility[0] - mobility[1]));
-			logger.debug("mobilityE              = " + e(mobility[0] - mobility[1]));
-
-			logger.debug("pawnsO                 = " + o(pawnStructure[0] - pawnStructure[1]));
-			logger.debug("pawnsE                 = " + e(pawnStructure[0] - pawnStructure[1]));
-
-			logger.debug("passedPawnsO           = " + o(passedPawns[0] - passedPawns[1]));
-			logger.debug("passedPawnsE           = " + e(passedPawns[0] - passedPawns[1]));
-
-			logger.debug("kingSafetyValueO       = " + o(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
-			logger.debug("kingSafetyValueE       = " + e(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
-
-			logger.debug("kingDefenseO           = " + o(kingDefense[0] - kingDefense[1]));
-			logger.debug("kingDefenseE           = " + e(kingDefense[0] - kingDefense[1]));
-
-			logger.debug("HungPiecesO            = " + o(hungPieces));
-			logger.debug("HungPiecesE            = " + e(hungPieces));
-
-			logger.debug("gamePhase              = " + gamePhase);
-			logger.debug("tempo                  = " + (board.getTurn() ? TEMPO : -TEMPO));
-			logger.debug("value                  = " + value);
+			logger.debug("material          = " + (material[0] - material[1]));
+			logger.debug("pawnMaterial      = " + (pawnMaterial[0] - pawnMaterial[1]));
+			logger.debug("centerOpening     = " + formatOE(center[0] - center[1]));
+			logger.debug("positional        = " + formatOE(positional[0] - positional[1]));
+			logger.debug("attacks           = " + formatOE(attacks[0] - attacks[1]));
+			logger.debug("mobility          = " + formatOE(mobility[0] - mobility[1]));
+			logger.debug("pawnStructure     = " + formatOE(pawnStructure[0] - pawnStructure[1]));
+			logger.debug("passedPawns       = " + formatOE(passedPawns[0] - passedPawns[1]));
+			logger.debug("kingSafety        = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
+			logger.debug("kingDefense       = " + formatOE(kingDefense[0] - kingDefense[1]));
+			logger.debug("gamePhase         = " + gamePhase);
+			logger.debug("tempo             = " + (board.getTurn() ? TEMPO : -TEMPO));
+			logger.debug("value             = " + value);
 		}
 		assert Math.abs(value) < Evaluator.KNOWN_WIN : "Eval is outside limits";
 		return value;
+	}
+
+	private String formatOE(int value) {
+		return StringUtils.padLeft(String.valueOf(o(value)), 6) + " " + StringUtils.padLeft(String.valueOf(e(value)), 6);
 	}
 }
