@@ -3,7 +3,6 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.hash.ZobristKey;
-import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 
 import java.util.Arrays;
@@ -848,7 +847,7 @@ public class Board {
 			d++; // next depth and side
 			// speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
-			if (Math.max(-seeGain[d-1], seeGain[d]) < 0) break; // pruning does not influence the result
+			if (Math.max(-seeGain[d - 1], seeGain[d]) < 0) break; // pruning does not influence the result
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
 			if ((fromSquare & mayXray) != 0) {
