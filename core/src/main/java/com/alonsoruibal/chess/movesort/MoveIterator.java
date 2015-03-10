@@ -160,12 +160,12 @@ public class MoveIterator {
 		if ((((all & (turn ? 0x06L : 0x0600000000000000L)) == 0 //
 				&& (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()))) //
 				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x0EL : 0x0E00000000000000L)) == 0)) {
-			addMove(Move.KING, attacksInfo.myKingIndex, attacksInfo.myKingIndex - 2, 0, false, Move.TYPE_KINGSIDE_CASTLING);
+			addMove(Move.KING, attacksInfo.myKingIndex, attacksInfo.myKingIndex - 2, false, Move.TYPE_KINGSIDE_CASTLING);
 		}
 		if ((((all & (turn ? 0x70L : 0x7000000000000000L)) == 0 //
 				&& (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))
 				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x34L : 0x3400000000000000L)) == 0)) {
-			addMove(Move.KING, attacksInfo.myKingIndex, attacksInfo.myKingIndex + 2, 0, false, Move.TYPE_QUEENSIDE_CASTLING);
+			addMove(Move.KING, attacksInfo.myKingIndex, attacksInfo.myKingIndex + 2, false, Move.TYPE_QUEENSIDE_CASTLING);
 		}
 	}
 
@@ -192,7 +192,7 @@ public class MoveIterator {
 							long testPassantSquare = (turn ? attacksInfo.piecesGivingCheck << 8 : attacksInfo.piecesGivingCheck >>> 8);
 							if (testPassantSquare == board.getPassantSquare() || // En-passant capture target giving check
 									(board.getPassantSquare() & attacksInfo.interposeCheckSquares) != 0) { // En passant capture to interpose
-								addMove(Move.PAWN, index, BitboardUtils.square2Index(board.getPassantSquare()), board.getPassantSquare(), true, Move.TYPE_PASSANT);
+								addMove(Move.PAWN, index, BitboardUtils.square2Index(board.getPassantSquare()), true, Move.TYPE_PASSANT);
 							}
 						}
 					} else {
@@ -263,7 +263,7 @@ public class MoveIterator {
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks, boolean capture) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
-			addMove(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, capture, 0);
+			addMove(pieceMoved, fromIndex, BitboardUtils.square2Index(to), capture, 0);
 			attacks ^= to;
 		}
 	}
@@ -272,19 +272,19 @@ public class MoveIterator {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & passant) != 0) {
-				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, true, Move.TYPE_PASSANT);
+				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), true, Move.TYPE_PASSANT);
 			} else {
 				boolean capture = (to & others) != 0;
 				if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
-					addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, capture, Move.TYPE_PROMOTION_QUEEN);
+					addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), capture, Move.TYPE_PROMOTION_QUEEN);
 					// If it is a capture, we must add the underpromotions
 					if (capture) {
-						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, capture, Move.TYPE_PROMOTION_KNIGHT);
-						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, capture, Move.TYPE_PROMOTION_ROOK);
-						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, capture, Move.TYPE_PROMOTION_BISHOP);
+						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), capture, Move.TYPE_PROMOTION_KNIGHT);
+						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), capture, Move.TYPE_PROMOTION_ROOK);
+						addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), capture, Move.TYPE_PROMOTION_BISHOP);
 					}
 				} else if (capture) {
-					addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, capture, 0);
+					addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), capture, 0);
 				}
 			}
 			attacks ^= to;
@@ -295,17 +295,17 @@ public class MoveIterator {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
-				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, false, Move.TYPE_PROMOTION_KNIGHT);
-				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, false, Move.TYPE_PROMOTION_ROOK);
-				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, false, Move.TYPE_PROMOTION_BISHOP);
+				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), false, Move.TYPE_PROMOTION_KNIGHT);
+				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), false, Move.TYPE_PROMOTION_ROOK);
+				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), false, Move.TYPE_PROMOTION_BISHOP);
 			} else {
-				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, false, 0);
+				addMove(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), false, 0);
 			}
 			attacks ^= to;
 		}
 	}
 
-	private void addMove(int pieceMoved, int fromIndex, int toIndex, long toSquare, boolean capture, int moveType) {
+	private void addMove(int pieceMoved, int fromIndex, int toIndex, boolean capture, int moveType) {
 		int move = Move.genMove(fromIndex, toIndex, pieceMoved, capture, moveType);
 		if (move == ttMove) {
 			return;
@@ -317,8 +317,8 @@ public class MoveIterator {
 		if (capture) {
 			pieceCaptured = Move.getPieceCaptured(board, move);
 			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
-			// Fix SEE for promotions TODO test
-//			see += Board.SEE_PIECE_VALUES[Move.getPiecePromoted(move)];
+			// Fix SEE for promotions
+			see += Board.SEE_PIECE_VALUES[Move.getPiecePromoted(move)];
 		} else {
 			if (move == killer1) {
 				foundKiller1 = true;
@@ -401,7 +401,7 @@ public class MoveIterator {
 	/**
 	 * Sets the check flag and verify move legality
 	 *
-	 * @returns Move.MOVE_NONE if the move is not legal
+	 * @return Move.MOVE_NONE if the move is not legal
 	 */
 	public int setCheckAndLegality(int move) {
 		if (move == Move.NONE) {
