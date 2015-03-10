@@ -164,7 +164,7 @@ public class MoveIteratorCheckAndLegalityTest {
 				enPassant++;
 			}
 		}
-		assertTrue(totalMoves  + " moves", moves == totalMoves);
+		assertTrue(totalMoves + " moves", moves == totalMoves);
 		assertTrue(totalCaptures + " captures", captures == totalCaptures);
 		assertTrue(totalEnPassant + " en-pasasnt", enPassant == totalEnPassant);
 	}
@@ -199,7 +199,6 @@ public class MoveIteratorCheckAndLegalityTest {
 		testPositionCountingMoves("rq2r1k1/5Qp1/p4p2/4bNP1/1p2P2P/8/PP4K1/5R1R b - - 1 2", Move.NONE, 3, 1, 0);
 	}
 
-	// TODO verify sorting
 	@Test
 	public void captureCheckingPieceWithKingAndTwoPiecesGivingCheck() {
 		testPositionCountingMoves("k4r2/R5pb/1pQp1n1p/3P4/5p1P/3P2P1/r1q1R2K/8 b - - 1 1", Move.NONE, 2, 1, 0);
