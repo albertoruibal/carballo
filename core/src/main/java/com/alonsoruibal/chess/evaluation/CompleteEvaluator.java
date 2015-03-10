@@ -58,6 +58,9 @@ public class CompleteEvaluator extends Evaluator {
 
 	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king (opening)
 
+	// Ponder kings attacks by the number of attackers (not pawns) later divided by 8
+	private final static int[] KING_SAFETY_PONDER = {0, 1, 4, 8, 16, 25, 36, 49, 50, 50, 50, 50, 50, 50, 50, 50};
+
 	// Pawns
 	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
 
@@ -74,9 +77,6 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
 	private final static int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
 	private final static int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
-
-	// Ponder kings attacks by the number of attackers (not pawns) later divided by 8
-	private final static int[] KING_SAFETY_PONDER = {0, 1, 4, 8, 16, 25, 36, 49, 50, 50, 50, 50, 50, 50, 50, 50};
 
 	private final static int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
 	private final static int PINNED_PIECE = oe(25, 35);
@@ -96,14 +96,14 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	private final static long[] BISHOP_TRAPPING = {
-			0x00, 1L << 10, 0x00, 0x00, 0x00, 0x00, 1L << 13, 0x00,
-			1L << 17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 1L << 22,
-			1L << 25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 1L << 30,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			1L << 33, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 1L << 38,
-			1L << 41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 1L << 46,
-			0x00, 1L << 50, 0x00, 0x00, 0x00, 0x00, 1L << 53, 0x00
+			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
+			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
+			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38,
+			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46,
+			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0
 	};
 
 	// The pair of values are {opening, endgame}
@@ -465,7 +465,7 @@ public class CompleteEvaluator extends Evaluator {
 						attacks[color] += PINNED_PIECE;
 					}
 
-					if ((pieceAttacks & mines & (board.rooks)) != 0) {
+					if ((pieceAttacks & mines & board.rooks) != 0) {
 						positional[color] += ROOK_CONNECT;
 					}
 					auxLong = BitboardUtils.COLUMN[column];
@@ -495,6 +495,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.kings) != 0) {
 					center[color] += kingIndexValue[pcsqIndex];
 
+					// If king is in the first rank, we add the pawn shield
 					if ((square & (isWhite ? BitboardUtils.RANK[0] : BitboardUtils.RANK[7])) != 0) {
 						kingDefense[color] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
@@ -527,7 +528,7 @@ public class CompleteEvaluator extends Evaluator {
 				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
 				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
 				+ config.getEvalKingSafety() * (kingDefense[0] - kingDefense[1])
-				+ (config.getEvalKingSafety() / 8) * ((KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1])); // Divide by eight
+				+ (config.getEvalKingSafety() >>> 3) * (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]);
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
@@ -537,16 +538,17 @@ public class CompleteEvaluator extends Evaluator {
 
 			logger.debug("material          = " + (material[0] - material[1]));
 			logger.debug("pawnMaterial      = " + (pawnMaterial[0] - pawnMaterial[1]));
-			logger.debug("centerOpening     = " + formatOE(center[0] - center[1]));
+			logger.debug("tempo             = " + (board.getTurn() ? TEMPO : -TEMPO));
+			logger.debug("gamePhase         = " + gamePhase);
+			logger.debug("                     Opening  Endgame");
+			logger.debug("center            = " + formatOE(center[0] - center[1]));
 			logger.debug("positional        = " + formatOE(positional[0] - positional[1]));
 			logger.debug("attacks           = " + formatOE(attacks[0] - attacks[1]));
 			logger.debug("mobility          = " + formatOE(mobility[0] - mobility[1]));
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[0] - pawnStructure[1]));
 			logger.debug("passedPawns       = " + formatOE(passedPawns[0] - passedPawns[1]));
-			logger.debug("kingSafetyValue   = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
+			logger.debug("kingSafety x 8    = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 			logger.debug("kingDefense       = " + formatOE(kingDefense[0] - kingDefense[1]));
-			logger.debug("gamePhase         = " + gamePhase);
-			logger.debug("tempo             = " + (board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("value             = " + value);
 		}
 		assert Math.abs(value) < Evaluator.KNOWN_WIN : "Eval is outside limits";
@@ -554,6 +556,6 @@ public class CompleteEvaluator extends Evaluator {
 	}
 
 	private String formatOE(int value) {
-		return StringUtils.padLeft(String.valueOf(o(value)), 6) + " " + StringUtils.padLeft(String.valueOf(e(value)), 6);
+		return StringUtils.padLeft(String.valueOf(o(value)), 8) + " " + StringUtils.padLeft(String.valueOf(e(value)), 8);
 	}
 }
