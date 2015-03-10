@@ -1,5 +1,6 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.epdtest;
 
+import com.alonsoruibal.chess.SlowTest;
 import com.alonsoruibal.chess.log.Logger;
 
 import org.junit.Test;

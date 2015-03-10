@@ -1,5 +1,8 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.epdtest;
 
+import com.alonsoruibal.chess.Config;
+import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.TestColors;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;

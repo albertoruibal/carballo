@@ -1,4 +1,6 @@
-package com.alonsoruibal.chess;
+package com.alonsoruibal.chess.epdtest;
+
+import com.alonsoruibal.chess.SlowTest;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
