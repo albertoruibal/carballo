@@ -40,7 +40,7 @@ public class SearchEngine implements Runnable {
 
 	public boolean debug = false;
 
-	private SearchParameters searchParameters;
+	protected SearchParameters searchParameters;
 
 	private boolean searching = false;
 	private boolean foundOneMove = false;
@@ -836,8 +836,7 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
-	public void newRun() throws SearchFinishedException {
-		startTime = System.currentTimeMillis();
+	private void newRun() throws SearchFinishedException {
 		foundOneMove = false;
 		searching = true;
 
@@ -852,9 +851,6 @@ public class SearchEngine implements Runnable {
 
 		initialPly = board.getMoveNumber();
 
-		thinkToNodes = searchParameters.getNodes();
-		thinkToDepth = searchParameters.getDepth();
-		thinkToTime = searchParameters.calculateMoveTime(board, startTime);
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
@@ -876,7 +872,7 @@ public class SearchEngine implements Runnable {
 		aspWindows = config.getAspirationWindowSizes();
 	}
 
-	public void runStepped() throws SearchFinishedException {
+	private void runStepped() throws SearchFinishedException {
 		selDepth = 0;
 		int failHighCount = 0;
 		int failLowCount = 0;
@@ -916,6 +912,13 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
+	public void setSearchLimits(SearchParameters searchParameters) {
+		startTime = System.currentTimeMillis();
+		thinkToNodes = searchParameters.getNodes();
+		thinkToDepth = searchParameters.getDepth();
+		thinkToTime = searchParameters.calculateMoveTime(board, startTime);
+	}
+
 	public void finishRun() {
 		// puts the board in the initial position
 		board.undoMove(initialPly);
@@ -929,6 +932,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void run() {
+		setSearchLimits(searchParameters);
 		try {
 			newRun();
 			while (true) {
@@ -1008,14 +1012,6 @@ public class SearchEngine implements Runnable {
 
 	public TranspositionTable getTT() {
 		return tt;
-	}
-
-	public SearchParameters getSearchParameters() {
-		return searchParameters;
-	}
-
-	public void setSearchParameters(SearchParameters searchParameters) {
-		this.searchParameters = searchParameters;
 	}
 
 	public boolean isInitialized() {

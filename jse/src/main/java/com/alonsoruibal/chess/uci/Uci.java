@@ -14,12 +14,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * UCI Interface TODO ponder
+ * UCI Interface
  */
 public class Uci implements SearchObserver {
+	static final String NAME = "Carballo Chess Engine v1.2";
+	static final String AUTHOR = "Alberto Alonso Ruibal";
 
 	Config config;
 	SearchEngineThreaded engine;
+	SearchParameters searchParameters;
 
 	boolean needsReload = true;
 
@@ -30,6 +33,7 @@ public class Uci implements SearchObserver {
 	}
 
 	void loop() {
+		System.out.println(NAME + " by " + AUTHOR);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			while (true) {
@@ -39,8 +43,8 @@ public class Uci implements SearchObserver {
 				String command = tokens[index++].toLowerCase();
 
 				if ("uci".equals(command)) {
-					System.out.println("id name Carballo Chess Engine v1.1");
-					System.out.println("id author Alberto Alonso Ruibal");
+					System.out.println("id name " + NAME);
+					System.out.println("id author " + AUTHOR);
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
 					System.out.println("option name Null Move type check default " + Config.DEFAULT_NULL_MOVE);
@@ -176,7 +180,7 @@ public class Uci implements SearchObserver {
 				} else if ("quit".equals(command)) {
 					System.exit(0);
 				} else if ("go".equals(command)) {
-					SearchParameters searchParameters = new SearchParameters();
+					searchParameters = new SearchParameters();
 					while (index < tokens.length) {
 						String arg1 = tokens[index++];
 						if ("searchmoves".equals(arg1)) {
@@ -245,7 +249,10 @@ public class Uci implements SearchObserver {
 
 				} else if ("debug".equals(command)) {
 				} else if ("ponderhit".equals(command)) {
-					// TODO ponder not supported
+					if (searchParameters != null) {
+						searchParameters.setPonder(false);
+						engine.setSearchLimits(searchParameters);
+					}
 				} else if ("register".equals(command)) {
 					// not used
 				} else {

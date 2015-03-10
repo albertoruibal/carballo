@@ -16,7 +16,7 @@ public class SearchEngineThreaded extends SearchEngine {
 	public void go(SearchParameters searchParameteres) {
 		if (!isInitialized()) return;
 		if (!isSearching()) {
-			setSearchParameters(searchParameteres);
+			this.searchParameters = searchParameteres;
 			thread = new Thread(this);
 			thread.start();
 		}

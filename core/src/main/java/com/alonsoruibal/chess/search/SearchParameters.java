@@ -123,7 +123,7 @@ public class SearchParameters {
 	 * @return
 	 */
 	public long calculateMoveTime(Board board, long startTime) {
-		if (infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
+		if (ponder || infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
 			return Long.MAX_VALUE;
 		}
 		if (moveTime != Integer.MAX_VALUE) {
