@@ -1,12 +1,9 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.log.Logger;
-import com.alonsoruibal.chess.search.SearchEngine;
-import com.alonsoruibal.chess.search.SearchParameters;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -227,32 +224,5 @@ public class ExperimentalEvaluatorTest {
 		System.out.println("value1 = " + value1);
 		System.out.println("value2 = " + value2);
 		assertTrue(value1 >= value2 + 40);
-	}
-
-	@Test
-	public void testOpeningD2D4() {
-		CompleteEvaluator evaluator = new CompleteEvaluator(new Config());
-
-		Board b = new Board();
-		b.startPosition();
-		int valueStart = evaluator.evaluate(b, attacksInfo);
-		b.doMove(Move.getFromString(b, "g1f3", false));
-		int valueG1F3 = evaluator.evaluate(b, attacksInfo);
-		b.undoMove();
-		b.doMove(Move.getFromString(b, "d2d4", false));
-		int valueD2D4 = evaluator.evaluate(b, attacksInfo);
-
-//		Config config = new Config();
-//		SearchEngine searchEngine = new SearchEngine(config);
-//		SearchParameters params = new SearchParameters();
-//		params.setNodes(100000);
-//		searchEngine.debug = true;
-//		searchEngine.getBoard().startPosition();
-//		searchEngine.go(params);
-
-		System.out.println("Eval diff " + (valueD2D4 - valueG1F3));
-
-		assertTrue("d2d4 eval must be greater than start position", valueD2D4 > valueStart);
-		assertTrue("d2d4 eval must be greater than g1f3", valueD2D4 > valueG1F3);
 	}
 }
