@@ -435,23 +435,27 @@ public class MoveIterator {
 		}
 
 		long squaresForDiscovery = from;
-		if (moveType == Move.TYPE_PASSANT) {
-			squaresForDiscovery |= (turn ? to >>> 8 : to << 8);
-			allAfterMove &= ~squaresForDiscovery;
+		switch (moveType) {
+			case Move.TYPE_PASSANT:
+				squaresForDiscovery |= (turn ? to >>> 8 : to << 8);
+				allAfterMove &= ~squaresForDiscovery;
+				break;
 
-		} else if (moveType == Move.TYPE_KINGSIDE_CASTLING) {
-			long rookMoveMask = (turn ? 0x05L : 0x0500000000000000L);
-			squaresForDiscovery |= rookMoveMask;
-			allAfterMove ^= rookMoveMask;
-			minesAfterMove ^= rookMoveMask;
-			rookSlidersAftermove ^= rookMoveMask;
+			case Move.TYPE_KINGSIDE_CASTLING:
+				long rookMoveMaskKingSide = (turn ? 0x05L : 0x0500000000000000L);
+				squaresForDiscovery |= rookMoveMaskKingSide;
+				allAfterMove ^= rookMoveMaskKingSide;
+				minesAfterMove ^= rookMoveMaskKingSide;
+				rookSlidersAftermove ^= rookMoveMaskKingSide;
+				break;
 
-		} else if (moveType == Move.TYPE_QUEENSIDE_CASTLING) {
-			long rookMoveMask = (turn ? 0x90L : 0x9000000000000000L);
-			squaresForDiscovery |= rookMoveMask;
-			allAfterMove ^= rookMoveMask;
-			minesAfterMove ^= rookMoveMask;
-			rookSlidersAftermove ^= rookMoveMask;
+			case Move.TYPE_QUEENSIDE_CASTLING:
+				long rookMoveMaskQueenSide = (turn ? 0x90L : 0x9000000000000000L);
+				squaresForDiscovery |= rookMoveMaskQueenSide;
+				allAfterMove ^= rookMoveMaskQueenSide;
+				minesAfterMove ^= rookMoveMaskQueenSide;
+				rookSlidersAftermove ^= rookMoveMaskQueenSide;
+				break;
 		}
 
 		int newMyKingIndex = attacksInfo.myKingIndex;
