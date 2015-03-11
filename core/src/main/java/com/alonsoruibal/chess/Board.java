@@ -463,8 +463,7 @@ public class Board {
 		}
 		sb.append("a b c d e f g h  ");
 		sb.append((getTurn() ? "white move\n" : "blacks move\n"));
-		// sb.append(" "
-		// +getWhiteKingsideCastling()+getWhiteQueensideCastling()+getBlackKingsideCastling()+getBlackQueensideCastling());
+		// sb.append(" " +getWhiteKingsideCastling()+getWhiteQueensideCastling()+getBlackKingsideCastling()+getBlackQueensideCastling());
 
 		return sb.toString();
 	}
@@ -812,22 +811,8 @@ public class Board {
 	}
 
 	public int see(int move) {
-		int pieceCaptured = 0;
-		long to = Move.getToSquare(move);
-
-		if ((to & knights) != 0) {
-			pieceCaptured = Move.KNIGHT;
-		} else if ((to & bishops) != 0) {
-			pieceCaptured = Move.BISHOP;
-		} else if ((to & rooks) != 0) {
-			pieceCaptured = Move.ROOK;
-		} else if ((to & queens) != 0) {
-			pieceCaptured = Move.QUEEN;
-		} else if (Move.isCapture(move)) {
-			pieceCaptured = Move.PAWN;
-		}
-
-		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), pieceCaptured);
+		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.getPieceCaptured(this, move)) //
+				+ SEE_PIECE_VALUES[Move.getPiecePromoted(move)]; // Fix SEE for promotions
 	}
 
 	/**
