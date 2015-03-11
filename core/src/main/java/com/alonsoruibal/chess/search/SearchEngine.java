@@ -721,28 +721,12 @@ public class SearchEngine implements Runnable {
 				bestScore = score;
 
 				if (nodeType == NODE_ROOT) {
-					long time = System.currentTimeMillis();
-
 					globalBestMove = move;
 					bestMoveScore = score;
 					foundOneMove = true;
 
-					getPv(move);
-
-					SearchStatusInfo info = new SearchStatusInfo();
-					info.setDepth(depth);
-					info.setSelDepth(selDepth);
-					info.setTime(time - startTime);
-					info.setPv(pv);
-					info.setScore(score, alpha, beta);
-					info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
-					info.setHashFull(tt.getHashFull());
-					info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
-
-					if (observer != null) {
-						observer.info(info);
-					} else {
-						logger.debug(info.toString());
+					if (depthRemaining > 6 * PLY) {
+						notifyMoveFound(move, score, alpha, beta);
 					}
 				}
 			}
@@ -784,6 +768,31 @@ public class SearchEngine implements Runnable {
 		tt.save(board, distanceToInitialPly, depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != 0);
 
 		return bestScore;
+	}
+
+	/**
+	 * Notifies the best move to the SearchObserver filling a SearchStatusInfo object
+	 */
+	private void notifyMoveFound(int move, int score, int alpha, int beta) {
+		long time = System.currentTimeMillis();
+
+		getPv(move);
+
+		SearchStatusInfo info = new SearchStatusInfo();
+		info.setDepth(depth);
+		info.setSelDepth(selDepth);
+		info.setTime(time - startTime);
+		info.setPv(pv);
+		info.setScore(score, alpha, beta);
+		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+		info.setHashFull(tt.getHashFull());
+		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
+
+		if (observer != null) {
+			observer.info(info);
+		} else {
+			logger.debug(info.toString());
+		}
 	}
 
 	/**
@@ -837,6 +846,9 @@ public class SearchEngine implements Runnable {
 	}
 
 	private void newRun() throws SearchFinishedException {
+		startTime = System.currentTimeMillis();
+		setSearchLimits(searchParameters);
+
 		foundOneMove = false;
 		searching = true;
 
@@ -901,19 +913,18 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		// If mate found and time is not infinite, exit
-		if ((thinkToTime != Long.MAX_VALUE) && ((rootScore <= -VALUE_IS_MATE) || (rootScore > VALUE_IS_MATE))) {
-			throw new SearchFinishedException();
+		if (depth <= 6) {
+			notifyMoveFound(globalBestMove, bestMoveScore, alpha, beta);
 		}
 
 		depth++;
-		if (depth == MAX_DEPTH || depth > thinkToDepth) {
+		if (((thinkToTime != Long.MAX_VALUE) && ((rootScore <= -VALUE_IS_MATE) || (rootScore > VALUE_IS_MATE))) // Mate found and time is not infinite
+				|| (depth == MAX_DEPTH) || (depth > thinkToDepth)) {
 			throw new SearchFinishedException();
 		}
 	}
 
 	public void setSearchLimits(SearchParameters searchParameters) {
-		startTime = System.currentTimeMillis();
 		thinkToNodes = searchParameters.getNodes();
 		thinkToDepth = searchParameters.getDepth();
 		thinkToTime = searchParameters.calculateMoveTime(board, startTime);
@@ -932,7 +943,6 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void run() {
-		setSearchLimits(searchParameters);
 		try {
 			newRun();
 			while (true) {
