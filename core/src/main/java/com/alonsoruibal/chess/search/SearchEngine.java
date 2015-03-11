@@ -385,29 +385,22 @@ public class SearchEngine implements Runnable {
 		}
 
 		boolean validOperations = false;
-		boolean checkEvasion = board.getCheck();
 
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
-		moveIterator.genMoves(ttMove, true, generateChecks);
+		moveIterator.genMoves(ttMove, (generateChecks ? MoveIterator.GENERATE_ONLY_TACTICAL_AND_CHECKS : MoveIterator.GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS));
 
 		int move;
 		while ((move = moveIterator.next()) != Move.NONE) {
 			validOperations = true;
 
-			if (!checkEvasion //
-					&& !(Move.isCheck(move) && generateChecks) // Necessary because TT move can be a no promotion or capture
-					&& moveIterator.getPhase() > MoveIterator.PHASE_GOOD_CAPTURES_AND_PROMOS) {
-				continue;
-			}
-
 			// Futility pruning
-			if (!checkEvasion //
+			if (!moveIterator.checkEvasion //
 					&& !Move.isCheck(move) //
 					&& !isPv //
 					&& move != ttMove //
-					&& !Move.isPawnPush678(move) // TODO test if necessary
+					&& !Move.isPawnPush678(move) //
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
-				int futilityValue = eval + ExperimentalEvaluator.PIECE_VALUES[Move.getPieceCaptured(board, move)] + config.getFutilityMarginQS();
+				int futilityValue = eval + moveIterator.getLastMoveSee() + config.getFutilityMarginQS();
 				if (futilityValue < beta) {
 					if (futilityValue > bestScore) {
 						bestScore = futilityValue;
@@ -515,10 +508,10 @@ public class SearchEngine implements Runnable {
 					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
-//				if (depthRemaining <= PLY) {
-//					razoringHit++;
-//					return quiescentSearch(0, alpha, beta);
-//				}
+				if (depthRemaining <= PLY) {
+					razoringHit++;
+					return quiescentSearch(0, alpha, beta);
+				}
 
 				int rbeta = beta - config.getRazoringMargin();
 				int v = quiescentSearch(0, rbeta - 1, rbeta);
@@ -618,7 +611,6 @@ public class SearchEngine implements Runnable {
 
 		int movesDone = 0;
 		boolean validOperations = false;
-		boolean checkEvasion = board.getCheck();
 		int bestScore = -Evaluator.VICTORY;
 		int move, bestMove = Move.NONE;
 
@@ -657,7 +649,7 @@ public class SearchEngine implements Runnable {
 
 			boolean importantMove = nodeType == NODE_ROOT //
 					|| extension != 0 //
-					|| checkEvasion //
+					|| moveIterator.checkEvasion //
 					|| Move.isCheck(move) //
 					|| Move.isCapture(move) // Include ALL captures
 					|| Move.isPawnPush678(move) // Includes promotions
