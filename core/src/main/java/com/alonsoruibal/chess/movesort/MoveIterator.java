@@ -15,7 +15,6 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
  * SEE captures, and move captures with SEE<0 to the end
  */
 public class MoveIterator {
-	//	private static final Logger logger = Logger.getLogger(MoveIterator.class);
 	public final static int PHASE_TT = 0;
 	public final static int PHASE_GEN_CAPTURES = 1;
 	public final static int PHASE_GOOD_CAPTURES_AND_PROMOS = 2;
