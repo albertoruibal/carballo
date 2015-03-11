@@ -847,9 +847,8 @@ public class Board {
 			d++; // next depth and side
 			// speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
-			if (Math.max(-seeGain[d - 1], seeGain[d]) < 0) break; // pruning does not influence the result
 			attacks ^= fromSquare; // reset bit in set to traverse
-			all ^= fromSquare; // reset bit in temporary occupancy (for x-Rays)
+			all ^= fromSquare; // reset bit in temporary occupancy (for X-Rays)
 			if ((fromSquare & mayXray) != 0) {
 				attacks |= bbAttacks.getXrayAttacks(this, toIndex, all);
 			}
