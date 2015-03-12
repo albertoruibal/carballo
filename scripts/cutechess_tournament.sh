@@ -5,7 +5,7 @@
 #
 # Requirements:
 #  - cutechess-cli from https://github.com/cutechess/cutechess
-#  - binfmt-support (debian) to allow executing jars
+#  - binfmt-support and jarwrapper (debian) to allow executing jars directly
 #  - The previous versions jars in ../jse built with the script build_previous_versions.sh
 #
 SCRIPT=$(realpath $0)
