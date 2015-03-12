@@ -15,9 +15,8 @@ public class MoveIterator {
 	// Kind of moves to generate
 	//
 	public final static int GENERATE_ALL = 0;
-	public final static int GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS = 1; // Generates only good captures and queen promotions (if the ttMove is a capture, always allow is)
-	public final static int GENERATE_ONLY_TACTICAL_AND_CHECKS = 2; // Generates also bad / equal captures and checks
-
+	public final static int GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS = 1; // Generates only good captures and queen promotions
+	public final static int GENERATE_ONLY_TACTICAL_AND_CHECKS = 2; // Generates all the captures and checks
 	//
 	// Move generation phases
 	//
@@ -112,6 +111,7 @@ public class MoveIterator {
 		checkEvasion = board.getCheck();
 		phase = PHASE_TT;
 		lastMoveSee = 0;
+
 		goodCaptureIndex = 0;
 		badCaptureIndex = 0;
 		equalCaptureIndex = 0;
@@ -130,13 +130,11 @@ public class MoveIterator {
 			case PHASE_TT:
 				phase++;
 				if (ttMove != Move.NONE) {
+					lastMoveSee = Move.isCapture(ttMove) ? board.see(ttMove) : 0;
 					if (checkEvasion //
 							|| (movesToGenerate == GENERATE_ALL) //
-							|| ((movesToGenerate >= GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS) && Move.isTactical(ttMove)) //
-							|| ((movesToGenerate == GENERATE_ONLY_TACTICAL_AND_CHECKS) && Move.isCheck(ttMove))) {
-						if (Move.isCapture(ttMove)) {
-							lastMoveSee = board.see(ttMove);
-						}
+							|| ((movesToGenerate == GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS) && ((Move.isCapture(ttMove) && lastMoveSee > 0) || (Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN))) //
+							|| ((movesToGenerate == GENERATE_ONLY_TACTICAL_AND_CHECKS) && (Move.isCapture(ttMove) || Move.isCheck(ttMove)))) {
 						return ttMove;
 					}
 				}
