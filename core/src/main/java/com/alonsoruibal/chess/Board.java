@@ -811,8 +811,7 @@ public class Board {
 	}
 
 	public int see(int move) {
-		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.getPieceCaptured(this, move)) //
-				+ SEE_PIECE_VALUES[Move.getPiecePromoted(move)]; // Fix SEE for promotions
+		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.getPieceCaptured(this, move));
 	}
 
 	/**

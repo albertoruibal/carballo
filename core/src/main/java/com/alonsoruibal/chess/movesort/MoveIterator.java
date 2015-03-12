@@ -578,8 +578,7 @@ public class MoveIterator {
 
 		if (capture) {
 			pieceCaptured = Move.getPieceCaptured(board, move);
-			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured) //
-					+ Board.SEE_PIECE_VALUES[Move.getPiecePromoted(move)]; // Fix SEE for promotions
+			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
 
 			if (!checkEvasion && (movesToGenerate == GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS && see <= 0)) {
 				return;
