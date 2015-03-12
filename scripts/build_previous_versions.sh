@@ -16,5 +16,5 @@ gradle clean proguard
 git checkout v0.9
 gradle clean proguard
 
-# Back to original git status
-git checkout HEAD
+# Back to the original git status
+git checkout master
