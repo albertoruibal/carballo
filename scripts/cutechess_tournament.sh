@@ -6,12 +6,12 @@
 # Requirements:
 #  - cutechess-cli from https://github.com/cutechess/cutechess
 #  - binfmt-support (debian) to allow executing jars
+#
+SCRIPT=$(realpath $0)
+SCRIPTPATH=$(dirname "$SCRIPT")
+cd "$SCRIPTPATH/../jse/"
 
 CUTECHESS=/usr/local/cutechess-cli/cutechess-cli.sh
-
-SCRIPT=$(realpath $0)
-SCRIPT_PATH=$(dirname $SCRIPT)
-cd $SCRIPT_PATH/../jse/
 
 chmod +x *.jar
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT=$(realpath $0)
-SCRIPTPATH=$(dirname $SCRIPT)
-cd $SCRIPTPATH/../jse/
+SCRIPTPATH=$(dirname "$SCRIPT")
+cd "$SCRIPTPATH/../jse/"
 
 gradle clean proguard
 
