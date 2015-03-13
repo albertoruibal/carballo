@@ -70,7 +70,6 @@ public class AttacksInfo {
 
 				pieceAttacks = 0;
 				if ((square & board.pawns) != 0) {
-					// TODO include passant captures ¿?
 					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
 				} else if ((square & board.knights) != 0) {
 					pieceAttacks = bbAttacks.knight[index];
