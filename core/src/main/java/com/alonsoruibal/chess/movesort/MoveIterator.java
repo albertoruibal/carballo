@@ -97,6 +97,14 @@ public class MoveIterator {
 		this.ttMove = ttMove;
 		this.movesToGenerate = movesToGenerate;
 
+		phase = PHASE_TT;
+		checkEvasion = board.getCheck();
+		lastMoveSee = 0;
+	}
+
+	private void initMoveGen() {
+		attacksInfo.build(board);
+
 		killer1 = sortInfo.killerMove1[depth];
 		killer2 = sortInfo.killerMove2[depth];
 		killer3 = depth < 2 ? Move.NONE : sortInfo.killerMove1[depth - 2];
@@ -106,11 +114,6 @@ public class MoveIterator {
 		foundKiller2 = false;
 		foundKiller3 = false;
 		foundKiller4 = false;
-
-		attacksInfo.build(board);
-		checkEvasion = board.getCheck();
-		phase = PHASE_TT;
-		lastMoveSee = 0;
 
 		goodCaptureIndex = 0;
 		badCaptureIndex = 0;
@@ -140,6 +143,7 @@ public class MoveIterator {
 				}
 
 			case PHASE_GEN_CAPTURES:
+				initMoveGen();
 				if (checkEvasion) {
 					generateCheckEvasionCaptures();
 				} else {
