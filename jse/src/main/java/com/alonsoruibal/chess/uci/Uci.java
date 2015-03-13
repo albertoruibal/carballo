@@ -46,6 +46,7 @@ public class Uci implements SearchObserver {
 					System.out.println("id name " + NAME);
 					System.out.println("id author " + AUTHOR);
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
+					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
 					System.out.println("option name Null Move type check default " + Config.DEFAULT_NULL_MOVE);
 					System.out.println("option name Null Move Margin type spin default " + Config.DEFAULT_NULL_MOVE_MARGIN + " min 0 max 1000");
@@ -96,6 +97,8 @@ public class Uci implements SearchObserver {
 
 					if ("Hash".equals(name)) {
 						config.setTranspositionTableSize(Integer.parseInt(value));
+					} else if ("Ponder".equals(name)) {
+						config.setPonder(Boolean.parseBoolean(value));
 					} else if ("OwnBook".equals(name)) {
 						config.setUseBook(Boolean.parseBoolean(value));
 					} else if ("NullMove".equals(name)) {
@@ -269,7 +272,7 @@ public class Uci implements SearchObserver {
 		StringBuilder sb = new StringBuilder();
 		sb.append("bestmove ");
 		sb.append(Move.toString(bestMove));
-		if (ponder != 0 && ponder != -1) {
+		if (config.getPonder() && ponder != Move.NONE) {
 			sb.append(" ponder ");
 			sb.append(Move.toString(ponder));
 		}

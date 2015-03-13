@@ -11,11 +11,9 @@ import java.util.Arrays;
  */
 public class Config {
 
-	// For manual testing
-	public boolean experimental = false;
-
 	// Default values are static fields used also from UCIEngine
 	public final static boolean DEFAULT_USE_BOOK = true;
+	public final static boolean DEFAULT_PONDER = true;
 	public final static int DEFAULT_BOOK_KNOWGLEDGE = 100;
 	public final static String DEFAULT_EVALUATOR = "experimental";
 	public final static boolean DEFAULT_NULL_MOVE = true;
@@ -54,6 +52,7 @@ public class Config {
 
 	public final static int DEFAULT_RAND = 0;
 
+	private boolean ponder = DEFAULT_PONDER;
 	private boolean useBook = DEFAULT_USE_BOOK;
 	private Book book;
 	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
@@ -94,6 +93,14 @@ public class Config {
 
 	public Config() {
 		setAspirationWindowSizes(DEFAULT_ASPIRATION_WINDOW_SIZES);
+	}
+
+	public boolean getPonder() {
+		return ponder;
+	}
+
+	public void setPonder(boolean ponder) {
+		this.ponder = ponder;
 	}
 
 	public boolean getUseBook() {
