@@ -67,8 +67,8 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Aspiration Window Sizes type string default " + Config.DEFAULT_ASPIRATION_WINDOW_SIZES);
 					System.out.println("option name Futility type check default " + Config.DEFAULT_FUTILITY);
 					System.out.println("option name Futility Margin type spin default " + Config.DEFAULT_FUTILITY_MARGIN + " min 1 max 1000");
-					System.out.println("option name Aggressive Futility type check default " + Config.DEFAULT_AGGRESIVE_FUTILITY);
-					System.out.println("option name Aggressive Futility Margin type spin default " + Config.DEFAULT_AGGRESIVE_FUTILITY_MARGIN
+					System.out.println("option name Aggressive Futility type check default " + Config.DEFAULT_AGGRESSIVE_FUTILITY);
+					System.out.println("option name Aggressive Futility Margin type spin default " + Config.DEFAULT_AGGRESSIVE_FUTILITY_MARGIN
 							+ " min 1 max 1000");
 					System.out.println("option name Futility Margin QS type spin default " + Config.DEFAULT_FUTILITY_MARGIN_QS + " min 1 max 1000");
 					System.out.println("option name Razoring type check default " + Config.DEFAULT_RAZORING);
