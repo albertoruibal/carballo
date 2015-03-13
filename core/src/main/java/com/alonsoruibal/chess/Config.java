@@ -33,8 +33,8 @@ public class Config {
 	public final static int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
 	public final static boolean DEFAULT_FUTILITY = true;
 	public final static int DEFAULT_FUTILITY_MARGIN = 100;
-	public final static boolean DEFAULT_AGGRESIVE_FUTILITY = true;
-	public final static int DEFAULT_AGGRESIVE_FUTILITY_MARGIN = 200;
+	public final static boolean DEFAULT_AGGRESSIVE_FUTILITY = true;
+	public final static int DEFAULT_AGGRESSIVE_FUTILITY_MARGIN = 200;
 	public final static int DEFAULT_FUTILITY_MARGIN_QS = 150;
 	public final static boolean DEFAULT_RAZORING = true;
 	public final static int DEFAULT_RAZORING_MARGIN = 900;
@@ -74,8 +74,8 @@ public class Config {
 	private int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
 	private boolean futility = DEFAULT_FUTILITY;
 	private int futilityMargin = DEFAULT_FUTILITY_MARGIN;
-	private boolean aggressiveFutility = DEFAULT_AGGRESIVE_FUTILITY;
-	private int aggressiveFutilityMargin = DEFAULT_AGGRESIVE_FUTILITY_MARGIN;
+	private boolean aggressiveFutility = DEFAULT_AGGRESSIVE_FUTILITY;
+	private int aggressiveFutilityMargin = DEFAULT_AGGRESSIVE_FUTILITY_MARGIN;
 	private int futilityMarginQS = DEFAULT_FUTILITY_MARGIN_QS;
 	private boolean razoring = DEFAULT_RAZORING;
 	private int razoringMargin = DEFAULT_RAZORING_MARGIN;
