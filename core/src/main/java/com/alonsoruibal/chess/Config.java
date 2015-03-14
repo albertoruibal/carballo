@@ -163,7 +163,7 @@ public class Config {
 		return iid;
 	}
 
-	public void getIid(boolean iid) {
+	public void setIid(boolean iid) {
 		this.iid = iid;
 	}
 

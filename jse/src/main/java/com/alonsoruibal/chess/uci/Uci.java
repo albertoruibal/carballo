@@ -108,7 +108,7 @@ public class Uci implements SearchObserver {
 					} else if ("StaticNullMove".equals(name)) {
 						config.setStaticNullMove(Boolean.parseBoolean(value));
 					} else if ("IID".equals(name)) {
-						config.getIid(Boolean.parseBoolean(value));
+						config.setIid(Boolean.parseBoolean(value));
 					} else if ("IIDMargin".equals(name)) {
 						config.setIidMargin(Integer.parseInt(value));
 					} else if ("ExtensionsCheck".equals(name)) {
