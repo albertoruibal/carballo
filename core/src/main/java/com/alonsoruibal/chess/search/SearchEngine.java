@@ -338,7 +338,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		boolean isPv = beta - alpha > 1;
-		int ttMove = 0;
+		int ttMove = Move.NONE;
 		// Generate checks for PV on PLY 0
 		boolean generateChecks = isPv && (qsdepth == 0);
 		// If we generate check, the entry in the TT has depthAnalyzed=1, because is better than without checks (depthAnalyzed=0)
