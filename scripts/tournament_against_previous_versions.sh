@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Test tournaments against old versions of the engine using cutechess-cli
+# Test tournaments against previous versions of the engine using cutechess-cli
 # Starting positions from the Noomen Test Suite 2012
 #
 # Requirements:
