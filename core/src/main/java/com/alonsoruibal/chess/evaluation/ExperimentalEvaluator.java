@@ -26,9 +26,6 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	public final static int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, 9999};
 
-	private final static int OPENING = 0;
-	private final static int ENDGAME = 1;
-
 	// Bishops
 	private final static int BISHOP_M = oe(5, 5); // Mobility units: this value is added for each destination square not occupied by one of our pieces or attacked by opposite pawns
 	private final static int BISHOP_ATTACKS_KING = oe(2, 1);
@@ -139,77 +136,66 @@ public class ExperimentalEvaluator extends Evaluator {
 			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0 //
 	};
 
-	private final static int[][] PawnColumn = {{-20, -8, -2, 5, 5, -2, -8, -20}, //
-			{-4, -6, -8, -10, -10, -8, -6, -4}};
-	private final static int[][] PawnRank = {{0, -3, -2, -1, 1, 2, 3, 0}, //
-			{0, -3, -3, -2, -1, 0, 2, 0}};
-	private final static int[][] KnightColumn = {{-26, -10, 1, 5, 5, 1, -10, -26}, //
-			{-4, -1, 2, 4, 4, 2, -1, -4}};
-	private final static int[][] KnightRank = {{-32, -10, 6, 15, 21, 19, 10, -11}, //
-			{-10, -5, -2, 1, 3, 5, 2, -3}};
-	private final static int[][] KnightLine = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{2, 1, 0, -1, -2, -4, -7, -10}};
-	private final static int[][] BishopLine = {{10, 5, 1, -3, -5, -7, -8, -12}, //
-			{3, 2, 0, 0, -2, -2, -3, -3}};
-	private final static int[][] BishopRank = {{-5, 0, 0, 0, 0, 0, 0, 0}, //
-			{0, 0, 0, 0, 0, 0, 0, 0}};
-	private final static int[][] RookColumn = {{-4, 0, 4, 8, 8, 4, 0, -4}, //
-			{0, 0, 0, 0, 0, 0, 0, 0}};
-	private final static int[][] RookRank = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{0, 0, 0, 0, 1, 1, 1, -2}};
-	private final static int[][] QueenColumn = {{-2, 0, 1, 2, 2, 1, 0, -2}, //
-			{-2, 0, 1, 2, 2, 1, 0, -2}};
-	private final static int[][] QueenRank = {{-2, 0, 1, 2, 2, 1, 0, -2}, //
-			{-2, 0, 1, 2, 2, 1, 0, -2}};
-	private final static int[][] QueenLine = {{3, 2, 1, 0, -2, -4, -7, -10}, //
-			{1, 0, -1, -3, -4, -6, -8, -12}};
-	private final static int[][] KingColumn = {{40, 45, 15, -5, -5, 15, 45, 40}, //
-			{-15, 0, 10, 15, 15, 10, 0, -15}};
-	private final static int[][] KingRank = {{4, 1, -2, -5, -10, -15, -25, -35}, //
-			{-15, 0, 10, 15, 15, 10, 0, -15}};
-	private final static int[][] KingLine = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{2, 0, -2, -5, -8, -12, -20, -30}};
-
-	// Values are rotated for whites, so when white is playing is like shown in the code
-	public final static int[] pawnIndexValue = new int[64];
-	public final static int[] knightIndexValue = new int[64];
-	public final static int[] bishopIndexValue = new int[64];
-	public final static int[] rookIndexValue = new int[64];
-	public final static int[] queenIndexValue = new int[64];
-	public final static int[] kingIndexValue = new int[64];
-
-	static {
-		// Initialize Piece square values
-		int i;
-
-		for (i = 0; i < 64; i++) {
-			int rank = i >> 3;
-			int column = 7 - i & 7;
-			int d = (((column - rank) >= 0) ? (column - rank) : -(column - rank));
-			int e = (((column + rank - 7) >= 0) ? (column + rank - 7) : -(column + rank - 7));
-
-			pawnIndexValue[i] = oe(PawnColumn[OPENING][column] + PawnRank[OPENING][rank],
-					PawnColumn[ENDGAME][column] + PawnRank[ENDGAME][rank]);
-			knightIndexValue[i] = oe(KnightColumn[OPENING][column] + KnightRank[OPENING][rank] + KnightLine[OPENING][d] + KnightLine[OPENING][e],
-					KnightColumn[ENDGAME][column] + KnightRank[ENDGAME][rank] + KnightLine[ENDGAME][d] + KnightLine[ENDGAME][e]);
-			bishopIndexValue[i] = oe(BishopRank[OPENING][rank] + BishopLine[OPENING][d] + BishopLine[OPENING][e],
-					BishopRank[ENDGAME][rank] + BishopLine[ENDGAME][d] + BishopLine[ENDGAME][e]);
-			rookIndexValue[i] = oe(RookColumn[OPENING][column] + RookRank[OPENING][rank],
-					RookColumn[ENDGAME][column] + RookRank[ENDGAME][rank]);
-			queenIndexValue[i] = oe(QueenColumn[OPENING][column] + QueenRank[OPENING][rank] + QueenLine[OPENING][d] + QueenLine[OPENING][e],
-					QueenColumn[ENDGAME][column] + QueenRank[ENDGAME][rank] + QueenLine[ENDGAME][d] + QueenLine[ENDGAME][e]);
-			kingIndexValue[i] = oe(KingColumn[OPENING][column] + KingRank[OPENING][rank] + KingLine[OPENING][d] + KingLine[OPENING][e],
-					KingColumn[ENDGAME][column] + KingRank[ENDGAME][rank] + KingLine[ENDGAME][d] + KingLine[ENDGAME][e]);
-		}
-
-		// Pawn opening corrections
-		pawnIndexValue[19] += oe(10, 0); // E3
-		pawnIndexValue[20] += oe(10, 0); // D3
-		pawnIndexValue[27] += oe(20, 0); // E4
-		pawnIndexValue[28] += oe(20, 0); // D4
-		pawnIndexValue[35] += oe(10, 0); // E5
-		pawnIndexValue[36] += oe(10, 0); // D5
-	}
+	private final static int pawnPcsq[] = {
+			oe(-21, -4), oe(-9, -6), oe(-3, -8), oe(4, -10), oe(4, -10), oe(-3, -8), oe(-9, -6), oe(-21, -4),
+			oe(-24, -7), oe(-12, -9), oe(-6, -11), oe(1, -13), oe(1, -13), oe(-6, -11), oe(-12, -9), oe(-24, -7),
+			oe(-23, -7), oe(-11, -9), oe(-5, -11), oe(12, -13), oe(12, -13), oe(-5, -11), oe(-11, -9), oe(-23, -7),
+			oe(-22, -6), oe(-10, -8), oe(-4, -10), oe(23, -12), oe(23, -12), oe(-4, -10), oe(-10, -8), oe(-22, -6),
+			oe(-20, -5), oe(-8, -7), oe(-2, -9), oe(15, -11), oe(15, -11), oe(-2, -9), oe(-8, -7), oe(-20, -5),
+			oe(-19, -4), oe(-7, -6), oe(-1, -8), oe(6, -10), oe(6, -10), oe(-1, -8), oe(-7, -6), oe(-19, -4),
+			oe(-18, -2), oe(-6, -4), oe(0, -6), oe(7, -8), oe(7, -8), oe(0, -6), oe(-6, -4), oe(-18, -2),
+			oe(-21, -4), oe(-9, -6), oe(-3, -8), oe(4, -10), oe(4, -10), oe(-3, -8), oe(-9, -6), oe(-21, -4)
+	};
+	private final static int knightPcsq[] = {
+			oe(-59, -22), oe(-43, -17), oe(-32, -12), oe(-28, -9), oe(-28, -9), oe(-32, -12), oe(-43, -17), oe(-59, -22),
+			oe(-37, -15), oe(-21, -8), oe(-10, -4), oe(-6, -2), oe(-6, -2), oe(-10, -4), oe(-21, -8), oe(-37, -15),
+			oe(-21, -10), oe(-5, -4), oe(7, 1), oe(11, 3), oe(11, 3), oe(7, 1), oe(-5, -4), oe(-21, -10),
+			oe(-12, -6), oe(4, -1), oe(16, 4), oe(20, 8), oe(20, 8), oe(16, 4), oe(4, -1), oe(-12, -6),
+			oe(-6, -4), oe(11, 1), oe(22, 6), oe(26, 10), oe(26, 10), oe(22, 6), oe(11, 1), oe(-6, -4),
+			oe(-8, -3), oe(9, 3), oe(20, 8), oe(24, 10), oe(24, 10), oe(20, 8), oe(9, 3), oe(-8, -3),
+			oe(-17, -8), oe(-1, -1), oe(11, 3), oe(15, 5), oe(15, 5), oe(11, 3), oe(-1, -1), oe(-17, -8),
+			oe(-38, -15), oe(-22, -10), oe(-11, -5), oe(-7, -2), oe(-7, -2), oe(-11, -5), oe(-22, -10), oe(-38, -15)
+	};
+	private final static int bishopPcsq[] = {
+			oe(-7, 0), oe(-9, -1), oe(-12, -2), oe(-14, -2), oe(-14, -2), oe(-12, -2), oe(-9, -1), oe(-7, 0),
+			oe(-4, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-4, -1),
+			oe(-7, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-7, -2),
+			oe(-9, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-9, -2),
+			oe(-9, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-9, -2),
+			oe(-7, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-7, -2),
+			oe(-4, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-4, -1),
+			oe(-2, 0), oe(-4, -1), oe(-7, -2), oe(-9, -2), oe(-9, -2), oe(-7, -2), oe(-4, -1), oe(-2, 0)
+	};
+	private final static int rookPcsq[] = {
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-5, -2), oe(-1, -2), oe(3, -2), oe(7, -2), oe(7, -2), oe(3, -2), oe(-1, -2), oe(-5, -2)
+	};
+	private final static int queenPcsq[] = {
+			oe(-12, -15), oe(-8, -10), oe(-5, -8), oe(-3, -7), oe(-3, -7), oe(-5, -8), oe(-8, -10), oe(-12, -15),
+			oe(-8, -10), oe(-2, -5), oe(0, -3), oe(2, -2), oe(2, -2), oe(0, -3), oe(-2, -5), oe(-8, -10),
+			oe(-5, -8), oe(0, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(0, -3), oe(-5, -8),
+			oe(-3, -7), oe(2, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(2, -2), oe(-3, -7),
+			oe(-3, -7), oe(2, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(2, -2), oe(-3, -7),
+			oe(-5, -8), oe(0, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(0, -3), oe(-5, -8),
+			oe(-8, -10), oe(-2, -5), oe(0, -3), oe(2, -2), oe(2, -2), oe(0, -3), oe(-2, -5), oe(-8, -10),
+			oe(-12, -15), oe(-8, -10), oe(-5, -8), oe(-3, -7), oe(-3, -7), oe(-5, -8), oe(-8, -10), oe(-12, -15)
+	};
+	private final static int kingPcsq[] = {
+			oe(43, -58), oe(48, -35), oe(18, -19), oe(-2, -13), oe(-2, -13), oe(18, -19), oe(48, -35), oe(43, -58),
+			oe(40, -35), oe(45, -10), oe(16, 2), oe(-4, 8), oe(-4, 8), oe(16, 2), oe(45, -10), oe(40, -35),
+			oe(37, -19), oe(43, 2), oe(13, 17), oe(-7, 23), oe(-7, 23), oe(13, 17), oe(43, 2), oe(37, -19),
+			oe(34, -13), oe(40, 8), oe(10, 23), oe(-10, 32), oe(-10, 32), oe(10, 23), oe(40, 8), oe(34, -13),
+			oe(29, -13), oe(35, 8), oe(5, 23), oe(-15, 32), oe(-15, 32), oe(5, 23), oe(35, 8), oe(29, -13),
+			oe(24, -19), oe(30, 2), oe(0, 17), oe(-20, 23), oe(-20, 23), oe(0, 17), oe(30, 2), oe(24, -19),
+			oe(14, -35), oe(19, -10), oe(-10, 2), oe(-30, 8), oe(-30, 8), oe(-10, 2), oe(19, -10), oe(14, -35),
+			oe(4, -58), oe(9, -35), oe(-21, -19), oe(-41, -13), oe(-41, -13), oe(-21, -19), oe(9, -35), oe(4, -58)
+	};
 
 	private Config config;
 
@@ -340,7 +326,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				pieceAttacks = attacksInfo.attacksFromSquare[index];
 
 				if ((square & board.pawns) != 0) {
-					center[color] += pawnIndexValue[pcsqIndex];
+					center[color] += pawnPcsq[pcsqIndex];
 
 					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += PAWN_ATTACKS_KING;
@@ -450,7 +436,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.knights) != 0) {
-					center[color] += knightIndexValue[pcsqIndex];
+					center[color] += knightPcsq[pcsqIndex];
 
 					// Only mobility forward
 					mobility[color] += KNIGHT_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks &
@@ -490,7 +476,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.bishops) != 0) {
-					center[color] += bishopIndexValue[pcsqIndex];
+					center[color] += bishopPcsq[pcsqIndex];
 
 					mobility[color] += BISHOP_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks &
 							BitboardUtils.RANKS_FORWARD[color][rank]);
@@ -545,7 +531,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.rooks) != 0) {
-					center[color] += rookIndexValue[pcsqIndex];
+					center[color] += rookPcsq[pcsqIndex];
 
 					mobility[color] += ROOK_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks);
 
@@ -627,7 +613,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.queens) != 0) {
-					center[color] += queenIndexValue[pcsqIndex];
+					center[color] += queenPcsq[pcsqIndex];
 
 					mobility[color] += QUEEN_M * BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks);
 
@@ -660,7 +646,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 				} else if ((square & board.kings) != 0) {
-					center[color] += kingIndexValue[pcsqIndex];
+					center[color] += kingPcsq[pcsqIndex];
 
 					// If king is in the first rank, we add the pawn shield
 					if ((square & (isWhite ? BitboardUtils.RANK[0] : BitboardUtils.RANK[7])) != 0) {
