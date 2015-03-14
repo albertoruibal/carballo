@@ -387,7 +387,7 @@ public class SearchEngine implements Runnable {
 		boolean validOperations = false;
 
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
-		moveIterator.genMoves(ttMove, (generateChecks ? MoveIterator.GENERATE_ONLY_TACTICAL_AND_CHECKS : MoveIterator.GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS));
+		moveIterator.genMoves(ttMove, (generateChecks ? MoveIterator.GENERATE_CAPTURES_PROMOS_CHECKS : MoveIterator.GENERATE_CAPTURES_PROMOS));
 
 		int move;
 		while ((move = moveIterator.next()) != Move.NONE) {

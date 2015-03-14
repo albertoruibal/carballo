@@ -13,10 +13,10 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 public class MoveIterator {
 	//
 	// Kind of moves to generate
-	//
+	// In check evasions all moves are always generated
 	public final static int GENERATE_ALL = 0;
-	public final static int GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS = 1; // Generates only good captures and queen promotions
-	public final static int GENERATE_ONLY_TACTICAL_AND_CHECKS = 2; // Generates all the captures and checks
+	public final static int GENERATE_CAPTURES_PROMOS = 1; // Generates only good/equal captures and queen promotions
+	public final static int GENERATE_CAPTURES_PROMOS_CHECKS = 2; // Generates only good/equal captures, queen promotions and checks
 	//
 	// Move generation phases
 	//
@@ -77,6 +77,7 @@ public class MoveIterator {
 	private int[] equalCapturesSee = new int[256];
 	private int[] equalCapturesScores = new int[256];
 	private int[] nonCaptures = new int[256]; // Stores non captures and underpromotions
+	private int[] nonCapturesSee = new int[256];
 	private int[] nonCapturesScores = new int[256];
 
 	private int depth;
@@ -133,11 +134,12 @@ public class MoveIterator {
 			case PHASE_TT:
 				phase++;
 				if (ttMove != Move.NONE) {
-					lastMoveSee = Move.isCapture(ttMove) ? board.see(ttMove) : 0;
+					lastMoveSee = Move.isCapture(ttMove) || Move.isCheck(ttMove) ? board.see(ttMove) : 0;
 					if (checkEvasion //
 							|| (movesToGenerate == GENERATE_ALL) //
-							|| ((movesToGenerate == GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS) && ((Move.isCapture(ttMove) && lastMoveSee > 0) || (Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN))) //
-							|| ((movesToGenerate == GENERATE_ONLY_TACTICAL_AND_CHECKS) && (Move.isCapture(ttMove) || Move.isCheck(ttMove)))) {
+							|| (Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN)
+							|| ((movesToGenerate == GENERATE_CAPTURES_PROMOS) && Move.isCapture(ttMove) && (lastMoveSee >= 0)) //
+							|| ((movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS) && (Move.isCapture(ttMove) || Move.isCheck(ttMove)) && (lastMoveSee >= 0))) {
 						return ttMove;
 					}
 				}
@@ -159,11 +161,6 @@ public class MoveIterator {
 				phase++;
 
 			case PHASE_EQUAL_CAPTURES:
-				if (!checkEvasion //
-						&& (movesToGenerate == GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS)) {
-					phase = PHASE_END;
-					return Move.NONE;
-				}
 				move = pickMoveFromArray(equalCaptureIndex, equalCaptures, equalCapturesScores, equalCapturesSee);
 				if (move != Move.NONE) {
 					return move;
@@ -171,10 +168,13 @@ public class MoveIterator {
 				phase++;
 
 			case PHASE_GEN_NON_CAPTURES:
-				lastMoveSee = 0;
 				if (checkEvasion) {
 					generateCheckEvasionsNonCaptures();
 				} else {
+					if (movesToGenerate == GENERATE_CAPTURES_PROMOS) {
+						phase = PHASE_END;
+						return Move.NONE;
+					}
 					generateNonCaptures();
 				}
 				phase++;
@@ -182,29 +182,33 @@ public class MoveIterator {
 			case PHASE_KILLER1:
 				phase++;
 				if (foundKiller1) {
+					lastMoveSee = Move.isCheck(killer1) ? board.see(killer1) : 0;
 					return killer1;
 				}
 
 			case PHASE_KILLER2:
 				phase++;
 				if (foundKiller2) {
+					lastMoveSee = Move.isCheck(killer2) ? board.see(killer2) : 0;
 					return killer2;
 				}
 
 			case PHASE_KILLER3:
 				phase++;
 				if (foundKiller3) {
+					lastMoveSee = Move.isCheck(killer3) ? board.see(killer3) : 0;
 					return killer3;
 				}
 
 			case PHASE_KILLER4:
 				phase++;
 				if (foundKiller4) {
+					lastMoveSee = Move.isCheck(killer4) ? board.see(killer4) : 0;
 					return killer4;
 				}
 
 			case PHASE_NON_CAPTURES:
-				move = pickMoveFromArray(nonCaptureIndex, nonCaptures, nonCapturesScores, null);
+				move = pickMoveFromArray(nonCaptureIndex, nonCaptures, nonCapturesScores, nonCapturesSee);
 				if (move != Move.NONE) {
 					return move;
 				}
@@ -236,9 +240,7 @@ public class MoveIterator {
 		if (bestIndex != -1) {
 			arrayScores[bestIndex] = SCORE_LOWEST;
 			int move = arrayMoves[bestIndex];
-			if (arraySee != null) {
-				lastMoveSee = arraySee[bestIndex];
-			}
+			lastMoveSee = arraySee[bestIndex];
 			return move;
 		} else {
 			return Move.NONE;
@@ -565,7 +567,7 @@ public class MoveIterator {
 		}
 
 		// Generating checks, if the move is not a check, skip it
-		if ((movesToGenerate == GENERATE_ONLY_TACTICAL_AND_CHECKS) && !checkEvasion && !check && !capture && (moveType != Move.TYPE_PROMOTION_QUEEN)) {
+		if ((movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS) && !checkEvasion && !check && !capture && (moveType != Move.TYPE_PROMOTION_QUEEN)) {
 			return;
 		}
 
@@ -574,18 +576,7 @@ public class MoveIterator {
 		if (move == ttMove) {
 			return;
 		}
-
-		int see = 0;
-		int pieceCaptured = 0;
-
-		if (capture) {
-			pieceCaptured = Move.getPieceCaptured(board, move);
-			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
-
-			if (!checkEvasion && (movesToGenerate == GENERATE_ONLY_GOOD_CAPTURES_AND_PROMOS && see <= 0)) {
-				return;
-			}
-		} else {
+		if (!capture) {
 			if (move == killer1) {
 				foundKiller1 = true;
 				return;
@@ -601,7 +592,17 @@ public class MoveIterator {
 			}
 		}
 
-		if (see < 0) {
+		int see = 0;
+		int pieceCaptured = capture ? Move.getPieceCaptured(board, move) : 0;
+
+		if (capture || check) {
+			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
+
+			if ((movesToGenerate != GENERATE_ALL) && !checkEvasion && (see < 0)) {
+				return;
+			}
+		}
+		if (capture && (see < 0)) {
 			badCaptures[badCaptureIndex] = move;
 			badCapturesSee[badCaptureIndex] = see;
 			badCapturesScores[badCaptureIndex] = see;
@@ -633,6 +634,7 @@ public class MoveIterator {
 			}
 		} else {
 			nonCaptures[nonCaptureIndex] = move;
+			nonCapturesSee[nonCaptureIndex] = see;
 			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : sortInfo.getMoveScore(move);
 			nonCaptureIndex++;
 		}
