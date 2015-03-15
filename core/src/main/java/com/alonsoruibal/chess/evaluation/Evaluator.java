@@ -25,7 +25,7 @@ public abstract class Evaluator {
 	 * Merges two short Opening - Ending values in one int
 	 */
 	public static int oe(int opening, int endgame) {
-		return (opening << 16) | endgame & 0xffff;
+		return (opening << 16) | (endgame & 0xffff);
 	}
 
 	/**
