@@ -21,8 +21,18 @@ public abstract class Evaluator {
 	 */
 	public abstract int evaluate(Board board, AttacksInfo attacksInfo);
 
+	/**
+	 * Merges two short Opening - Ending values in one int
+	 */
 	public static int oe(int opening, int endgame) {
-		return (((short) (opening)) << 16) + (short) (endgame);
+		return (opening << 16) | endgame & 0xffff;
+	}
+
+	/**
+	 * Multiply with negative numbers (in the factor or in one of the oe components) cannot be done directly
+	 */
+	public static int oeMul(int factor, int oeValue) {
+		return (((oeValue >> 16) * factor) << 16) | ((oeValue & 0xffff) * factor) & 0xffff;
 	}
 
 	public static int o(int oe) {
