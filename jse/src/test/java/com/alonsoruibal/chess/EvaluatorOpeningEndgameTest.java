@@ -42,7 +42,6 @@ public class EvaluatorOpeningEndgameTest {
 	@Test
 	public void mutiplyPositive() {
 		int value = 5 * Evaluator.oe(4, 50);
-
 		assertEquals("Multiply O", 20, Evaluator.o(value));
 		assertEquals("Multiply E", 250, Evaluator.e(value));
 	}
