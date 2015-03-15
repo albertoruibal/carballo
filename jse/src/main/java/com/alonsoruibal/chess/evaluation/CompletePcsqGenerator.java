@@ -31,12 +31,12 @@ public class CompletePcsqGenerator {
 	private final static int[] KingRank = {+1, +0, -2, -3, -4, -5, -6, -7};
 
 	// Values are rotated for whites, so when white is playing is like shown in the code
-	public final static int[] pawnPcsq = new int[64];
-	public final static int[] knightPcsq = new int[64];
-	public final static int[] bishopPcsq = new int[64];
-	public final static int[] rookPcsq = new int[64];
-	public final static int[] queenPcsq = new int[64];
-	public final static int[] kingPcsq = new int[64];
+	public int[] pawnPcsq = new int[64];
+	public int[] knightPcsq = new int[64];
+	public int[] bishopPcsq = new int[64];
+	public int[] rookPcsq = new int[64];
+	public int[] queenPcsq = new int[64];
+	public int[] kingPcsq = new int[64];
 
 	public void generate() {
 		// Initialize Piece square values Fruit/Toga style
@@ -51,6 +51,7 @@ public class CompletePcsqGenerator {
 			bishopPcsq[i] = BishopLine[column] * BishopCenterValue + BishopLine[rank] * BishopCenterValue;
 			rookPcsq[i] = RookColumn[column] * RookColumnValue;
 			queenPcsq[i] = QueenLine[column] * QueenCenterValue + QueenLine[rank] * QueenCenterValue;
+			System.out.println(Evaluator.o(queenPcsq[i]));
 			kingPcsq[i] = KingColumn[column] * KingColumnValue + KingRank[rank] * KingRankValue + KingLine[column] * KingCenterValue + KingLine[rank] * KingCenterValue;
 		}
 
@@ -112,7 +113,7 @@ public class CompletePcsqGenerator {
 	}
 
 	public static void main(String args[]) {
-		// Prints bitbase in java array format
+		// Prints Pcsq in java array format
 		CompletePcsqGenerator generator = new CompletePcsqGenerator();
 		generator.generate();
 		generator.print();

@@ -39,12 +39,12 @@ public class ExperimentalPcsqGenerator {
 			{2, 0, -2, -5, -8, -12, -20, -30}};
 
 	// Values are rotated for whites, so when white is playing is like shown in the code
-	public final static int[] pawnPcsq = new int[64];
-	public final static int[] knightPcsq = new int[64];
-	public final static int[] bishopPcsq = new int[64];
-	public final static int[] rookPcsq = new int[64];
-	public final static int[] queenPcsq = new int[64];
-	public final static int[] kingPcsq = new int[64];
+	public int[] pawnPcsq = new int[64];
+	public int[] knightPcsq = new int[64];
+	public int[] bishopPcsq = new int[64];
+	public int[] rookPcsq = new int[64];
+	public int[] queenPcsq = new int[64];
+	public int[] kingPcsq = new int[64];
 
 	public void generate() {
 		// Initialize Piece square values
@@ -117,7 +117,7 @@ public class ExperimentalPcsqGenerator {
 	}
 
 	public static void main(String args[]) {
-		// Prints bitbase in java array format
+		// Prints Pcsq in java array format
 		ExperimentalPcsqGenerator generator = new ExperimentalPcsqGenerator();
 		generator.generate();
 		generator.print();
