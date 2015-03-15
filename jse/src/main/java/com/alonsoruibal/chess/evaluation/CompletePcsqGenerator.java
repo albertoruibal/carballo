@@ -46,13 +46,12 @@ public class CompletePcsqGenerator {
 			int rank = i >> 3;
 			int column = 7 - i & 7;
 
-			pawnPcsq[i] = PawnColumn[column] * PawnColumnValue;
-			knightPcsq[i] = KnightLine[column] * KnightCenterValue + KnightLine[rank] * KnightCenterValue + KnightRank[rank] * KnightRankValue;
-			bishopPcsq[i] = BishopLine[column] * BishopCenterValue + BishopLine[rank] * BishopCenterValue;
-			rookPcsq[i] = RookColumn[column] * RookColumnValue;
-			queenPcsq[i] = QueenLine[column] * QueenCenterValue + QueenLine[rank] * QueenCenterValue;
-			System.out.println(Evaluator.o(queenPcsq[i]));
-			kingPcsq[i] = KingColumn[column] * KingColumnValue + KingRank[rank] * KingRankValue + KingLine[column] * KingCenterValue + KingLine[rank] * KingCenterValue;
+			pawnPcsq[i] = Evaluator.oeMul(PawnColumn[column], PawnColumnValue);
+			knightPcsq[i] = Evaluator.oeMul(KnightLine[column], KnightCenterValue) + Evaluator.oeMul(KnightLine[rank], KnightCenterValue) + Evaluator.oeMul(KnightRank[rank], KnightRankValue);
+			bishopPcsq[i] = Evaluator.oeMul(BishopLine[column], BishopCenterValue) + Evaluator.oeMul(BishopLine[rank], BishopCenterValue);
+			rookPcsq[i] = Evaluator.oeMul(RookColumn[column], RookColumnValue);
+			queenPcsq[i] = Evaluator.oeMul(QueenLine[column], QueenCenterValue) + Evaluator.oeMul(QueenLine[rank], QueenCenterValue);
+			kingPcsq[i] = Evaluator.oeMul(KingColumn[column], KingColumnValue) + Evaluator.oeMul(KingRank[rank], KingRankValue) + Evaluator.oeMul(KingLine[column], KingCenterValue) + Evaluator.oeMul(KingLine[rank], KingCenterValue);
 		}
 
 		knightPcsq[56] += KnightTrappedValue; // H8

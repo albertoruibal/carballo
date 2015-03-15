@@ -9,10 +9,10 @@ import com.alonsoruibal.chess.util.StringUtils;
 
 /**
  * Evaluation is done in centipawns
- *
+ * <p/>
  * Material imbalances from Larry KaufMan:
  * http://home.comcast.net/~danheisman/Articles/evaluation_of_material_imbalance.htm
- *
+ * <p/>
  * Piece/square values like Fruit/Toga
  *
  * @author rui
@@ -117,24 +117,24 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-15, 0), oe(-5, 0), oe(0, 0), oe(5, 0), oe(5, 0), oe(0, 0), oe(-5, 0), oe(-15, 0)
 	};
 	private final static int knightPcsq[] = {
-			oe(-51, -40), oe(-41, -30), oe(-31, -20), oe(-26, -15), oe(-26, -15), oe(-31, -20), oe(-41, -30), oe(-51, -40),
-			oe(-36, -30), oe(-26, -20), oe(-16, -10), oe(-11, -5), oe(-11, -5), oe(-16, -10), oe(-26, -20), oe(-36, -30),
-			oe(-21, -20), oe(-11, -10), oe(0, 0), oe(5, 5), oe(5, 5), oe(0, 0), oe(-11, -10), oe(-21, -20),
-			oe(-11, -15), oe(-1, -5), oe(10, 5), oe(15, 10), oe(15, 10), oe(10, 5), oe(-1, -5), oe(-11, -15),
-			oe(-6, -15), oe(4, -5), oe(15, 5), oe(20, 10), oe(20, 10), oe(15, 5), oe(4, -5), oe(-6, -15),
-			oe(-6, -20), oe(4, -10), oe(15, 0), oe(20, 5), oe(20, 5), oe(15, 0), oe(4, -10), oe(-6, -20),
-			oe(-21, -30), oe(-11, -20), oe(-1, -10), oe(4, -5), oe(4, -5), oe(-1, -10), oe(-11, -20), oe(-21, -30),
-			oe(-136, -40), oe(-26, -30), oe(-16, -20), oe(-11, -15), oe(-11, -15), oe(-16, -20), oe(-26, -30), oe(-136, -40)
+			oe(-49, -40), oe(-39, -30), oe(-30, -20), oe(-25, -15), oe(-25, -15), oe(-30, -20), oe(-39, -30), oe(-49, -40),
+			oe(-34, -30), oe(-24, -20), oe(-15, -10), oe(-10, -5), oe(-10, -5), oe(-15, -10), oe(-24, -20), oe(-34, -30),
+			oe(-20, -20), oe(-10, -10), oe(0, 0), oe(5, 5), oe(5, 5), oe(0, 0), oe(-10, -10), oe(-20, -20),
+			oe(-10, -15), oe(0, -5), oe(10, 5), oe(15, 10), oe(15, 10), oe(10, 5), oe(0, -5), oe(-10, -15),
+			oe(-5, -15), oe(5, -5), oe(15, 5), oe(20, 10), oe(20, 10), oe(15, 5), oe(5, -5), oe(-5, -15),
+			oe(-5, -20), oe(5, -10), oe(15, 0), oe(20, 5), oe(20, 5), oe(15, 0), oe(5, -10), oe(-5, -20),
+			oe(-19, -30), oe(-9, -20), oe(0, -10), oe(5, -5), oe(5, -5), oe(0, -10), oe(-9, -20), oe(-19, -30),
+			oe(-134, -40), oe(-24, -30), oe(-15, -20), oe(-10, -15), oe(-10, -15), oe(-15, -20), oe(-24, -30), oe(-134, -40)
 	};
 	private final static int bishopPcsq[] = {
-			oe(-19, -18), oe(-19, -12), oe(-17, -9), oe(-15, -6), oe(-15, -6), oe(-17, -9), oe(-19, -12), oe(-19, -18),
-			oe(-9, -12), oe(-1, -6), oe(-3, -3), oe(0, 0), oe(0, 0), oe(-3, -3), oe(-1, -6), oe(-9, -12),
-			oe(-7, -9), oe(-3, -3), oe(4, 0), oe(2, 3), oe(2, 3), oe(4, 0), oe(-3, -3), oe(-7, -9),
-			oe(-5, -6), oe(0, 0), oe(2, 3), oe(8, 6), oe(8, 6), oe(2, 3), oe(0, 0), oe(-5, -6),
-			oe(-5, -6), oe(0, 0), oe(2, 3), oe(8, 6), oe(8, 6), oe(2, 3), oe(0, 0), oe(-5, -6),
-			oe(-7, -9), oe(-3, -3), oe(4, 0), oe(2, 3), oe(2, 3), oe(4, 0), oe(-3, -3), oe(-7, -9),
-			oe(-9, -12), oe(-1, -6), oe(-3, -3), oe(0, 0), oe(0, 0), oe(-3, -3), oe(-1, -6), oe(-9, -12),
-			oe(-9, -18), oe(-9, -12), oe(-7, -9), oe(-5, -6), oe(-5, -6), oe(-7, -9), oe(-9, -12), oe(-9, -18)
+			oe(-17, -18), oe(-17, -12), oe(-16, -9), oe(-14, -6), oe(-14, -6), oe(-16, -9), oe(-17, -12), oe(-17, -18),
+			oe(-7, -12), oe(1, -6), oe(-2, -3), oe(1, 0), oe(1, 0), oe(-2, -3), oe(1, -6), oe(-7, -12),
+			oe(-6, -9), oe(-2, -3), oe(4, 0), oe(2, 3), oe(2, 3), oe(4, 0), oe(-2, -3), oe(-6, -9),
+			oe(-4, -6), oe(1, 0), oe(2, 3), oe(8, 6), oe(8, 6), oe(2, 3), oe(1, 0), oe(-4, -6),
+			oe(-4, -6), oe(1, 0), oe(2, 3), oe(8, 6), oe(8, 6), oe(2, 3), oe(1, 0), oe(-4, -6),
+			oe(-6, -9), oe(-2, -3), oe(4, 0), oe(2, 3), oe(2, 3), oe(4, 0), oe(-2, -3), oe(-6, -9),
+			oe(-7, -12), oe(1, -6), oe(-2, -3), oe(1, 0), oe(1, 0), oe(-2, -3), oe(1, -6), oe(-7, -12),
+			oe(-7, -18), oe(-7, -12), oe(-6, -9), oe(-4, -6), oe(-4, -6), oe(-6, -9), oe(-7, -12), oe(-7, -18)
 	};
 	private final static int rookPcsq[] = {
 			oe(-6, 0), oe(-3, 0), oe(0, 0), oe(3, 0), oe(3, 0), oe(0, 0), oe(-3, 0), oe(-6, 0),
@@ -147,24 +147,24 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-6, 0), oe(-3, 0), oe(0, 0), oe(3, 0), oe(3, 0), oe(0, 0), oe(-3, 0), oe(-6, 0)
 	};
 	private final static int queenPcsq[] = {
-			oe(-6, -24), oe(-6, -16), oe(-6, -12), oe(-6, -8), oe(-6, -8), oe(-6, -12), oe(-6, -16), oe(-6, -24),
-			oe(-1, -16), oe(-1, -8), oe(-1, -4), oe(0, 0), oe(0, 0), oe(-1, -4), oe(-1, -8), oe(-1, -16),
-			oe(-1, -12), oe(-1, -4), oe(0, 0), oe(0, 4), oe(0, 4), oe(0, 0), oe(-1, -4), oe(-1, -12),
-			oe(-1, -8), oe(0, 0), oe(0, 4), oe(0, 8), oe(0, 8), oe(0, 4), oe(0, 0), oe(-1, -8),
-			oe(-1, -8), oe(0, 0), oe(0, 4), oe(0, 8), oe(0, 8), oe(0, 4), oe(0, 0), oe(-1, -8),
-			oe(-1, -12), oe(-1, -4), oe(0, 0), oe(0, 4), oe(0, 4), oe(0, 0), oe(-1, -4), oe(-1, -12),
-			oe(-1, -16), oe(-1, -8), oe(-1, -4), oe(0, 0), oe(0, 0), oe(-1, -4), oe(-1, -8), oe(-1, -16),
-			oe(-1, -24), oe(-1, -16), oe(-1, -12), oe(-1, -8), oe(-1, -8), oe(-1, -12), oe(-1, -16), oe(-1, -24)
+			oe(-4, -24), oe(-4, -16), oe(-5, -12), oe(-5, -8), oe(-5, -8), oe(-5, -12), oe(-4, -16), oe(-4, -24),
+			oe(1, -16), oe(1, -8), oe(0, -4), oe(1, 0), oe(1, 0), oe(0, -4), oe(1, -8), oe(1, -16),
+			oe(0, -12), oe(0, -4), oe(0, 0), oe(0, 4), oe(0, 4), oe(0, 0), oe(0, -4), oe(0, -12),
+			oe(0, -8), oe(1, 0), oe(0, 4), oe(0, 8), oe(0, 8), oe(0, 4), oe(1, 0), oe(0, -8),
+			oe(0, -8), oe(1, 0), oe(0, 4), oe(0, 8), oe(0, 8), oe(0, 4), oe(1, 0), oe(0, -8),
+			oe(0, -12), oe(0, -4), oe(0, 0), oe(0, 4), oe(0, 4), oe(0, 0), oe(0, -4), oe(0, -12),
+			oe(1, -16), oe(1, -8), oe(0, -4), oe(1, 0), oe(1, 0), oe(0, -4), oe(1, -8), oe(1, -16),
+			oe(1, -24), oe(1, -16), oe(0, -12), oe(0, -8), oe(0, -8), oe(0, -12), oe(1, -16), oe(1, -24)
 	};
 	private final static int kingPcsq[] = {
-			oe(39, -72), oe(49, -48), oe(29, -36), oe(9, -24), oe(9, -24), oe(29, -36), oe(49, -48), oe(39, -72),
-			oe(29, -48), oe(39, -24), oe(19, -12), oe(0, 0), oe(0, 0), oe(19, -12), oe(39, -24), oe(29, -48),
-			oe(9, -36), oe(19, -12), oe(0, 0), oe(-20, 12), oe(-20, 12), oe(0, 0), oe(19, -12), oe(9, -36),
-			oe(-1, -24), oe(10, 0), oe(-10, 12), oe(-30, 24), oe(-30, 24), oe(-10, 12), oe(10, 0), oe(-1, -24),
-			oe(-11, -24), oe(0, 0), oe(-20, 12), oe(-40, 24), oe(-40, 24), oe(-20, 12), oe(0, 0), oe(-11, -24),
-			oe(-21, -36), oe(-11, -12), oe(-30, 0), oe(-50, 12), oe(-50, 12), oe(-30, 0), oe(-11, -12), oe(-21, -36),
-			oe(-31, -48), oe(-21, -24), oe(-41, -12), oe(-60, 0), oe(-60, 0), oe(-41, -12), oe(-21, -24), oe(-31, -48),
-			oe(-41, -72), oe(-31, -48), oe(-51, -36), oe(-71, -24), oe(-71, -24), oe(-51, -36), oe(-31, -48), oe(-41, -72)
+			oe(41, -72), oe(51, -48), oe(30, -36), oe(10, -24), oe(10, -24), oe(30, -36), oe(51, -48), oe(41, -72),
+			oe(31, -48), oe(41, -24), oe(20, -12), oe(1, 0), oe(1, 0), oe(20, -12), oe(41, -24), oe(31, -48),
+			oe(10, -36), oe(20, -12), oe(0, 0), oe(-20, 12), oe(-20, 12), oe(0, 0), oe(20, -12), oe(10, -36),
+			oe(0, -24), oe(11, 0), oe(-10, 12), oe(-30, 24), oe(-30, 24), oe(-10, 12), oe(11, 0), oe(0, -24),
+			oe(-10, -24), oe(1, 0), oe(-20, 12), oe(-40, 24), oe(-40, 24), oe(-20, 12), oe(1, 0), oe(-10, -24),
+			oe(-20, -36), oe(-10, -12), oe(-30, 0), oe(-50, 12), oe(-50, 12), oe(-30, 0), oe(-10, -12), oe(-20, -36),
+			oe(-29, -48), oe(-19, -24), oe(-40, -12), oe(-59, 0), oe(-59, 0), oe(-40, -12), oe(-19, -24), oe(-29, -48),
+			oe(-39, -72), oe(-29, -48), oe(-50, -36), oe(-70, -24), oe(-70, -24), oe(-50, -36), oe(-29, -48), oe(-39, -72)
 	};
 
 	private Config config;
@@ -404,7 +404,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.knights) != 0) {
 					center[color] += knightPcsq[pcsqIndex];
 
-					mobility[color] += KNIGHT_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - KNIGHT_M_UNITS);
+					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - KNIGHT_M_UNITS, KNIGHT_M);
 
 					if ((pieceAttacks & squaresNearKing[color]) != 0) {
 						kingSafety[color] += KNIGHT_ATTACKS_KING;
@@ -421,7 +421,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.bishops) != 0) {
 					center[color] += bishopPcsq[pcsqIndex];
 
-					mobility[color] += BISHOP_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - BISHOP_M_UNITS);
+					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - BISHOP_M_UNITS, BISHOP_M);
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += BISHOP_ATTACKS_KING;
@@ -442,7 +442,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.rooks) != 0) {
 					center[color] += rookPcsq[pcsqIndex];
 
-					mobility[color] += ROOK_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS);
+					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS, ROOK_M);
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += ROOK_ATTACKS_KING;
@@ -469,7 +469,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.queens) != 0) {
 					center[color] += queenPcsq[pcsqIndex];
 
-					mobility[color] += QUEEN_M * (BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - QUEEN_M_UNITS);
+					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - QUEEN_M_UNITS, QUEEN_M);
 
 					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
 						kingSafety[color] += QUEEN_ATTACKS_KING;
@@ -512,14 +512,14 @@ public class CompleteEvaluator extends Evaluator {
 		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[1]);
 		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
 
-		int oe = config.getEvalCenter() * (center[0] - center[1])
-				+ config.getEvalPositional() * (positional[0] - positional[1])
-				+ config.getEvalAttacks() * (attacks[0] - attacks[1] + hungPieces)
-				+ config.getEvalMobility() * (mobility[0] - mobility[1])
-				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
-				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
-				+ config.getEvalKingSafety() * (kingDefense[0] - kingDefense[1])
-				+ (config.getEvalKingSafety() >>> 3) * (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]);
+		int oe = oeMul(config.getEvalCenter(), center[0] - center[1])
+				+ oeMul(config.getEvalPositional(), positional[0] - positional[1])
+				+ oeMul(config.getEvalAttacks(), attacks[0] - attacks[1] + hungPieces)
+				+ oeMul(config.getEvalMobility(), mobility[0] - mobility[1])
+				+ oeMul(config.getEvalPawnStructure(), pawnStructure[0] - pawnStructure[1])
+				+ oeMul(config.getEvalPassedPawns(), passedPawns[0] - passedPawns[1])
+				+ oeMul(config.getEvalKingSafety(), kingDefense[0] - kingDefense[1])
+				+ oeMul(config.getEvalKingSafety() >>> 3, (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
@@ -538,7 +538,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("mobility          = " + formatOE(mobility[0] - mobility[1]));
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[0] - pawnStructure[1]));
 			logger.debug("passedPawns       = " + formatOE(passedPawns[0] - passedPawns[1]));
-			logger.debug("kingSafety x 8    = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
+			logger.debug("kingSafety x8     = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 			logger.debug("kingDefense       = " + formatOE(kingDefense[0] - kingDefense[1]));
 			logger.debug("value             = " + value);
 		}

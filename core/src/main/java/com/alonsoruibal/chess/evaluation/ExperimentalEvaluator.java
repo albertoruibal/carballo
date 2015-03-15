@@ -674,14 +674,14 @@ public class ExperimentalEvaluator extends Evaluator {
 		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[1]);
 		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
 
-		int oe = config.getEvalCenter() * (center[0] - center[1])
-				+ config.getEvalPositional() * (positional[0] - positional[1])
-				+ config.getEvalAttacks() * (attacks[0] - attacks[1] + hungPieces)
-				+ config.getEvalMobility() * (mobility[0] - mobility[1])
-				+ config.getEvalPawnStructure() * (pawnStructure[0] - pawnStructure[1])
-				+ config.getEvalPassedPawns() * (passedPawns[0] - passedPawns[1])
-				+ config.getEvalKingSafety() * (kingDefense[0] - kingDefense[1])
-				+ config.getEvalKingSafety() * (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]);
+		int oe = oeMul(config.getEvalCenter(), center[0] - center[1])
+				+ oeMul(config.getEvalPositional(), positional[0] - positional[1])
+				+ oeMul(config.getEvalAttacks(), attacks[0] - attacks[1] + hungPieces)
+				+ oeMul(config.getEvalMobility(), mobility[0] - mobility[1])
+				+ oeMul(config.getEvalPawnStructure(), pawnStructure[0] - pawnStructure[1])
+				+ oeMul(config.getEvalPassedPawns(), passedPawns[0] - passedPawns[1])
+				+ oeMul(config.getEvalKingSafety(), kingDefense[0] - kingDefense[1]
+				+ (KING_SAFETY_PONDER[kingAttackersCount[0]] * kingSafety[0] - KING_SAFETY_PONDER[kingAttackersCount[1]] * kingSafety[1]));
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
