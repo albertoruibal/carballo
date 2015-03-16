@@ -59,18 +59,14 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Extensions Passed Pawn type spin default " + Config.DEFAULT_EXTENSIONS_PASSED_PAWN + " min 0 max 2");
 					System.out.println("option name Extensions Mate Threat type spin default " + Config.DEFAULT_EXTENSIONS_MATE_THREAT + " min 0 max 2");
 					System.out.println("option name Extensions Singular type spin default " + Config.DEFAULT_EXTENSIONS_SINGULAR + " min 0 max 2");
-					System.out
-							.println("option name Singular Extension Margin type spin default " + Config.DEFAULT_SINGULAR_EXTENSION_MARGIN + " min 0 max 300");
-					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR
-							+ " var simplified var complete var experimental");
+					System.out.println("option name Singular Extension Margin type spin default " + Config.DEFAULT_SINGULAR_EXTENSION_MARGIN + " min 0 max 300");
+					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
 					System.out.println("option name Aspiration Window type check default " + Config.DEFAULT_ASPIRATION_WINDOW);
 					System.out.println("option name Aspiration Window Sizes type string default " + Config.DEFAULT_ASPIRATION_WINDOW_SIZES);
 					System.out.println("option name Futility type check default " + Config.DEFAULT_FUTILITY);
-					System.out.println("option name Futility Margin type spin default " + Config.DEFAULT_FUTILITY_MARGIN + " min 1 max 1000");
-					System.out.println("option name Aggressive Futility type check default " + Config.DEFAULT_AGGRESSIVE_FUTILITY);
-					System.out.println("option name Aggressive Futility Margin type spin default " + Config.DEFAULT_AGGRESSIVE_FUTILITY_MARGIN
-							+ " min 1 max 1000");
 					System.out.println("option name Futility Margin QS type spin default " + Config.DEFAULT_FUTILITY_MARGIN_QS + " min 1 max 1000");
+					System.out.println("option name Futility Margin type spin default " + Config.DEFAULT_FUTILITY_MARGIN + " min 1 max 1000");
+					System.out.println("option name Futility Margin Aggressive type spin default " + Config.DEFAULT_FUTILITY_MARGIN_AGGRESSIVE + " min 1 max 1000");
 					System.out.println("option name Razoring type check default " + Config.DEFAULT_RAZORING);
 					System.out.println("option name Razoring Margin type spin default " + Config.DEFAULT_RAZORING_MARGIN + " min 1 max 1000");
 					System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
@@ -131,14 +127,12 @@ public class Uci implements SearchObserver {
 						config.setAspirationWindowSizes(value);
 					} else if ("Futility".equals(name)) {
 						config.setFutility(Boolean.parseBoolean(value));
-					} else if ("FutilityMargin".equals(name)) {
-						config.setFutilityMargin(Integer.parseInt(value));
-					} else if ("AggressiveFutility".equals(name)) {
-						config.setAggressiveFutility(Boolean.parseBoolean(value));
-					} else if ("AggressiveFutilityMargin".equals(name)) {
-						config.setAggressiveFutilityMargin(Integer.parseInt(value));
 					} else if ("FutilityMarginQS".equals(name)) {
 						config.setFutilityMarginQS(Integer.parseInt(value));
+					} else if ("FutilityMargin".equals(name)) {
+						config.setFutilityMargin(Integer.parseInt(value));
+					} else if ("FutilityMarginAggressive".equals(name)) {
+						config.setFutilityMarginAggressive(Integer.parseInt(value));
 					} else if ("Razoring".equals(name)) {
 						config.setRazoring(Boolean.parseBoolean(value));
 					} else if ("RazoringMargin".equals(name)) {

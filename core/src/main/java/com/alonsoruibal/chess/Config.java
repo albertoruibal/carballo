@@ -32,10 +32,9 @@ public class Config {
 	public final static String DEFAULT_ASPIRATION_WINDOW_SIZES = "10,25,150,400,550,1025";
 	public final static int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
 	public final static boolean DEFAULT_FUTILITY = true;
+	public final static int DEFAULT_FUTILITY_MARGIN_QS = 80;
 	public final static int DEFAULT_FUTILITY_MARGIN = 100;
-	public final static boolean DEFAULT_AGGRESSIVE_FUTILITY = true;
-	public final static int DEFAULT_AGGRESSIVE_FUTILITY_MARGIN = 200;
-	public final static int DEFAULT_FUTILITY_MARGIN_QS = 150;
+	public final static int DEFAULT_FUTILITY_MARGIN_AGGRESSIVE = 200;
 	public final static boolean DEFAULT_RAZORING = true;
 	public final static int DEFAULT_RAZORING_MARGIN = 400;
 
@@ -73,10 +72,9 @@ public class Config {
 	private int[] aspirationWindowSizes; // It is initialized in the constructor
 	private int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
 	private boolean futility = DEFAULT_FUTILITY;
-	private int futilityMargin = DEFAULT_FUTILITY_MARGIN;
-	private boolean aggressiveFutility = DEFAULT_AGGRESSIVE_FUTILITY;
-	private int aggressiveFutilityMargin = DEFAULT_AGGRESSIVE_FUTILITY_MARGIN;
 	private int futilityMarginQS = DEFAULT_FUTILITY_MARGIN_QS;
+	private int futilityMargin = DEFAULT_FUTILITY_MARGIN;
+	private int futilityMarginAggressive = DEFAULT_FUTILITY_MARGIN_AGGRESSIVE;
 	private boolean razoring = DEFAULT_RAZORING;
 	private int razoringMargin = DEFAULT_RAZORING_MARGIN;
 	private int contemptFactor = DEFAULT_CONTEMPT_FACTOR;
@@ -191,6 +189,14 @@ public class Config {
 		this.futility = futility;
 	}
 
+	public int getFutilityMarginQS() {
+		return futilityMarginQS;
+	}
+
+	public void setFutilityMarginQS(int futilityMarginQS) {
+		this.futilityMarginQS = futilityMarginQS;
+	}
+
 	public int getFutilityMargin() {
 		return futilityMargin;
 	}
@@ -199,28 +205,12 @@ public class Config {
 		this.futilityMargin = futilityMargin;
 	}
 
-	public boolean getAggressiveFutility() {
-		return aggressiveFutility;
+	public int getFutilityMarginAggressive() {
+		return futilityMarginAggressive;
 	}
 
-	public void setAggressiveFutility(boolean aggressiveFutility) {
-		this.aggressiveFutility = aggressiveFutility;
-	}
-
-	public int getAggressiveFutilityMargin() {
-		return aggressiveFutilityMargin;
-	}
-
-	public void setAggressiveFutilityMargin(int aggressiveFutilityMargin) {
-		this.aggressiveFutilityMargin = aggressiveFutilityMargin;
-	}
-
-	public int getFutilityMarginQS() {
-		return futilityMarginQS;
-	}
-
-	public void setFutilityMarginQS(int futilityMarginQS) {
-		this.futilityMarginQS = futilityMarginQS;
+	public void setFutilityMarginAggressive(int futilityMarginAggressive) {
+		this.futilityMarginAggressive = futilityMarginAggressive;
 	}
 
 	public boolean getAspirationWindow() {
@@ -417,8 +407,7 @@ public class Config {
 				"Extensions:       Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
 				"Razoring          " + razoring + " (" + razoringMargin + ")\n" +
 				"Null Move         " + nullMove + " (" + nullMoveMargin + ")\n" +
-				"Fut. Pruning      " + futility + " (" + futilityMargin + ") QS: (" + futilityMarginQS + ")\n" +
-				"Agg. Futility     " + aggressiveFutility + " (" + aggressiveFutilityMargin + ")\n" +
+				"Fut. Pruning      " + futility + " QS: \" + futilityMarginQS + \", " + futilityMargin + "), AGG: \" + aggressiveFutilityMargin + \"\n" +
 				"Static Null Move  " + staticNullMove + "\n" +
 				"IID               " + iid + " (" + iidMargin + ")\n" +
 				"LMR               " + lmr + "\n" +

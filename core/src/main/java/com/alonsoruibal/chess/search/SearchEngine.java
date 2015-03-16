@@ -357,22 +357,23 @@ public class SearchEngine implements Runnable {
 		int bestMove = Move.NONE;
 		int staticEval = Evaluator.NO_VALUE;
 		int eval = -Evaluator.VICTORY;
+		int futilityBase = -Evaluator.VICTORY;
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
 			staticEval = evaluate(foundTT, distanceToInitialPly);
 			eval = refineEval(foundTT, staticEval);
 
-			if (eval > bestScore) {
-				bestScore = eval;
-			}
 			// Evaluation functions increase alpha and can originate beta cutoffs
+			bestScore = Math.max(bestScore, eval);
 			if (bestScore >= beta) {
 				if (!foundTT) {
 					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, Move.NONE, bestScore, TranspositionTable.DEPTH_QS_CHECKS, staticEval, false);
 				}
 				return bestScore;
 			}
+
+			futilityBase = eval + config.getFutilityMarginQS();
 		}
 
 		// If we have more depths than possible...
@@ -394,17 +395,20 @@ public class SearchEngine implements Runnable {
 			validOperations = true;
 
 			// Futility pruning
-			if (!moveIterator.checkEvasion //
+			if (config.getFutility() //
+					&& !moveIterator.checkEvasion //
 					&& !Move.isCheck(move) //
 					&& !isPv //
 					&& move != ttMove //
 					&& !Move.isPawnPush678(move) //
-					&& Math.abs(eval) < Evaluator.KNOWN_WIN) {
-				int futilityValue = eval + moveIterator.getLastMoveSee() + config.getFutilityMarginQS();
+					&& futilityBase > -Evaluator.KNOWN_WIN) {
+				int futilityValue = futilityBase + ExperimentalEvaluator.PIECE_VALUES[Move.getPieceCaptured(board, move)];
 				if (futilityValue < beta) {
-					if (futilityValue > bestScore) {
-						bestScore = futilityValue;
-					}
+					bestScore = Math.max(bestScore, futilityValue);
+					continue;
+				}
+				if (futilityBase < beta && moveIterator.getLastMoveSee() <= 0) {
+					bestScore = Math.max(bestScore, futilityBase);
 					continue;
 				}
 			}
@@ -545,7 +549,7 @@ public class SearchEngine implements Runnable {
 				nullMoveProbe++;
 				board.doMove(0, false, false);
 				int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
-				if (eval - beta > CompleteEvaluator.PAWN) {
+				if (eval - beta > ExperimentalEvaluator.PAWN) {
 					R++; // TODO TEST adding PLY
 				}
 				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
@@ -585,22 +589,18 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Futility pruning
-			if (nodeType == NODE_NULL) {
+			if (nodeType == NODE_NULL && config.getFutility()) {
 				if (depthRemaining <= PLY) { // at frontier nodes
-					if (config.getFutility()) {
-						futilityValue = staticEval + config.getFutilityMargin();
-						if (futilityValue < beta) {
-							futilityHit++;
-							futilityPrune = true;
-						}
+					futilityValue = staticEval + config.getFutilityMargin();
+					if (futilityValue < beta) {
+						futilityHit++;
+						futilityPrune = true;
 					}
 				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-					if (config.getAggressiveFutility()) {
-						futilityValue = staticEval + config.getAggressiveFutilityMargin();
-						if (futilityValue < beta) {
-							aggressiveFutilityHit++;
-							futilityPrune = true;
-						}
+					futilityValue = staticEval + config.getFutilityMarginAggressive();
+					if (futilityValue < beta) {
+						aggressiveFutilityHit++;
+						futilityPrune = true;
 					}
 				}
 			}
