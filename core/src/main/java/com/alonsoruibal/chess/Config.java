@@ -37,7 +37,7 @@ public class Config {
 	public final static int DEFAULT_AGGRESSIVE_FUTILITY_MARGIN = 200;
 	public final static int DEFAULT_FUTILITY_MARGIN_QS = 150;
 	public final static boolean DEFAULT_RAZORING = true;
-	public final static int DEFAULT_RAZORING_MARGIN = 900;
+	public final static int DEFAULT_RAZORING_MARGIN = 400;
 
 	// >0 refuses draw <0 looks for draw
 	public final static int DEFAULT_CONTEMPT_FACTOR = 90;
