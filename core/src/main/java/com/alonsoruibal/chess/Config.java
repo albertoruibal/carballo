@@ -404,10 +404,10 @@ public class Config {
 				"Book              " + useBook + " (" + book + ")\n" +
 				"TT Size           " + transpositionTableSize + "\n" +
 				"Aspiration Window " + aspirationWindow + " " + Arrays.toString(aspirationWindowSizes) + "\n" +
-				"Extensions:       Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
+				"Extensions        Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
 				"Razoring          " + razoring + " (" + razoringMargin + ")\n" +
 				"Null Move         " + nullMove + " (" + nullMoveMargin + ")\n" +
-				"Fut. Pruning      " + futility + " QS: \" + futilityMarginQS + \", " + futilityMargin + "), AGG: \" + aggressiveFutilityMargin + \"\n" +
+				"Futility Pruning  " + futility + " (" + futilityMarginQS + ", " + futilityMargin + ", " + futilityMarginAggressive + ")\n" +
 				"Static Null Move  " + staticNullMove + "\n" +
 				"IID               " + iid + " (" + iidMargin + ")\n" +
 				"LMR               " + lmr + "\n" +
