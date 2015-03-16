@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.evaluation;
 
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 public class EndgameEvaluator {
@@ -47,6 +48,9 @@ public class EndgameEvaluator {
 		if ((blackMaterial == 0 && whiteNoPawnMaterial == 0 && whitePawns == 1) || //
 				(whiteMaterial == 0 && blackNoPawnMaterial == 0 && blackPawns == 1)) {
 			return EndgameEvaluator.endgameKPK(board, whiteMaterial > blackMaterial);
+		}
+		if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
+			return EndgameEvaluator.endgameKRKR(board); // Not always a draw
 		}
 		if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 2) || //
 				(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 2)) {
@@ -102,5 +106,29 @@ public class EndgameEvaluator {
 		return whiteDominant ?
 				Evaluator.KNOWN_WIN + ExperimentalEvaluator.PAWN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
 				-Evaluator.KNOWN_WIN - ExperimentalEvaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
+	}
+
+	private static int endgameKRKR(Board board) {
+		int myKingIndex = BitboardUtils.square2Index(board.kings & board.getMines());
+		int myRookIndex = BitboardUtils.square2Index(board.rooks & board.getMines());
+		int otherKingIndex = BitboardUtils.square2Index(board.kings & board.getOthers());
+		int otherRookIndex = BitboardUtils.square2Index(board.rooks & board.getOthers());
+
+		// The other king is too far, or my king is near the other rook, so my rook can capture the other rook
+		if ((BitboardUtils.distance(otherKingIndex, otherRookIndex) > 1 || BitboardUtils.distance(myKingIndex, otherRookIndex) == 1) &&
+				(BitboardAttacks.getInstance().getRookAttacks(myRookIndex, board.getAll()) & board.rooks) != 0) {
+			return Evaluator.KNOWN_WIN;
+		}
+		// The other rook is undefended and my king can capture it
+		if (BitboardUtils.distance(otherKingIndex, otherRookIndex) > 1 &&
+				BitboardUtils.distance(myKingIndex, otherRookIndex) == 1) {
+			// Does the other king capture my rook just after my move?
+			if (BitboardUtils.distance(otherKingIndex, myRookIndex) == 1 &&
+					BitboardUtils.distance(otherRookIndex/*that's my king after after capture*/, myRookIndex) > 1) {
+				return Evaluator.DRAW;
+			}
+			return Evaluator.KNOWN_WIN;
+		}
+		return Evaluator.DRAW;
 	}
 }
