@@ -164,7 +164,7 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testKingSafety() {
-		String fen = "r6k/1R6/8/8/8/8/8/7K w QKqk - 0 0";
+		String fen = "r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0";
 		Board board = new Board();
 		board.setFen(fen);
 		int value = evaluator.evaluate(board, attacksInfo);
