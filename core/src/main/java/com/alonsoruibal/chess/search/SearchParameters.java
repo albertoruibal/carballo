@@ -1,6 +1,5 @@
 package com.alonsoruibal.chess.search;
 
-import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.log.Logger;
 
 public class SearchParameters {
@@ -26,8 +25,9 @@ public class SearchParameters {
 	int moveTime = Integer.MAX_VALUE;
 	// Think infinite
 	boolean infinite;
-
 	boolean ponder;
+
+	boolean manageTime;
 
 	public boolean isPonder() {
 		return ponder;
@@ -118,30 +118,43 @@ public class SearchParameters {
 	}
 
 	/**
+	 * Used to detect if it can add more time in case of panic or apply other heuristics to reduce time
+	 *
+	 * @return true if the engine is responsible of managing the remaining time
+	 */
+	public boolean manageTime() {
+		return manageTime;
+	}
+
+	/**
 	 * Time management routine
+	 * @param panicTime is set to true when the score fails low in the root node by 100
 	 *
 	 * @return the time to think, or Long.MAX_VALUE if it can think an infinite time
 	 */
-	public long calculateMoveTime(Board board, long startTime) {
+	public long calculateMoveTime(boolean engineIsWhite, long startTime, boolean panicTime) {
+		manageTime = false;
 		if (ponder || infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
 			return Long.MAX_VALUE;
 		}
 		if (moveTime != Integer.MAX_VALUE) {
 			return startTime + moveTime;
 		}
+		manageTime = true;
 
-		int calctime = 0;
-		if (board.getTurn()) {
-			if (wtime > 0) {
-				calctime = wtime / 40 + winc / 2;
-			}
-		} else {
-			if (btime > 0) {
-				calctime = btime / 40 + binc / 2;
-			}
+		int calcTime = 0;
+		int timeAvailable = engineIsWhite ? wtime : btime;
+		int timeInc = engineIsWhite ? winc : binc;
+		if (timeAvailable > 0) {
+			calcTime = timeAvailable / 40 + (timeInc >>> 1);
 		}
-		logger.debug("Thinking for " + calctime + "Ms");
-		return startTime + calctime;
+		if (panicTime) {
+			calcTime = calcTime << 2;
+		}
+		calcTime = Math.min(calcTime, timeAvailable >>> 4);
+
+		logger.debug("Thinking for " + calcTime + "Ms");
+		return startTime + calcTime;
 	}
 
 	public static SearchParameters get(int moveTime) {

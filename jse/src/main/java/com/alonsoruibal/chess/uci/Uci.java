@@ -168,14 +168,16 @@ public class Uci implements SearchObserver {
 						// Wait for the engine to finish searching
 						while (engine.isSearching()) {
 							try {
-								Thread.sleep(100);
+								Thread.sleep(10);
 							} catch (Exception e) {
 							}
 						}
 					}
 					System.out.println("readyok");
+
 				} else if ("quit".equals(command)) {
 					System.exit(0);
+
 				} else if ("go".equals(command)) {
 					searchParameters = new SearchParameters();
 					while (index < tokens.length) {
@@ -214,6 +216,7 @@ public class Uci implements SearchObserver {
 				} else if ("ucinewgame".equals(command)) {
 					engine.getBoard().startPosition();
 					engine.clear();
+
 				} else if ("position".equals(command)) {
 					if (index < tokens.length) {
 						String arg1 = tokens[index++];
@@ -248,8 +251,9 @@ public class Uci implements SearchObserver {
 				} else if ("ponderhit".equals(command)) {
 					if (searchParameters != null) {
 						searchParameters.setPonder(false);
-						engine.setSearchLimits(searchParameters);
+						engine.setSearchLimits(searchParameters, false);
 					}
+
 				} else if ("register".equals(command)) {
 					// not used
 				} else {

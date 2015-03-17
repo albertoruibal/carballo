@@ -18,11 +18,10 @@ public class SearchEngineThreaded extends SearchEngine {
 		if (!isSearching()) {
 			this.searchParameters = searchParameteres;
 			try {
-				newRun();
+				prepareRun();
 				thread = new Thread(this);
 				thread.start();
 			} catch (SearchFinishedException ignored) {
-				finishRun();
 			}
 		}
 	}
@@ -34,7 +33,7 @@ public class SearchEngineThreaded extends SearchEngine {
 		super.stop();
 		while (isSearching()) {
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
