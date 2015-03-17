@@ -43,7 +43,7 @@ public class SearchEngine implements Runnable {
 	protected SearchParameters searchParameters;
 
 	private boolean searching = false;
-	private boolean foundOneMove = false;
+	private boolean foundOneMove;
 
 	private Config config;
 
@@ -72,7 +72,7 @@ public class SearchEngine implements Runnable {
 	private boolean panicTime;
 	private boolean engineIsWhite;
 
-	long startTime;
+	public long startTime;
 
 	// For performance benching
 	private long positionCounter;
@@ -320,9 +320,6 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
-		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
-			finishRun();
-		}
 		qsPositionCounter++;
 
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
@@ -380,11 +377,7 @@ public class SearchEngine implements Runnable {
 
 		// If we have more depths than possible...
 		if (distanceToInitialPly >= MAX_DEPTH - 1) {
-			if (board.getCheck()) {
-				return evaluateDraw(distanceToInitialPly); // Return a drawish score if we are in check
-			} else {
-				return eval;
-			}
+			return board.getCheck() ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
 		}
 
 		boolean validOperations = false;
@@ -441,7 +434,7 @@ public class SearchEngine implements Runnable {
 	 * Search Root, PV and null window
 	 */
 	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws SearchFinishedException {
-		if (foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
+		if (nodeType != NODE_ROOT && foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			finishRun();
 		}
 
@@ -478,17 +471,7 @@ public class SearchEngine implements Runnable {
 		ttProbe++;
 		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != 0);
 		if (foundTT) {
-			if (canUseTT(depthRemaining, alpha, beta)) {
-
-				if (nodeType == NODE_ROOT) {
-					globalBestMove = tt.getBestMove();
-					bestMoveScore = tt.getScore();
-					foundOneMove = true;
-
-					if (depthRemaining > 6 * PLY) {
-						notifyMoveFound(globalBestMove, bestMoveScore, alpha, beta);
-					}
-				}
+			if (nodeType != NODE_ROOT && canUseTT(depthRemaining, alpha, beta)) {
 				return tt.getScore();
 			}
 			ttMove = tt.getBestMove();
@@ -497,21 +480,25 @@ public class SearchEngine implements Runnable {
 			ttDepthAnalyzed = tt.getDepthAnalyzed();
 		}
 
-		if (depthRemaining < PLY || distanceToInitialPly >= MAX_DEPTH - 1) {
-			return quiescentSearch(0, alpha, beta);
-		}
-
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
 		int futilityValue = -Evaluator.VICTORY;
 		int staticEval = -Evaluator.VICTORY;
+		int eval = -Evaluator.VICTORY;
 
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = evaluate(evalTT, distanceToInitialPly);
-			int eval = refineEval(foundTT, staticEval);
+			eval = refineEval(foundTT, staticEval);
+		}
 
+		// If we have more depths than possible...
+		if (distanceToInitialPly >= MAX_DEPTH - 1) {
+			return board.getCheck() ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
+		}
+
+		if (!board.getCheck()) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
 					&& config.getRazoring() //
@@ -648,7 +635,7 @@ public class SearchEngine implements Runnable {
 
 				singularExtensionProbe++;
 				int seBeta = ttScore - config.getSingularExtensionMargin();
-				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
+				int excScore = depthRemaining >> 1 < PLY ? quiescentSearch(0, seBeta - 1, seBeta) : search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
 					extension += config.getExtensionsSingular();
@@ -687,7 +674,8 @@ public class SearchEngine implements Runnable {
 			int lowBound = (alpha > bestScore ? alpha : bestScore);
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
 				// PV move not null searched
-				score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+				score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
+						-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
 			} else {
 				// Try searching null window
 				boolean doFullSearch = true;
@@ -701,17 +689,20 @@ public class SearchEngine implements Runnable {
 				}
 
 				if (reduction > 0) {
-					score = -search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
+					score = depthRemaining - reduction - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
+							-search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
 					doFullSearch = (score > lowBound);
 				}
 				if (doFullSearch) {
-					score = -search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, 0);
+					score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
+							-search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, 0);
 
 					// Finally search as PV if score on window
 					if ((nodeType == NODE_PV || nodeType == NODE_ROOT) //
 							&& score > lowBound //
 							&& (nodeType == NODE_ROOT || score < beta)) {
-						score = -search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+						score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
+								-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
 					}
 				}
 			}
@@ -948,7 +939,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void finishRun() throws SearchFinishedException {
-		// puts the board in the initial position
+		// Go back the board to the initial position
 		board.undoMove(initialPly);
 		searching = false;
 
