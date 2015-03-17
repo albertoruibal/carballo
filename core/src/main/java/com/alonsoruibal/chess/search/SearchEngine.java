@@ -934,7 +934,7 @@ public class SearchEngine implements Runnable {
 
 		if ((searchParameters.manageTime() && ( // Under time restrictions and...
 				Math.abs(rootScore) > VALUE_IS_MATE // Mate found or
-						|| (time2 + ((time2 - time1) >>> 2)) > thinkToTime)) // It will not likely finish the next iteration
+						|| (time2 + ((time2 - time1) << 1)) > thinkToTime)) // It will not likely finish the next iteration
 				|| depth == MAX_DEPTH || depth > thinkToDepth) { // Search limit reached
 			finishRun();
 		}
