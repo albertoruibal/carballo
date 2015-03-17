@@ -73,7 +73,7 @@ public class SearchStatusInfo {
 
 	int depth;
 	int selDepth;
-	long time;
+	long time = Long.MIN_VALUE;
 	long nodes;
 	String pv;
 	int multiPv;
@@ -259,7 +259,7 @@ public class SearchStatusInfo {
 			sb.append(" nodes ");
 			sb.append(nodes);
 		}
-		if (time != 0) {
+		if (time != Long.MIN_VALUE) {
 			sb.append(" time ");
 			sb.append(time);
 		}
