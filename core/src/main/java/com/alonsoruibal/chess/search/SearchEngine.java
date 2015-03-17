@@ -796,7 +796,12 @@ public class SearchEngine implements Runnable {
 		}
 		if (!searching) {
 			this.searchParameters = searchParameters;
-			run();
+			try {
+				newRun();
+				run();
+			} catch (Exception e) {
+				finishRun();
+			}
 		}
 	}
 
@@ -837,7 +842,7 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
-	private void newRun() throws SearchFinishedException {
+	public void newRun() throws SearchFinishedException {
 		startTime = System.currentTimeMillis();
 		setSearchLimits(searchParameters);
 
@@ -854,7 +859,6 @@ public class SearchEngine implements Runnable {
 		pv = null;
 
 		initialPly = board.getMoveNumber();
-
 
 		if (config.getUseBook() && config.getBook() != null && board.isUsingBook()
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
@@ -936,7 +940,6 @@ public class SearchEngine implements Runnable {
 
 	public void run() {
 		try {
-			newRun();
 			while (true) {
 				runStepped();
 			}

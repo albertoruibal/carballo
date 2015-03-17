@@ -17,8 +17,13 @@ public class SearchEngineThreaded extends SearchEngine {
 		if (!isInitialized()) return;
 		if (!isSearching()) {
 			this.searchParameters = searchParameteres;
-			thread = new Thread(this);
-			thread.start();
+			try {
+				newRun();
+				thread = new Thread(this);
+				thread.start();
+			} catch (SearchFinishedException ignored) {
+				finishRun();
+			}
 		}
 	}
 

@@ -118,9 +118,9 @@ public class SearchParameters {
 	}
 
 	/**
-	 * TODO elaborate a bit
+	 * Time management routine
 	 *
-	 * @return
+	 * @return the time to think, or Long.MAX_VALUE if it can think an infinite time
 	 */
 	public long calculateMoveTime(Board board, long startTime) {
 		if (ponder || infinite || depth < Integer.MAX_VALUE || nodes < Integer.MAX_VALUE) {
@@ -133,11 +133,11 @@ public class SearchParameters {
 		int calctime = 0;
 		if (board.getTurn()) {
 			if (wtime > 0) {
-				calctime = wtime / 40 + winc;
+				calctime = wtime / 40 + winc / 2;
 			}
 		} else {
 			if (btime > 0) {
-				calctime = btime / 40 + binc;
+				calctime = btime / 40 + binc / 2;
 			}
 		}
 		logger.debug("Thinking for " + calctime + "Ms");
