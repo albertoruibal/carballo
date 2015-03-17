@@ -275,6 +275,7 @@ public class Uci implements SearchObserver {
 			sb.append(Move.toString(ponder));
 		}
 		System.out.println(sb.toString());
+		System.out.flush();
 	}
 
 	public void info(SearchStatusInfo info) {
