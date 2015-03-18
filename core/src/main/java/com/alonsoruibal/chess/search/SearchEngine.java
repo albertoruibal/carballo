@@ -635,7 +635,8 @@ public class SearchEngine implements Runnable {
 
 				singularExtensionProbe++;
 				int seBeta = ttScore - config.getSingularExtensionMargin();
-				int excScore = depthRemaining >> 1 < PLY ? quiescentSearch(0, seBeta - 1, seBeta) : search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
+				int excScore = depthRemaining >> 1 < PLY ? quiescentSearch(0, seBeta - 1, seBeta) :
+						search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
 					extension += config.getExtensionsSingular();
