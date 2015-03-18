@@ -701,9 +701,7 @@ public class Board {
 				if (fillInfo) {
 					generateLegalMoves();
 					if (isMate()) { // Append # when mate
-						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "#");
-					} else if (getCheck()) { // Append + when check
-						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1) + "+");
+						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1).replace("+", "#"));
 					}
 				}
 			} else {

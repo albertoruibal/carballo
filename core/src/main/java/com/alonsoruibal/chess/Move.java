@@ -312,6 +312,9 @@ public class Move {
 			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, check, moveType);
 			if (checkLegality) {
 				if (board.doMove(moveInt, true, false)) {
+					if (board.getCheck()) {
+						moveInt = moveInt | CHECK_MASK; // If the move didn't has the check flag set
+					}
 					board.undoMove();
 					return moveInt;
 				}

@@ -1,11 +1,13 @@
 package com.alonsoruibal.chess.movegen;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Move;
 
 public class LegalMoveGenerator extends MagicMoveGenerator {
 
 	/**
-	 * get only LEGAL Operations by testing with domove
+	 * Get only LEGAL moves testing with doMove
+	 * The moves are returned with the check flag set
 	 */
 	@Override
 	public int generateMoves(Board board, int moves[], int index) {
@@ -13,7 +15,7 @@ public class LegalMoveGenerator extends MagicMoveGenerator {
 		int j = index;
 		for (int i = 0; i < lastIndex; i++) {
 			if (board.doMove(moves[i], true, false)) {
-				moves[j++] = moves[i];
+				moves[j++] = board.getCheck() ? moves[i] | Move.CHECK_MASK : moves[i];
 				board.undoMove();
 			}
 		}
