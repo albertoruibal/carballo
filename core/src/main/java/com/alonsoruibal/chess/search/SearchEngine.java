@@ -40,7 +40,7 @@ public class SearchEngine implements Runnable {
 
 	public boolean debug = false;
 
-	protected SearchParameters searchParameters;
+	private SearchParameters searchParameters;
 
 	private boolean searching = false;
 	private boolean foundOneMove;
@@ -1039,5 +1039,9 @@ public class SearchEngine implements Runnable {
 
 	public boolean isSearching() {
 		return searching;
+	}
+
+	public void setSearchParameters(SearchParameters searchParameters) {
+		this.searchParameters = searchParameters;
 	}
 }
