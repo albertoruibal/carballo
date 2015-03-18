@@ -45,20 +45,23 @@ public class EndgameEvaluator {
 		int whiteMaterial = whiteNoPawnMaterial + whitePawns;
 		int blackMaterial = blackNoPawnMaterial + blackPawns;
 
+		// Endgames without pawns
+		if (whitePawns == 0 && blackPawns == 0) {
+			if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 2) || //
+					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 2)) {
+				return Evaluator.DRAW; // KNNk is draw
+			}
+			if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 1 && whiteBishops == 1) || //
+					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
+				return EndgameEvaluator.endgameKBNK(board, whiteMaterial > blackMaterial);
+			}
+			if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
+				return EndgameEvaluator.endgameKRKR(board); // Not always a draw
+			}
+		}
 		if ((blackMaterial == 0 && whiteNoPawnMaterial == 0 && whitePawns == 1) || //
 				(whiteMaterial == 0 && blackNoPawnMaterial == 0 && blackPawns == 1)) {
 			return EndgameEvaluator.endgameKPK(board, whiteMaterial > blackMaterial);
-		}
-		if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
-			return EndgameEvaluator.endgameKRKR(board); // Not always a draw
-		}
-		if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 2) || //
-				(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 2)) {
-			return Evaluator.DRAW; // KNNk is draw
-		}
-		if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 1 && whiteBishops == 1) || //
-				(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
-			return EndgameEvaluator.endgameKBNK(board, whiteMaterial > blackMaterial);
 		}
 		if (blackMaterial == 0 && (whiteBishops >= 2 || whiteRooks > 0 || whiteQueens > 0) || //
 				whiteMaterial == 0 && (whiteBishops >= 2 || blackRooks > 0 || blackQueens > 0)) {
