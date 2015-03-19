@@ -78,14 +78,14 @@ public class AttacksInfo {
 				} else { // It is a slider
 					if ((square & (board.bishops | board.queens)) != 0) {
 						long sliderAttacks = bbAttacks.getBishopAttacks(index, all);
-						if (((square & mines) == 0) && (sliderAttacks & myKing) != 0) {
+						if ((square & mines) == 0 && (sliderAttacks & myKing) != 0) {
 							interposeCheckSquares |= sliderAttacks & bishopAttacksMyking; // And with only the diagonal attacks to the king
 						}
 						pieceAttacks |= sliderAttacks;
 					}
 					if ((square & (board.rooks | board.queens)) != 0) {
 						long sliderAttacks = bbAttacks.getRookAttacks(index, all);
-						if (((square & mines) == 0) && (sliderAttacks & myKing) != 0) {
+						if ((square & mines) == 0 && (sliderAttacks & myKing) != 0) {
 							interposeCheckSquares |= sliderAttacks & rookAttacksMyking; // And with only the rook attacks to the king
 						}
 						pieceAttacks |= sliderAttacks;
@@ -95,7 +95,7 @@ public class AttacksInfo {
 				attackedSquares[color] |= pieceAttacks;
 				attacksFromSquare[index] = pieceAttacks;
 
-				if (((square & mines) == 0) && (pieceAttacks & myKing) != 0) {
+				if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
 					piecesGivingCheck |= square;
 				}
 			} else {
