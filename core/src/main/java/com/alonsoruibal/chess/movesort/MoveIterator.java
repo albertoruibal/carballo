@@ -594,13 +594,14 @@ public class MoveIterator {
 		int see = SEE_NOT_CALCULATED;
 		int pieceCaptured = capture ? Move.getPieceCaptured(board, move) : 0;
 
-		if (capture || check) {
+		if (capture || (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && check)) {
 			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
-
-			if (movesToGenerate != GENERATE_ALL && !checkEvasion && see < 0) {
-				return;
-			}
 		}
+
+		if (movesToGenerate != GENERATE_ALL && !checkEvasion && see < 0) {
+			return;
+		}
+
 		if (capture && see < 0) {
 			badCaptures[badCaptureIndex] = move;
 			badCapturesSee[badCaptureIndex] = see;
