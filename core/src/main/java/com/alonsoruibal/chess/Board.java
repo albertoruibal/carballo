@@ -275,8 +275,7 @@ public class Board {
 	}
 
 	/**
-	 * Sets fen without destroying move history. If lastMove = null destroy the
-	 * move history
+	 * Sets fen without destroying move history. If lastMove = null destroy the move history
 	 */
 	public void setFenMove(String fen, String lastMove) {
 		long tmpWhites = 0;
@@ -700,7 +699,6 @@ public class Board {
 				setCheckFlags();
 
 				if (fillSanInfo) {
-					generateLegalMoves();
 					if (isMate()) { // Append # when mate
 						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1).replace("+", "#"));
 					}
