@@ -469,7 +469,7 @@ public class SearchEngine implements Runnable {
 		int score = 0;
 
 		ttProbe++;
-		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != 0);
+		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != Move.NONE);
 		if (foundTT) {
 			if (nodeType != NODE_ROOT && canUseTT(depthRemaining, alpha, beta)) {
 				return tt.getScore();
@@ -550,7 +550,7 @@ public class SearchEngine implements Runnable {
 				if (eval - beta > ExperimentalEvaluator.PAWN) {
 					R++; // TODO TEST adding PLY
 				}
-				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, 0);
+				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, Move.NONE);
 				board.undoMove();
 				if (score >= beta) {
 					if (score >= VALUE_IS_MATE) {
@@ -559,7 +559,7 @@ public class SearchEngine implements Runnable {
 
 					// Verification search on initial depths
 					if (depthRemaining < 6 * PLY //
-							|| search(NODE_NULL, depthRemaining - 5 * PLY, beta - 1, beta, false, 0) >= beta) {
+							|| search(NODE_NULL, depthRemaining - 5 * PLY, beta - 1, beta, false, Move.NONE) >= beta) {
 						nullMoveHit++;
 						return score;
 					}
@@ -676,7 +676,7 @@ public class SearchEngine implements Runnable {
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
 				// PV move not null searched
 				score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
-						-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+						-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, Move.NONE);
 			} else {
 				// Try searching null window
 				boolean doFullSearch = true;
@@ -691,19 +691,19 @@ public class SearchEngine implements Runnable {
 
 				if (reduction > 0) {
 					score = depthRemaining - reduction - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
-							-search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, 0);
+							-search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, Move.NONE);
 					doFullSearch = (score > lowBound);
 				}
 				if (doFullSearch) {
 					score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
-							-search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, 0);
+							-search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, Move.NONE);
 
 					// Finally search as PV if score on window
 					if ((nodeType == NODE_PV || nodeType == NODE_ROOT) //
 							&& score > lowBound //
 							&& (nodeType == NODE_ROOT || score < beta)) {
 						score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
-								-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, 0);
+								-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, Move.NONE);
 					}
 				}
 			}
@@ -760,7 +760,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Save in the transposition table
-		tt.save(board, distanceToInitialPly, depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != 0);
+		tt.save(board, distanceToInitialPly, depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != Move.NONE);
 
 		return bestScore;
 	}
@@ -897,7 +897,7 @@ public class SearchEngine implements Runnable {
 		// Iterate aspiration windows
 		while (true) {
 			aspirationWindowProbe++;
-			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, 0);
+			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, Move.NONE);
 
 			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", rootScore=" + rootScore);
 
