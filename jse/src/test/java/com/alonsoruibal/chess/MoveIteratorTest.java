@@ -137,6 +137,25 @@ public class MoveIteratorTest {
 	}
 
 	@Test
+	public void canCastleLongAlthoughThereIsAnAttackedSquareNear() {
+		Board b = new Board();
+		b.setFen("7k/8/8/8/8/8/p5p1/R3K3 w Q - 0 1");
+		System.out.println(b.toString());
+		MoveIterator lmi = new MoveIterator(b, new AttacksInfo(), new SortInfo(), 0);
+		lmi.genMoves(Move.NONE);
+		int move;
+		int castling = Move.NONE;
+		while ((move = lmi.next()) != Move.NONE) {
+			System.out.println(Move.toStringExt(move));
+
+			if (Move.getMoveType(move) == Move.TYPE_QUEENSIDE_CASTLING) {
+				castling = move;
+			}
+		}
+		assertTrue("Must allow castling because the king does not crosses an attacked square", castling != Move.NONE);
+	}
+
+	@Test
 	public void longCastlingGivesCheck2() {
 		Board b = new Board();
 		b.setFen("8/8/8/8/8/8/8/R3K2k w Q - 0 1");

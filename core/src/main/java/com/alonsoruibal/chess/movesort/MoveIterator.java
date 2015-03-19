@@ -331,7 +331,7 @@ public class MoveIterator {
 		}
 		if ((((all & (turn ? 0x70L : 0x7000000000000000L)) == 0 //
 				&& (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))
-				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x34L : 0x3400000000000000L)) == 0)) {
+				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x38L : 0x3800000000000000L)) == 0)) {
 			addMove(Move.KING, attacksInfo.myKingIndex, board.kings & mines, (board.kings & mines) << 2, false, Move.TYPE_QUEENSIDE_CASTLING);
 		}
 	}
