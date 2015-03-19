@@ -74,7 +74,6 @@ public class MoveIterator {
 	private int[] goodCapturesSee = new int[256];
 	private int[] goodCapturesScores = new int[256];
 	private int[] badCaptures = new int[256]; // Stores captures and queen promotions
-	private int[] badCapturesSee = new int[256];
 	private int[] badCapturesScores = new int[256];
 	private int[] equalCaptures = new int[256]; // Stores captures and queen promotions
 	private int[] equalCapturesSee = new int[256];
@@ -214,7 +213,7 @@ public class MoveIterator {
 				phase++;
 
 			case PHASE_BAD_CAPTURES:
-				move = pickMoveFromArray(badCaptureIndex, badCaptures, badCapturesScores, badCapturesSee);
+				move = pickMoveFromArray(badCaptureIndex, badCaptures, badCapturesScores, badCapturesScores);
 				if (move != Move.NONE) {
 					return move;
 				}
@@ -237,9 +236,9 @@ public class MoveIterator {
 			}
 		}
 		if (bestIndex != -1) {
-			arrayScores[bestIndex] = SCORE_LOWEST;
 			int move = arrayMoves[bestIndex];
 			lastMoveSee = arraySee[bestIndex];
+			arrayScores[bestIndex] = SCORE_LOWEST;
 			return move;
 		} else {
 			return Move.NONE;
@@ -604,7 +603,6 @@ public class MoveIterator {
 
 		if (capture && see < 0) {
 			badCaptures[badCaptureIndex] = move;
-			badCapturesSee[badCaptureIndex] = see;
 			badCapturesScores[badCaptureIndex] = see;
 			badCaptureIndex++;
 			return;
