@@ -591,7 +591,7 @@ public class MoveIterator {
 			}
 		}
 
-		int see = 0;
+		int see = SEE_NOT_CALCULATED;
 		int pieceCaptured = capture ? Move.getPieceCaptured(board, move) : 0;
 
 		if (capture || check) {
