@@ -39,12 +39,15 @@ public class MoveIterator {
 	private static final int SCORE_UNDERPROMOTION = Integer.MIN_VALUE + 1;
 	private static final int SCORE_LOWEST = Integer.MIN_VALUE;
 
+	public final static int SEE_NOT_CALCULATED = Short.MAX_VALUE;
+
 	private Board board;
 	private AttacksInfo attacksInfo;
 
 	private int ttMove;
 	private int movesToGenerate;
 
+	private int move;
 	private int lastMoveSee;
 	private int killer1;
 	private int killer2;
@@ -87,7 +90,7 @@ public class MoveIterator {
 	private BitboardAttacks bbAttacks;
 
 	public int getLastMoveSee() {
-		return lastMoveSee;
+		return lastMoveSee != SEE_NOT_CALCULATED ? lastMoveSee : board.see(move);
 	}
 
 	public void genMoves(int ttMove) {
@@ -129,17 +132,16 @@ public class MoveIterator {
 	}
 
 	public int next() {
-		int move;
 		switch (phase) {
 			case PHASE_TT:
 				phase++;
 				if (ttMove != Move.NONE) {
 					lastMoveSee = Move.isCapture(ttMove) || Move.isCheck(ttMove) ? board.see(ttMove) : 0;
 					if (checkEvasion //
-							|| (movesToGenerate == GENERATE_ALL) //
-							|| (Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN)
-							|| ((movesToGenerate == GENERATE_CAPTURES_PROMOS) && Move.isCapture(ttMove) && (lastMoveSee >= 0)) //
-							|| ((movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS) && (Move.isCapture(ttMove) || Move.isCheck(ttMove)) && (lastMoveSee >= 0))) {
+							|| movesToGenerate == GENERATE_ALL //
+							|| Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN
+							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS && Move.isCapture(ttMove) && lastMoveSee >= 0) //
+							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && (Move.isCapture(ttMove) || Move.isCheck(ttMove)) && lastMoveSee >= 0)) {
 						return ttMove;
 					}
 				}
@@ -180,30 +182,27 @@ public class MoveIterator {
 				phase++;
 
 			case PHASE_KILLER1:
+				lastMoveSee = SEE_NOT_CALCULATED;
 				phase++;
 				if (foundKiller1) {
-					lastMoveSee = Move.isCheck(killer1) ? board.see(killer1) : 0;
 					return killer1;
 				}
 
 			case PHASE_KILLER2:
 				phase++;
 				if (foundKiller2) {
-					lastMoveSee = Move.isCheck(killer2) ? board.see(killer2) : 0;
 					return killer2;
 				}
 
 			case PHASE_KILLER3:
 				phase++;
 				if (foundKiller3) {
-					lastMoveSee = Move.isCheck(killer3) ? board.see(killer3) : 0;
 					return killer3;
 				}
 
 			case PHASE_KILLER4:
 				phase++;
 				if (foundKiller4) {
-					lastMoveSee = Move.isCheck(killer4) ? board.see(killer4) : 0;
 					return killer4;
 				}
 
@@ -448,12 +447,12 @@ public class MoveIterator {
 					addMove(Move.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_QUEEN);
 					// If it is a capture, we must add the underpromotions
 					if (capture) {
-						addMove(Move.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_KNIGHT);
-						addMove(Move.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_ROOK);
-						addMove(Move.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_BISHOP);
+						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_KNIGHT);
+						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_ROOK);
+						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_BISHOP);
 					}
 				} else if (capture) {
-					addMove(Move.PAWN, fromIndex, from, to, capture, 0);
+					addMove(Move.PAWN, fromIndex, from, to, true, 0);
 				}
 			}
 			attacks ^= to;
@@ -541,7 +540,7 @@ public class MoveIterator {
 				return; // Illegal move
 			}
 		}
-		if (((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0) ||
+		if ((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0 ||
 				((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Move.KING)) {
 			// Regenerate rook attacks to my king
 			long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
@@ -551,14 +550,14 @@ public class MoveIterator {
 		}
 
 		// Discovered checks
-		if (!check && ((squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0)) {
+		if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0) {
 			// Regenerate bishop attacks to the other king
 			long newBishopAttacks = bbAttacks.getBishopAttacks(attacksInfo.otherKingIndex, allAfterMove);
 			if ((newBishopAttacks & bishopSlidersAftermove & minesAfterMove) != 0) {
 				check = true;
 			}
 		}
-		if (!check && ((squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0)) {
+		if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0) {
 			// Regenerate rook attacks to the other king
 			long newRookAttacks = bbAttacks.getRookAttacks(attacksInfo.otherKingIndex, allAfterMove);
 			if ((newRookAttacks & rookSlidersAftermove & minesAfterMove) != 0) {
@@ -567,7 +566,7 @@ public class MoveIterator {
 		}
 
 		// Generating checks, if the move is not a check, skip it
-		if ((movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS) && !checkEvasion && !check && !capture && (moveType != Move.TYPE_PROMOTION_QUEEN)) {
+		if (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && !checkEvasion && !check && !capture && moveType != Move.TYPE_PROMOTION_QUEEN) {
 			return;
 		}
 
@@ -598,11 +597,11 @@ public class MoveIterator {
 		if (capture || check) {
 			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
 
-			if ((movesToGenerate != GENERATE_ALL) && !checkEvasion && (see < 0)) {
+			if (movesToGenerate != GENERATE_ALL && !checkEvasion && see < 0) {
 				return;
 			}
 		}
-		if (capture && (see < 0)) {
+		if (capture && see < 0) {
 			badCaptures[badCaptureIndex] = move;
 			badCapturesSee[badCaptureIndex] = see;
 			badCapturesScores[badCaptureIndex] = see;
@@ -612,7 +611,7 @@ public class MoveIterator {
 
 		boolean underPromotion = moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP;
 
-		if ((capture || (moveType == Move.TYPE_PROMOTION_QUEEN)) & !underPromotion) {
+		if ((capture || moveType == Move.TYPE_PROMOTION_QUEEN) && !underPromotion) {
 			// Order GOOD captures by MVV/LVA (Hyatt dixit)
 			int score = 0;
 			if (capture) {
@@ -621,7 +620,7 @@ public class MoveIterator {
 			if (moveType == Move.TYPE_PROMOTION_QUEEN) {
 				score += SCORE_PROMOTION_QUEEN;
 			}
-			if (see > 0 || (moveType == Move.TYPE_PROMOTION_QUEEN)) {
+			if (see > 0 || moveType == Move.TYPE_PROMOTION_QUEEN) {
 				goodCaptures[goodCaptureIndex] = move;
 				goodCapturesSee[goodCaptureIndex] = see;
 				goodCapturesScores[goodCaptureIndex] = score;
