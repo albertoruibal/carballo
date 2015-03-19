@@ -7,7 +7,8 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
  * Magic move generator
- * Pseudo-legal Moves
+ * Generate pseudo-legal moves because can leave the king in check.
+ * It does not set the check flag.
  *
  * @author Alberto Alonso Ruibal
  */
@@ -21,11 +22,11 @@ public class MagicMoveGenerator implements MoveGenerator {
 
 	BitboardAttacks bbAttacks;
 
-	public int generateMoves(Board board, int[] moves, int mIndex) {
+	public int generateMoves(Board board, int[] moves, int startIndex) {
 		this.moves = moves;
 		bbAttacks = BitboardAttacks.getInstance();
 
-		moveIndex = mIndex;
+		moveIndex = startIndex;
 		all = board.getAll();
 		mines = board.getMines();
 		others = board.getOthers();
@@ -36,31 +37,30 @@ public class MagicMoveGenerator implements MoveGenerator {
 			if (board.getTurn() == ((square & board.whites) != 0)) {
 
 				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Move.ROOK, index, bbAttacks.getRookAttacks(index, all));
+					generateMovesFromAttacks(Move.ROOK, index, bbAttacks.getRookAttacks(index, all) & ~mines);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Move.BISHOP, index, bbAttacks.getBishopAttacks(index, all));
+					generateMovesFromAttacks(Move.BISHOP, index, bbAttacks.getBishopAttacks(index, all) & ~mines);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Move.QUEEN, index, bbAttacks.getRookAttacks(index, all));
-					generateMovesFromAttacks(Move.QUEEN, index, bbAttacks.getBishopAttacks(index, all));
+					generateMovesFromAttacks(Move.QUEEN, index, (bbAttacks.getRookAttacks(index, all) | bbAttacks.getBishopAttacks(index, all)) & ~mines);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Move.KING, index, bbAttacks.king[index]);
+					generateMovesFromAttacks(Move.KING, index, bbAttacks.king[index] & ~mines);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index]);
+					generateMovesFromAttacks(Move.KNIGHT, index, bbAttacks.knight[index] & ~mines);
 				} else if ((square & board.pawns) != 0) { // Pawns
 					if ((square & board.whites) != 0) {
 						if (((square << 8) & all) == 0) {
-							addMoves(Move.PAWN, index, index + 8, (square << 8), false, true, 0);
+							addMoves(Move.PAWN, index, index + 8, false, 0);
 							// Two squares if it is in he first row	
 							if (((square & BitboardUtils.b2_d) != 0) && (((square << 16) & all) == 0))
-								addMoves(Move.PAWN, index, index + 16, (square << 16), false, false, 0);
+								addMoves(Move.PAWN, index, index + 16, false, 0);
 						}
 						generatePawnCapturesFromAttacks(index, bbAttacks.pawnUpwards[index], board.getPassantSquare());
 					} else {
 						if (((square >>> 8) & all) == 0) {
-							addMoves(Move.PAWN, index, index - 8, (square >>> 8), false, true, 0);
+							addMoves(Move.PAWN, index, index - 8, false, 0);
 							// Two squares if it is in he first row	
 							if (((square & BitboardUtils.b2_u) != 0) && (((square >>> 16) & all) == 0))
-								addMoves(Move.PAWN, index, index - 16, (square >>> 16), false, false, 0);
+								addMoves(Move.PAWN, index, index - 16, false, 0);
 						}
 						generatePawnCapturesFromAttacks(index, bbAttacks.pawnDownwards[index], board.getPassantSquare());
 					}
@@ -79,7 +79,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 			if (!board.getCheck() &&
 					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 1), board.getTurn())
 					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 2), board.getTurn()))
-				addMoves(Move.KING, myKingIndex, myKingIndex - 2, 0, false, false, Move.TYPE_KINGSIDE_CASTLING);
+				addMoves(Move.KING, myKingIndex, myKingIndex - 2, false, Move.TYPE_KINGSIDE_CASTLING);
 		}
 		if ((((all & (board.getTurn() ? 0x70L : 0x7000000000000000L)) == 0 &&
 				(board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))) {
@@ -89,7 +89,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 			if (!board.getCheck() &&
 					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 1), board.getTurn())
 					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 2), board.getTurn()))
-				addMoves(Move.KING, myKingIndex, myKingIndex + 2, 0, false, false, Move.TYPE_QUEENSIDE_CASTLING);
+				addMoves(Move.KING, myKingIndex, myKingIndex + 2, false, Move.TYPE_QUEENSIDE_CASTLING);
 		}
 		return moveIndex;
 	}
@@ -100,11 +100,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
-			// If we collide with other piece (or other piece and cannot capture), this is blocking
-			if ((to & mines) == 0) {
-				// Capturing
-				addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), to, ((to & others) != 0), true, 0);
-			}
+			addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), ((to & others) != 0), 0);
 			attacks ^= to;
 		}
 	}
@@ -113,21 +109,19 @@ public class MagicMoveGenerator implements MoveGenerator {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & others) != 0) {
-				addMoves(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, true, true, 0);
+				addMoves(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), true, 0);
 			} else if ((to & passant) != 0) {
-				addMoves(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), to, true, true, Move.TYPE_PASSANT);
+				addMoves(Move.PAWN, fromIndex, BitboardUtils.square2Index(to), true, Move.TYPE_PASSANT);
 			}
 			attacks ^= to;
 		}
 	}
 
 	/**
-	 * Adds an operation
-	 * to onlyneeded for captures
+	 * Adds a move
 	 */
-	private void addMoves(int pieceMoved, int fromIndex, int toIndex, long to, boolean capture, boolean checkPromotion, int moveType) {
-
-		if (checkPromotion && (pieceMoved == Move.PAWN) && ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0)) {
+	private void addMoves(int pieceMoved, int fromIndex, int toIndex, boolean capture, int moveType) {
+		if (pieceMoved == Move.PAWN && (toIndex < 8 || toIndex >= 56)) {
 			moves[moveIndex++] = Move.genMove(fromIndex, toIndex, pieceMoved, capture, Move.TYPE_PROMOTION_QUEEN);
 			moves[moveIndex++] = Move.genMove(fromIndex, toIndex, pieceMoved, capture, Move.TYPE_PROMOTION_KNIGHT);
 			moves[moveIndex++] = Move.genMove(fromIndex, toIndex, pieceMoved, capture, Move.TYPE_PROMOTION_ROOK);
