@@ -269,8 +269,6 @@ public class Board {
 
 	/**
 	 * Loads board from a fen notation
-	 *
-	 * @param fen
 	 */
 	public void setFen(String fen) {
 		setFenMove(fen, null);
@@ -489,8 +487,8 @@ public class Board {
 		sanMoves.clear();
 	}
 
-	private void saveHistory(int move, boolean fillInfo) {
-		if (fillInfo) {
+	private void saveHistory(int move, boolean fillSanInfo) {
+		if (fillSanInfo) {
 			sanMoves.put(moveNumber, Move.toSan(this, move));
 		}
 
@@ -516,6 +514,9 @@ public class Board {
 		return moveHistory[moveNumber - 1];
 	}
 
+	/**
+	 * This is very inefficient because it fills the San info, so it must not be called from inside search
+	 */
 	public boolean doMove(int move) {
 		return doMove(move, true, true);
 	}
@@ -524,7 +525,7 @@ public class Board {
 	 * Moves and also updates the board's zobrish key verify legality, if not
 	 * legal undo move and return false 0 is the null move
 	 */
-	public boolean doMove(int move, boolean verify, boolean fillInfo) {
+	public boolean doMove(int move, boolean verify, boolean fillSanInfo) {
 		// logger.debug("Before move: \n" + toString() + "\n " +
 		// Move.toStringExt(move));
 
@@ -532,7 +533,7 @@ public class Board {
 			return false;
 		}
 		// Save history
-		saveHistory(move, fillInfo);
+		saveHistory(move, fillSanInfo);
 
 		int fromIndex = Move.getFromIndex(move);
 		int toIndex = Move.getToIndex(move);
@@ -698,7 +699,7 @@ public class Board {
 			if (isValid()) {
 				setCheckFlags();
 
-				if (fillInfo) {
+				if (fillSanInfo) {
 					generateLegalMoves();
 					if (isMate()) { // Append # when mate
 						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1).replace("+", "#"));
@@ -868,10 +869,7 @@ public class Board {
 	}
 
 	/**
-	 * Check if a passed pawn is in the square, useful to trigger extensions
-	 *
-	 * @param index
-	 * @return
+	 * Check if a passed pawn is in the index, useful to trigger extensions
 	 */
 	public boolean isPassedPawn(int index) {
 		int rank = index >> 3;
@@ -888,9 +886,6 @@ public class Board {
 
 	/**
 	 * Returns true if move is legal
-	 *
-	 * @param move
-	 * @return
 	 */
 	public boolean isMoveLegal(int move) {
 		generateLegalMoves();

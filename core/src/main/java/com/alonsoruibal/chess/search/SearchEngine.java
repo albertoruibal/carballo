@@ -969,7 +969,7 @@ public class SearchEngine implements Runnable {
 		StringBuilder sb = new StringBuilder();
 		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
 		sb.append(Move.toString(firstMove));
-		board.doMove(firstMove);
+		board.doMove(firstMove, true, false);
 
 		int i = 1;
 		while (i < 256) {
