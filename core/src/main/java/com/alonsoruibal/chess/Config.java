@@ -17,7 +17,6 @@ public class Config {
 	public final static int DEFAULT_BOOK_KNOWGLEDGE = 100;
 	public final static String DEFAULT_EVALUATOR = "experimental";
 	public final static boolean DEFAULT_NULL_MOVE = true;
-	public final static int DEFAULT_NULL_MOVE_MARGIN = 200;
 	public final static boolean DEFAULT_STATIC_NULL_MOVE = true;
 	public final static boolean DEFAULT_IID = true;
 	public final static int DEFAULT_IID_MARGIN = 300;
@@ -57,7 +56,6 @@ public class Config {
 	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
 	private String evaluator = DEFAULT_EVALUATOR;
 	private boolean nullMove = DEFAULT_NULL_MOVE;
-	private int nullMoveMargin = DEFAULT_NULL_MOVE_MARGIN;
 	private boolean staticNullMove = DEFAULT_STATIC_NULL_MOVE;
 	private boolean iid = DEFAULT_IID;
 	private int iidMargin = DEFAULT_IID_MARGIN;
@@ -139,14 +137,6 @@ public class Config {
 
 	public void setNullMove(boolean nullMove) {
 		this.nullMove = nullMove;
-	}
-
-	public int getNullMoveMargin() {
-		return nullMoveMargin;
-	}
-
-	public void setNullMoveMargin(int nullMoveMargin) {
-		this.nullMoveMargin = nullMoveMargin;
 	}
 
 	public boolean getStaticNullMove() {
@@ -406,7 +396,7 @@ public class Config {
 				"Aspiration Window " + aspirationWindow + " " + Arrays.toString(aspirationWindowSizes) + "\n" +
 				"Extensions        Check=" + extensionsCheck + " MateThreat=" + extensionsMateThreat + " PawnPush=" + extensionsPawnPush + " PassedPawn=" + extensionsPassedPawn + " Singular=" + extensionsSingular + " (" + singularExtensionMargin + ")\n" +
 				"Razoring          " + razoring + " (" + razoringMargin + ")\n" +
-				"Null Move         " + nullMove + " (" + nullMoveMargin + ")\n" +
+				"Null Move         " + nullMove + "\n" +
 				"Futility Pruning  " + futility + " (" + futilityMarginQS + ", " + futilityMargin + ", " + futilityMarginAggressive + ")\n" +
 				"Static Null Move  " + staticNullMove + "\n" +
 				"IID               " + iid + " (" + iidMargin + ")\n" +

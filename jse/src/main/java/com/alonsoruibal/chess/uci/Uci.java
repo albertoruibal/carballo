@@ -49,7 +49,6 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
 					System.out.println("option name Null Move type check default " + Config.DEFAULT_NULL_MOVE);
-					System.out.println("option name Null Move Margin type spin default " + Config.DEFAULT_NULL_MOVE_MARGIN + " min 0 max 1000");
 					System.out.println("option name Static Null Move type check default " + Config.DEFAULT_STATIC_NULL_MOVE);
 					System.out.println("option name LMR type check default " + Config.DEFAULT_LMR);
 					System.out.println("option name IID type check default " + Config.DEFAULT_IID);
@@ -99,8 +98,6 @@ public class Uci implements SearchObserver {
 						config.setUseBook(Boolean.parseBoolean(value));
 					} else if ("NullMove".equals(name)) {
 						config.setNullMove(Boolean.parseBoolean(value));
-					} else if ("NullMoveMargin".equals(name)) {
-						config.setNullMoveMargin(Integer.parseInt(value));
 					} else if ("StaticNullMove".equals(name)) {
 						config.setStaticNullMove(Boolean.parseBoolean(value));
 					} else if ("IID".equals(name)) {

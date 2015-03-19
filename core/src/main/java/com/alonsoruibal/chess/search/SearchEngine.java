@@ -539,27 +539,31 @@ public class SearchEngine implements Runnable {
 			if (nodeType == NODE_NULL //
 					&& config.getNullMove() //
 					&& allowNullMove //
-					&& depthRemaining > 3 * PLY //
+					&& depthRemaining >= 2 * PLY //
 					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval > beta - (depthRemaining >= 4 * PLY ? config.getNullMoveMargin() : 0) //
+					&& eval >= beta //
 					&& boardAllowsNullMove()) {
 
 				nullMoveProbe++;
+
+				int R = 3 * PLY + //
+						depthRemaining / 4 + //
+						PLY * (eval - beta) / ExperimentalEvaluator.PAWN;
+
 				board.doMove(0, false, false);
-				int R = 3 * PLY + (depthRemaining >= 5 * PLY ? depthRemaining / (4 * PLY) : 0);
-				if (eval - beta > ExperimentalEvaluator.PAWN) {
-					R++; // TODO TEST adding PLY
-				}
-				score = -search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, Move.NONE);
+				score = depthRemaining - R < PLY ? -quiescentSearch(0, -beta, -beta + 1) :
+						-search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, Move.NONE);
 				board.undoMove();
+
 				if (score >= beta) {
 					if (score >= VALUE_IS_MATE) {
 						score = beta;
 					}
 
 					// Verification search on initial depths
-					if (depthRemaining < 6 * PLY //
-							|| search(NODE_NULL, depthRemaining - 5 * PLY, beta - 1, beta, false, Move.NONE) >= beta) {
+					if (depthRemaining < 12 * PLY //
+							|| (depthRemaining - R < PLY ? quiescentSearch(0, beta - 1, beta) :
+							search(NODE_NULL, depthRemaining - R, beta - 1, beta, false, Move.NONE)) >= beta) {
 						nullMoveHit++;
 						return score;
 					}
@@ -635,8 +639,7 @@ public class SearchEngine implements Runnable {
 
 				singularExtensionProbe++;
 				int seBeta = ttScore - config.getSingularExtensionMargin();
-				int excScore = depthRemaining >> 1 < PLY ? quiescentSearch(0, seBeta - 1, seBeta) :
-						search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
+				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
 					extension += config.getExtensionsSingular();
