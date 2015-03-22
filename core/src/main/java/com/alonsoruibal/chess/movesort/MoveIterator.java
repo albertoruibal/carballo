@@ -530,37 +530,40 @@ public class MoveIterator {
 			newMyKingIndex = toIndex;
 		}
 
-		// Candidates to leave the king in check after moving
-		if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
-				((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Move.KING)) { // Moving the king when the king is in check by a slider
-			// Regenerate bishop attacks to my king
-			long newBishopAttacks = bbAttacks.getBishopAttacks(newMyKingIndex, allAfterMove);
-			if ((newBishopAttacks & bishopSlidersAftermove & ~minesAfterMove) != 0) {
-				return; // Illegal move
+		// After a promotion to queen or rook there are new sliders transversing the origin square, so mayPin is not valid
+		if ((squaresForDiscovery & attacksInfo.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK) {
+			// Candidates to leave the king in check after moving
+			if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
+					((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Move.KING)) { // Moving the king when the king is in check by a slider
+				// Regenerate bishop attacks to my king
+				long newBishopAttacks = bbAttacks.getBishopAttacks(newMyKingIndex, allAfterMove);
+				if ((newBishopAttacks & bishopSlidersAftermove & ~minesAfterMove) != 0) {
+					return; // Illegal move
+				}
 			}
-		}
-		if ((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0 ||
-				((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Move.KING)) {
-			// Regenerate rook attacks to my king
-			long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
-			if ((newRookAttacks & rookSlidersAftermove & ~minesAfterMove) != 0) {
-				return; // Illegal move
+			if ((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0 ||
+					((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Move.KING)) {
+				// Regenerate rook attacks to my king
+				long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
+				if ((newRookAttacks & rookSlidersAftermove & ~minesAfterMove) != 0) {
+					return; // Illegal move
+				}
 			}
-		}
 
-		// Discovered checks
-		if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0) {
-			// Regenerate bishop attacks to the other king
-			long newBishopAttacks = bbAttacks.getBishopAttacks(attacksInfo.otherKingIndex, allAfterMove);
-			if ((newBishopAttacks & bishopSlidersAftermove & minesAfterMove) != 0) {
-				check = true;
+			// Discovered checks
+			if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0) {
+				// Regenerate bishop attacks to the other king
+				long newBishopAttacks = bbAttacks.getBishopAttacks(attacksInfo.otherKingIndex, allAfterMove);
+				if ((newBishopAttacks & bishopSlidersAftermove & minesAfterMove) != 0) {
+					check = true;
+				}
 			}
-		}
-		if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0) {
-			// Regenerate rook attacks to the other king
-			long newRookAttacks = bbAttacks.getRookAttacks(attacksInfo.otherKingIndex, allAfterMove);
-			if ((newRookAttacks & rookSlidersAftermove & minesAfterMove) != 0) {
-				check = true;
+			if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0) {
+				// Regenerate rook attacks to the other king
+				long newRookAttacks = bbAttacks.getRookAttacks(attacksInfo.otherKingIndex, allAfterMove);
+				if ((newRookAttacks & rookSlidersAftermove & minesAfterMove) != 0) {
+					check = true;
+				}
 			}
 		}
 
@@ -590,11 +593,18 @@ public class MoveIterator {
 			}
 		}
 
-		int see = SEE_NOT_CALCULATED;
 		int pieceCaptured = capture ? Move.getPieceCaptured(board, move) : 0;
-
+		int see = SEE_NOT_CALCULATED;
 		if (capture || (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && check)) {
-			see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
+			// If there aren't pieces attacking the destiny square
+			// and the piece cannot pin an attack to the see square,
+			// the see will be the captured piece value
+			if ((attacksInfo.attackedSquares[turn ? 1 : 0] & to) == 0
+					&& (attacksInfo.mayPin & from) == 0) {
+				see = capture ? Board.SEE_PIECE_VALUES[pieceCaptured] : 0;
+			} else {
+				see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
+			}
 		}
 
 		if (movesToGenerate != GENERATE_ALL && !checkEvasion && see < 0) {

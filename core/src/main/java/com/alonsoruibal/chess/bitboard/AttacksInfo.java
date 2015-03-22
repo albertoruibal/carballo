@@ -5,7 +5,7 @@ import com.alonsoruibal.chess.Board;
 /**
  * Holds all the possible attacks for a board
  *
- * It is used by the evaluators and the move iterator
+ * It is used by the evaluators and the move iterator, and also to speed the SEE calculations detecting not attacked squares
  *
  * Calculates the checking pieces and the interpose squares to avoid checks
  */
@@ -16,6 +16,7 @@ public class AttacksInfo {
 	public long boardKey = 0;
 	public long attacksFromSquare[] = new long[64];
 	public long attackedSquares[] = {0, 0};
+	public long mayPin; // bot my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
 	public long piecesGivingCheck;
 	public long interposeCheckSquares;
 
@@ -57,6 +58,7 @@ public class AttacksInfo {
 
 		attackedSquares[0] = 0;
 		attackedSquares[1] = 0;
+		mayPin = 0;
 		piecesGivingCheck = 0;
 		interposeCheckSquares = 0;
 
@@ -90,6 +92,7 @@ public class AttacksInfo {
 						}
 						pieceAttacks |= sliderAttacks;
 					}
+					mayPin |= all & pieceAttacks;
 				}
 
 				attackedSquares[color] |= pieceAttacks;
