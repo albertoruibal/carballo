@@ -243,8 +243,6 @@ public class Uci implements SearchObserver {
 							while (index < tokens.length) {
 								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
 								engine.getBoard().doMove(move);
-								System.out.println(engine.getBoard());
-								System.out.println(engine.getBoard().getFen());
 							}
 						}
 					}
