@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import org.junit.Test;
@@ -51,5 +52,13 @@ public class SearchEngineTest {
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must be exact score", TranspositionTable.TYPE_EXACT_SCORE, search.getTT().getNodeType());
 		assertEquals("Must refine", 43, refine);
+	}
+
+	@Test
+	public void testSearchAlreadyMate() {
+		SearchEngine search = new SearchEngine(new Config());
+		search.getBoard().setFen("r7/4K1q1/r7/1p5p/4k3/8/8/8 w - - 8 75");
+		search.go(SearchParameters.get(1));
+		assertEquals(Move.NONE, search.getBestMove());
 	}
 }
