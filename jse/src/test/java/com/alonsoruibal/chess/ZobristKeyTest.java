@@ -12,17 +12,17 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test zobrish keys
+ * Test zobrist keys
  * Also test that after board.setfen(x), x==board.getFen();
  */
 public class ZobristKeyTest {
 
 	/**
-	 * Test that the zobrish key of the board is equal than the obtained with fen
+	 * Test that the zobrist key of the board is equal than the obtained with fen
 	 * making random legal moves
 	 */
 	@Test
-	public void testBoardZobrishKey() {
+	public void testBoardZobristKey() {
 		Board board = new Board();
 		MoveGenerator movegen = new LegalMoveGenerator();
 		board.startPosition();
@@ -46,7 +46,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey1() {
+	public void testZobristKey1() {
 		Board board = new Board();
 		board.startPosition();
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -58,7 +58,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey2() {
+	public void testZobristKey2() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -67,7 +67,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey3() {
+	public void testZobristKey3() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -76,7 +76,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey4() {
+	public void testZobristKey4() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1pppp/8/3pP3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -85,7 +85,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey5() {
+	public void testZobristKey5() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -94,7 +94,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey6() {
+	public void testZobristKey6() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPPKPPP/RNBQ1BNR b kq - 0 3");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -103,7 +103,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey7() {
+	public void testZobristKey7() {
 		Board board = new Board();
 		board.setFen("rnbq1bnr/ppp1pkpp/8/3pPp2/8/8/PPPPKPPP/RNBQ1BNR w - - 0 4");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -112,7 +112,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey8() {
+	public void testZobristKey8() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/p1pppppp/8/8/PpP4P/8/1P1PPPP1/RNBQKBNR b KQkq c3 0 3");
 		long result = ZobristKeyFen.getKey(board.getFen());
@@ -121,7 +121,7 @@ public class ZobristKeyTest {
 	}
 
 	@Test
-	public void testZobrishKey9() {
+	public void testZobristKey9() {
 		Board board = new Board();
 		board.setFen("rnbqkbnr/p1pppppp/8/8/P6P/R1p5/1P1PPPP1/1NBQKBNR b Kkq - 0 4");
 		long result = ZobristKeyFen.getKey(board.getFen());
