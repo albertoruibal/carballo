@@ -89,7 +89,7 @@ public class MoveIterator {
 	private BitboardAttacks bbAttacks;
 
 	public int getLastMoveSee() {
-		return lastMoveSee != SEE_NOT_CALCULATED ? lastMoveSee : board.see(move);
+		return lastMoveSee != SEE_NOT_CALCULATED ? lastMoveSee : board.see(move, attacksInfo);
 	}
 
 	public void genMoves(int ttMove) {
@@ -323,16 +323,34 @@ public class MoveIterator {
 			}
 			square <<= 1;
 		}
-		// Castling: disabled when in check or squares attacked
-		if ((((all & (turn ? 0x06L : 0x0600000000000000L)) == 0 //
-				&& (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()))) //
-				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x0EL : 0x0E00000000000000L)) == 0)) {
-			addMove(Move.KING, attacksInfo.myKingIndex, board.kings & mines, (board.kings & mines) >>> 2, false, Move.TYPE_KINGSIDE_CASTLING);
-		}
-		if ((((all & (turn ? 0x70L : 0x7000000000000000L)) == 0 //
-				&& (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))
-				&& ((attacksInfo.attackedSquares[turn ? 1 : 0] & (turn ? 0x38L : 0x3800000000000000L)) == 0)) {
-			addMove(Move.KING, attacksInfo.myKingIndex, board.kings & mines, (board.kings & mines) << 2, false, Move.TYPE_QUEENSIDE_CASTLING);
+		// Castling: disabled when in check or king route attacked
+		if (!board.getCheck()) {
+			if (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
+				long rookOrigin = 1L << board.castlingKingsideRookOrigin[turn ? 0 : 1];
+				long rookDestiny = 1L << board.CASTLING_KINGSIDE_ROOK_DESTINY[turn ? 0 : 1];
+				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+				long kingOrigin = board.kings & mines;
+				long kingDestiny = 1L << board.CASTLING_KINGSIDE_KING_DESTINY[turn ? 0 : 1];
+				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+
+				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
+						&& (attacksInfo.attackedSquares[turn ? 1 : 0] & kingRoute) == 0) {
+					addMove(Move.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_KINGSIDE_CASTLING);
+				}
+			}
+			if (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
+				long rookOrigin = 1L << board.castlingQueensideRookOrigin[turn ? 0 : 1];
+				long rookDestiny = 1L << board.CASTLING_QUEENSIDE_ROOK_DESTINY[turn ? 0 : 1];
+				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+				long kingOrigin = board.kings & mines;
+				long kingDestiny = 1L << board.CASTLING_QUEENSIDE_KING_DESTINY[turn ? 0 : 1];
+				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+
+				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
+						&& (attacksInfo.attackedSquares[turn ? 1 : 0] & kingRoute) == 0) {
+					addMove(Move.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
+				}
+			}
 		}
 	}
 
@@ -509,7 +527,7 @@ public class MoveIterator {
 				break;
 
 			case Move.TYPE_KINGSIDE_CASTLING:
-				long rookMoveMaskKingSide = (turn ? 0x05L : 0x0500000000000000L);
+				long rookMoveMaskKingSide = (1L << board.castlingKingsideRookOrigin[turn ? 0 : 1]) | (1L << board.CASTLING_KINGSIDE_ROOK_DESTINY[turn ? 0 : 1]);
 				squaresForDiscovery |= rookMoveMaskKingSide;
 				allAfterMove ^= rookMoveMaskKingSide;
 				minesAfterMove ^= rookMoveMaskKingSide;
@@ -517,7 +535,7 @@ public class MoveIterator {
 				break;
 
 			case Move.TYPE_QUEENSIDE_CASTLING:
-				long rookMoveMaskQueenSide = (turn ? 0x90L : 0x9000000000000000L);
+				long rookMoveMaskQueenSide = (1L << board.castlingQueensideRookOrigin[turn ? 0 : 1]) | (1L << board.CASTLING_QUEENSIDE_ROOK_DESTINY[turn ? 0 : 1]);
 				squaresForDiscovery |= rookMoveMaskQueenSide;
 				allAfterMove ^= rookMoveMaskQueenSide;
 				minesAfterMove ^= rookMoveMaskQueenSide;

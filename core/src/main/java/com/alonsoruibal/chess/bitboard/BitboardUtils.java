@@ -122,7 +122,7 @@ public class BitboardUtils {
 	public static final long[][] RANKS_BACKWARD = {RANKS_DOWNWARDS, RANKS_UPWARDS};
 	public static final long[][] RANK_AND_BACKWARD = {RANK_AND_DOWNWARDS, RANK_AND_UPWARDS};
 
-	public static final String[] squareNames = changeEndianArray64(new String[] //
+	public static final String[] SQUARE_NAMES = changeEndianArray64(new String[] //
 			{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", //
 					"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", //
 					"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", //
@@ -133,7 +133,7 @@ public class BitboardUtils {
 					"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"});
 
 	// To use with square2Index
-	public static final byte[] bitTable = {63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57,
+	public static final byte[] BIT_TABLE = {63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57,
 			0, 35, 62, 31, 40, 4, 49, 5, 52, 26, 60, 6, 23, 44, 46, 27, 56, 16, 7, 39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
 
 	/**
@@ -142,7 +142,7 @@ public class BitboardUtils {
 	public static byte square2Index(long square) {
 		long b = square ^ (square - 1);
 		int fold = (int) (b ^ (b >>> 32));
-		return bitTable[(fold * 0x783a9b23) >>> 26];
+		return BIT_TABLE[(fold * 0x783a9b23) >>> 26];
 	}
 
 	/**
@@ -240,16 +240,16 @@ public class BitboardUtils {
 	 * @return
 	 */
 	public static String square2Algebraic(long square) {
-		return squareNames[square2Index(square)];
+		return SQUARE_NAMES[square2Index(square)];
 	}
 
 	public static String index2Algebraic(int index) {
-		return squareNames[index];
+		return SQUARE_NAMES[index];
 	}
 
 	public static int algebraic2Index(String name) {
 		for (int i = 0; i < 64; i++) {
-			if (name.equals(squareNames[i])) {
+			if (name.equals(SQUARE_NAMES[i])) {
 				return i;
 			}
 		}
@@ -259,7 +259,7 @@ public class BitboardUtils {
 	public static long algebraic2Square(String name) {
 		long aux = H1;
 		for (int i = 0; i < 64; i++) {
-			if (name.equals(squareNames[i])) {
+			if (name.equals(SQUARE_NAMES[i])) {
 				return aux;
 			}
 			aux <<= 1;
@@ -309,7 +309,7 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * Gets a long with the less significative bit of the board
+	 * Gets a long with the less significant bit of the board
 	 */
 	public static long lsb(long board) {
 		return board & (-board);
@@ -330,6 +330,15 @@ public class BitboardUtils {
 	 */
 	public static int distance(int index1, int index2) {
 		return Math.max(Math.abs((index1 & 7) - (index2 & 7)), Math.abs((index1 >> 3) - (index2 >> 3)));
+	}
+
+	/**
+	 * Gets the horizontal line between two squares (including the origin and destiny squares)
+	 */
+	public static long getHorizontalLine(long square1, long square2) {
+		return square1 > square2 ?
+				(square1 + square1 - 1) & ~(square2 - 1) :
+				(square2 + square2 - 1) & ~(square1 - 1);
 	}
 
 	public static boolean isWhite(long square) {

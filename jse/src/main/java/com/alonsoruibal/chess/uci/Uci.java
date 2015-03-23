@@ -48,6 +48,7 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
 					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
+					System.out.println("option name UCI_Chess960 type check default false");
 					System.out.println("option name Null Move type check default " + Config.DEFAULT_NULL_MOVE);
 					System.out.println("option name Static Null Move type check default " + Config.DEFAULT_STATIC_NULL_MOVE);
 					System.out.println("option name LMR type check default " + Config.DEFAULT_LMR);
@@ -96,6 +97,8 @@ public class Uci implements SearchObserver {
 						config.setPonder(Boolean.parseBoolean(value));
 					} else if ("OwnBook".equals(name)) {
 						config.setUseBook(Boolean.parseBoolean(value));
+					} else if ("UCI_Chess960".equals(name)) {
+						config.setUciChess960(Boolean.parseBoolean(value));
 					} else if ("NullMove".equals(name)) {
 						config.setNullMove(Boolean.parseBoolean(value));
 					} else if ("StaticNullMove".equals(name)) {
@@ -240,6 +243,8 @@ public class Uci implements SearchObserver {
 							while (index < tokens.length) {
 								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
 								engine.getBoard().doMove(move);
+								System.out.println(engine.getBoard());
+								System.out.println(engine.getBoard().getFen());
 							}
 						}
 					}

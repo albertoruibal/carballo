@@ -253,7 +253,7 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testGeneratePromotionsInQuiescence() {
-		// Must only generate the promotion to queen
+		// It must only generate the promotion to queen
 		testPositionCountingMoves("7k/P7/8/8/8/8/8/7K w - - 0 1", MoveIterator.GENERATE_CAPTURES_PROMOS, Move.NONE, 1, 0, 0, 1);
 
 		// Generates the underpromotion to rook
@@ -268,5 +268,10 @@ public class MoveIteratorTest {
 	@Test
 	public void testGenerateOnlyGoodAnEqualCapturesInQuiescence() {
 		testPositionCountingMoves("2q4k/3n4/1p6/2b5/8/1N2B3/8/6QK w - - 0 1", MoveIterator.GENERATE_CAPTURES_PROMOS, Move.NONE, 2, 2, 0, 0);
+	}
+
+	@Test
+	public void testChess960Castling() {
+		testPositionCountingMoves("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQRKBBNR w KQkq - 0 1", MoveIterator.GENERATE_ALL, Move.NONE, 20, 0, 0, 0);
 	}
 }

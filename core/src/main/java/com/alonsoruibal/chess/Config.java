@@ -50,6 +50,8 @@ public class Config {
 
 	public final static int DEFAULT_RAND = 0;
 
+	public final static boolean DEFAULT_UCI_CHESS960 = false;
+
 	private boolean ponder = DEFAULT_PONDER;
 	private boolean useBook = DEFAULT_USE_BOOK;
 	private Book book;
@@ -86,6 +88,8 @@ public class Config {
 	private int evalKingSafety = DEFAULT_EVAL_KING_SAFETY;
 
 	private int rand = DEFAULT_RAND;
+
+	private boolean uciChess960 = DEFAULT_UCI_CHESS960;
 
 	public Config() {
 		setAspirationWindowSizes(DEFAULT_ASPIRATION_WINDOW_SIZES);
@@ -366,6 +370,14 @@ public class Config {
 
 	public void setRazoringMargin(int razoringMargin) {
 		this.razoringMargin = razoringMargin;
+	}
+
+	public boolean isUciChess960() {
+		return uciChess960;
+	}
+
+	public void setUciChess960(boolean uciChess960) {
+		this.uciChess960 = uciChess960;
 	}
 
 	/**

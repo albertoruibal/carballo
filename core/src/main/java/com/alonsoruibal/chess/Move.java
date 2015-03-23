@@ -5,7 +5,7 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
  * For efficiency Moves are int, this is a static class to threat with this
- *
+ * <p>
  * Move format (18 bits):
  * MTXCPPPFFFFFFTTTTTT
  * -------------^ To index (6 bits)
@@ -167,41 +167,37 @@ public class Move {
 		int moveType = 0;
 		int pieceMoved = 0;
 		boolean check = move.indexOf("+") > 0 || move.indexOf("#") > 0;
+		int color = board.getTurn() ? 0 : 1;
+		long mines = board.getMines();
 
 		// Ignore checks, captures indicators...
-		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o")
-				.replaceAll("O", "o");
+		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
 		if ("ooo".equals(move)) {
-			if (board.getTurn()) {
-				move = "e1c1";
-			} else {
-				move = "e8c8";
-			}
+			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[board.chess960 ? board.castlingQueensideRookOrigin[color] : Board.CASTLING_QUEENSIDE_KING_DESTINY[color]];
 		} else if ("oo".equals(move)) {
-			if (board.getTurn()) {
-				move = "e1g1";
-			} else {
-				move = "e8g8";
+			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[board.chess960 ? board.castlingKingsideRookOrigin[color] : Board.CASTLING_KINGSIDE_KING_DESTINY[color]];
+		} else {
+			char promo = move.charAt(move.length() - 1);
+			switch (Character.toLowerCase(promo)) {
+				case 'q':
+					moveType = TYPE_PROMOTION_QUEEN;
+					break;
+				case 'n':
+					moveType = TYPE_PROMOTION_KNIGHT;
+					break;
+				case 'b':
+					moveType = TYPE_PROMOTION_BISHOP;
+					break;
+				case 'r':
+					moveType = TYPE_PROMOTION_ROOK;
+					break;
 			}
-		}
-		char promo = move.charAt(move.length() - 1);
-		switch (Character.toLowerCase(promo)) {
-			case 'q':
-				moveType = TYPE_PROMOTION_QUEEN;
-				break;
-			case 'n':
-				moveType = TYPE_PROMOTION_KNIGHT;
-				break;
-			case 'b':
-				moveType = TYPE_PROMOTION_BISHOP;
-				break;
-			case 'r':
-				moveType = TYPE_PROMOTION_ROOK;
-				break;
-		}
-		// If promotion, remove the last char
-		if (moveType != 0) {
-			move = move.substring(0, move.length() - 1);
+			// If promotion, remove the last char
+			if (moveType != 0) {
+				move = move.substring(0, move.length() - 1);
+			}
 		}
 
 		// To is always the last 2 characters
@@ -214,20 +210,19 @@ public class Move {
 		// Fills from with a mask of possible from values
 		switch (move.charAt(0)) {
 			case 'N':
-				from = board.knights & board.getMines() & bbAttacks.knight[toIndex];
+				from = board.knights & mines & bbAttacks.knight[toIndex];
 				break;
 			case 'K':
-				from = board.kings & board.getMines() & bbAttacks.king[toIndex];
+				from = board.kings & mines & bbAttacks.king[toIndex];
 				break;
 			case 'R':
-				from = board.rooks & board.getMines() & bbAttacks.getRookAttacks(toIndex, board.getAll());
+				from = board.rooks & mines & bbAttacks.getRookAttacks(toIndex, board.getAll());
 				break;
 			case 'B':
-				from = board.bishops & board.getMines() & bbAttacks.getBishopAttacks(toIndex, board.getAll());
+				from = board.bishops & mines & bbAttacks.getBishopAttacks(toIndex, board.getAll());
 				break;
 			case 'Q':
-				from = board.queens & board.getMines()
-						& (bbAttacks.getRookAttacks(toIndex, board.getAll()) | bbAttacks.getBishopAttacks(toIndex, board.getAll()));
+				from = board.queens & mines & (bbAttacks.getRookAttacks(toIndex, board.getAll()) | bbAttacks.getBishopAttacks(toIndex, board.getAll()));
 				break;
 		}
 		if (from != 0) { // remove the piece char
@@ -235,13 +230,13 @@ public class Move {
 		} else { // Pawn moves
 			if (move.length() == 2) {
 				if (board.getTurn()) {
-					from = board.pawns & board.getMines() & ((to >>> 8) | (((to >>> 8) & board.getAll()) == 0 ? (to >>> 16) : 0));
+					from = board.pawns & mines & ((to >>> 8) | (((to >>> 8) & board.getAll()) == 0 ? (to >>> 16) : 0));
 				} else {
-					from = board.pawns & board.getMines() & ((to << 8) | (((to << 8) & board.getAll()) == 0 ? (to << 16) : 0));
+					from = board.pawns & mines & ((to << 8) | (((to << 8) & board.getAll()) == 0 ? (to << 16) : 0));
 				}
 			}
 			if (move.length() == 3) { // Pawn capture
-				from = board.pawns & board.getMines() & (board.getTurn() ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
+				from = board.pawns & mines & (board.getTurn() ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
 			}
 		}
 		if (move.length() == 3) { // now disambiaguate
@@ -294,19 +289,18 @@ public class Move {
 				pieceMoved = QUEEN;
 			} else if ((myFrom & board.kings) != 0) {
 				pieceMoved = KING;
-				// Only if origin square is king's initial square TODO FRC
-				if (fromIndex == 3 || fromIndex == 3 + (8 * 7)) {
-					if (toIndex == (fromIndex + 2)) {
-						moveType = TYPE_QUEENSIDE_CASTLING;
-					}
-					if (toIndex == (fromIndex - 2)) {
-						moveType = TYPE_KINGSIDE_CASTLING;
-					}
+				if ((board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) && //
+						(toIndex == (fromIndex - 2) || toIndex == board.castlingKingsideRookOrigin[color])) {
+					moveType = TYPE_KINGSIDE_CASTLING;
+				}
+				if ((board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) && //
+						(toIndex == (fromIndex + 2) || toIndex == board.castlingQueensideRookOrigin[color])) {
+					moveType = TYPE_QUEENSIDE_CASTLING;
 				}
 			}
 
 			// Now set captured piece flag
-			if ((to & (board.whites | board.blacks)) != 0) {
+			if ((to & (board.getTurn() ? board.blacks : board.whites)) != 0) {
 				capture = true;
 			}
 			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, check, moveType);

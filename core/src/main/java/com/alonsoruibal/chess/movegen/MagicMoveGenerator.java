@@ -70,27 +70,34 @@ public class MagicMoveGenerator implements MoveGenerator {
 			index++;
 		}
 
-		square = board.kings & mines; // my king
-		int myKingIndex = -1;
-		// Castling: disabled when in check or squares attacked
-		if ((((all & (board.getTurn() ? 0x06L : 0x0600000000000000L)) == 0 &&
-				(board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling())))) {
-			myKingIndex = BitboardUtils.square2Index(square);
-			if (!board.getCheck() &&
-					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 1), board.getTurn())
-					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex - 2), board.getTurn()))
-				addMoves(Move.KING, myKingIndex, myKingIndex - 2, false, Move.TYPE_KINGSIDE_CASTLING);
-		}
-		if ((((all & (board.getTurn() ? 0x70L : 0x7000000000000000L)) == 0 &&
-				(board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling())))) {
-			if (myKingIndex == -1) {
-				myKingIndex = BitboardUtils.square2Index(square);
+		// Castling: disabled when in check or king route attacked
+		if (!board.getCheck()) {
+			if (board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
+				long rookOrigin = 1L << board.castlingKingsideRookOrigin[board.getTurn() ? 0 : 1];
+				long rookDestiny = 1L << board.CASTLING_KINGSIDE_ROOK_DESTINY[board.getTurn() ? 0 : 1];
+				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+				long kingOrigin = board.kings & mines;
+				long kingDestiny = 1L << board.CASTLING_KINGSIDE_KING_DESTINY[board.getTurn() ? 0 : 1];
+				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
+						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
+					addMoves(Move.KING, BitboardUtils.square2Index(kingOrigin), BitboardUtils.square2Index(board.chess960 ? rookOrigin : kingDestiny), false, Move.TYPE_KINGSIDE_CASTLING);
+				}
 			}
-			if (!board.getCheck() &&
-					!bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 1), board.getTurn())
-					&& !bbAttacks.isIndexAttacked(board, (byte) (myKingIndex + 2), board.getTurn()))
-				addMoves(Move.KING, myKingIndex, myKingIndex + 2, false, Move.TYPE_QUEENSIDE_CASTLING);
+			if (board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
+				long rookOrigin = 1L << board.castlingQueensideRookOrigin[board.getTurn() ? 0 : 1];
+				long rookDestiny = 1L << board.CASTLING_QUEENSIDE_ROOK_DESTINY[board.getTurn() ? 0 : 1];
+				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+				long kingOrigin = board.kings & mines;
+				long kingDestiny = 1L << board.CASTLING_QUEENSIDE_KING_DESTINY[board.getTurn() ? 0 : 1];
+				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
+						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
+					addMoves(Move.KING, BitboardUtils.square2Index(kingOrigin), BitboardUtils.square2Index(board.chess960 ? rookOrigin : kingDestiny), false, Move.TYPE_QUEENSIDE_CASTLING);
+				}
+			}
 		}
+
 		return moveIndex;
 	}
 

@@ -151,6 +151,10 @@ public class SearchEngine implements Runnable {
 	public void init() {
 		initialized = false;
 
+		if (config.isUciChess960()) {
+			board.chess960 = true;
+		}
+
 		board.startPosition();
 		sortInfo.clear();
 
@@ -907,11 +911,11 @@ public class SearchEngine implements Runnable {
 			if (rootScore <= alpha) {
 				failLowCount++;
 				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY) ? initialScore
-						- aspWindows[failLowCount] : -Evaluator.VICTORY);
+						- aspWindows[failLowCount] : -Evaluator.VICTORY - 1);
 			} else if (rootScore >= beta) {
 				failHighCount++;
 				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY) ? initialScore
-						+ aspWindows[failHighCount] : Evaluator.VICTORY);
+						+ aspWindows[failHighCount] : Evaluator.VICTORY + 1);
 			} else {
 				aspirationWindowHit++;
 				break;

@@ -8,6 +8,32 @@ import static org.junit.Assert.assertTrue;
 public class BoardTest {
 
 	@Test
+	public void testNoChess960StartPosition() {
+		Board b = new Board();
+		b.startPosition();
+		assertEquals(false, b.chess960);
+	}
+
+	@Test
+	public void testChess960StartPosition() {
+		Board b = new Board();
+		b.startPosition(545);
+		System.out.println(b);
+		assertEquals("brnbknqr/pppppppp/8/8/8/8/PPPPPPPP/BRNBKNQR w KQkq - 0 1", b.getFen());
+	}
+
+	@Test
+	public void testChess960Castling() {
+		Board b = new Board();
+		b.setFen("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQRKBBNR w KQkq - 0 1");
+		System.out.println(b);
+		int move = Move.getFromString(b, "O-O-O", false);
+		b.doMove(move, false, false);
+		System.out.println(b);
+		assertEquals("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQKRBBNR b kq - 1 1", b.getFen());
+	}
+
+	@Test
 	public void testMoveNumber1() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
