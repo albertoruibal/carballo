@@ -66,6 +66,10 @@ public interface ChessConstants extends Constants {
 	public String mt10s();
 	public String mt15s();
 	public String mt30s();
-	
+
+	public String standard();
+
+	public String chess960();
+
 	public String about();
 }

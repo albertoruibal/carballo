@@ -31,7 +31,8 @@
                         <g:Label ui:field='modeLabel' text="{constants.mode}"
                                  styleName="{style.categoryLabel}"/>
                         <g:ListBox ui:field='modeListBox' styleName="{style.text}"/>
-                        <g:Label ui:field='reflectionLabel' text="{constants.reflectionTime}"
+						<g:ListBox ui:field='chessVariantListBox' styleName="{style.text}"/>
+						<g:Label ui:field='reflectionLabel' text="{constants.reflectionTime}"
                                  styleName="{style.categoryLabel}"/>
                         <g:ListBox ui:field='timeListBox' styleName="{style.text}"/>
                         <g:VerticalPanel width="100%">

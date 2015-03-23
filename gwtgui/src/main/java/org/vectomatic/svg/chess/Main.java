@@ -30,30 +30,18 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.StyleInjector;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.*;
 
 import org.vectomatic.dom.svg.OMSVGSVGElement;
 import org.vectomatic.dom.svg.utils.OMSVGParser;
 
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -102,6 +90,8 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 
 	@UiField
 	ListBox modeListBox;
+	@UiField
+	ListBox chessVariantListBox;
 	@UiField
 	ListBox timeListBox;
 	@UiField
@@ -166,6 +156,10 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 		modeListBox.addItem(ChessMode.whitesVsBlacks.getDescription(), ChessMode.whitesVsBlacks.name());
 		modeListBox.addItem(ChessMode.computerVsComputer.getDescription(), ChessMode.computerVsComputer.name());
 		modeListBox.setSelectedIndex(0);
+
+		chessVariantListBox.addItem(ChessConstants.INSTANCE.standard());
+		chessVariantListBox.addItem(ChessConstants.INSTANCE.chess960());
+		chessVariantListBox.setSelectedIndex(0);
 
 		timeListBox.addItem(ChessConstants.INSTANCE.mt1s(), "1");
 		timeListBox.addItem(ChessConstants.INSTANCE.mt3s(), "3");
@@ -323,7 +317,13 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 */
 	public void restart() {
 		movesBackward.clear();
-		board.startPosition();
+		Random random = new Random();
+
+		if (chessVariantListBox.getSelectedIndex() == 0) {
+			board.startPosition();
+		} else {
+			board.startPosition((int) (random.nextDouble() * 960)); // FRC
+		}
 		chessboard.update(board.getFen(), 0, 0, true, true);
 		nextMove();
 	}
