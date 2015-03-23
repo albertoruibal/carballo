@@ -717,28 +717,30 @@ public class Board {
 			// Move pieces in colour fields
 			if (getTurn()) {
 				whites ^= moveMask;
-
-				// Tests to disable castling
-				if ((pieceMoved == Move.KING || fromIndex == castlingKingsideRookOrigin[0]) && (flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0) {
-					flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
-					key[0] ^= ZobristKey.whiteKingSideCastling;
-				}
-				if ((pieceMoved == Move.KING || fromIndex == castlingQueensideRookOrigin[0]) && (flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0) {
-					flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
-					key[0] ^= ZobristKey.whiteQueenSideCastling;
-				}
 			} else {
 				blacks ^= moveMask;
+			}
 
-				// Tests to disable castling
-				if ((pieceMoved == Move.KING || fromIndex == castlingKingsideRookOrigin[1]) && (flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0) {
-					flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
-					key[1] ^= ZobristKey.blackKingSideCastling;
-				}
-				if ((pieceMoved == Move.KING || fromIndex == castlingQueensideRookOrigin[1]) && (flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0) {
-					flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
-					key[1] ^= ZobristKey.blackQueenSideCastling;
-				}
+			// Tests to disable castling
+			if ((flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0 && //
+					((turn && pieceMoved == Move.KING) || fromIndex == castlingKingsideRookOrigin[0] || toIndex == castlingKingsideRookOrigin[0])) {
+				flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
+				key[0] ^= ZobristKey.whiteKingSideCastling;
+			}
+			if ((flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0 && //
+					((turn && pieceMoved == Move.KING) || fromIndex == castlingQueensideRookOrigin[0] || toIndex == castlingQueensideRookOrigin[0])) {
+				flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
+				key[0] ^= ZobristKey.whiteQueenSideCastling;
+			}
+			if ((flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0 && //
+					((!turn && pieceMoved == Move.KING) || fromIndex == castlingKingsideRookOrigin[1] || toIndex == castlingKingsideRookOrigin[1])) {
+				flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
+				key[1] ^= ZobristKey.blackKingSideCastling;
+			}
+			if ((flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0 && //
+					((!turn && pieceMoved == Move.KING) || fromIndex == castlingQueensideRookOrigin[1] || toIndex == castlingQueensideRookOrigin[1])) {
+				flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
+				key[1] ^= ZobristKey.blackQueenSideCastling;
 			}
 		}
 		// Change turn
