@@ -328,7 +328,7 @@ public class MoveIterator {
 			if (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
 				long rookOrigin = 1L << board.castlingKingsideRookOrigin[turn ? 0 : 1];
 				long rookDestiny = 1L << board.CASTLING_KINGSIDE_ROOK_DESTINY[turn ? 0 : 1];
-				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
 				long kingDestiny = 1L << board.CASTLING_KINGSIDE_KING_DESTINY[turn ? 0 : 1];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
@@ -344,7 +344,7 @@ public class MoveIterator {
 				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
 				long kingDestiny = 1L << board.CASTLING_QUEENSIDE_KING_DESTINY[turn ? 0 : 1];
-				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& (attacksInfo.attackedSquares[turn ? 1 : 0] & kingRoute) == 0) {

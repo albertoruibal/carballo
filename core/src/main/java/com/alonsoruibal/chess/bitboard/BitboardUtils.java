@@ -334,11 +334,10 @@ public class BitboardUtils {
 
 	/**
 	 * Gets the horizontal line between two squares (including the origin and destiny squares)
+	 * square1 must be to the left of square2 (square1 must be a higher bit)
 	 */
 	public static long getHorizontalLine(long square1, long square2) {
-		return square1 > square2 ?
-				(square1 + square1 - 1) & ~(square2 - 1) :
-				(square2 + square2 - 1) & ~(square1 - 1);
+		return (square1 | (square1 - 1)) & ~(square2 - 1);
 	}
 
 	public static boolean isWhite(long square) {
