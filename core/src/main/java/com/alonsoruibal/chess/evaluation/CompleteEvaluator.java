@@ -308,7 +308,7 @@ public class CompleteEvaluator extends Evaluator {
 					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentColumns & myPawns;
 					long myPawnsAheadAdjacent = ranksForward & adjacentColumns & myPawns;
 					long otherPawnsAheadAdjacent = ranksForward & adjacentColumns & otherPawns;
-					long myPawnAttacks = (isWhite ? pawnAttacks[0] : pawnAttacks[1]);
+					long myPawnAttacks = isWhite ? pawnAttacks[0] : pawnAttacks[1];
 
 					boolean isolated = (myPawns & adjacentColumns) == 0;
 					boolean supported = (square & myPawnAttacks) != 0;
@@ -319,10 +319,10 @@ public class CompleteEvaluator extends Evaluator {
 							(((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
 									(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
 					boolean backwards = !isolated && !passed && !candidate &&
-							(myPawnsBesideAndBehindAdjacent == 0) &&
-							((pieceAttacks & otherPawns) == 0) && // No backwards if it can capture
-							((BitboardUtils.RANK_AND_BACKWARD[color][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
-									routeToPromotion & (board.pawns | otherPawnAttacks)) != 0); // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
+							myPawnsBesideAndBehindAdjacent == 0 &&
+							(pieceAttacks & otherPawns) == 0 && // No backwards if it can capture
+							(BitboardUtils.RANK_AND_BACKWARD[color][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
+									routeToPromotion & (board.pawns | otherPawnAttacks)) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
 					if (debug) {
 						boolean connected = ((bbAttacks.king[index] & adjacentColumns & myPawns) != 0);
@@ -358,7 +358,7 @@ public class CompleteEvaluator extends Evaluator {
 						passedPawns[color] += PAWN_CANDIDATE[(isWhite ? rank : 7 - rank)];
 					}
 					if (passed) {
-						int relativeRank = (isWhite ? rank : 7 - rank);
+						int relativeRank = isWhite ? rank : 7 - rank;
 						long backColumn = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_BACKWARD[color][rank];
 						// If has has root/queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
