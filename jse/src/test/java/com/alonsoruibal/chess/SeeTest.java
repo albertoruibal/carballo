@@ -45,4 +45,9 @@ public class SeeTest {
 	public void testSeeError() {
 		testSee("8/1kb2p2/4b1p1/8/2Q2NB1/8/8/K7 w - - 0 1", "Nf4xe6", 105);
 	}
+
+	@Test
+	public void testSeeEnpassant() {
+		testSee("7k/8/8/8/2pP1n2/8/2B5/7K b - d3 0 1", "c4xd3", 100);
+	}
 }
