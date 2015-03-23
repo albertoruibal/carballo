@@ -12,7 +12,7 @@ import java.util.Arrays;
 /**
  * Transposition table using two keys and multiprobe
  * <p/>
- * Uses part of the board's zobrish key (shifted) as the index
+ * Uses part of the board's zobrist key (shifted) as the index
  *
  * @author rui
  */
