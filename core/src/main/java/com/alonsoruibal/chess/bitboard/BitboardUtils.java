@@ -316,13 +316,13 @@ public class BitboardUtils {
 	}
 
 	public static long msb(long board) {
-		board |= board >> 32;
-		board |= board >> 16;
-		board |= board >> 8;
-		board |= board >> 4;
-		board |= board >> 2;
-		board |= board >> 1;
-		return (board >> 1) + 1;
+		board |= board >>> 32;
+		board |= board >>> 16;
+		board |= board >>> 8;
+		board |= board >>> 4;
+		board |= board >>> 2;
+		board |= board >>> 1;
+		return (board >>> 1) + 1;
 	}
 
 	/**
