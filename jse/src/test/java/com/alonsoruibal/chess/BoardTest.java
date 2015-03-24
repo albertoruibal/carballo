@@ -34,6 +34,28 @@ public class BoardTest {
 	}
 
 	@Test
+	public void testChess960CastlingKingSameSquare() {
+		Board b = new Board();
+		b.setFen("r1krbnqb/1pp1pppp/1p1p4/8/3P4/8/PPP1PPPP/NRK1RNQB w Qk - 0 1");
+		System.out.println(b);
+		int move = Move.getFromString(b, "O-O-O", false);
+		b.doMove(move, false, false);
+		System.out.println(b);
+		assertEquals("r1krbnqb/1pp1pppp/1p1p4/8/3P4/8/PPP1PPPP/N1KRRNQB b k - 1 1", b.getFen());
+	}
+
+	@Test
+	public void testChess960CastlingRookSameSquare() {
+		Board b = new Board();
+		b.setFen("7k/pppppppp/8/8/8/8/PPPPPPPP/3RK3 w Q - 0 1");
+		System.out.println(b);
+		int move = Move.getFromString(b, "O-O-O", false);
+		b.doMove(move, false, false);
+		System.out.println(b);
+		assertEquals("7k/pppppppp/8/8/8/8/PPPPPPPP/2KR4 b - - 1 1", b.getFen());
+	}
+
+	@Test
 	public void testXFen() {
 		// http://en.wikipedia.org/wiki/X-FEN
 		Board b = new Board();

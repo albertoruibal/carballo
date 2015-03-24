@@ -279,6 +279,11 @@ public class MoveIteratorTest {
 	}
 
 	@Test
+	public void testChess960CastlingRookSameSquareGivesCheck() {
+		testPositionCountingMoves("8/8/8/8/8/8/8/3RK2k w Q - 0 1", MoveIterator.GENERATE_ALL, Move.NONE, 15, 0, 0, 4);
+	}
+
+	@Test
 	public void testDoNotGenerateLongCastling() {
 		Board b = new Board();
 

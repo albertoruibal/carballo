@@ -735,8 +735,8 @@ public class Board {
 						int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
 						int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
 						// Recalculate move mask for chess960 castlings
-						moveMask = from | (1L << toIndex);
-						long rookMoveMask = (1L << originRookIndex) | (1L << destinyRookIndex);
+						moveMask = from ^ (1L << toIndex);
+						long rookMoveMask = (1L << originRookIndex) ^ (1L << destinyRookIndex);
 						key[color] ^= ZobristKey.rook[color][originRookIndex] ^ ZobristKey.rook[color][destinyRookIndex];
 
 						if (getTurn()) {

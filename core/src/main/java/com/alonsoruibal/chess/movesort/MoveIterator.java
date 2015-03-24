@@ -497,57 +497,70 @@ public class MoveIterator {
 		// Verify check and legality
 		//
 		boolean check = false;
-		long bishopSlidersAftermove = (board.bishops | board.queens) & ~from & ~to;
-		long rookSlidersAftermove = (board.rooks | board.queens) & ~from & ~to;
-		long allAfterMove = (all | to) & ~from;
-		long minesAfterMove = (mines | to) & ~from;
-
-		// Direct checks
-		if (pieceMoved == Move.KNIGHT || moveType == Move.TYPE_PROMOTION_KNIGHT) {
-			check = (to & bbAttacks.knight[attacksInfo.otherKingIndex]) != 0;
-		} else if (pieceMoved == Move.BISHOP || moveType == Move.TYPE_PROMOTION_BISHOP) {
-			check = (to & attacksInfo.bishopAttacksOtherking) != 0;
-			bishopSlidersAftermove |= to;
-		} else if (pieceMoved == Move.ROOK || moveType == Move.TYPE_PROMOTION_ROOK) {
-			check = (to & attacksInfo.rookAttacksOtherking) != 0;
-			rookSlidersAftermove |= to;
-		} else if (pieceMoved == Move.QUEEN || moveType == Move.TYPE_PROMOTION_QUEEN) {
-			check = (to & (attacksInfo.bishopAttacksOtherking | attacksInfo.rookAttacksOtherking)) != 0;
-			bishopSlidersAftermove |= to;
-			rookSlidersAftermove |= to;
-		} else if (pieceMoved == Move.PAWN) {
-			check = (to & (turn ? bbAttacks.pawnDownwards[attacksInfo.otherKingIndex] : bbAttacks.pawnUpwards[attacksInfo.otherKingIndex])) != 0;
-		}
-
+		int newMyKingIndex;
+		long rookSlidersAfterMove, allAfterMove, minesAfterMove;
+		long bishopSlidersAfterMove = (board.bishops | board.queens) & ~from & ~to;
 		long squaresForDiscovery = from;
 
-		if (moveType == Move.TYPE_PASSANT) {
-			squaresForDiscovery |= (turn ? to >>> 8 : to << 8);
-			allAfterMove &= ~squaresForDiscovery;
-
-		} else if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
+		if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
 			// {White Kingside, White Queenside, Black Kingside, Black Queenside}
 			int j = (turn ? 0 : 2) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
-			long rookMoveMask = board.castlingRooks[j] | board.CASTLING_ROOK_DESTINY_SQUARE[j];
-			squaresForDiscovery |= rookMoveMask;
-			allAfterMove ^= rookMoveMask;
-			minesAfterMove ^= rookMoveMask;
-			rookSlidersAftermove ^= rookMoveMask;
-		}
 
-		int newMyKingIndex = attacksInfo.myKingIndex;
-		if (pieceMoved == Move.KING) {
-			newMyKingIndex = toIndex;
+			newMyKingIndex = board.CASTLING_KING_DESTINY_INDEX[j];
+			// Castling has a special "to" in Chess960 where the destiny square is the rook
+			long kingTo = board.CASTLING_KING_DESTINY_SQUARE[j];
+			long rookTo = board.CASTLING_ROOK_DESTINY_SQUARE[j];
+			long rookMoveMask = board.castlingRooks[j] ^ rookTo;
+
+			rookSlidersAfterMove = (board.rooks ^ rookMoveMask) | board.queens;
+			allAfterMove = ((all ^ rookMoveMask) | kingTo) & ~from;
+			minesAfterMove = ((mines ^ rookMoveMask) | kingTo) & ~from;
+
+			// Direct check by rook
+			check |= (rookTo & attacksInfo.rookAttacksOtherking) != 0;
+		} else {
+			if (pieceMoved == Move.KING) {
+				newMyKingIndex = toIndex;
+			} else {
+				newMyKingIndex = attacksInfo.myKingIndex;
+			}
+
+			rookSlidersAfterMove = (board.rooks | board.queens) & ~from & ~to;
+			allAfterMove = (all | to) & ~from;
+			minesAfterMove = (mines | to) & ~from;
+			squaresForDiscovery = from;
+
+			if (moveType == Move.TYPE_PASSANT) {
+				squaresForDiscovery |= (turn ? to >>> 8 : to << 8);
+				allAfterMove &= ~squaresForDiscovery;
+			}
+
+			// Direct checks
+			if (pieceMoved == Move.KNIGHT || moveType == Move.TYPE_PROMOTION_KNIGHT) {
+				check = (to & bbAttacks.knight[attacksInfo.otherKingIndex]) != 0;
+			} else if (pieceMoved == Move.BISHOP || moveType == Move.TYPE_PROMOTION_BISHOP) {
+				check = (to & attacksInfo.bishopAttacksOtherking) != 0;
+				bishopSlidersAfterMove |= to;
+			} else if (pieceMoved == Move.ROOK || moveType == Move.TYPE_PROMOTION_ROOK) {
+				check = (to & attacksInfo.rookAttacksOtherking) != 0;
+				rookSlidersAfterMove |= to;
+			} else if (pieceMoved == Move.QUEEN || moveType == Move.TYPE_PROMOTION_QUEEN) {
+				check = (to & (attacksInfo.bishopAttacksOtherking | attacksInfo.rookAttacksOtherking)) != 0;
+				bishopSlidersAfterMove |= to;
+				rookSlidersAfterMove |= to;
+			} else if (pieceMoved == Move.PAWN) {
+				check = (to & (turn ? bbAttacks.pawnDownwards[attacksInfo.otherKingIndex] : bbAttacks.pawnUpwards[attacksInfo.otherKingIndex])) != 0;
+			}
 		}
 
 		// After a promotion to queen or rook there are new sliders transversing the origin square, so mayPin is not valid
-		if ((squaresForDiscovery & attacksInfo.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK) {
+		if ((squaresForDiscovery & attacksInfo.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP) {
 			// Candidates to leave the king in check after moving
 			if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
 					((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Move.KING)) { // Moving the king when the king is in check by a slider
 				// Regenerate bishop attacks to my king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(newMyKingIndex, allAfterMove);
-				if ((newBishopAttacks & bishopSlidersAftermove & ~minesAfterMove) != 0) {
+				if ((newBishopAttacks & bishopSlidersAfterMove & ~minesAfterMove) != 0) {
 					return; // Illegal move
 				}
 			}
@@ -555,7 +568,7 @@ public class MoveIterator {
 					((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Move.KING)) {
 				// Regenerate rook attacks to my king
 				long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
-				if ((newRookAttacks & rookSlidersAftermove & ~minesAfterMove) != 0) {
+				if ((newRookAttacks & rookSlidersAfterMove & ~minesAfterMove) != 0) {
 					return; // Illegal move
 				}
 			}
@@ -564,14 +577,14 @@ public class MoveIterator {
 			if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0) {
 				// Regenerate bishop attacks to the other king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(attacksInfo.otherKingIndex, allAfterMove);
-				if ((newBishopAttacks & bishopSlidersAftermove & minesAfterMove) != 0) {
+				if ((newBishopAttacks & bishopSlidersAfterMove & minesAfterMove) != 0) {
 					check = true;
 				}
 			}
 			if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0) {
 				// Regenerate rook attacks to the other king
 				long newRookAttacks = bbAttacks.getRookAttacks(attacksInfo.otherKingIndex, allAfterMove);
-				if ((newRookAttacks & rookSlidersAftermove & minesAfterMove) != 0) {
+				if ((newRookAttacks & rookSlidersAfterMove & minesAfterMove) != 0) {
 					check = true;
 				}
 			}
