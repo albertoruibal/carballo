@@ -15,8 +15,20 @@ public class BitBoardUtilsTest {
 	}
 
 	@Test
+	public void testLsb() {
+		assertEquals((1L), BitboardUtils.lsb(1L));
+		assertEquals((1L << 63), BitboardUtils.lsb(1L << 63));
+		assertEquals((1L << 32), BitboardUtils.lsb((1L << 63) | 1L << 32));
+		assertEquals(1L, BitboardUtils.lsb((1L << 32) | 1L));
+		assertEquals(0, BitboardUtils.lsb(0));
+	}
+
+	@Test
 	public void testMsb() {
+		assertEquals((1L), BitboardUtils.msb(1L));
 		assertEquals((1L << 63), BitboardUtils.msb(1L << 63));
 		assertEquals((1L << 63), BitboardUtils.msb((1L << 63) | 1L << 32));
+		assertEquals((1L << 32), BitboardUtils.msb((1L << 32) | 1L));
+		assertEquals(0, BitboardUtils.msb(0));
 	}
 }

@@ -322,7 +322,7 @@ public class BitboardUtils {
 		board |= board >>> 4;
 		board |= board >>> 2;
 		board |= board >>> 1;
-		return (board >>> 1) + 1;
+		return board == 0 ? 0 : (board >>> 1) + 1;
 	}
 
 	/**
