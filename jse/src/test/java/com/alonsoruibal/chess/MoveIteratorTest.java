@@ -6,6 +6,7 @@ import com.alonsoruibal.chess.movesort.SortInfo;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MoveIteratorTest {
@@ -262,6 +263,8 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testGenerateCapturesInQuiescence() {
+
+
 		testPositionCountingMoves("8/1kb2p2/4b1p1/8/2Q2NB1/8/8/K7 w - - 0 1", MoveIterator.GENERATE_CAPTURES_PROMOS, Move.NONE, 2, 2, 0, 0);
 	}
 
@@ -273,5 +276,45 @@ public class MoveIteratorTest {
 	@Test
 	public void testChess960Castling() {
 		testPositionCountingMoves("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQRKBBNR w KQkq - 0 1", MoveIterator.GENERATE_ALL, Move.NONE, 20, 0, 0, 0);
+	}
+
+	@Test
+	public void testDoNotGenerateLongCastling() {
+		Board b = new Board();
+
+		// position startpos moves e2e4 c7c6 g1f3 d7d5 b1c3 c8g4 f1e2 e7e6 d2d4 g8f6 e4e5 f6e4 e1g1 h7h6 c1e3 e4c3 b2c3 d8a5 e3d2
+		b.startPosition();
+		b.doMove(Move.getFromString(b, "e2e4", false));
+		b.doMove(Move.getFromString(b, "c7c6", false));
+		b.doMove(Move.getFromString(b, "g1f3", false));
+		b.doMove(Move.getFromString(b, "d7d5", false));
+		b.doMove(Move.getFromString(b, "b1c3", false));
+		b.doMove(Move.getFromString(b, "c8g4", false));
+		b.doMove(Move.getFromString(b, "f1e2", false));
+		b.doMove(Move.getFromString(b, "e7e6", false));
+		b.doMove(Move.getFromString(b, "d2d4", false));
+		b.doMove(Move.getFromString(b, "g8f6", false));
+		b.doMove(Move.getFromString(b, "e4e5", false));
+		b.doMove(Move.getFromString(b, "f6e4", false));
+		b.doMove(Move.getFromString(b, "e1g1", false));
+		b.doMove(Move.getFromString(b, "h7h6", false));
+		b.doMove(Move.getFromString(b, "c1e3", false));
+		b.doMove(Move.getFromString(b, "e4c3", false));
+		b.doMove(Move.getFromString(b, "b2c3", false));
+		b.doMove(Move.getFromString(b, "d8a5", false));
+		b.doMove(Move.getFromString(b, "e3d2", false));
+
+		System.out.println(b.toString());
+		MoveIterator moveIterator = new MoveIterator(b, new AttacksInfo(), new SortInfo(), 0);
+		moveIterator.genMoves(0, MoveIterator.GENERATE_ALL);
+		int move;
+		boolean longCastling = false;
+		while ((move = moveIterator.next()) != Move.NONE) {
+			System.out.println(Move.toStringExt(move));
+			if ("O-O-O".equals(Move.toStringExt(move))) {
+				longCastling = true;
+			}
+		}
+		assertEquals("Must not allow black long castling", false, longCastling);
 	}
 }
