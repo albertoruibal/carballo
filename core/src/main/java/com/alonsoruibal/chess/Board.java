@@ -366,7 +366,7 @@ public class Board {
 			tmpFlags |= FLAG_TURN;
 		}
 		if (tokens.length > 2) {
-			// Set castling rights supporting XFEN to disambiguate positions in Chess 960
+			// Set castling rights supporting XFEN to disambiguate positions in Chess960
 			String castlings = tokens[2];
 
 			chess960 = false;
