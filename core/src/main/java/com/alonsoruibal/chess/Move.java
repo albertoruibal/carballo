@@ -167,17 +167,17 @@ public class Move {
 		int moveType = 0;
 		int pieceMoved = 0;
 		boolean check = move.indexOf("+") > 0 || move.indexOf("#") > 0;
-		int color = board.getTurn() ? 0 : 1;
 		long mines = board.getMines();
+		boolean turn = board.getTurn();
 
 		// Ignore checks, captures indicators...
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
-		if ("ooo".equals(move)) {
+		if ("oo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[board.chess960 ? board.castlingQueensideRookOrigin[color] : Board.CASTLING_QUEENSIDE_KING_DESTINY[color]];
-		} else if ("oo".equals(move)) {
+					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
+		} else if ("ooo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[board.chess960 ? board.castlingKingsideRookOrigin[color] : Board.CASTLING_KINGSIDE_KING_DESTINY[color]];
+					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 1 : 3] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3])];
 		} else {
 			char promo = move.charAt(move.length() - 1);
 			switch (Character.toLowerCase(promo)) {
@@ -229,14 +229,14 @@ public class Move {
 			move = move.substring(1);
 		} else { // Pawn moves
 			if (move.length() == 2) {
-				if (board.getTurn()) {
+				if (turn) {
 					from = board.pawns & mines & ((to >>> 8) | (((to >>> 8) & board.getAll()) == 0 ? (to >>> 16) : 0));
 				} else {
 					from = board.pawns & mines & ((to << 8) | (((to << 8) & board.getAll()) == 0 ? (to << 16) : 0));
 				}
 			}
 			if (move.length() == 3) { // Pawn capture
-				from = board.pawns & mines & (board.getTurn() ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
+				from = board.pawns & mines & (turn ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
 			}
 		}
 		if (move.length() == 3) { // now disambiaguate
@@ -289,18 +289,18 @@ public class Move {
 				pieceMoved = QUEEN;
 			} else if ((myFrom & board.kings) != 0) {
 				pieceMoved = KING;
-				if ((board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) && //
-						(toIndex == (fromIndex - 2) || toIndex == board.castlingKingsideRookOrigin[color])) {
+				if ((turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) && //
+						(toIndex == (fromIndex - 2) || to == board.castlingRooks[turn ? 0 : 2])) {
 					moveType = TYPE_KINGSIDE_CASTLING;
 				}
-				if ((board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) && //
-						(toIndex == (fromIndex + 2) || toIndex == board.castlingQueensideRookOrigin[color])) {
+				if ((turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) && //
+						(toIndex == (fromIndex + 2) || to == board.castlingRooks[turn ? 1 : 3])) {
 					moveType = TYPE_QUEENSIDE_CASTLING;
 				}
 			}
 
 			// Now set captured piece flag
-			if ((to & (board.getTurn() ? board.blacks : board.whites)) != 0) {
+			if ((to & (turn ? board.blacks : board.whites)) != 0) {
 				capture = true;
 			}
 			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, check, moveType);

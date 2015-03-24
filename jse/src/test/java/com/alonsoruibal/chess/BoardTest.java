@@ -34,6 +34,18 @@ public class BoardTest {
 	}
 
 	@Test
+	public void testXFen() {
+		// http://en.wikipedia.org/wiki/X-FEN
+		Board b = new Board();
+		b.setFen("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BNK1RR w Gkq - 4 11");
+		System.out.println(b);
+		assertEquals(1L << 1, b.castlingRooks[0]);
+		b.doMove(Move.getFromString(b, "O-O", true));
+		System.out.println(b);
+		assertEquals("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BN1RKR b kq - 5 11", b.getFen());
+	}
+
+	@Test
 	public void testMoveNumber1() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");

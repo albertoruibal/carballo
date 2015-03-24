@@ -73,11 +73,11 @@ public class MagicMoveGenerator implements MoveGenerator {
 		// Castling: disabled when in check or king route attacked
 		if (!board.getCheck()) {
 			if (board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
-				long rookOrigin = 1L << board.castlingKingsideRookOrigin[board.getTurn() ? 0 : 1];
-				long rookDestiny = 1L << board.CASTLING_KINGSIDE_ROOK_DESTINY[board.getTurn() ? 0 : 1];
+				long rookOrigin = board.castlingRooks[board.getTurn() ? 0 : 2];
+				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = 1L << board.CASTLING_KINGSIDE_KING_DESTINY[board.getTurn() ? 0 : 1];
+				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
@@ -85,11 +85,11 @@ public class MagicMoveGenerator implements MoveGenerator {
 				}
 			}
 			if (board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
-				long rookOrigin = 1L << board.castlingQueensideRookOrigin[board.getTurn() ? 0 : 1];
-				long rookDestiny = 1L << board.CASTLING_QUEENSIDE_ROOK_DESTINY[board.getTurn() ? 0 : 1];
+				long rookOrigin = board.castlingRooks[board.getTurn() ? 1 : 3];
+				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = 1L << board.CASTLING_QUEENSIDE_KING_DESTINY[board.getTurn() ? 0 : 1];
+				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {

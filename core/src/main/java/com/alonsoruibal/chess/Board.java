@@ -31,11 +31,11 @@ public class Board {
 	// Position on boarch in which is captured
 	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
-	// Fot the castlings {white, black}
-	public static final int CASTLING_KINGSIDE_KING_DESTINY[] = {1, 57};
-	public static final int CASTLING_KINGSIDE_ROOK_DESTINY[] = {2, 58};
-	public static final int CASTLING_QUEENSIDE_KING_DESTINY[] = {5, 61};
-	public static final int CASTLING_QUEENSIDE_ROOK_DESTINY[] = {4, 60};
+	// For the castlings {White Kingside, White Queenside, Black Kingside, Black Queenside}
+	public static final int CASTLING_KING_DESTINY_INDEX[] = {1, 5, 57, 61};
+	public static final long CASTLING_KING_DESTINY_SQUARE[] = {1L << 1, 1L << 5, 1L << 57, 1L << 61};
+	public static final int CASTLING_ROOK_DESTINY_INDEX[] = {2, 4, 58, 60};
+	public static final long CASTLING_ROOK_DESTINY_SQUARE[] = {1L << 2, 1L << 4, 1L << 58, 1L << 60};
 
 	// For the SEE SWAP algorithm
 	public static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
@@ -80,8 +80,8 @@ public class Board {
 	public int[] fiftyMovesRuleHistory;
 	public int[] seeGain;
 
-	public int castlingKingsideRookOrigin[] = {0, 0};
-	public int castlingQueensideRookOrigin[] = {0, 0};
+	// Origin squares for the castling rook {White Kingside, White Queenside, Black Kingside, Black Queenside}
+	public long castlingRooks[] = {0, 0, 0, 0};
 
 	public boolean chess960; // basically decides the destiny square of the castlings
 
@@ -325,6 +325,7 @@ public class Board {
 		long tmpKings = 0;
 		long tmpFlags;
 		int tmpFiftyMovesRule = 0;
+		long tmpCastlingRooks[] = {0, 0, 0, 0};
 		int fenMoveNumber = 0;
 
 		int i = 0;
@@ -365,19 +366,88 @@ public class Board {
 			tmpFlags |= FLAG_TURN;
 		}
 		if (tokens.length > 2) {
-			String promotions = tokens[2];
-			if (promotions.contains("K")) {
+			// Set castling rights supporting XFEN to disambiguate positions in Chess 960
+			String castlings = tokens[2];
+
+			chess960 = false;
+			// Squares to the sides of the kings {White Kingside, White Queenside, Black Kingside, Black Queenside}
+			long whiteKingLateralSquares[] = {
+					BitboardUtils.b_d & ((tmpKings & tmpWhites) - 1), BitboardUtils.b_d & ~(((tmpKings & tmpWhites) - 1) | tmpKings & tmpWhites),
+					BitboardUtils.b_u & ((tmpKings & tmpBlacks) - 1), BitboardUtils.b_u & ~(((tmpKings & tmpBlacks) - 1) | tmpKings & tmpBlacks)};
+
+			// Squares where we can find a castling rook
+			long possibleCastlingRookSquares[] = {0, 0, 0, 0};
+
+			for (int k = 0; k < castlings.length(); k++) {
+				char c = castlings.charAt(k);
+				switch (c) {
+					case 'K':
+						possibleCastlingRookSquares[0] = whiteKingLateralSquares[0];
+						break;
+					case 'Q':
+						possibleCastlingRookSquares[1] = whiteKingLateralSquares[1];
+						break;
+					case 'k':
+						possibleCastlingRookSquares[2] = whiteKingLateralSquares[2];
+						break;
+					case 'q':
+						possibleCastlingRookSquares[3] = whiteKingLateralSquares[3];
+						break;
+					default:
+						// Shredder-FEN receives the name of the column where the castling rook is
+						int whiteColumn = "ABCDEFGH".indexOf(c);
+						int blackColumn = "abcdefgh".indexOf(c);
+						if (whiteColumn >= 0) {
+							long rookSquare = BitboardUtils.b_d & BitboardUtils.COLUMN[whiteColumn];
+							if ((rookSquare & whiteKingLateralSquares[0]) != 0) {
+								possibleCastlingRookSquares[0] = rookSquare;
+							} else if ((rookSquare & whiteKingLateralSquares[1]) != 0) {
+								possibleCastlingRookSquares[1] = rookSquare;
+							}
+						} else if (blackColumn >= 0) {
+							long rookSquare = BitboardUtils.b_u & BitboardUtils.COLUMN[blackColumn];
+							if ((rookSquare & whiteKingLateralSquares[2]) != 0) {
+								possibleCastlingRookSquares[2] = rookSquare;
+							} else if ((rookSquare & whiteKingLateralSquares[3]) != 0) {
+								possibleCastlingRookSquares[3] = rookSquare;
+							}
+						}
+				}
+			}
+
+			// Now store the squares of the castling rooks
+			tmpCastlingRooks[0] = BitboardUtils.lsb(tmpRooks & tmpWhites & possibleCastlingRookSquares[0]);
+			tmpCastlingRooks[1] = BitboardUtils.msb(tmpRooks & tmpWhites & possibleCastlingRookSquares[1]);
+			tmpCastlingRooks[2] = BitboardUtils.lsb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[2]);
+			tmpCastlingRooks[3] = BitboardUtils.msb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[3]);
+
+			// Set the castling flags and detect Chess960
+			if (tmpCastlingRooks[0] != 0) {
 				tmpFlags |= FLAG_WHITE_KINGSIDE_CASTLING;
+				if ((tmpWhites & tmpKings) != 1L << 3 || tmpCastlingRooks[0] != 1L) {
+					chess960 = true;
+				}
 			}
-			if (promotions.contains("Q")) {
+			if (tmpCastlingRooks[1] != 0) {
 				tmpFlags |= FLAG_WHITE_QUEENSIDE_CASTLING;
+				if ((tmpWhites & tmpKings) != 1L << 3 || tmpCastlingRooks[1] != 1L << 7) {
+					chess960 = true;
+				}
 			}
-			if (promotions.contains("k")) {
+			if (tmpCastlingRooks[2] != 0) {
 				tmpFlags |= FLAG_BLACK_KINGSIDE_CASTLING;
+				if ((tmpBlacks & tmpKings) != 1L << 59 || tmpCastlingRooks[2] != 1L << 56) {
+					chess960 = true;
+				}
 			}
-			if (promotions.contains("q")) {
+			if (tmpCastlingRooks[3] != 0) {
 				tmpFlags |= FLAG_BLACK_QUEENSIDE_CASTLING;
+				if ((tmpBlacks & tmpKings) != 1L << 59 || tmpCastlingRooks[3] != 1L << 63) {
+					chess960 = true;
+				}
 			}
+			// END FEN castlings
+
 			if (tokens.length > 3) {
 				String passant = tokens[3];
 				tmpFlags |= FLAGS_PASSANT & BitboardUtils.algebraic2Square(passant);
@@ -440,40 +510,14 @@ public class Board {
 			// Flags are not completed till verify, so skip checking
 			flags = tmpFlags;
 
+			castlingRooks[0] = tmpCastlingRooks[0];
+			castlingRooks[1] = tmpCastlingRooks[1];
+			castlingRooks[2] = tmpCastlingRooks[2];
+			castlingRooks[3] = tmpCastlingRooks[3];
+
 			// Set zobrist key and check flags
 			key = ZobristKey.getKey(this);
 			setCheckFlags();
-
-			// Set castling rooks to the most outside rooks, TODO XFEN
-			chess960 = false;
-			int whiteKingIndex = BitboardUtils.square2Index(whites & kings);
-			int blackKingIndex = BitboardUtils.square2Index(blacks & kings);
-			long whiteKingRight = (kings & whites) - 1; // Squares to the right of the white king
-			long blackKingRight = (kings & blacks) - 1;
-			if (getWhiteKingsideCastling()) {
-				castlingKingsideRookOrigin[0] = BitboardUtils.square2Index(BitboardUtils.lsb(BitboardUtils.b_d & rooks & whites & whiteKingRight));
-				if (whiteKingIndex != 3 || castlingKingsideRookOrigin[0] != 0) {
-					chess960 = true;
-				}
-			}
-			if (getBlackKingsideCastling()) {
-				castlingKingsideRookOrigin[1] = BitboardUtils.square2Index(BitboardUtils.lsb(BitboardUtils.b_u & rooks & blacks & blackKingRight));
-				if (blackKingIndex != 59 || castlingKingsideRookOrigin[1] != 56) {
-					chess960 = true;
-				}
-			}
-			if (getWhiteQueensideCastling()) {
-				castlingQueensideRookOrigin[0] = BitboardUtils.square2Index(BitboardUtils.msb(BitboardUtils.b_d & rooks & whites & ~whiteKingRight));
-				if (whiteKingIndex != 3 || castlingQueensideRookOrigin[0] != 7) {
-					chess960 = true;
-				}
-			}
-			if (getWhiteQueensideCastling()) {
-				castlingQueensideRookOrigin[1] = BitboardUtils.square2Index(BitboardUtils.msb(BitboardUtils.b_u & rooks & blacks & ~blackKingRight));
-				if (blackKingIndex != 59 || castlingQueensideRookOrigin[1] != 63) {
-					chess960 = true;
-				}
-			}
 
 			// and save history
 			resetHistory();
@@ -504,7 +548,7 @@ public class Board {
 		}
 		sb.append("a b c d e f g h  ");
 		sb.append((getTurn() ? "white move " : "blacks move "));
-		sb.append(" " + (getWhiteKingsideCastling() ? "K" : "") + (getWhiteQueensideCastling() ? "Q" : "") + (getBlackKingsideCastling() ? "k" : "") + (getBlackQueensideCastling() ? "q" : ""));
+		sb.append((getWhiteKingsideCastling() ? "K" : "") + (getWhiteQueensideCastling() ? "Q" : "") + (getBlackKingsideCastling() ? "k" : "") + (getBlackQueensideCastling() ? "q" : ""));
 
 		return sb.toString();
 	}
@@ -683,21 +727,13 @@ public class Board {
 					key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
 					break;
 				case Move.KING: // if castling, moves rooks too
-					int originRookIndex = -1;
-					int destinyRookIndex = -1;
-					switch (moveType) {
-						case Move.TYPE_KINGSIDE_CASTLING:
-							originRookIndex = castlingKingsideRookOrigin[color];
-							destinyRookIndex = CASTLING_KINGSIDE_ROOK_DESTINY[color];
-							toIndex = CASTLING_KINGSIDE_KING_DESTINY[color];
-							break;
-						case Move.TYPE_QUEENSIDE_CASTLING:
-							originRookIndex = castlingQueensideRookOrigin[color];
-							destinyRookIndex = CASTLING_QUEENSIDE_ROOK_DESTINY[color];
-							toIndex = CASTLING_QUEENSIDE_KING_DESTINY[color];
-							break;
-					}
-					if (originRookIndex != -1) {
+					if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
+						// {White Kingside, White Queenside, Black Kingside, Black Queenside}
+						int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
+
+						toIndex = CASTLING_KING_DESTINY_INDEX[j];
+						int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
+						int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
 						// Recalculate move mask for chess960 castlings
 						moveMask = from | (1L << toIndex);
 						long rookMoveMask = (1L << originRookIndex) | (1L << destinyRookIndex);
@@ -723,22 +759,22 @@ public class Board {
 
 			// Tests to disable castling
 			if ((flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Move.KING) || fromIndex == castlingKingsideRookOrigin[0] || toIndex == castlingKingsideRookOrigin[0])) {
+					((turn && pieceMoved == Move.KING) || from == castlingRooks[0] || to == castlingRooks[0])) {
 				flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
 				key[0] ^= ZobristKey.whiteKingSideCastling;
 			}
 			if ((flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Move.KING) || fromIndex == castlingQueensideRookOrigin[0] || toIndex == castlingQueensideRookOrigin[0])) {
+					((turn && pieceMoved == Move.KING) || from == castlingRooks[1] || to == castlingRooks[1])) {
 				flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
 				key[0] ^= ZobristKey.whiteQueenSideCastling;
 			}
 			if ((flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Move.KING) || fromIndex == castlingKingsideRookOrigin[1] || toIndex == castlingKingsideRookOrigin[1])) {
+					((!turn && pieceMoved == Move.KING) || from == castlingRooks[2] || to == castlingRooks[2])) {
 				flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
 				key[1] ^= ZobristKey.blackKingSideCastling;
 			}
 			if ((flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Move.KING) || fromIndex == castlingQueensideRookOrigin[1] || toIndex == castlingQueensideRookOrigin[1])) {
+					((!turn && pieceMoved == Move.KING) || from == castlingRooks[3] || to == castlingRooks[3])) {
 				flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
 				key[1] ^= ZobristKey.blackQueenSideCastling;
 			}
