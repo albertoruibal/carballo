@@ -550,9 +550,7 @@ public class SearchEngine implements Runnable {
 
 				nullMoveProbe++;
 
-				int R = 3 * PLY + //
-						depthRemaining / 4 + //
-						PLY * (eval - beta) / ExperimentalEvaluator.PAWN;
+				int R = 3 * PLY + (depthRemaining >>> 2);
 
 				board.doMove(0, false, false);
 				score = depthRemaining - R < PLY ? -quiescentSearch(0, -beta, -beta + 1) :
