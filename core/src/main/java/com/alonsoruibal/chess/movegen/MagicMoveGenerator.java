@@ -74,10 +74,10 @@ public class MagicMoveGenerator implements MoveGenerator {
 		if (!board.getCheck()) {
 			if (board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
 				long rookOrigin = board.castlingRooks[board.getTurn() ? 0 : 2];
-				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
+				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
+				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
@@ -86,10 +86,10 @@ public class MagicMoveGenerator implements MoveGenerator {
 			}
 			if (board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
 				long rookOrigin = board.castlingRooks[board.getTurn() ? 1 : 3];
-				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
+				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
+				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {

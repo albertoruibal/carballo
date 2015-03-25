@@ -327,10 +327,10 @@ public class MoveIterator {
 		if (!board.getCheck()) {
 			if (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
 				long rookOrigin = board.castlingRooks[turn ? 0 : 2];
-				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 0 : 2];
+				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 0 : 2];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2];
+				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
@@ -340,10 +340,10 @@ public class MoveIterator {
 			}
 			if (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
 				long rookOrigin = board.castlingRooks[turn ? 1 : 3];
-				long rookDestiny = board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 1 : 3];
+				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 1 : 3];
 				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
 				long kingOrigin = board.kings & mines;
-				long kingDestiny = board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3];
+				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3];
 				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
@@ -506,10 +506,10 @@ public class MoveIterator {
 			// {White Kingside, White Queenside, Black Kingside, Black Queenside}
 			int j = (turn ? 0 : 2) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
 
-			newMyKingIndex = board.CASTLING_KING_DESTINY_INDEX[j];
+			newMyKingIndex = Board.CASTLING_KING_DESTINY_INDEX[j];
 			// Castling has a special "to" in Chess960 where the destiny square is the rook
-			long kingTo = board.CASTLING_KING_DESTINY_SQUARE[j];
-			long rookTo = board.CASTLING_ROOK_DESTINY_SQUARE[j];
+			long kingTo = Board.CASTLING_KING_DESTINY_SQUARE[j];
+			long rookTo = Board.CASTLING_ROOK_DESTINY_SQUARE[j];
 			long rookMoveMask = board.castlingRooks[j] ^ rookTo;
 
 			rookSlidersAfterMove = (board.rooks ^ rookMoveMask) | board.queens;
