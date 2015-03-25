@@ -1,55 +1,52 @@
 Carballo Chess Engine
 =====================
 
-Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java
-chess engine with Applet and GWT (HTML5) interfaces. It is used in the Mobialia Chess apps.
+Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-It's organized into modules:
+* UCI: a text interface for chess GUIs like Arena: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.2.tgz
+* HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
+
+It is organized into modules:
 
 * Core: the chess engine
-* JSE: the Java Standard Edition version with the UCI interface and JUnit tests
-* GWT: components needed for the GWT GUI
-* GWTGUI: an HTML5 interface developed by Lukas Laag, it depends on Core and GWT
-* Applet: the applet code, it depends on Core and Jse (deprecated)
+* Jse: the Java Standard Edition version with the UCI interface and JUnit tests
+* Gwt: components needed for the GWT GUI
+* GwtGui: an HTML5 interface developed by Lukas Laag, it depends on Core and Gwt
+* Applet: the applet code (deprecated), it depends on Core and Jse
 
 The Core and the UCI interface are converted to C# in the project http://github.com/albertoruibal/carballo_cs
 
-Links:
-
-* GWT interface: http://www.mobialia.com/webchessgwt
-* UCI binary: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.1.tgz
-* Source code: https://github.com/albertoruibal/carballo
-
-It is licensed under GPLv3, and you are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
+It is licensed under GPLv3 and the source code is hosted at https://github.com/albertoruibal/carballo.
+You are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
 
 Features
 ========
 
 * UCI interface for chess GUIs like Arena
-* It includes a great GWT interface by Lukas Laag
-* It also has a Java Applet GUI (deprecated)
-* Based on Bitboards
-* Magic bitboard move generator, it also includes code for magic number generation
+* It includes a great GWT interface by Lukas Laag and a deprecated Java Applet GUI
+* Based on bitboards with a magic bitboard move generator, it also includes code for magic number generation
+* Move iterator sorting moves with four killer move slots, SEE, MVV/LVA and history heuristic
 * PVS searcher
-* Iterative deepening
 * Aspiration window, moves only one border of the window if falls out
 * Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
-* Quiescent search with only good captures (according to SEE) and limited check generation
-* Move sorting: two killer move slots, SEE, MVV/LVA and history heuristic
-* Also Internal Iterative Deepening to improve sorting
-* Fractional Extensions: check, pawn push and passed pawns, mate threat, recapture (2 = 1PLY)
+* Quiescent Search (QS) with only good or equal captures (according to SEE) and limited check generation
+* Internal Iterative Deepening to improve sorting
+* Extensions: Check, pawn push and passed pawns and mate threat
 * Reductions: Late Move Reductions (LMR)
-* Pruning: Null Move Pruning, Static Null Move Pruning, Futility Pruning and Aggressive Futility Pruning
-* Polyglot Opening Book support; in the code it includes Fruit's Small Book
-* FEN notation import/export support, also EPD support for testing
+* Pruning: Null move Pruning, static null move pruning, futility pruning and aggressive futility pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parameterizable evaluator (only for the complete &amp; experimental evaluators)
-* Contempt factor
-* JUnit used for testing, multiple test suites provided (Perft, BT2630, LCTII, WAC, etc.)
+* Polyglot opening book support; in the code it includes Fruit's Small Book
+* FEN notation import/export support, also EPD support for testing
+* JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WAC, etc.)
 
-It scores 2520 ELO points at BT2630 tests in my Intel Core i7-3667U CPU @ 2.00GHz.
-It also solves 294 positions of the 300 WinAtChess test (at 5 seconds each).
-His real strength is about 2200 ELO points, you can check his tournament ranking at http://www.computerchess.org.uk/ccrl/
+Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
+
+* WinAtChess: 287 positions of 300 (1 second each)
+* SilentButDeadly: 89 positions solved of 134 (5 seconds each)
+* Arasan: 22 positions of 250 (60 seconds each)
+
+His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
 Authors
 =======
@@ -89,14 +86,33 @@ Run Win at Chess tests:
 cd jse
 gradle -Dtest.single=WinAtChessTest cleanTest test
 ```
-Run BT2630 tests:
+Run Silent but Deadly tests:
 ```
 cd jse
-gradle -Dtest.single=BT2630Test cleanTest test
+gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 ```
 
 History
 =======
+
+Version 1.2: A new MoveIterator, Chess960 and lots of UCI improvements
+
+* New MoveIterator that generates only legal moves with a check flag set
+* Added support for Chess960 (Fischer Random Chess)
+* Implemented UCI Ponder
+* New replace strategy for the TT, taking into account the entry depth and the generation difference
+* In the TT in QS, store the entries with checks generated with depth 1 and entries without checks with depth 0
+* Four killer move slots
+* Set default razoring margin to 400
+* Fix the futility in QS and set the default futility in QS to 80
+* Remove the null move margin and improve the null move reduction calculation
+* Remove the recapture extension
+* New time management strategy adding a "panic time" when the search in the root node fails low by a margin of 100
+* Do not penalize pinned pawns in the evaluators, multiply the hung pieces bonus by the number of hung pieces, and pawn center opening corrections
+* Fixed a bug multiplying the opening/ending values in the evaluators by negative factors
+* Generate piece-square values in different classes
+* Fixed an important bug in the SWAP algorithm for the SSE evaluation
+* Now it uses 1" for the WinAtChess tests
 
 Version 1.1: Urgent bug fix for 1.0
 
@@ -113,7 +129,7 @@ Version 1.0: Lots of fixes, small advances in test results: 294 in WAC (5") and 
 * New pawn classification in the ExperimentalEvaluator
 * Now the PV line is shown every time that a move is found in the root node
 * Implemented UCI seldepth, lowerbound, upperbound and hashfull
-* Implemented the depth and node limit for the search
+* Implemented the depth and nodae limit for the search
 * Enabled the endgame knowledge
 * In the search, assume that pawn pushes are to the 6th, 7th or 8th rank
 * Extend only checks with positive SSE
