@@ -487,7 +487,7 @@ public class CompleteEvaluator extends Evaluator {
 					center[color] += kingPcsq[pcsqIndex];
 
 					// If king is in the first rank, we add the pawn shield
-					if ((square & (isWhite ? BitboardUtils.RANK[0] : BitboardUtils.RANK[7])) != 0) {
+					if ((square & (isWhite ? BitboardUtils.RANK[0] | BitboardUtils.RANK[1] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
 						kingDefense[color] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
 				}

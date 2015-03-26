@@ -57,8 +57,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int ROOK_ATTACKS_PU_BK = oe(4, 5); // Attacks bishop or knight not defended by pawn
 	private final static int ROOK_ATTACKS_Q = oe(5, 5); // Attacks queen
 	private final static int ROOK_COLUMN_OPEN_NO_MG = oe(20, 10); // No pawns in rook column and no minor guarded
-	private final static int ROOK_COLUMN_OPEN_MG_NP = oe(10, 0); // No pawns in rook column and minor guarded, my pawn can attack
-	private final static int ROOK_COLUMN_OPEN_MG_P = oe(15, 5); // No pawns in rook column and minor guarded, my pawn can attack
+	private final static int ROOK_COLUMN_OPEN_MG_NP = oe(10, 0); // No pawns in rook column and minor guarded, my pawns cannot attack
+	private final static int ROOK_COLUMN_OPEN_MG_P = oe(15, 5); // No pawns in rook column and minor guarded, my pawns can attack
 	private final static int ROOK_COLUMN_SEMIOPEN = oe(3, 6); // No pawns mines in column
 	private final static int ROOK_COLUMN_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
 	private final static int ROOK_COLUMN_SEMIOPEN_K = oe(3, 6); // No pawns mines in column and opposite king
@@ -649,7 +649,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					center[color] += kingPcsq[pcsqIndex];
 
 					// If king is in the first rank, we add the pawn shield
-					if ((square & (isWhite ? BitboardUtils.RANK[0] : BitboardUtils.RANK[7])) != 0) {
+					if ((square & (isWhite ? BitboardUtils.RANK[0] | BitboardUtils.RANK[1] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
 						kingDefense[color] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
 				}
