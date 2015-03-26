@@ -16,6 +16,6 @@ CUTECHESS=/usr/local/cutechess-cli/cutechess-cli.sh
 
 chmod +x *.jar
 
-$CUTECHESS -engine name=carballo-1.2 cmd=./carballo-1.2.jar -engine name=carballo-1.1.1 cmd=./carballo-1.1.1.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20
-$CUTECHESS -engine name=carballo-1.2 cmd=./carballo-1.2.jar -engine name=carballo-1.1 cmd=./carballo-1.1.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20
-$CUTECHESS -engine name=carballo-1.2 cmd=./carballo-1.2.jar -engine name=carballo-0.9 cmd=./carballo-0.9.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20
+$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-1.2 cmd=./carballo-1.2.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20
+$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-1.1 cmd=./carballo-1.1.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20
+$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-0.9 cmd=./carballo-0.9.jar -each proto=uci tc=5 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20

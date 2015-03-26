@@ -6,9 +6,8 @@ SCRIPT=$(realpath $0)
 SCRIPTPATH=$(dirname "$SCRIPT")
 cd "$SCRIPTPATH/../jse/"
 
-git checkout v1.1.1
+git checkout v1.2
 gradle clean proguard
-mv carballo-1.1.jar carballo-1.1.1.jar
 
 git checkout v1.1
 gradle clean proguard
