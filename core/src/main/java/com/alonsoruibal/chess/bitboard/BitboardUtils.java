@@ -22,23 +22,6 @@ public class BitboardUtils {
 	public static final long b2_r = 0x0303030303030303L; // right
 	public static final long b2_l = 0xC0C0C0C0C0C0C0C0L; // left
 
-	public static final long b3_d = 0x0000000000ffffffL; // down
-	public static final long b3_u = 0xffffff0000000000L; // up
-
-	public static final long r2_d = 0x000000000000ff00L; // rank 2 down
-	public static final long r2_u = 0x00ff000000000000L; // up
-
-	public static final long r3_d = 0x0000000000ff0000L; // rank 3 down
-	public static final long r3_u = 0x0000ff0000000000L; // up
-
-	// Board centers (for evaluation)
-	public static final long c4 = 0x0000001818000000L; // center (4 squares)
-	public static final long c16 = 0x00003C3C3C3C0000L; // center (16 squares)
-	public static final long c36 = 0x007E7E7E7E7E7E00L; // center (36 squares)
-
-	public static final long r4 = 0xC3C300000000C3C3L; // corners (4 squares)
-	public static final long r9 = 0xE7E7E70000E7E7E7L; // corners (9 squares)
-
 	// 0 is a, 7 is g
 	public static final long[] COLUMN = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
 	public static final long[] COLUMNS_ADJACENTS = { //
@@ -74,8 +57,7 @@ public class BitboardUtils {
 			0 //
 	};
 
-	// 0 is 1, 7 is 8
-	public static final long[] RANK = {b_d, b_d << 8, b_d << 16, b_d << 24, b_d << 32, b_d << 40, b_d << 48, b_d << 56};
+	public static final long[] RANK = {b_d, b_d << 8, b_d << 16, b_d << 24, b_d << 32, b_d << 40, b_d << 48, b_d << 56}; // 0 is 1, 7 is 8
 	public static final long[] RANKS_UPWARDS = { //
 			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
 			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //

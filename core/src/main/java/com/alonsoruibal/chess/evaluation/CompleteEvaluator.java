@@ -232,11 +232,11 @@ public class CompleteEvaluator extends Evaluator {
 		pawnMaterial[0] = PAWN * whitePawns;
 		pawnMaterial[1] = PAWN * blackPawns;
 		material[0] = (KNIGHT + knightKaufBonusWhite) * whiteKnights + BISHOP * whiteBishops + (ROOK + rookKaufBonusWhite) * whiteRooks + QUEEN * whiteQueens + //
-				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
-						(board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
+						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 		material[1] = (KNIGHT + knightKaufBonusBlack) * blackKnights + BISHOP * blackBishops + (ROOK + rookKaufBonusBlack) * blackRooks + QUEEN * blackQueens + //
-				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 && //
-						(board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
+						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 
 		center[0] = 0;
 		center[1] = 0;
@@ -276,7 +276,7 @@ public class CompleteEvaluator extends Evaluator {
 		attacksInfo.build(board);
 
 		long all = board.getAll();
-		long pieceAttacks, pieceAttacksXray, auxLong;
+		long pieceAttacks, pieceAttacksXray;
 		long square = 1;
 		for (int index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
@@ -308,20 +308,25 @@ public class CompleteEvaluator extends Evaluator {
 					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentColumns & myPawns;
 					long myPawnsAheadAdjacent = ranksForward & adjacentColumns & myPawns;
 					long otherPawnsAheadAdjacent = ranksForward & adjacentColumns & otherPawns;
-					long myPawnAttacks = isWhite ? pawnAttacks[0] : pawnAttacks[1];
 
 					boolean isolated = (myPawns & adjacentColumns) == 0;
-					boolean supported = (square & myPawnAttacks) != 0;
+					boolean supported = (square & pawnAttacks[color]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
 					boolean opposed = (otherPawns & routeToPromotion) != 0;
-					boolean passed = !doubled && !opposed && (otherPawnsAheadAdjacent == 0);
-					boolean candidate = !doubled && !opposed && !passed &&
-							(((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
+					boolean passed = !doubled
+							&& !opposed
+							&& otherPawnsAheadAdjacent == 0;
+					boolean candidate = !doubled
+							&& !opposed
+							&& !passed
+							&& (((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
 									(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
-					boolean backwards = !isolated && !passed && !candidate &&
-							myPawnsBesideAndBehindAdjacent == 0 &&
-							(pieceAttacks & otherPawns) == 0 && // No backwards if it can capture
-							(BitboardUtils.RANK_AND_BACKWARD[color][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
+					boolean backwards = !isolated
+							&& !passed
+							&& !candidate
+							&& myPawnsBesideAndBehindAdjacent == 0
+							&& (pieceAttacks & otherPawns) == 0 // No backwards if it can capture
+							&& (BitboardUtils.RANK_AND_BACKWARD[color][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
 									routeToPromotion & (board.pawns | otherPawnAttacks)) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
 					if (debug) {
@@ -342,7 +347,8 @@ public class CompleteEvaluator extends Evaluator {
 						);
 					}
 
-					if (!supported && !isolated) {
+					if (!supported
+							&& !isolated) {
 						pawnStructure[color] += PAWN_UNSUPPORTED;
 					}
 					if (doubled) {
@@ -368,10 +374,12 @@ public class CompleteEvaluator extends Evaluator {
 						long pawnsLeft = BitboardUtils.ROWS_LEFT[column] & board.pawns;
 						long pawnsRight = BitboardUtils.ROWS_RIGHT[column] & board.pawns;
 
-						boolean connected = ((bbAttacks.king[index] & adjacentColumns & myPawns) != 0);
+						boolean connected = (bbAttacks.king[index] & adjacentColumns & myPawns) != 0;
 						boolean outside = ((pawnsLeft != 0) && (pawnsRight == 0)) || ((pawnsLeft == 0) && (pawnsRight != 0));
-						boolean mobile = ((pushSquare & (all | attackedAndNotDefendedRoute)) == 0);
-						boolean runner = mobile && ((routeToPromotion & all) == 0) && (attackedAndNotDefendedRoute == 0);
+						boolean mobile = (pushSquare & (all | attackedAndNotDefendedRoute)) == 0;
+						boolean runner = mobile
+								&& (routeToPromotion & all) == 0
+								&& attackedAndNotDefendedRoute == 0;
 
 						if (debug) {
 							debugSB.append("        PASSER " + //
@@ -459,10 +467,11 @@ public class CompleteEvaluator extends Evaluator {
 					if ((pieceAttacks & mines & board.rooks) != 0) {
 						positional[color] += ROOK_CONNECT;
 					}
-					auxLong = BitboardUtils.COLUMN[column];
-					if ((auxLong & board.pawns) == 0) {
+
+					long rookColumn = BitboardUtils.COLUMN[column];
+					if ((rookColumn & board.pawns) == 0) {
 						positional[color] += ROOK_COLUMN_OPEN;
-					} else if ((auxLong & board.pawns & mines) == 0) {
+					} else if ((rookColumn & board.pawns & mines) == 0) {
 						positional[color] += ROOK_COLUMN_SEMIOPEN;
 					}
 
@@ -486,7 +495,7 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.kings) != 0) {
 					center[color] += kingPcsq[pcsqIndex];
 
-					// If king is in the first rank, we add the pawn shield
+					// If king is in the first or second rank, we add the pawn shield
 					if ((square & (isWhite ? BitboardUtils.RANK[0] | BitboardUtils.RANK[1] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
 						kingDefense[color] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
