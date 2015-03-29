@@ -1,8 +1,5 @@
 package com.alonsoruibal.chess.bitboard;
 
-/**
- * @author rui
- */
 public class BitboardUtils {
 	public static final long A8 = 0x8000000000000000L;
 	public static final long H1 = 0x0000000000000001L;
@@ -23,37 +20,37 @@ public class BitboardUtils {
 	public static final long b2_l = 0xC0C0C0C0C0C0C0C0L; // left
 
 	// 0 is a, 7 is g
-	public static final long[] COLUMN = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
-	public static final long[] COLUMNS_ADJACENTS = { //
-			COLUMN[1], //
-			COLUMN[0] | COLUMN[2], //
-			COLUMN[1] | COLUMN[3], //
-			COLUMN[2] | COLUMN[4], //
-			COLUMN[3] | COLUMN[5], //
-			COLUMN[4] | COLUMN[6], //
-			COLUMN[5] | COLUMN[7], //
-			COLUMN[6] //
+	public static final long[] FILE = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
+	public static final long[] FILES_ADJACENT = { //
+			FILE[1], //
+			FILE[0] | FILE[2], //
+			FILE[1] | FILE[3], //
+			FILE[2] | FILE[4], //
+			FILE[3] | FILE[5], //
+			FILE[4] | FILE[6], //
+			FILE[5] | FILE[7], //
+			FILE[6] //
 	};
 
-	public static final long[] ROWS_LEFT = { //
+	public static final long[] FILES_LEFT = { //
 			0, //
-			COLUMN[0], //
-			COLUMN[0] | COLUMN[1], //
-			COLUMN[0] | COLUMN[1] | COLUMN[2], //
-			COLUMN[0] | COLUMN[1] | COLUMN[2] | COLUMN[3], //
-			COLUMN[0] | COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4], //
-			COLUMN[0] | COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5], //
-			COLUMN[0] | COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] //
+			FILE[0], //
+			FILE[0] | FILE[1], //
+			FILE[0] | FILE[1] | FILE[2], //
+			FILE[0] | FILE[1] | FILE[2] | FILE[3], //
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4], //
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5], //
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] //
 	};
 
-	public static final long[] ROWS_RIGHT = { //
-			COLUMN[1] | COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
-			COLUMN[2] | COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
-			COLUMN[3] | COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
-			COLUMN[4] | COLUMN[5] | COLUMN[6] | COLUMN[7], //
-			COLUMN[5] | COLUMN[6] | COLUMN[7], //
-			COLUMN[6] | COLUMN[7], //
-			COLUMN[7], //
+	public static final long[] FILES_RIGHT = { //
+			FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
+			FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
+			FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
+			FILE[4] | FILE[5] | FILE[6] | FILE[7], //
+			FILE[5] | FILE[6] | FILE[7], //
+			FILE[6] | FILE[7], //
+			FILE[7], //
 			0 //
 	};
 
@@ -250,15 +247,15 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * gets the column (0..7) of the square
+	 * Gets the file (0..7) for (a..h) of the square
 	 *
 	 * @param square
 	 * @return
 	 */
-	public static int getColumn(long square) {
-		for (int column = 0; column < 8; column++) {
-			if ((COLUMN[column] & square) != 0) {
-				return column;
+	public static int getFile(long square) {
+		for (int file = 0; file < 8; file++) {
+			if ((FILE[file] & square) != 0) {
+				return file;
 			}
 		}
 		return 0;
@@ -282,7 +279,7 @@ public class BitboardUtils {
 		return 0;
 	}
 
-	public static int getColumnOfIndex(int index) {
+	public static int getFileOfIndex(int index) {
 		return 7 - index & 7;
 	}
 

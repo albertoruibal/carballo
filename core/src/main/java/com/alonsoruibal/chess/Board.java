@@ -394,18 +394,18 @@ public class Board {
 						possibleCastlingRookSquares[3] = whiteKingLateralSquares[3];
 						break;
 					default:
-						// Shredder-FEN receives the name of the column where the castling rook is
-						int whiteColumn = "ABCDEFGH".indexOf(c);
-						int blackColumn = "abcdefgh".indexOf(c);
-						if (whiteColumn >= 0) {
-							long rookSquare = BitboardUtils.b_d & BitboardUtils.COLUMN[whiteColumn];
+						// Shredder-FEN receives the name of the file where the castling rook is
+						int whiteFile = "ABCDEFGH".indexOf(c);
+						int blackFile = "abcdefgh".indexOf(c);
+						if (whiteFile >= 0) {
+							long rookSquare = BitboardUtils.b_d & BitboardUtils.FILE[whiteFile];
 							if ((rookSquare & whiteKingLateralSquares[0]) != 0) {
 								possibleCastlingRookSquares[0] = rookSquare;
 							} else if ((rookSquare & whiteKingLateralSquares[1]) != 0) {
 								possibleCastlingRookSquares[1] = rookSquare;
 							}
-						} else if (blackColumn >= 0) {
-							long rookSquare = BitboardUtils.b_u & BitboardUtils.COLUMN[blackColumn];
+						} else if (blackFile >= 0) {
+							long rookSquare = BitboardUtils.b_u & BitboardUtils.FILE[blackFile];
 							if ((rookSquare & whiteKingLateralSquares[2]) != 0) {
 								possibleCastlingRookSquares[2] = rookSquare;
 							} else if ((rookSquare & whiteKingLateralSquares[3]) != 0) {
@@ -636,7 +636,7 @@ public class Board {
 
 		// Remove passant flags: from the zobrist key
 		if ((flags & FLAGS_PASSANT) != 0) {
-			key[1 - color] ^= ZobristKey.passantColumn[BitboardUtils.getColumn(flags & FLAGS_PASSANT)];
+			key[1 - color] ^= ZobristKey.passantFile[BitboardUtils.getFile(flags & FLAGS_PASSANT)];
 		}
 		// and from the flags
 		flags &= ~FLAGS_PASSANT;
@@ -678,7 +678,7 @@ public class Board {
 						flags |= (from >>> 8);
 					}
 					if ((flags & FLAGS_PASSANT) != 0) {
-						key[color] ^= ZobristKey.passantColumn[BitboardUtils.getColumn(flags & FLAGS_PASSANT)];
+						key[color] ^= ZobristKey.passantFile[BitboardUtils.getFile(flags & FLAGS_PASSANT)];
 					}
 
 					if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_BISHOP
@@ -969,13 +969,13 @@ public class Board {
 	 */
 	public boolean isPassedPawn(int index) {
 		int rank = index >> 3;
-		int column = 7 - index & 7;
+		int file = 7 - index & 7;
 		long square = 0x1L << index;
 
 		if ((whites & square) != 0) {
-			return ((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) & BitboardUtils.RANKS_UPWARDS[rank] & pawns & blacks) == 0;
+			return ((BitboardUtils.FILE[file] | BitboardUtils.FILES_ADJACENT[file]) & BitboardUtils.RANKS_UPWARDS[rank] & pawns & blacks) == 0;
 		} else if ((blacks & square) != 0) {
-			return ((BitboardUtils.COLUMN[column] | BitboardUtils.COLUMNS_ADJACENTS[column]) & BitboardUtils.RANKS_DOWNWARDS[rank] & pawns & whites) == 0;
+			return ((BitboardUtils.FILE[file] | BitboardUtils.FILES_ADJACENT[file]) & BitboardUtils.RANKS_DOWNWARDS[rank] & pawns & whites) == 0;
 		}
 		return false;
 	}

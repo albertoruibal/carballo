@@ -143,33 +143,33 @@ public class ZobristKeyFen {
 		castleFlags = tokens[2];
 		enPassantSquare = tokens[3];
 
-		int row = 7;
-		int column = 0;
+		int rank = 7;
+		int file = 0;
 		int p = 0;
 		while (true) {
 			if (p >= boardString.length())
 				break;
 			pieceChar = boardString.charAt(p++);
 			if (pieceChar == '/') {
-				row--;
-				column = 0;
+				rank--;
+				file = 0;
 				continue;
 			}
 			if (('1' <= pieceChar) && ('8' >= pieceChar)) {
 				for (i = 0; i <= pieceChar - '1'; i++) {
-					board[column++][row] = '-';
+					board[file++][rank] = '-';
 				}
 				continue;
 			}
-			board[column++][row] = pieceChar;
+			board[file++][rank] = pieceChar;
 		}
 
-		for (column = 0; column <= 7; column++) {
-			for (row = 0; row <= 7; row++) {
-				pieceChar = board[column][row];
+		for (file = 0; file <= 7; file++) {
+			for (rank = 0; rank <= 7; rank++) {
+				pieceChar = board[file][rank];
 				if (pieceChar != '-') {
 					pieceEncode = pieceNames.indexOf(pieceChar);
-					key ^= random64[64 * pieceEncode + 8 * row + column];
+					key ^= random64[64 * pieceEncode + 8 * rank + file];
 				}
 			}
 		}
@@ -197,14 +197,14 @@ public class ZobristKeyFen {
 		}
 		// EnPassant Flag is only set if pawn can capture
 		if (!"-".equals(enPassantSquare)) {
-			column = enPassantSquare.charAt(0) - 'a';
+			file = enPassantSquare.charAt(0) - 'a';
 			if ("b".equals(turn)) {
-				if ((column > 0 && board[column - 1][3] == 'p') || (column < 7 && board[column + 1][3] == 'p')) {
-					key ^= random64[randomEnPassantOffset + column];
+				if ((file > 0 && board[file - 1][3] == 'p') || (file < 7 && board[file + 1][3] == 'p')) {
+					key ^= random64[randomEnPassantOffset + file];
 				}
 			} else {
-				if ((column > 0 && board[column - 1][4] == 'P') || (column < 7 && board[column + 1][4] == 'P')) {
-					key ^= random64[randomEnPassantOffset + column];
+				if ((file > 0 && board[file - 1][4] == 'P') || (file < 7 && board[file + 1][4] == 'P')) {
+					key ^= random64[randomEnPassantOffset + file];
 				}
 			}
 		}
@@ -263,7 +263,7 @@ public class ZobristKeyFen {
 //		System.out.println("public static final long blackQueenSideCastling = 0x" + Long.toHexString(random64[randomCastleOffset + 3]) + "L;");
 //
 //		// passant flags only when pawn can capture
-//		System.out.print("public static final long passantColumn[] = {");
+//		System.out.print("public static final long passantFile[] = {");
 //		for (column = 0; column < 8; column++) {
 //			System.out.print("0x" + Long.toHexString(random64[randomEnPassantOffset + column]) + "L, ");
 //		}

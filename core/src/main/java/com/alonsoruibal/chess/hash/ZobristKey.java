@@ -22,7 +22,7 @@ public class ZobristKey {
 	public static final long whiteQueenSideCastling = 0xf165b587df898190L;
 	public static final long blackKingSideCastling = 0xa57e6339dd2cf3a0L;
 	public static final long blackQueenSideCastling = 0x1ef6e6dbb1961ec9L;
-	public static final long[] passantColumn = {0x70cc73d90bc26e24L, 0xe21a6b35df0c3ad7L, 0x3a93d8b2806962L, 0x1c99ded33cb890a1L, 0xcf3145de0add4289L, 0xd0e4427a5514fb72L, 0x77c621cc9fb3a483L, 0x67a34dac4356550bL,};
+	public static final long[] passantFile = {0x70cc73d90bc26e24L, 0xe21a6b35df0c3ad7L, 0x3a93d8b2806962L, 0x1c99ded33cb890a1L, 0xcf3145de0add4289L, 0xd0e4427a5514fb72L, 0x77c621cc9fb3a483L, 0x67a34dac4356550bL,};
 	public static final long whiteMove = 0xf8d626aaaf278509L;
 
 	/**
@@ -81,7 +81,7 @@ public class ZobristKey {
 				(((!board.getTurn() && (((passant << 9) | (passant << 7)) & board.blacks & board.pawns) != 0)) ||
 						((board.getTurn() && (((passant >>> 9) | (passant >>> 7)) & board.whites & board.pawns) != 0)))) {
 			color = board.getTurn() ? 0 : 1; // TODO test
-			key[1 - color] ^= passantColumn[BitboardUtils.getColumn(passant)];
+			key[1 - color] ^= passantFile[BitboardUtils.getFile(passant)];
 		}
 		if (board.getTurn()) key[0] ^= whiteMove;
 		return key;

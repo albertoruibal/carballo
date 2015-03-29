@@ -243,7 +243,7 @@ public class Move {
 			char disambiguate = move.charAt(0);
 			int i = "abcdefgh".indexOf(disambiguate);
 			if (i >= 0) {
-				from &= BitboardUtils.COLUMN[i];
+				from &= BitboardUtils.FILE[i];
 			}
 			int j = "12345678".indexOf(disambiguate);
 			if (j >= 0) {
@@ -375,8 +375,8 @@ public class Move {
 
 		boolean isLegal = false;
 		boolean disambiguate = false;
-		boolean colEqual = false;
-		boolean rowEqual = false;
+		boolean fileEqual = false;
+		boolean rankEqual = false;
 		for (int i = 0; i < board.legalMoveCount; i++) {
 			int move2 = board.legalMoves[i];
 			if (move == move2) {
@@ -384,10 +384,10 @@ public class Move {
 			} else if (getToIndex(move) == getToIndex(move2) && (getPieceMoved(move) == getPieceMoved(move2))) {
 				disambiguate = true;
 				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8)) {
-					colEqual = true;
+					fileEqual = true;
 				}
 				if ((getFromIndex(move) / 8) == (getFromIndex(move2) / 8)) {
-					rowEqual = true;
+					rankEqual = true;
 				}
 			}
 		}
@@ -410,9 +410,9 @@ public class Move {
 		}
 
 		if (disambiguate) {
-			if (colEqual && rowEqual) {
+			if (fileEqual && rankEqual) {
 				sb.append(fromSq);
-			} else if (colEqual && !rowEqual) {
+			} else if (fileEqual && !rankEqual) {
 				sb.append(fromSq.charAt(1));
 			} else {
 				sb.append(fromSq.charAt(0));

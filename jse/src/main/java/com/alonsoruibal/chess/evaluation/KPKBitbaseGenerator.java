@@ -39,7 +39,7 @@ public class KPKBitbaseGenerator {
 	int index(boolean whitetoMove, int blackKingIndex, int whiteKingIndex, int pawnIndex) {
 		return whiteKingIndex + (blackKingIndex << 6) + //
 				((whitetoMove ? 1 : 0) << 12) + //
-				(BitboardUtils.getColumnOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
+				(BitboardUtils.getFileOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
 	}
 
 	class KPKPosition {

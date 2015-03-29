@@ -153,7 +153,7 @@ public class KPKBitbase {
 	int index(boolean whitetoMove, int blackKingIndex, int whiteKingIndex, int pawnIndex) {
 		return whiteKingIndex + (blackKingIndex << 6) + //
 				((whitetoMove ? 1 : 0) << 12) + //
-				(BitboardUtils.getColumnOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
+				(BitboardUtils.getFileOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
 	}
 
 	public boolean probe(int whiteKingIndex, int whitePawnIndex, int blackKingIndex, boolean whiteToMove) {
@@ -176,7 +176,7 @@ public class KPKBitbase {
 			pawnIndex = 63 - pawnIndex;
 			whiteToMove = !whiteToMove;
 		}
-		if (BitboardUtils.getColumnOfIndex(pawnIndex) > 3) {
+		if (BitboardUtils.getFileOfIndex(pawnIndex) > 3) {
 			// flip horizontal
 			whiteKingIndex = BitboardUtils.flipHorizontalIndex(whiteKingIndex);
 			blackKingIndex = BitboardUtils.flipHorizontalIndex(blackKingIndex);

@@ -40,8 +40,8 @@ public class CompleteEvaluator extends Evaluator {
 	// Rooks
 	private final static int ROOK_M_UNITS = 7;
 	private final static int ROOK_M = oe(2, 4);
-	private final static int ROOK_COLUMN_OPEN = oe(25, 20); // No pawns in rook column
-	private final static int ROOK_COLUMN_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook column
+	private final static int ROOK_FILE_OPEN = oe(25, 20); // No pawns in rook file
+	private final static int ROOK_FILE_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook file
 	private final static int ROOK_CONNECT = oe(20, 10); // Rook connects with other rook x 2
 	private final static int ROOK_KAUF_BONUS = -12;
 
@@ -287,7 +287,7 @@ public class CompleteEvaluator extends Evaluator {
 				long otherPawnAttacks = (isWhite ? pawnAttacks[1] : pawnAttacks[0]);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
-				int column = 7 - index & 7;
+				int file = 7 - index & 7;
 
 				pieceAttacks = attacksInfo.attacksFromSquare[index];
 
@@ -302,14 +302,14 @@ public class CompleteEvaluator extends Evaluator {
 
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
-					long adjacentColumns = BitboardUtils.COLUMNS_ADJACENTS[column];
+					long adjacentFiles = BitboardUtils.FILES_ADJACENT[file];
 					long ranksForward = BitboardUtils.RANKS_FORWARD[color][rank];
-					long routeToPromotion = BitboardUtils.COLUMN[column] & ranksForward;
-					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentColumns & myPawns;
-					long myPawnsAheadAdjacent = ranksForward & adjacentColumns & myPawns;
-					long otherPawnsAheadAdjacent = ranksForward & adjacentColumns & otherPawns;
+					long routeToPromotion = BitboardUtils.FILE[file] & ranksForward;
+					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentFiles & myPawns;
+					long myPawnsAheadAdjacent = ranksForward & adjacentFiles & myPawns;
+					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
 
-					boolean isolated = (myPawns & adjacentColumns) == 0;
+					boolean isolated = (myPawns & adjacentFiles) == 0;
 					boolean supported = (square & pawnAttacks[color]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
 					boolean opposed = (otherPawns & routeToPromotion) != 0;
@@ -330,7 +330,7 @@ public class CompleteEvaluator extends Evaluator {
 									routeToPromotion & (board.pawns | otherPawnAttacks)) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
 					if (debug) {
-						boolean connected = ((bbAttacks.king[index] & adjacentColumns & myPawns) != 0);
+						boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
 						debugSB.append("PAWN " + //
 										index + //
 										(color == 0 ? " WHITE " : " BLACK ") + //
@@ -365,16 +365,16 @@ public class CompleteEvaluator extends Evaluator {
 					}
 					if (passed) {
 						int relativeRank = isWhite ? rank : 7 - rank;
-						long backColumn = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_BACKWARD[color][rank];
+						long backFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[color][rank];
 						// If has has root/queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
-								((routeToPromotion & attacksInfo.attackedSquares[1 - color]) | ((backColumn & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
-										~((routeToPromotion & attacksInfo.attackedSquares[color]) | ((backColumn & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
+								((routeToPromotion & attacksInfo.attackedSquares[1 - color]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
+										~((routeToPromotion & attacksInfo.attackedSquares[color]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
 						long pushSquare = isWhite ? square << 8 : square >>> 8;
-						long pawnsLeft = BitboardUtils.ROWS_LEFT[column] & board.pawns;
-						long pawnsRight = BitboardUtils.ROWS_RIGHT[column] & board.pawns;
+						long pawnsLeft = BitboardUtils.FILES_LEFT[file] & board.pawns;
+						long pawnsRight = BitboardUtils.FILES_RIGHT[file] & board.pawns;
 
-						boolean connected = (bbAttacks.king[index] & adjacentColumns & myPawns) != 0;
+						boolean connected = (bbAttacks.king[index] & adjacentFiles & myPawns) != 0;
 						boolean outside = ((pawnsLeft != 0) && (pawnsRight == 0)) || ((pawnsLeft == 0) && (pawnsRight != 0));
 						boolean mobile = (pushSquare & (all | attackedAndNotDefendedRoute)) == 0;
 						boolean runner = mobile
@@ -468,11 +468,11 @@ public class CompleteEvaluator extends Evaluator {
 						positional[color] += ROOK_CONNECT;
 					}
 
-					long rookColumn = BitboardUtils.COLUMN[column];
-					if ((rookColumn & board.pawns) == 0) {
-						positional[color] += ROOK_COLUMN_OPEN;
-					} else if ((rookColumn & board.pawns & mines) == 0) {
-						positional[color] += ROOK_COLUMN_SEMIOPEN;
+					long rookFile = BitboardUtils.FILE[file];
+					if ((rookFile & board.pawns) == 0) {
+						positional[color] += ROOK_FILE_OPEN;
+					} else if ((rookFile & board.pawns & mines) == 0) {
+						positional[color] += ROOK_FILE_SEMIOPEN;
 					}
 
 				} else if ((square & board.queens) != 0) {

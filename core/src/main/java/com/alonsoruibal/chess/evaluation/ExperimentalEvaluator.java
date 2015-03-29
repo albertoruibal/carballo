@@ -56,12 +56,12 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int ROOK_ATTACKS_PU_P = oe(2, 3); // Attacks pawn not defended by pawn (PU=Pawn Undefended)
 	private final static int ROOK_ATTACKS_PU_BK = oe(4, 5); // Attacks bishop or knight not defended by pawn
 	private final static int ROOK_ATTACKS_Q = oe(5, 5); // Attacks queen
-	private final static int ROOK_COLUMN_OPEN_NO_MG = oe(20, 10); // No pawns in rook column and no minor guarded
-	private final static int ROOK_COLUMN_OPEN_MG_NP = oe(10, 0); // No pawns in rook column and minor guarded, my pawns cannot attack
-	private final static int ROOK_COLUMN_OPEN_MG_P = oe(15, 5); // No pawns in rook column and minor guarded, my pawns can attack
-	private final static int ROOK_COLUMN_SEMIOPEN = oe(3, 6); // No pawns mines in column
-	private final static int ROOK_COLUMN_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
-	private final static int ROOK_COLUMN_SEMIOPEN_K = oe(3, 6); // No pawns mines in column and opposite king
+	private final static int ROOK_FILE_OPEN_NO_MG = oe(20, 10); // No pawns in rook file and no minor guarded
+	private final static int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
+	private final static int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
+	private final static int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
+	private final static int ROOK_FILE_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
+	private final static int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
 	private final static int ROOK_8_KING_8 = oe(5, 10); // Rook in 8th rank and opposite king in 8th rank
 	private final static int ROOK_7_KP_78 = oe(10, 30); // Rook in 7th rank and opposite king or pawn in 7/8th rank
 	private final static int ROOK_7_P_78_K_8_RQ_7 = oe(10, 20); // Rook in 7th rank and opposite king in 8th and attacked opposite queen or rook on 7th
@@ -321,7 +321,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				long otherPawnAttacks = (isWhite ? pawnAttacks[1] : pawnAttacks[0]);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
-				int column = 7 - index & 7;
+				int file = 7 - index & 7;
 
 				pieceAttacks = attacksInfo.attacksFromSquare[index];
 
@@ -336,14 +336,14 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
-					long adjacentColumns = BitboardUtils.COLUMNS_ADJACENTS[column];
+					long adjacentFiles = BitboardUtils.FILES_ADJACENT[file];
 					long ranksForward = BitboardUtils.RANKS_FORWARD[color][rank];
-					long routeToPromotion = BitboardUtils.COLUMN[column] & ranksForward;
-					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentColumns & myPawns;
-					long myPawnsAheadAdjacent = ranksForward & adjacentColumns & myPawns;
-					long otherPawnsAheadAdjacent = ranksForward & adjacentColumns & otherPawns;
+					long routeToPromotion = BitboardUtils.FILE[file] & ranksForward;
+					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[color][rank] & adjacentFiles & myPawns;
+					long myPawnsAheadAdjacent = ranksForward & adjacentFiles & myPawns;
+					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
 
-					boolean isolated = (myPawns & adjacentColumns) == 0;
+					boolean isolated = (myPawns & adjacentFiles) == 0;
 					boolean supported = (square & pawnAttacks[color]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
 					boolean opposed = (otherPawns & routeToPromotion) != 0;
@@ -364,7 +364,7 @@ public class ExperimentalEvaluator extends Evaluator {
 									routeToPromotion & (board.pawns | otherPawnAttacks)) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
 					if (debug) {
-						boolean connected = ((bbAttacks.king[index] & adjacentColumns & myPawns) != 0);
+						boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
 						debugSB.append("PAWN " + //
 										index + //
 										(color == 0 ? " WHITE " : " BLACK ") + //
@@ -399,16 +399,16 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 					if (passed) {
 						int relativeRank = isWhite ? rank : 7 - rank;
-						long backColumn = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_BACKWARD[color][rank];
+						long backFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[color][rank];
 						// If has has root/queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
-								((routeToPromotion & attacksInfo.attackedSquares[1 - color]) | ((backColumn & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
-										~((routeToPromotion & attacksInfo.attackedSquares[color]) | ((backColumn & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
+								((routeToPromotion & attacksInfo.attackedSquares[1 - color]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
+										~((routeToPromotion & attacksInfo.attackedSquares[color]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
 						long pushSquare = isWhite ? square << 8 : square >>> 8;
-						long pawnsLeft = BitboardUtils.ROWS_LEFT[column] & board.pawns;
-						long pawnsRight = BitboardUtils.ROWS_RIGHT[column] & board.pawns;
+						long pawnsLeft = BitboardUtils.FILES_LEFT[file] & board.pawns;
+						long pawnsRight = BitboardUtils.FILES_RIGHT[file] & board.pawns;
 
-						boolean connected = (bbAttacks.king[index] & adjacentColumns & myPawns) != 0;
+						boolean connected = (bbAttacks.king[index] & adjacentFiles & myPawns) != 0;
 						boolean outside = ((pawnsLeft != 0) && (pawnsRight == 0)) || ((pawnsLeft == 0) && (pawnsRight != 0));
 						boolean mobile = (pushSquare & (all | attackedAndNotDefendedRoute)) == 0;
 						boolean runner = mobile
@@ -587,28 +587,28 @@ public class ExperimentalEvaluator extends Evaluator {
 						positional[color] += ROOK_6_KP_678;
 					}
 
-					long rookColumn = BitboardUtils.COLUMN[column] & BitboardUtils.RANKS_FORWARD[color][rank];
-					if ((rookColumn & board.pawns & mines) == 0) {
-						positional[color] += ROOK_COLUMN_SEMIOPEN;
-						if ((rookColumn & board.pawns) == 0) {
-							if ((rookColumn & minorPiecesDefendedByPawns[1 - color]) == 0) {
-								positional[color] += ROOK_COLUMN_OPEN_NO_MG;
+					long rookFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_FORWARD[color][rank];
+					if ((rookFile & board.pawns & mines) == 0) {
+						positional[color] += ROOK_FILE_SEMIOPEN;
+						if ((rookFile & board.pawns) == 0) {
+							if ((rookFile & minorPiecesDefendedByPawns[1 - color]) == 0) {
+								positional[color] += ROOK_FILE_OPEN_NO_MG;
 							} else {
-								if ((rookColumn & minorPiecesDefendedByPawns[1 - color] & pawnCanAttack[color]) == 0) {
-									positional[color] += ROOK_COLUMN_OPEN_MG_NP;
+								if ((rookFile & minorPiecesDefendedByPawns[1 - color] & pawnCanAttack[color]) == 0) {
+									positional[color] += ROOK_FILE_OPEN_MG_NP;
 								} else {
-									positional[color] += ROOK_COLUMN_OPEN_MG_P;
+									positional[color] += ROOK_FILE_OPEN_MG_P;
 								}
 							}
 						} else {
 							// There is an opposite backward pawn
-							if ((rookColumn & board.pawns & others & pawnCanAttack[1 - color]) == 0) {
-								positional[color] += ROOK_COLUMN_SEMIOPEN_BP;
+							if ((rookFile & board.pawns & others & pawnCanAttack[1 - color]) == 0) {
+								positional[color] += ROOK_FILE_SEMIOPEN_BP;
 							}
 						}
 
-						if ((rookColumn & board.kings & others) != 0) {
-							positional[color] += ROOK_COLUMN_SEMIOPEN_K;
+						if ((rookFile & board.kings & others) != 0) {
+							positional[color] += ROOK_FILE_SEMIOPEN_K;
 						}
 					}
 					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
