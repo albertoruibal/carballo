@@ -115,25 +115,25 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
 	private final static int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, oe(7, 7), oe(7, 7), oe(10, 10), oe(10, 10), oe(7, 7), oe(7, 7), 0, //
-			0, oe(5, 5), oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), oe(5, 5), 0, //
-			0, 0, oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0 //
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, oe(7, 7), oe(7, 7), oe(10, 10), oe(10, 10), oe(7, 7), oe(7, 7), 0,
+			0, oe(5, 5), oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), oe(5, 5), 0,
+			0, 0, oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0
 	};
 
-	private final static long[] BISHOP_TRAPPING = { //
-			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0, //
-			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22, //
-			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38, //
-			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46, //
-			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0 //
+	private final static long[] BISHOP_TRAPPING = {
+			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
+			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
+			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38,
+			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46,
+			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0
 	};
 
 	private final static int pawnPcsq[] = {
