@@ -294,7 +294,7 @@ public class CompleteEvaluator extends Evaluator {
 				if ((square & board.pawns) != 0) {
 					center[color] += pawnPcsq[pcsqIndex];
 
-					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
+					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += PAWN_ATTACKS_KING;
 					}
 
@@ -414,7 +414,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - KNIGHT_M_UNITS, KNIGHT_M);
 
-					if ((pieceAttacks & squaresNearKing[color]) != 0) {
+					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += KNIGHT_ATTACKS_KING;
 						kingAttackersCount[color]++;
 					}
@@ -431,7 +431,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - BISHOP_M_UNITS, BISHOP_M);
 
-					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
+					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += BISHOP_ATTACKS_KING;
 						kingAttackersCount[color]++;
 					}
@@ -452,7 +452,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - ROOK_M_UNITS, ROOK_M);
 
-					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
+					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += ROOK_ATTACKS_KING;
 						kingAttackersCount[color]++;
 					}
@@ -480,7 +480,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[color] += oeMul(BitboardUtils.popCount(pieceAttacks & ~mines & ~otherPawnAttacks) - QUEEN_M_UNITS, QUEEN_M);
 
-					if ((pieceAttacks & squaresNearKing[1 - color]) != 0) {
+					if ((pieceAttacks & squaresNearKing[1 - color] & ~otherPawnAttacks) != 0) {
 						kingSafety[color] += QUEEN_ATTACKS_KING;
 						kingAttackersCount[color]++;
 					}
