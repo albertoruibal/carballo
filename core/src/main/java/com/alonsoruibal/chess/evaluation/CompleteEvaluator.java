@@ -9,10 +9,6 @@ import com.alonsoruibal.chess.util.StringUtils;
 
 /**
  * Evaluation is done in centipawns
- * <p/>
- * Material imbalances from Larry KaufMan:
- * http://home.comcast.net/~danheisman/Articles/evaluation_of_material_imbalance.htm
- * <p/>
  * Piece/square values like Fruit/Toga
  *
  * @author rui
@@ -35,7 +31,6 @@ public class CompleteEvaluator extends Evaluator {
 	// Knights
 	private final static int KNIGHT_M_UNITS = 4;
 	private final static int KNIGHT_M = oe(4, 4);
-	private final static int KNIGHT_KAUF_BONUS = 7;
 
 	// Rooks
 	private final static int ROOK_M_UNITS = 7;
@@ -43,7 +38,6 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int ROOK_FILE_OPEN = oe(25, 20); // No pawns in rook file
 	private final static int ROOK_FILE_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook file
 	private final static int ROOK_CONNECT = oe(20, 10); // Rook connects with other rook x 2
-	private final static int ROOK_KAUF_BONUS = -12;
 
 	// Queen
 	private final static int QUEEN_M_UNITS = 13;
@@ -221,20 +215,12 @@ public class CompleteEvaluator extends Evaluator {
 			return endGameValue;
 		}
 
-		// From material imbalances (Larry Kaufmann):
-		// A further refinement would be to raise the knight's value by 1/16 and lower the rook's value by 1/8
-		// for each pawn above five of the side being valued, with the opposite adjustment for each pawn short of five
-		int knightKaufBonusWhite = KNIGHT_KAUF_BONUS * (whitePawns - 5);
-		int knightKaufBonusBlack = KNIGHT_KAUF_BONUS * (blackPawns - 5);
-		int rookKaufBonusWhite = ROOK_KAUF_BONUS * (whitePawns - 5);
-		int rookKaufBonusBlack = ROOK_KAUF_BONUS * (blackPawns - 5);
-
 		pawnMaterial[0] = PAWN * whitePawns;
 		pawnMaterial[1] = PAWN * blackPawns;
-		material[0] = (KNIGHT + knightKaufBonusWhite) * whiteKnights + BISHOP * whiteBishops + (ROOK + rookKaufBonusWhite) * whiteRooks + QUEEN * whiteQueens + //
+		material[0] = KNIGHT * whiteKnights + BISHOP * whiteBishops + ROOK * whiteRooks + QUEEN * whiteQueens + //
 				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
 						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
-		material[1] = (KNIGHT + knightKaufBonusBlack) * blackKnights + BISHOP * blackBishops + (ROOK + rookKaufBonusBlack) * blackRooks + QUEEN * blackQueens + //
+		material[1] = KNIGHT * blackKnights + BISHOP * blackBishops + ROOK * blackRooks + QUEEN * blackQueens + //
 				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
 						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 
