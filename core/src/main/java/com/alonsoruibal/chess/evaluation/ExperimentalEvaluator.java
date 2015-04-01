@@ -57,14 +57,13 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int ROOK_ATTACKS_PU_BK = oe(4, 5); // Attacks bishop or knight not defended by pawn
 	private final static int ROOK_ATTACKS_Q = oe(5, 5); // Attacks queen
 	private final static int ROOK_FILE_OPEN_NO_MG = oe(20, 10); // No pawns in rook file and no minor guarded
-	private final static int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
 	private final static int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
+	private final static int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
 	private final static int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
 	private final static int ROOK_FILE_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
 	private final static int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
 	private final static int ROOK_8_KING_8 = oe(5, 10); // Rook in 8th rank and opposite king in 8th rank
 	private final static int ROOK_7_KP_78 = oe(10, 30); // Rook in 7th rank and opposite king or pawn in 7/8th rank
-	private final static int ROOK_7_P_78_K_8_RQ_7 = oe(10, 20); // Rook in 7th rank and opposite king in 8th and attacked opposite queen or rook on 7th
 	private final static int ROOK_6_KP_678 = oe(5, 15); // Rook in 6th rank and opposite king or pawns in 6/7/8th
 	private final static int ROOK_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int ROOK_OUTPOST_ATT_NK_PU = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
@@ -571,17 +570,10 @@ public class ExperimentalEvaluator extends Evaluator {
 							&& (others & board.kings & rank8) != 0) {
 						positional[color] += ROOK_8_KING_8;
 					}
-
 					if ((square & rank7) != 0
 							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
 						positional[color] += ROOK_7_KP_78;
-
-						if ((others & board.kings & rank8) != 0
-								&& (pieceAttacks & others & (board.queens | board.rooks) & rank7) != 0) {
-							positional[color] += ROOK_7_P_78_K_8_RQ_7;
-						}
 					}
-
 					if ((square & rank6) != 0
 							&& (others & (board.kings | board.pawns) & (rank6 | rank7 | rank8)) != 0) {
 						positional[color] += ROOK_6_KP_678;
