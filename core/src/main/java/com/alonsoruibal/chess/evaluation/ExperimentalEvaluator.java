@@ -33,11 +33,10 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int BISHOP_ATTACKS_PU_P = oe(3, 4);
 	private final static int BISHOP_ATTACKS_PU_K = oe(5, 5);
 	private final static int BISHOP_ATTACKS_RQ = oe(7, 10);
-	private final static int BISHOP_PAWN_IN_COLOR = oe(1, 1); // Sums for each pawn in the bishop color
-	private final static int BISHOP_FORWARD_P_PU = oe(0, 1); // Sums for each of the undefended opposite pawns forward
+	private final static int BISHOP_MY_PAWNS_NOT_IN_COLOR = oe(1, 1); // Bonus for each of my pawns not in the bishop color (Capablanca rule)
+	private final static int BISHOP_OTHER_PAWNS_IN_COLOR = oe(-1, -1); // for each of the other pawns in my color
 	private final static int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
-
 	private final static int BISHOP_TRAPPED = oe(-40, -40);
 
 	// Knights
@@ -522,10 +521,10 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 
-					long pawnsInBishopColor = board.pawns & ((square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.WHITE_SQUARES : BitboardUtils.BLACK_SQUARES);
-
-					positional[color] += BISHOP_PAWN_IN_COLOR * BitboardUtils.popCount(pawnsInBishopColor)
-							+ BISHOP_FORWARD_P_PU * BitboardUtils.popCount(pawnsInBishopColor & others & BitboardUtils.RANKS_FORWARD[color][rank]);
+					long myPawnsNotInBishopColor = mines & board.pawns & ((square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.BLACK_SQUARES : BitboardUtils.WHITE_SQUARES);
+					long otherPawnsInBishopColor = others & board.pawns & ((square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.WHITE_SQUARES : BitboardUtils.BLACK_SQUARES);
+					positional[color] += BitboardUtils.popCount(myPawnsNotInBishopColor) * BISHOP_MY_PAWNS_NOT_IN_COLOR
+							+ oeMul(BitboardUtils.popCount(otherPawnsInBishopColor), BISHOP_OTHER_PAWNS_IN_COLOR);
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[color] += BISHOP_TRAPPED;
