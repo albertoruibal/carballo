@@ -21,14 +21,6 @@ public class Move {
 	// Predefined moves
 	public static final int NONE = 0;
 
-	// Move pieces ordered by value
-	public static final int PAWN = 1;
-	public static final int KNIGHT = 2;
-	public static final int BISHOP = 3;
-	public static final int ROOK = 4;
-	public static final int QUEEN = 5;
-	public static final int KING = 6;
-
 	public static final String PIECE_LETTERS_LOWERCASE = " pnbrqk";
 	public static final String PIECE_LETTERS_UPPERCASE = " PNBRQK";
 
@@ -75,19 +67,19 @@ public class Move {
 
 	public static int getPieceCaptured(Board board, int move) {
 		if (getMoveType(move) == TYPE_PASSANT) {
-			return PAWN;
+			return Piece.PAWN;
 		}
 		long toSquare = getToSquare(move);
 		if ((toSquare & board.pawns) != 0) {
-			return Move.PAWN;
+			return Piece.PAWN;
 		} else if ((toSquare & board.knights) != 0) {
-			return Move.KNIGHT;
+			return Piece.KNIGHT;
 		} else if ((toSquare & board.bishops) != 0) {
-			return Move.BISHOP;
+			return Piece.BISHOP;
 		} else if ((toSquare & board.rooks) != 0) {
-			return Move.ROOK;
+			return Piece.ROOK;
 		} else if ((toSquare & board.queens) != 0) {
-			return Move.QUEEN;
+			return Piece.QUEEN;
 		}
 		return 0;
 	}
@@ -106,17 +98,17 @@ public class Move {
 
 	// Pawn push to 7 or 8th rank
 	public static boolean isPawnPush(int move) {
-		return Move.getPieceMoved(move) == PAWN && (Move.getToIndex(move) < 16 || Move.getToIndex(move) > 47);
+		return Move.getPieceMoved(move) == Piece.PAWN && (Move.getToIndex(move) < 16 || Move.getToIndex(move) > 47);
 	}
 
 	// Pawn push to 6, 7 or 8th rank
 	public static boolean isPawnPush678(int move) {
-		return Move.getPieceMoved(move) == PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 40 : Move.getToIndex(move) < 24);
+		return Move.getPieceMoved(move) == Piece.PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 40 : Move.getToIndex(move) < 24);
 	}
 
 	// Pawn push to 5, 6, 7 or 8th rank
 	public static boolean isPawnPush5678(int move) {
-		return Move.getPieceMoved(move) == PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 32 : Move.getToIndex(move) < 32);
+		return Move.getPieceMoved(move) == Piece.PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 32 : Move.getToIndex(move) < 32);
 	}
 
 	/**
@@ -129,13 +121,13 @@ public class Move {
 	public static int getPiecePromoted(int move) {
 		switch (getMoveType(move)) {
 			case TYPE_PROMOTION_QUEEN:
-				return QUEEN;
+				return Piece.QUEEN;
 			case TYPE_PROMOTION_ROOK:
-				return ROOK;
+				return Piece.ROOK;
 			case TYPE_PROMOTION_KNIGHT:
-				return KNIGHT;
+				return Piece.KNIGHT;
 			case TYPE_PROMOTION_BISHOP:
-				return BISHOP;
+				return Piece.BISHOP;
 		}
 		return 0;
 	}
@@ -266,7 +258,7 @@ public class Move {
 			boolean capture = false;
 			if ((myFrom & board.pawns) != 0) {
 
-				pieceMoved = PAWN;
+				pieceMoved = Piece.PAWN;
 				// for passant captures
 				if ((toIndex != (fromIndex - 8)) && (toIndex != (fromIndex + 8)) && (toIndex != (fromIndex - 16)) && (toIndex != (fromIndex + 16))) {
 					if ((to & board.getAll()) == 0) {
@@ -280,15 +272,15 @@ public class Move {
 				}
 			}
 			if ((myFrom & board.bishops) != 0) {
-				pieceMoved = BISHOP;
+				pieceMoved = Piece.BISHOP;
 			} else if ((myFrom & board.knights) != 0) {
-				pieceMoved = KNIGHT;
+				pieceMoved = Piece.KNIGHT;
 			} else if ((myFrom & board.rooks) != 0) {
-				pieceMoved = ROOK;
+				pieceMoved = Piece.ROOK;
 			} else if ((myFrom & board.queens) != 0) {
-				pieceMoved = QUEEN;
+				pieceMoved = Piece.QUEEN;
 			} else if ((myFrom & board.kings) != 0) {
-				pieceMoved = KING;
+				pieceMoved = Piece.KING;
 				if ((turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) && //
 						(toIndex == (fromIndex - 2) || to == board.castlingRooks[turn ? 0 : 2])) {
 					moveType = TYPE_KINGSIDE_CASTLING;
@@ -348,7 +340,7 @@ public class Move {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		if (getPieceMoved(move) != Move.PAWN) {
+		if (getPieceMoved(move) != Piece.PAWN) {
 			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPieceMoved(move)));
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
@@ -400,12 +392,12 @@ public class Move {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		if (getPieceMoved(move) != Move.PAWN) {
+		if (getPieceMoved(move) != Piece.PAWN) {
 			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPieceMoved(move)));
 		}
 		String fromSq = BitboardUtils.index2Algebraic(Move.getFromIndex(move));
 
-		if (isCapture(move) && getPieceMoved(move) == Move.PAWN) {
+		if (isCapture(move) && getPieceMoved(move) == Piece.PAWN) {
 			disambiguate = true;
 		}
 

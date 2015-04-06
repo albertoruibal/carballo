@@ -666,7 +666,7 @@ public class Board {
 
 			// Pawn movements
 			switch (pieceMoved) {
-				case Move.PAWN:
+				case Piece.PAWN:
 					fiftyMovesRule = 0;
 					// Set new passant flags if pawn is advancing two squares (marks
 					// the destination square where the pawn can be captured)
@@ -710,23 +710,23 @@ public class Board {
 						key[color] ^= ZobristKey.pawn[color][fromIndex] ^ ZobristKey.pawn[color][toIndex];
 					}
 					break;
-				case Move.ROOK:
+				case Piece.ROOK:
 					rooks ^= moveMask;
 					key[color] ^= ZobristKey.rook[color][fromIndex] ^ ZobristKey.rook[color][toIndex];
 					break;
-				case Move.BISHOP:
+				case Piece.BISHOP:
 					bishops ^= moveMask;
 					key[color] ^= ZobristKey.bishop[color][fromIndex] ^ ZobristKey.bishop[color][toIndex];
 					break;
-				case Move.KNIGHT:
+				case Piece.KNIGHT:
 					knights ^= moveMask;
 					key[color] ^= ZobristKey.knight[color][fromIndex] ^ ZobristKey.knight[color][toIndex];
 					break;
-				case Move.QUEEN:
+				case Piece.QUEEN:
 					queens ^= moveMask;
 					key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
 					break;
-				case Move.KING: // if castling, moves rooks too
+				case Piece.KING: // if castling, moves rooks too
 					if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
 						// {White Kingside, White Queenside, Black Kingside, Black Queenside}
 						int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
@@ -759,22 +759,22 @@ public class Board {
 
 			// Tests to disable castling
 			if ((flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Move.KING) || from == castlingRooks[0] || to == castlingRooks[0])) {
+					((turn && pieceMoved == Piece.KING) || from == castlingRooks[0] || to == castlingRooks[0])) {
 				flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
 				key[0] ^= ZobristKey.whiteKingSideCastling;
 			}
 			if ((flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Move.KING) || from == castlingRooks[1] || to == castlingRooks[1])) {
+					((turn && pieceMoved == Piece.KING) || from == castlingRooks[1] || to == castlingRooks[1])) {
 				flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
 				key[0] ^= ZobristKey.whiteQueenSideCastling;
 			}
 			if ((flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Move.KING) || from == castlingRooks[2] || to == castlingRooks[2])) {
+					((!turn && pieceMoved == Piece.KING) || from == castlingRooks[2] || to == castlingRooks[2])) {
 				flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
 				key[1] ^= ZobristKey.blackKingSideCastling;
 			}
 			if ((flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Move.KING) || from == castlingRooks[3] || to == castlingRooks[3])) {
+					((!turn && pieceMoved == Piece.KING) || from == castlingRooks[3] || to == castlingRooks[3])) {
 				flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
 				key[1] ^= ZobristKey.blackQueenSideCastling;
 			}
@@ -934,17 +934,17 @@ public class Board {
 
 			// Gets the next attacker
 			if ((fromCandidates = attacks & pawns & side) != 0) {
-				pieceMoved = Move.PAWN;
+				pieceMoved = Piece.PAWN;
 			} else if ((fromCandidates = attacks & knights & side) != 0) {
-				pieceMoved = Move.KNIGHT;
+				pieceMoved = Piece.KNIGHT;
 			} else if ((fromCandidates = attacks & bishops & side) != 0) {
-				pieceMoved = Move.BISHOP;
+				pieceMoved = Piece.BISHOP;
 			} else if ((fromCandidates = attacks & rooks & side) != 0) {
-				pieceMoved = Move.ROOK;
+				pieceMoved = Piece.ROOK;
 			} else if ((fromCandidates = attacks & queens & side) != 0) {
-				pieceMoved = Move.QUEEN;
+				pieceMoved = Piece.QUEEN;
 			} else if ((fromCandidates = attacks & kings & side) != 0) {
-				pieceMoved = Move.KING;
+				pieceMoved = Piece.KING;
 			}
 			fromSquare = BitboardUtils.lsb(fromCandidates);
 

@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.movesort;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
@@ -266,15 +267,15 @@ public class MoveIterator {
 		for (int index = 0; index < 64; index++) {
 			if ((square & mines) != 0) {
 				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Move.ROOK, index, square, attacksInfo.attacksFromSquare[index] & others, true);
+					generateMovesFromAttacks(Piece.ROOK, index, square, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Move.BISHOP, index, square, attacksInfo.attacksFromSquare[index] & others, true);
+					generateMovesFromAttacks(Piece.BISHOP, index, square, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Move.QUEEN, index, square, attacksInfo.attacksFromSquare[index] & others, true);
+					generateMovesFromAttacks(Piece.QUEEN, index, square, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Move.KING, index, square, attacksInfo.attacksFromSquare[index] & others & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
+					generateMovesFromAttacks(Piece.KING, index, square, attacksInfo.attacksFromSquare[index] & others & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Move.KNIGHT, index, square, attacksInfo.attacksFromSquare[index] & others, true);
+					generateMovesFromAttacks(Piece.KNIGHT, index, square, attacksInfo.attacksFromSquare[index] & others, true);
 				} else if ((square & board.pawns) != 0) { // Pawns
 					if (turn) {
 						generatePawnCapturesOrGoodPromos(index, square, //
@@ -301,15 +302,15 @@ public class MoveIterator {
 		for (int index = 0; index < 64; index++) {
 			if ((square & mines) != 0) {
 				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Move.ROOK, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
+					generateMovesFromAttacks(Piece.ROOK, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Move.BISHOP, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
+					generateMovesFromAttacks(Piece.BISHOP, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Move.QUEEN, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
+					generateMovesFromAttacks(Piece.QUEEN, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Move.KING, index, square, attacksInfo.attacksFromSquare[index] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
+					generateMovesFromAttacks(Piece.KING, index, square, attacksInfo.attacksFromSquare[index] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Move.KNIGHT, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
+					generateMovesFromAttacks(Piece.KNIGHT, index, square, attacksInfo.attacksFromSquare[index] & ~all, false);
 				}
 				if ((square & board.pawns) != 0) { // Pawns excluding the already generated promos
 					if (turn) {
@@ -335,7 +336,7 @@ public class MoveIterator {
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& (attacksInfo.attackedSquares[turn ? 1 : 0] & kingRoute) == 0) {
-					addMove(Move.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_KINGSIDE_CASTLING);
+					addMove(Piece.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_KINGSIDE_CASTLING);
 				}
 			}
 			if (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
@@ -348,7 +349,7 @@ public class MoveIterator {
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
 						&& (attacksInfo.attackedSquares[turn ? 1 : 0] & kingRoute) == 0) {
-					addMove(Move.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
+					addMove(Piece.KING, attacksInfo.myKingIndex, kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
 				}
 			}
 		}
@@ -356,7 +357,7 @@ public class MoveIterator {
 
 	public void generateCheckEvasionCaptures() {
 		// King can capture one of the checking pieces if two pieces giving check
-		generateMovesFromAttacks(Move.KING, attacksInfo.myKingIndex, board.kings & mines, others & attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
+		generateMovesFromAttacks(Piece.KING, attacksInfo.myKingIndex, board.kings & mines, others & attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~attacksInfo.attackedSquares[turn ? 1 : 0], true);
 
 		if (BitboardUtils.popCount(attacksInfo.piecesGivingCheck) == 1) {
 			long square = 1;
@@ -377,19 +378,19 @@ public class MoveIterator {
 							long testPassantSquare = (turn ? attacksInfo.piecesGivingCheck << 8 : attacksInfo.piecesGivingCheck >>> 8);
 							if (testPassantSquare == board.getPassantSquare() || // En-passant capture target giving check
 									(board.getPassantSquare() & attacksInfo.interposeCheckSquares) != 0) { // En passant capture to interpose
-								addMove(Move.PAWN, index, square, board.getPassantSquare(), true, Move.TYPE_PASSANT);
+								addMove(Piece.PAWN, index, square, board.getPassantSquare(), true, Move.TYPE_PASSANT);
 							}
 						}
 					} else {
 						if (((attacksInfo.attacksFromSquare[index] & attacksInfo.piecesGivingCheck)) != 0) {
 							if ((square & board.rooks) != 0) { // Rook
-								generateMovesFromAttacks(Move.ROOK, index, square, attacksInfo.piecesGivingCheck, true);
+								generateMovesFromAttacks(Piece.ROOK, index, square, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.bishops) != 0) { // Bishop
-								generateMovesFromAttacks(Move.BISHOP, index, square, attacksInfo.piecesGivingCheck, true);
+								generateMovesFromAttacks(Piece.BISHOP, index, square, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.queens) != 0) { // Queen
-								generateMovesFromAttacks(Move.QUEEN, index, square, attacksInfo.piecesGivingCheck, true);
+								generateMovesFromAttacks(Piece.QUEEN, index, square, attacksInfo.piecesGivingCheck, true);
 							} else if ((square & board.knights) != 0) { // Knight
-								generateMovesFromAttacks(Move.KNIGHT, index, square, attacksInfo.piecesGivingCheck, true);
+								generateMovesFromAttacks(Piece.KNIGHT, index, square, attacksInfo.piecesGivingCheck, true);
 							}
 						}
 					}
@@ -401,7 +402,7 @@ public class MoveIterator {
 
 	public void generateCheckEvasionsNonCaptures() {
 		// Moving king (without captures)
-		generateMovesFromAttacks(Move.KING, attacksInfo.myKingIndex, board.kings & mines, attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
+		generateMovesFromAttacks(Piece.KING, attacksInfo.myKingIndex, board.kings & mines, attacksInfo.attacksFromSquare[attacksInfo.myKingIndex] & ~all & ~attacksInfo.attackedSquares[turn ? 1 : 0], false);
 
 		// Interpose: Cannot interpose with more than one piece giving check
 		if (BitboardUtils.popCount(attacksInfo.piecesGivingCheck) == 1) {
@@ -426,13 +427,13 @@ public class MoveIterator {
 						long destinySquares = attacksInfo.attacksFromSquare[index] & attacksInfo.interposeCheckSquares & ~all;
 						if (destinySquares != 0) {
 							if ((square & board.rooks) != 0) { // Rook
-								generateMovesFromAttacks(Move.ROOK, index, square, destinySquares, false);
+								generateMovesFromAttacks(Piece.ROOK, index, square, destinySquares, false);
 							} else if ((square & board.bishops) != 0) { // Bishop
-								generateMovesFromAttacks(Move.BISHOP, index, square, destinySquares, false);
+								generateMovesFromAttacks(Piece.BISHOP, index, square, destinySquares, false);
 							} else if ((square & board.queens) != 0) { // Queen
-								generateMovesFromAttacks(Move.QUEEN, index, square, destinySquares, false);
+								generateMovesFromAttacks(Piece.QUEEN, index, square, destinySquares, false);
 							} else if ((square & board.knights) != 0) { // Knight
-								generateMovesFromAttacks(Move.KNIGHT, index, square, destinySquares, false);
+								generateMovesFromAttacks(Piece.KNIGHT, index, square, destinySquares, false);
 							}
 						}
 					}
@@ -457,19 +458,19 @@ public class MoveIterator {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & passant) != 0) {
-				addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PASSANT);
+				addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PASSANT);
 			} else {
 				boolean capture = (to & others) != 0;
 				if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
-					addMove(Move.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_QUEEN);
+					addMove(Piece.PAWN, fromIndex, from, to, capture, Move.TYPE_PROMOTION_QUEEN);
 					// If it is a capture, we must add the underpromotions
 					if (capture) {
-						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_KNIGHT);
-						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_ROOK);
-						addMove(Move.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_BISHOP);
+						addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_KNIGHT);
+						addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_ROOK);
+						addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PROMOTION_BISHOP);
 					}
 				} else if (capture) {
-					addMove(Move.PAWN, fromIndex, from, to, true, 0);
+					addMove(Piece.PAWN, fromIndex, from, to, true, 0);
 				}
 			}
 			attacks ^= to;
@@ -480,11 +481,11 @@ public class MoveIterator {
 		while (attacks != 0) {
 			long to = BitboardUtils.lsb(attacks);
 			if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
-				addMove(Move.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_KNIGHT);
-				addMove(Move.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_ROOK);
-				addMove(Move.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_BISHOP);
+				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_KNIGHT);
+				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_ROOK);
+				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_BISHOP);
 			} else {
-				addMove(Move.PAWN, fromIndex, from, to, false, 0);
+				addMove(Piece.PAWN, fromIndex, from, to, false, 0);
 			}
 			attacks ^= to;
 		}
@@ -519,7 +520,7 @@ public class MoveIterator {
 			// Direct check by rook
 			check |= (rookTo & attacksInfo.rookAttacksOtherking) != 0;
 		} else {
-			if (pieceMoved == Move.KING) {
+			if (pieceMoved == Piece.KING) {
 				newMyKingIndex = toIndex;
 			} else {
 				newMyKingIndex = attacksInfo.myKingIndex;
@@ -536,19 +537,19 @@ public class MoveIterator {
 			}
 
 			// Direct checks
-			if (pieceMoved == Move.KNIGHT || moveType == Move.TYPE_PROMOTION_KNIGHT) {
+			if (pieceMoved == Piece.KNIGHT || moveType == Move.TYPE_PROMOTION_KNIGHT) {
 				check = (to & bbAttacks.knight[attacksInfo.otherKingIndex]) != 0;
-			} else if (pieceMoved == Move.BISHOP || moveType == Move.TYPE_PROMOTION_BISHOP) {
+			} else if (pieceMoved == Piece.BISHOP || moveType == Move.TYPE_PROMOTION_BISHOP) {
 				check = (to & attacksInfo.bishopAttacksOtherking) != 0;
 				bishopSlidersAfterMove |= to;
-			} else if (pieceMoved == Move.ROOK || moveType == Move.TYPE_PROMOTION_ROOK) {
+			} else if (pieceMoved == Piece.ROOK || moveType == Move.TYPE_PROMOTION_ROOK) {
 				check = (to & attacksInfo.rookAttacksOtherking) != 0;
 				rookSlidersAfterMove |= to;
-			} else if (pieceMoved == Move.QUEEN || moveType == Move.TYPE_PROMOTION_QUEEN) {
+			} else if (pieceMoved == Piece.QUEEN || moveType == Move.TYPE_PROMOTION_QUEEN) {
 				check = (to & (attacksInfo.bishopAttacksOtherking | attacksInfo.rookAttacksOtherking)) != 0;
 				bishopSlidersAfterMove |= to;
 				rookSlidersAfterMove |= to;
-			} else if (pieceMoved == Move.PAWN) {
+			} else if (pieceMoved == Piece.PAWN) {
 				check = (to & (turn ? bbAttacks.pawnDownwards[attacksInfo.otherKingIndex] : bbAttacks.pawnUpwards[attacksInfo.otherKingIndex])) != 0;
 			}
 		}
@@ -557,7 +558,7 @@ public class MoveIterator {
 		if ((squaresForDiscovery & attacksInfo.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP) {
 			// Candidates to leave the king in check after moving
 			if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
-					((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Move.KING)) { // Moving the king when the king is in check by a slider
+					((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Piece.KING)) { // Moving the king when the king is in check by a slider
 				// Regenerate bishop attacks to my king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(newMyKingIndex, allAfterMove);
 				if ((newBishopAttacks & bishopSlidersAfterMove & ~minesAfterMove) != 0) {
@@ -565,7 +566,7 @@ public class MoveIterator {
 				}
 			}
 			if ((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0 ||
-					((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Move.KING)) {
+					((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Piece.KING)) {
 				// Regenerate rook attacks to my king
 				long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
 				if ((newRookAttacks & rookSlidersAfterMove & ~minesAfterMove) != 0) {

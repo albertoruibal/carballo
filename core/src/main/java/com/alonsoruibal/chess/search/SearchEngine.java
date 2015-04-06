@@ -3,6 +3,7 @@ package com.alonsoruibal.chess.search;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
+import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
@@ -248,7 +249,7 @@ public class SearchEngine implements Runnable {
 				return PLY;
 			}
 		}
-		if (Move.getPieceMoved(move) == Move.PAWN) {
+		if (Move.getPieceMoved(move) == Piece.PAWN) {
 			if (Move.isPawnPush678(move)) {
 				ext += config.getExtensionsPawnPush();
 			}
