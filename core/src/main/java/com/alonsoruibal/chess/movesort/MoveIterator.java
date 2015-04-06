@@ -518,7 +518,7 @@ public class MoveIterator {
 			minesAfterMove = ((mines ^ rookMoveMask) | kingTo) & ~from;
 
 			// Direct check by rook
-			check |= (rookTo & attacksInfo.rookAttacksOtherking) != 0;
+			check |= (rookTo & attacksInfo.rookAttacksOtherKing) != 0;
 		} else {
 			if (pieceMoved == Piece.KING) {
 				newMyKingIndex = toIndex;
@@ -540,13 +540,13 @@ public class MoveIterator {
 			if (pieceMoved == Piece.KNIGHT || moveType == Move.TYPE_PROMOTION_KNIGHT) {
 				check = (to & bbAttacks.knight[attacksInfo.otherKingIndex]) != 0;
 			} else if (pieceMoved == Piece.BISHOP || moveType == Move.TYPE_PROMOTION_BISHOP) {
-				check = (to & attacksInfo.bishopAttacksOtherking) != 0;
+				check = (to & attacksInfo.bishopAttacksOtherKing) != 0;
 				bishopSlidersAfterMove |= to;
 			} else if (pieceMoved == Piece.ROOK || moveType == Move.TYPE_PROMOTION_ROOK) {
-				check = (to & attacksInfo.rookAttacksOtherking) != 0;
+				check = (to & attacksInfo.rookAttacksOtherKing) != 0;
 				rookSlidersAfterMove |= to;
 			} else if (pieceMoved == Piece.QUEEN || moveType == Move.TYPE_PROMOTION_QUEEN) {
-				check = (to & (attacksInfo.bishopAttacksOtherking | attacksInfo.rookAttacksOtherking)) != 0;
+				check = (to & (attacksInfo.bishopAttacksOtherKing | attacksInfo.rookAttacksOtherKing)) != 0;
 				bishopSlidersAfterMove |= to;
 				rookSlidersAfterMove |= to;
 			} else if (pieceMoved == Piece.PAWN) {
@@ -557,7 +557,7 @@ public class MoveIterator {
 		// After a promotion to queen or rook there are new sliders transversing the origin square, so mayPin is not valid
 		if ((squaresForDiscovery & attacksInfo.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP) {
 			// Candidates to leave the king in check after moving
-			if (((squaresForDiscovery & attacksInfo.bishopAttacksMyking) != 0) ||
+			if (((squaresForDiscovery & attacksInfo.bishopAttacksMyKing) != 0) ||
 					((attacksInfo.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Piece.KING)) { // Moving the king when the king is in check by a slider
 				// Regenerate bishop attacks to my king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(newMyKingIndex, allAfterMove);
@@ -565,7 +565,7 @@ public class MoveIterator {
 					return; // Illegal move
 				}
 			}
-			if ((squaresForDiscovery & attacksInfo.rookAttacksMyking) != 0 ||
+			if ((squaresForDiscovery & attacksInfo.rookAttacksMyKing) != 0 ||
 					((attacksInfo.piecesGivingCheck & (board.rooks | board.queens)) != 0 && pieceMoved == Piece.KING)) {
 				// Regenerate rook attacks to my king
 				long newRookAttacks = bbAttacks.getRookAttacks(newMyKingIndex, allAfterMove);
@@ -575,14 +575,14 @@ public class MoveIterator {
 			}
 
 			// Discovered checks
-			if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherking) != 0) {
+			if (!check && (squaresForDiscovery & attacksInfo.bishopAttacksOtherKing) != 0) {
 				// Regenerate bishop attacks to the other king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(attacksInfo.otherKingIndex, allAfterMove);
 				if ((newBishopAttacks & bishopSlidersAfterMove & minesAfterMove) != 0) {
 					check = true;
 				}
 			}
-			if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherking) != 0) {
+			if (!check && (squaresForDiscovery & attacksInfo.rookAttacksOtherKing) != 0) {
 				// Regenerate rook attacks to the other king
 				long newRookAttacks = bbAttacks.getRookAttacks(attacksInfo.otherKingIndex, allAfterMove);
 				if ((newRookAttacks & rookSlidersAfterMove & minesAfterMove) != 0) {
