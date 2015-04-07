@@ -52,7 +52,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int BISHOP_ATTACKS_PU_P = oe(3, 4);
 	private final static int BISHOP_ATTACKS_PU_K = oe(5, 5);
 	private final static int BISHOP_ATTACKS_RQ = oe(7, 10);
-	private final static int BISHOP_MY_PAWNS_NOT_IN_COLOR = oe(1, 1); // Bonus for each of my pawns not in the bishop color (Capablanca rule)
+	private final static int BISHOP_MY_PAWNS_NOT_IN_COLOR = oe(2, 4); // Bonus for each of my pawns not in the bishop color (Capablanca rule)
 	private final static int BISHOP_OTHER_PAWNS_IN_COLOR = oe(-1, -1); // for each of the other pawns in my color
 	private final static int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
@@ -210,7 +210,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	private long[] superiorPieceAttacked = {0, 0};
 
-	// Squares that pawn can attack
+	// Squares that pawns can attack
 	private long[] pawnCanAttack = {0, 0};
 
 	private long[] minorPiecesDefendedByPawns = {0, 0};
