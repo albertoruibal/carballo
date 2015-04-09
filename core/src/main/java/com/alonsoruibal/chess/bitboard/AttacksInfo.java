@@ -96,7 +96,7 @@ public class AttacksInfo {
 					
 				} else if ((square & board.knights) != 0) {
 					pieceAttacks = bbAttacks.knight[index];
-					bishopAttacks[us] |= pieceAttacks;
+					knightAttacks[us] |= pieceAttacks;
 
 				} else if ((square & board.bishops) != 0) {
 					pieceAttacks = bbAttacks.getBishopAttacks(index, all);
