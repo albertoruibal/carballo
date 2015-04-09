@@ -81,7 +81,7 @@ public class AttacksInfo {
 		piecesGivingCheck = 0;
 		interposeCheckSquares = 0;
 
-		long pieceAttacks;
+		long pieceAttacks = 0;
 		int index;
 		long square = 1;
 		for (index = 0; index < 64; index++) {
@@ -89,18 +89,24 @@ public class AttacksInfo {
 				boolean isWhite = ((board.whites & square) != 0);
 				int us = (isWhite ? W : B);
 
-				pieceAttacks = 0;
 				if ((square & board.pawns) != 0) {
 					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
+					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
+					}
 					pawnAttacks[us] |= pieceAttacks;
-					
+
 				} else if ((square & board.knights) != 0) {
 					pieceAttacks = bbAttacks.knight[index];
+					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
+					}
 					knightAttacks[us] |= pieceAttacks;
 
 				} else if ((square & board.bishops) != 0) {
 					pieceAttacks = bbAttacks.getBishopAttacks(index, all);
 					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
 						interposeCheckSquares |= pieceAttacks & bishopAttacksMyKing; // And with only the diagonal attacks to the king
 					}
 					bishopAttacks[us] |= pieceAttacks;
@@ -109,6 +115,7 @@ public class AttacksInfo {
 				} else if ((square & board.rooks) != 0) {
 					pieceAttacks = bbAttacks.getRookAttacks(index, all);
 					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
 						interposeCheckSquares |= pieceAttacks & rookAttacksMyKing; // And with only the rook attacks to the king
 					}
 					rookAttacks[us] |= pieceAttacks;
@@ -117,10 +124,12 @@ public class AttacksInfo {
 				} else if ((square & board.queens) != 0) {
 					long bishopSliderAttacks = bbAttacks.getBishopAttacks(index, all);
 					if ((square & mines) == 0 && (bishopSliderAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
 						interposeCheckSquares |= bishopSliderAttacks & bishopAttacksMyKing; // And with only the diagonal attacks to the king
 					}
 					long rookSliderAttacks = bbAttacks.getRookAttacks(index, all);
 					if ((square & mines) == 0 && (rookSliderAttacks & myKing) != 0) {
+						piecesGivingCheck |= square;
 						interposeCheckSquares |= rookSliderAttacks & rookAttacksMyKing; // And with only the rook attacks to the king
 					}
 					pieceAttacks = rookSliderAttacks | bishopSliderAttacks;
@@ -133,10 +142,6 @@ public class AttacksInfo {
 				}
 
 				attacksFromSquare[index] = pieceAttacks;
-
-				if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
-					piecesGivingCheck |= square;
-				}
 			} else {
 				attacksFromSquare[index] = 0;
 			}
