@@ -32,10 +32,10 @@ public class ExperimentalEvaluator extends Evaluator {
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private final static int[][] MOBILITY = {
 			{}, {},
-			{oe(-40, -30), oe(-15, -11), oe(0, 0), oe(8, 6), oe(15, 11), oe(21, 16), oe(26, 20), oe(30, 23), oe(32, 24)},
+			{oe(-40, -30), oe(-10, -8), oe(4, 3), oe(11, 8), oe(16, 12), oe(20, 15), oe(22, 17), oe(24, 18), oe(25, 19)},
 			{oe(-30, -25), oe(-12, -10), oe(3, 3), oe(12, 10), oe(20, 17), oe(27, 23), oe(33, 28), oe(39, 33), oe(44, 37), oe(48, 40), oe(52, 43), oe(55, 46), oe(58, 48), oe(60, 50)},
 			{oe(-13, -40), oe(-5, -15), oe(0, 0), oe(4, 12), oe(7, 21), oe(10, 29), oe(12, 37), oe(15, 44), oe(17, 50), oe(19, 56), oe(20, 61), oe(21, 64), oe(22, 67), oe(23, 69), oe(23, 70)},
-			{oe(-15, -30), oe(-8, -15), oe(-2, -4), oe(4, 7), oe(8, 16), oe(12, 23), oe(15, 29), oe(18, 35), oe(20, 40), oe(22, 44), oe(24, 47), oe(25, 50), oe(26, 52), oe(27, 54), oe(28, 55), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56), oe(28, 56)}
+			{oe(-15, -30), oe(-8, -16), oe(-3, -5), oe(0, 0), oe(3, 6), oe(6, 11), oe(8, 15), oe(9, 18), oe(11, 21), oe(12, 23), oe(12, 24), oe(13, 25), oe(13, 26), oe(14, 27), oe(14, 27), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28), oe(14, 28)}
 	};
 
 	// Knights
