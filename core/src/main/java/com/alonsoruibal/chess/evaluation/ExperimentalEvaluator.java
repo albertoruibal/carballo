@@ -571,8 +571,8 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 
 					long rank6 = isWhite ? BitboardUtils.RANK[5] : BitboardUtils.RANK[2];
-					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[B];
-					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[W];
+					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[1];
+					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0];
 
 					if ((square & rank8) != 0
 							&& (others & board.kings & rank8) != 0) {
@@ -643,8 +643,8 @@ public class ExperimentalEvaluator extends Evaluator {
 						attacks[us] += PINNED_PIECE;
 					}
 
-					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[B];
-					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[W];
+					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[1];
+					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0];
 
 					if ((square & rank7) != 0
 							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
@@ -659,7 +659,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					center[us] += kingPcsq[pcsqIndex];
 
 					// If king is in the first or second rank, we add the pawn shield
-					if ((square & (isWhite ? BitboardUtils.RANK[W] | BitboardUtils.RANK[B] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
+					if ((square & (isWhite ? BitboardUtils.RANK[0] | BitboardUtils.RANK[1] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
 						kingDefense[us] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
 				}
