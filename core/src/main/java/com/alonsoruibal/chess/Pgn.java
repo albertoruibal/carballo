@@ -71,7 +71,7 @@ public class Pgn {
 
 		Date d = new Date();
 		// For GWT we use deprecated methods
-		sb.append("[Date \"").append(d.getYear()).append(".").append(d.getMonth()).append(".").append(d.getDay()).append("\"]\n");
+		sb.append("[Date \"").append(d.getYear() + 1900).append(".").append(d.getMonth() + 1).append(".").append(d.getDate()).append("\"]\n");
 		sb.append("[Round \"?\"]\n");
 		sb.append("[White \"").append(whiteName).append("\"]\n");
 		sb.append("[Black \"").append(blackName).append("\"]\n");
