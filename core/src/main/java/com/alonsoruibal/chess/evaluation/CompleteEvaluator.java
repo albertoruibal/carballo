@@ -63,9 +63,8 @@ public class CompleteEvaluator extends Evaluator {
 
 	// Pawns
 	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
-
-	// Array is not opposed, opposed
 	private final static int PAWN_BACKWARDS = oe(-10, -15);
+	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
 	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
 

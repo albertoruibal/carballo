@@ -97,9 +97,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int PAWN_ATTACKS_QUEEN = oe(8, 12);
 
 	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
-
-	// Array is not opposed, opposed
 	private final static int PAWN_BACKWARDS = oe(-10, -15);
+	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
 	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
 
