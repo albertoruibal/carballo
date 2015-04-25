@@ -251,6 +251,9 @@ public class Board {
 				kings |= square;
 				break;
 		}
+
+		key = ZobristKey.getKey(this);
+		setCheckFlags();
 	}
 
 	/**
