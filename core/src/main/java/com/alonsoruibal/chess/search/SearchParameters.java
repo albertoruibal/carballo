@@ -21,7 +21,7 @@ public class SearchParameters {
 	int nodes = Integer.MAX_VALUE;
 	// Search for mate in mate moves
 	int mate;
-	// Search movetime seconds
+	// Search movetime milliseconds
 	int moveTime = Integer.MAX_VALUE;
 	// Think infinite
 	boolean infinite;
