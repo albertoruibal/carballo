@@ -49,6 +49,7 @@ public class Config {
 	public final static int DEFAULT_EVAL_KING_SAFETY = 100;
 
 	public final static int DEFAULT_RAND = 0;
+	public final static int DEFAULT_ELO = 2100;
 
 	public final static boolean DEFAULT_UCI_CHESS960 = false;
 
@@ -386,12 +387,11 @@ public class Config {
 	 * @param engineElo
 	 */
 	public void setElo(int engineElo) {
+		int errorsPerMil = 800 - ((engineElo - 500) * 800) / 1600;
+		setRand(errorsPerMil);
+
 		int kPercentage = ((engineElo - 500) * 100) / 1600; // knowledge percentage
-		int bookPercentage = ((engineElo - 500) * 100) / 1600; // book knowledge percentage
-		int ePercentage = 88 - ((engineElo - 500) * 88) / 1600; // percentage of errors
-		setRand(ePercentage);
-		setUseBook(true);
-		setBookKnowledge(bookPercentage);
+		setBookKnowledge(kPercentage);
 		setEvalPawnStructure(kPercentage);
 		setEvalPassedPawns(kPercentage);
 		setEvalKingSafety(kPercentage);

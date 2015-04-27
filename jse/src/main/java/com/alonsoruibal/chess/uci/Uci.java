@@ -77,7 +77,7 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Eval Pawn Structure type spin default " + Config.DEFAULT_EVAL_PAWN_STRUCTURE + " min 0 max 200");
 					System.out.println("option name Eval Passed Pawns type spin default " + Config.DEFAULT_EVAL_PASSED_PAWNS + " min 0 max 200");
 					System.out.println("option name Eval King Safety type spin default " + Config.DEFAULT_EVAL_KING_SAFETY + " min 0 max 200");
-					System.out.println("option name Rand type spin default " + Config.DEFAULT_RAND + " min 0 max 100");
+					System.out.println("option name Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
 					System.out.println("uciok");
 
 				} else if ("setoption".equals(command)) {
@@ -153,8 +153,8 @@ public class Uci implements SearchObserver {
 						config.setEvalPassedPawns(Integer.parseInt(value));
 					} else if ("EvalKingSafety".equals(name)) {
 						config.setEvalKingSafety(Integer.parseInt(value));
-					} else if ("Rand".equals(name)) {
-						config.setRand(Integer.parseInt(value));
+					} else if ("Elo".equals(name)) {
+						config.setElo(Integer.parseInt(value));
 					}
 					needsReload = true;
 

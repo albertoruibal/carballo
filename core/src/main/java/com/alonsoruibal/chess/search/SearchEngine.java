@@ -716,8 +716,11 @@ public class SearchEngine implements Runnable {
 
 			board.undoMove();
 
-			// It tracks the best move and it also insert errors on the root node
-			if (score > bestScore && (nodeType != NODE_ROOT || config.getRand() == 0 || (random.nextInt(100) > config.getRand()))) {
+			// It tracks the best move and...
+			if (score > bestScore &&
+					|| config.getRand() == 0 //... insert errors to lower the ELO
+					|| bestScore == -Evaluator.VICTORY // it makes sure that has at least one move
+					|| random.nextInt(1000) > config.getRand())){
 				bestMove = move;
 				bestScore = score;
 
