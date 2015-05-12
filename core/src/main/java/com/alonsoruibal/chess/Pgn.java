@@ -229,7 +229,8 @@ public class Pgn {
 			}
 
 			if (addMove) {
-				if ("1/2-1/2".equals(el)) {
+				if ("*".equals(el)) {
+				} else if ("1/2-1/2".equals(el)) {
 				} else if ("1-0".equals(el)) {
 				} else if ("0-1".equals(el)) {
 				} else if (comment1 == 0 && comment2 == 0) {
