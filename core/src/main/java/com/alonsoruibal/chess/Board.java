@@ -1010,7 +1010,7 @@ public class Board {
 
 	public int getLegalMoves(int moves[]) {
 		generateLegalMoves();
-		System.arraycopy(legalMoves, 0, moves, 0, legalMoveCount);
+		System.arraycopy(legalMoves, 0, moves, 0, (legalMoveCount != -1 ? legalMoveCount : 0));
 		return legalMoveCount;
 	}
 
