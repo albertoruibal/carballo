@@ -46,6 +46,7 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int ROOK_FILE_OPEN = oe(25, 20); // No pawns in rook file
 	private final static int ROOK_FILE_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook file
 	private final static int ROOK_CONNECT = oe(20, 10); // Rook connects with other rook x 2
+	private final static int ROOK_7 = oe(10, 30); // Rook in 7th rank and opposite king in 8th or pawn in 7th
 
 	// Queen
 
@@ -469,6 +470,13 @@ public class CompleteEvaluator extends Evaluator {
 						positional[us] += ROOK_FILE_OPEN;
 					} else if ((rookFile & board.pawns & mines) == 0) {
 						positional[us] += ROOK_FILE_SEMIOPEN;
+					}
+
+					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[1];
+					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0];
+					if ((square & rank7) != 0
+							&& ((others & board.kings & rank8) != 0 || (others & board.pawns & rank7) != 0)) {
+						positional[us] += ROOK_7;
 					}
 
 				} else if ((square & board.queens) != 0) {
