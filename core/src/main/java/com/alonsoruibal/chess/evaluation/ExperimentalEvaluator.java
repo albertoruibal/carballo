@@ -52,8 +52,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int BISHOP_ATTACKS_PU_P = oe(3, 4);
 	private final static int BISHOP_ATTACKS_PU_K = oe(5, 5);
 	private final static int BISHOP_ATTACKS_RQ = oe(7, 10);
-	private final static int BISHOP_MY_PAWNS_NOT_IN_COLOR = oe(2, 4); // Bonus for each of my pawns not in the bishop color (Capablanca rule)
-	private final static int BISHOP_OTHER_PAWNS_IN_COLOR = oe(-1, -1); // for each of the other pawns in my color
+	private final static int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Bonus for each of my pawns in the bishop color (Capablanca rule)
 	private final static int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
 	private final static int BISHOP_TRAPPED = oe(-40, -40);
@@ -312,8 +311,8 @@ public class ExperimentalEvaluator extends Evaluator {
 		minorPiecesDefendedByPawns[B] = board.blacks & (board.bishops | board.knights) & pawnAttacks[B];
 
 		// Squares surrounding King
-		squaresNearKing[W] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
-		squaresNearKing[B] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
+		squaresNearKing[W] = bbAttacks.king[ai.kingIndex[W]];
+		squaresNearKing[B] = bbAttacks.king[ai.kingIndex[B]];
 
 		mobilitySquares[W] = ~board.whites & ~pawnAttacks[B];
 		mobilitySquares[B] = ~board.blacks & ~pawnAttacks[W];
@@ -530,9 +529,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 
-					long bishopColorSquares = (square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.WHITE_SQUARES : BitboardUtils.BLACK_SQUARES;
-					positional[us] += BitboardUtils.popCount(mines & board.pawns & ~bishopColorSquares) * BISHOP_MY_PAWNS_NOT_IN_COLOR
-							+ oeMul(BitboardUtils.popCount(others & board.pawns & bishopColorSquares), BISHOP_OTHER_PAWNS_IN_COLOR);
+					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * BitboardUtils.popCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[us] += BISHOP_TRAPPED;

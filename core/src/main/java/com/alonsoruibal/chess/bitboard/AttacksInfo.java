@@ -18,21 +18,16 @@ public class AttacksInfo {
 	public long boardKey = 0;
 	public long attacksFromSquare[] = new long[64];
 	public long attackedSquares[] = {0, 0};
+	public int kingIndex[] = {0, 0};
+	//
+	// Squares with possible ray attacks to the kings: used to detect check and move legality
+	//
+	public long bishopAttacksKing[] = {0, 0};
+	public long rookAttacksKing[] = {0, 0};
 
 	public long mayPin; // bot my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
 	public long piecesGivingCheck;
 	public long interposeCheckSquares;
-
-	public int myKingIndex;
-	public int otherKingIndex;
-
-	//
-	// Squares with possible ray attacks to the kings: used to detect check and move legality
-	//
-	public long bishopAttacksMyKing;
-	public long rookAttacksMyKing;
-	public long bishopAttacksOtherKing;
-	public long rookAttacksOtherKing;
 
 	public AttacksInfo() {
 		this.bbAttacks = BitboardAttacks.getInstance();
@@ -49,15 +44,16 @@ public class AttacksInfo {
 		long all = board.getAll();
 		long mines = board.getMines();
 		long myKing = board.kings & mines;
+		int us = board.getTurn() ? 0 : 1;
 
-		myKingIndex = BitboardUtils.square2Index(myKing);
-		otherKingIndex = BitboardUtils.square2Index(board.kings & ~mines);
+		kingIndex[W] = BitboardUtils.square2Index(board.kings & board.whites);
+		kingIndex[B] = BitboardUtils.square2Index(board.kings & board.blacks);
 
-		bishopAttacksMyKing = bbAttacks.getBishopAttacks(myKingIndex, all);
-		rookAttacksMyKing = bbAttacks.getRookAttacks(myKingIndex, all);
+		bishopAttacksKing[W] = bbAttacks.getBishopAttacks(kingIndex[W], all);
+		bishopAttacksKing[B] = bbAttacks.getBishopAttacks(kingIndex[B], all);
 
-		bishopAttacksOtherKing = bbAttacks.getBishopAttacks(otherKingIndex, all);
-		rookAttacksOtherKing = bbAttacks.getRookAttacks(otherKingIndex, all);
+		rookAttacksKing[W] = bbAttacks.getRookAttacks(kingIndex[W], all);
+		rookAttacksKing[B] = bbAttacks.getRookAttacks(kingIndex[B], all);
 
 		attackedSquares[0] = 0;
 		attackedSquares[1] = 0;
@@ -83,14 +79,14 @@ public class AttacksInfo {
 					if ((square & (board.bishops | board.queens)) != 0) {
 						long sliderAttacks = bbAttacks.getBishopAttacks(index, all);
 						if ((square & mines) == 0 && (sliderAttacks & myKing) != 0) {
-							interposeCheckSquares |= sliderAttacks & bishopAttacksMyKing; // And with only the diagonal attacks to the king
+							interposeCheckSquares |= sliderAttacks & bishopAttacksKing[us]; // And with only the diagonal attacks to the king
 						}
 						pieceAttacks |= sliderAttacks;
 					}
 					if ((square & (board.rooks | board.queens)) != 0) {
 						long sliderAttacks = bbAttacks.getRookAttacks(index, all);
 						if ((square & mines) == 0 && (sliderAttacks & myKing) != 0) {
-							interposeCheckSquares |= sliderAttacks & rookAttacksMyKing; // And with only the rook attacks to the king
+							interposeCheckSquares |= sliderAttacks & rookAttacksKing[us]; // And with only the rook attacks to the king
 						}
 						pieceAttacks |= sliderAttacks;
 					}

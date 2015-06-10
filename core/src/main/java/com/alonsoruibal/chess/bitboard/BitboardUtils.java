@@ -327,4 +327,8 @@ public class BitboardUtils {
 		return (square & BLACK_SQUARES) != 0;
 	}
 
+	public static long getSameColorSquares(long square) {
+		return (square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.WHITE_SQUARES : BitboardUtils.BLACK_SQUARES;
+	}
+
 }

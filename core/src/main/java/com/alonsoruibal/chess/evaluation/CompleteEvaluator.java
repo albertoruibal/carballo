@@ -265,8 +265,8 @@ public class CompleteEvaluator extends Evaluator {
 		attacks[B] = 0;
 
 		// Squares surrounding King
-		squaresNearKing[W] = bbAttacks.king[BitboardUtils.square2Index(board.whites & board.kings)] | board.whites & board.kings;
-		squaresNearKing[B] = bbAttacks.king[BitboardUtils.square2Index(board.blacks & board.kings)] | board.blacks & board.kings;
+		squaresNearKing[W] = bbAttacks.king[ai.kingIndex[W]];
+		squaresNearKing[B] = bbAttacks.king[ai.kingIndex[B]];
 
 		mobilitySquares[W] = ~board.whites & ~pawnAttacks[B];
 		mobilitySquares[B] = ~board.blacks & ~pawnAttacks[W];
