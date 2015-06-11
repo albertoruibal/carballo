@@ -39,18 +39,17 @@ public class ExperimentalEvaluator extends Evaluator {
 	};
 
 	private final static int[] PAWN_ATTACKS = {
-			0, oe(0, 0), oe(15, 20), oe(15, 20), oe(20, 45), oe(25, 60), 0
-			//0, oe(0,0), oe(5, 7), oe(5, 7), oe(7, 10), oe(8, 12), 0
+			0, oe(0, 0), oe(5, 7), oe(5, 7), oe(7, 10), oe(8, 12), 0
 	};
 
 	// Minor piece attacks to pawn undefended pieces
 	private final static int[] MINOR_ATTACKS = {
-			0, oe(3, 6), oe(10, 15), oe(10, 15), oe(10, 30), oe(15, 40), 0
+			0, oe(3, 4), oe(5, 5), oe(5, 5), oe(7, 10), oe(7, 10), 0
 	};
 
 	// Major piece attacks to pawn undefended pieces
 	private final static int[] MAJOR_ATTACKS = {
-			0, oe(2, 6), oe(4, 7), oe(4, 7), oe(5, 15), oe(7, 20), 0
+			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
 
 	// Knights
@@ -219,8 +218,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	private int[] pawnStructure = {0, 0};
 	private int[] passedPawns = {0, 0};
 
-	private long[] superiorPieceAttacked = {0, 0};
-
 	private long[] pawnCanAttack = {0, 0};
 
 	private long[] minorPiecesDefendedByPawns = {0, 0};
@@ -286,9 +283,6 @@ public class ExperimentalEvaluator extends Evaluator {
 		passedPawns[W] = 0;
 		passedPawns[B] = 0;
 
-		superiorPieceAttacked[W] = 0;
-		superiorPieceAttacked[B] = 0;
-
 		// Squares that pawns attack or can attack by advancing
 		pawnCanAttack[W] = ai.pawnAttacks[W] | ai.pawnAttacks[W] << 8 | ai.pawnAttacks[W] << 16 | ai.pawnAttacks[W] << 24 | ai.pawnAttacks[W] << 32 | ai.pawnAttacks[W] << 40;
 		pawnCanAttack[B] = ai.pawnAttacks[B] | ai.pawnAttacks[B] >>> 8 | ai.pawnAttacks[B] >>> 16 | ai.pawnAttacks[B] >>> 24 | ai.pawnAttacks[B] >>> 32 | ai.pawnAttacks[B] >>> 40;
@@ -329,8 +323,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += PAWN_ATTACKS_KING;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.knights | board.bishops | board.rooks | board.queens);
 
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
@@ -454,8 +446,6 @@ public class ExperimentalEvaluator extends Evaluator {
 						kingDefense[us] += KNIGHT_DEFENDS_KING;
 					}
 
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.rooks | board.queens);
-
 					// Knight outpost: no opposite pawns can attack the square
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them]) != 0) {
 						positional[us] += KNIGHT_OUTPOST;
@@ -481,8 +471,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((pieceAttacks & squaresNearKing[us]) != 0) {
 						kingDefense[us] += BISHOP_DEFENDS_KING;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.rooks | board.queens);
 
 					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
@@ -517,8 +505,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((pieceAttacks & squaresNearKing[us]) != 0) {
 						kingDefense[us] += ROOK_DEFENDS_KING;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & board.queens;
 
 					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
@@ -632,13 +618,9 @@ public class ExperimentalEvaluator extends Evaluator {
 		// Tempo
 		value += (board.getTurn() ? TEMPO : -TEMPO);
 
-		int supAttWhite = BitboardUtils.popCount(superiorPieceAttacked[W]);
-		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[B]);
-		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
-
 		int oe = oeMul(config.getEvalCenter(), center[W] - center[B])
 				+ oeMul(config.getEvalPositional(), positional[W] - positional[B])
-				+ oeMul(config.getEvalAttacks(), attacks[W] - attacks[B] + hungPieces)
+				+ oeMul(config.getEvalAttacks(), attacks[W] - attacks[B])
 				+ oeMul(config.getEvalMobility(), mobility[W] - mobility[B])
 				+ oeMul(config.getEvalPawnStructure(), pawnStructure[W] - pawnStructure[B])
 				+ oeMul(config.getEvalPassedPawns(), passedPawns[W] - passedPawns[B])
@@ -671,13 +653,17 @@ public class ExperimentalEvaluator extends Evaluator {
 	}
 
 	private int evalAttacks(Board board, AttacksInfo ai, int us) {
-		long pawnAttacks = ai.pawnAttacks[W] & (us == 0 ? board.whites : board.blacks);
-		int attacks = PAWN_ATTACKS[Piece.KNIGHT] * BitboardUtils.popCount(pawnAttacks & board.knights) + //
-				PAWN_ATTACKS[Piece.BISHOP] * BitboardUtils.popCount(pawnAttacks & board.bishops) + //
-				PAWN_ATTACKS[Piece.ROOK] * BitboardUtils.popCount(pawnAttacks & board.rooks) + //
-				PAWN_ATTACKS[Piece.QUEEN] * BitboardUtils.popCount(pawnAttacks & board.queens);
+		int attacks = 0;
+		long others = (us == 0 ? board.blacks : board.whites);
 
-		long otherWeak = (us == 0 ? board.blacks : board.whites) & ai.attackedSquares[us] & ~ai.pawnAttacks[1-us];
+		long attackedByPawn = others & ai.pawnAttacks[us];
+		while (attackedByPawn != 0) {
+			long lsb = BitboardUtils.lsb(attackedByPawn);
+			attacks += PAWN_ATTACKS[board.getPieceIntAt(lsb)];
+			attackedByPawn &= ~lsb;
+		}
+
+		long otherWeak = others & ai.attackedSquares[us] & ~ai.pawnAttacks[1 - us];
 		if (otherWeak != 0) {
 			long attackedByMinor = otherWeak & (ai.knightAttacks[us] | ai.bishopAttacks[us]);
 			while (attackedByMinor != 0) {
@@ -692,6 +678,15 @@ public class ExperimentalEvaluator extends Evaluator {
 				attackedByMajor &= ~lsb;
 			}
 		}
+
+		long superiorAttacks = others & ai.pawnAttacks[us] & (board.knights | board.bishops | board.rooks | board.queens)
+				| others & (ai.knightAttacks[us] | ai.bishopAttacks[us]) & (board.rooks | board.queens)
+				| others & ai.rookAttacks[us] & board.queens;
+		int superiorAttacksCount = BitboardUtils.popCount(superiorAttacks);
+		if (superiorAttacksCount >= 2) {
+			attacks += superiorAttacksCount * HUNG_PIECES;
+		}
+
 		return attacks;
 	}
 

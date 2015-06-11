@@ -203,19 +203,19 @@ public class Board {
 
 	public int getPieceIntAt(long square) {
 		return ((pawns & square) != 0 ? Piece.PAWN : //
-				((queens & square) != 0 ? Piece.QUEEN : //
-						((rooks & square) != 0 ? Piece.ROOK : //
-								((bishops & square) != 0 ? Piece.BISHOP : //
-										((knights & square) != 0 ? Piece.KNIGHT : //
+				((knights & square) != 0 ? Piece.KNIGHT : //
+						((bishops & square) != 0 ? Piece.BISHOP : //
+								((rooks & square) != 0 ? Piece.ROOK : //
+										((queens & square) != 0 ? Piece.QUEEN : //
 												((kings & square) != 0 ? Piece.KING : '.'))))));
 	}
 
 	public char getPieceAt(long square) {
 		char p = ((pawns & square) != 0 ? 'p' : //
-				((queens & square) != 0 ? 'q' : //
-						((rooks & square) != 0 ? 'r' : //
-								((bishops & square) != 0 ? 'b' : //
-										((knights & square) != 0 ? 'n' : //
+				((knights & square) != 0 ? 'n' : //
+						((bishops & square) != 0 ? 'b' : //
+								((rooks & square) != 0 ? 'r' : //
+										((queens & square) != 0 ? 'q' : //
 												((kings & square) != 0 ? 'k' : '.'))))));
 		return ((whites & square) != 0 ? Character.toUpperCase(p) : p);
 	}
