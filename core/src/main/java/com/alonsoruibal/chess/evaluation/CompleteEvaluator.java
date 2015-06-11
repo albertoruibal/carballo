@@ -186,7 +186,6 @@ public class CompleteEvaluator extends Evaluator {
 
 	private long[] superiorPieceAttacked = {0, 0};
 
-	private long[] pawnAttacks = {0, 0};
 	private long[] pawnCanAttack = {0, 0};
 
 	// Squares surrounding King
@@ -253,13 +252,9 @@ public class CompleteEvaluator extends Evaluator {
 		superiorPieceAttacked[W] = 0;
 		superiorPieceAttacked[B] = 0;
 
-		// Squares attacked by pawns
-		pawnAttacks[W] = ((board.pawns & board.whites & ~BitboardUtils.b_l) << 9) | ((board.pawns & board.whites & ~BitboardUtils.b_r) << 7);
-		pawnAttacks[B] = ((board.pawns & board.blacks & ~BitboardUtils.b_r) >>> 9) | ((board.pawns & board.blacks & ~BitboardUtils.b_l) >>> 7);
-
 		// Squares that pawns attack or can attack by advancing
-		pawnCanAttack[W] = pawnAttacks[W] | pawnAttacks[W] << 8 | pawnAttacks[W] << 16 | pawnAttacks[W] << 24 | pawnAttacks[W] << 32 | pawnAttacks[W] << 40;
-		pawnCanAttack[B] = pawnAttacks[B] | pawnAttacks[B] >>> 8 | pawnAttacks[B] >>> 16 | pawnAttacks[B] >>> 24 | pawnAttacks[B] >>> 32 | pawnAttacks[B] >>> 40;
+		pawnCanAttack[W] = ai.pawnAttacks[W] | ai.pawnAttacks[W] << 8 | ai.pawnAttacks[W] << 16 | ai.pawnAttacks[W] << 24 | ai.pawnAttacks[W] << 32 | ai.pawnAttacks[W] << 40;
+		pawnCanAttack[B] = ai.pawnAttacks[B] | ai.pawnAttacks[B] >>> 8 | ai.pawnAttacks[B] >>> 16 | ai.pawnAttacks[B] >>> 24 | ai.pawnAttacks[B] >>> 32 | ai.pawnAttacks[B] >>> 40;
 
 		attacks[W] = 0;
 		attacks[B] = 0;
@@ -268,8 +263,8 @@ public class CompleteEvaluator extends Evaluator {
 		squaresNearKing[W] = bbAttacks.king[ai.kingIndex[W]];
 		squaresNearKing[B] = bbAttacks.king[ai.kingIndex[B]];
 
-		mobilitySquares[W] = ~board.whites & ~pawnAttacks[B];
-		mobilitySquares[B] = ~board.blacks & ~pawnAttacks[W];
+		mobilitySquares[W] = ~board.whites & ~ai.pawnAttacks[B];
+		mobilitySquares[B] = ~board.blacks & ~ai.pawnAttacks[W];
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray;
@@ -281,7 +276,7 @@ public class CompleteEvaluator extends Evaluator {
 				int them = (isWhite ? B : W);
 				long mines = (isWhite ? board.whites : board.blacks);
 				long others = (isWhite ? board.blacks : board.whites);
-				long otherPawnAttacks = (isWhite ? pawnAttacks[B] : pawnAttacks[W]);
+				long otherPawnAttacks = (isWhite ? ai.pawnAttacks[B] : ai.pawnAttacks[W]);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
 				int file = 7 - index & 7;
@@ -307,7 +302,7 @@ public class CompleteEvaluator extends Evaluator {
 					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
 
 					boolean isolated = (myPawns & adjacentFiles) == 0;
-					boolean supported = (square & pawnAttacks[us]) != 0;
+					boolean supported = (square & ai.pawnAttacks[us]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
 					boolean opposed = (otherPawns & routeToPromotion) != 0;
 					boolean passed = !doubled
@@ -419,7 +414,7 @@ public class CompleteEvaluator extends Evaluator {
 					superiorPieceAttacked[us] |= pieceAttacks & others & (board.rooks | board.queens);
 
 					// Knight outpost: no opposite pawns can attack the square and it is defended by one of our pawns
-					if ((square & ~pawnCanAttack[them] & pawnAttacks[us]) != 0) {
+					if ((square & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += KNIGTH_OUTPOST[pcsqIndex];
 					}
 
