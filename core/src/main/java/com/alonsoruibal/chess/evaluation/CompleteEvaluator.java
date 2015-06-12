@@ -36,6 +36,20 @@ public class CompleteEvaluator extends Evaluator {
 			{oe(-26, -52), oe(-24, -48), oe(-22, -44), oe(-20, -40), oe(-18, -36), oe(-16, -32), oe(-14, -28), oe(-12, -24), oe(-10, -20), oe(-8, -16), oe(-6, -12), oe(-4, -8), oe(-2, -4), oe(0, 0), oe(2, 4), oe(4, 8), oe(6, 12), oe(8, 16), oe(10, 20), oe(12, 24), oe(14, 28), oe(16, 32), oe(18, 36), oe(20, 40), oe(22, 44), oe(24, 48), oe(26, 52), oe(28, 56)}
 	};
 
+	private final static int[] PAWN_ATTACKS = {
+			0, oe(0, 0), oe(5, 7), oe(5, 7), oe(7, 10), oe(8, 12), 0
+	};
+
+	// Minor piece attacks to pawn undefended pieces
+	private final static int[] MINOR_ATTACKS = {
+			0, oe(3, 4), oe(5, 5), oe(5, 5), oe(7, 10), oe(7, 10), 0
+	};
+
+	// Major piece attacks to pawn undefended pieces
+	private final static int[] MAJOR_ATTACKS = {
+			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
+	};
+
 	// Knights
 
 
@@ -184,8 +198,6 @@ public class CompleteEvaluator extends Evaluator {
 	private int[] pawnStructure = {0, 0};
 	private int[] passedPawns = {0, 0};
 
-	private long[] superiorPieceAttacked = {0, 0};
-
 	private long[] pawnCanAttack = {0, 0};
 
 	// Squares surrounding King
@@ -249,15 +261,13 @@ public class CompleteEvaluator extends Evaluator {
 		passedPawns[W] = 0;
 		passedPawns[B] = 0;
 
-		superiorPieceAttacked[W] = 0;
-		superiorPieceAttacked[B] = 0;
-
 		// Squares that pawns attack or can attack by advancing
 		pawnCanAttack[W] = ai.pawnAttacks[W] | ai.pawnAttacks[W] << 8 | ai.pawnAttacks[W] << 16 | ai.pawnAttacks[W] << 24 | ai.pawnAttacks[W] << 32 | ai.pawnAttacks[W] << 40;
 		pawnCanAttack[B] = ai.pawnAttacks[B] | ai.pawnAttacks[B] >>> 8 | ai.pawnAttacks[B] >>> 16 | ai.pawnAttacks[B] >>> 24 | ai.pawnAttacks[B] >>> 32 | ai.pawnAttacks[B] >>> 40;
 
-		attacks[W] = 0;
-		attacks[B] = 0;
+		// Calculate attacks
+		attacks[W] = evalAttacks(board, ai, W);
+		attacks[B] = evalAttacks(board, ai, B);
 
 		// Squares surrounding King
 		squaresNearKing[W] = bbAttacks.king[ai.kingIndex[W]];
@@ -289,8 +299,6 @@ public class CompleteEvaluator extends Evaluator {
 					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
 						kingSafety[us] += PAWN_ATTACKS_KING;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.knights | board.bishops | board.rooks | board.queens);
 
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
@@ -411,8 +419,6 @@ public class CompleteEvaluator extends Evaluator {
 						kingAttackersCount[us]++;
 					}
 
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.rooks | board.queens);
-
 					// Knight outpost: no opposite pawns can attack the square and it is defended by one of our pawns
 					if ((square & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += KNIGTH_OUTPOST[pcsqIndex];
@@ -427,8 +433,6 @@ public class CompleteEvaluator extends Evaluator {
 						kingSafety[us] += BISHOP_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & (board.rooks | board.queens);
 
 					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
@@ -448,8 +452,6 @@ public class CompleteEvaluator extends Evaluator {
 						kingSafety[us] += ROOK_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
-
-					superiorPieceAttacked[us] |= pieceAttacks & others & board.queens;
 
 					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
 					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
@@ -516,13 +518,9 @@ public class CompleteEvaluator extends Evaluator {
 		// Tempo
 		value += (board.getTurn() ? TEMPO : -TEMPO);
 
-		int supAttWhite = BitboardUtils.popCount(superiorPieceAttacked[W]);
-		int supAttBlack = BitboardUtils.popCount(superiorPieceAttacked[B]);
-		int hungPieces = (supAttWhite >= 2 ? supAttWhite * HUNG_PIECES : 0) - (supAttBlack >= 2 ? supAttBlack * HUNG_PIECES : 0);
-
 		int oe = oeMul(config.getEvalCenter(), center[W] - center[B])
 				+ oeMul(config.getEvalPositional(), positional[W] - positional[B])
-				+ oeMul(config.getEvalAttacks(), attacks[W] - attacks[B] + hungPieces)
+				+ oeMul(config.getEvalAttacks(), attacks[W] - attacks[B])
 				+ oeMul(config.getEvalMobility(), mobility[W] - mobility[B])
 				+ oeMul(config.getEvalPawnStructure(), pawnStructure[W] - pawnStructure[B])
 				+ oeMul(config.getEvalPassedPawns(), passedPawns[W] - passedPawns[B])
@@ -552,6 +550,44 @@ public class CompleteEvaluator extends Evaluator {
 		}
 		assert Math.abs(value) < Evaluator.KNOWN_WIN : "Eval is outside limits";
 		return value;
+	}
+
+	private int evalAttacks(Board board, AttacksInfo ai, int us) {
+		int attacks = 0;
+		long others = (us == 0 ? board.blacks : board.whites);
+
+		long attackedByPawn = others & ai.pawnAttacks[us];
+		while (attackedByPawn != 0) {
+			long lsb = BitboardUtils.lsb(attackedByPawn);
+			attacks += PAWN_ATTACKS[board.getPieceIntAt(lsb)];
+			attackedByPawn &= ~lsb;
+		}
+
+		long otherWeak = others & ai.attackedSquares[us] & ~ai.pawnAttacks[1 - us];
+		if (otherWeak != 0) {
+			long attackedByMinor = otherWeak & (ai.knightAttacks[us] | ai.bishopAttacks[us]);
+			while (attackedByMinor != 0) {
+				long lsb = BitboardUtils.lsb(attackedByMinor);
+				attacks += MINOR_ATTACKS[board.getPieceIntAt(lsb)];
+				attackedByMinor &= ~lsb;
+			}
+			long attackedByMajor = otherWeak & (ai.rookAttacks[us] | ai.queenAttacks[us]);
+			while (attackedByMajor != 0) {
+				long lsb = BitboardUtils.lsb(attackedByMajor);
+				attacks += MAJOR_ATTACKS[board.getPieceIntAt(lsb)];
+				attackedByMajor &= ~lsb;
+			}
+		}
+
+		long superiorAttacks = others & ai.pawnAttacks[us] & (board.knights | board.bishops | board.rooks | board.queens)
+				| others & (ai.knightAttacks[us] | ai.bishopAttacks[us]) & (board.rooks | board.queens)
+				| others & ai.rookAttacks[us] & board.queens;
+		int superiorAttacksCount = BitboardUtils.popCount(superiorAttacks);
+		if (superiorAttacksCount >= 2) {
+			attacks += superiorAttacksCount * HUNG_PIECES;
+		}
+
+		return attacks;
 	}
 
 	private String formatOE(int value) {
