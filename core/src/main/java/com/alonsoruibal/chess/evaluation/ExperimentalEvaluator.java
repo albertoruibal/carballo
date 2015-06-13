@@ -17,18 +17,6 @@ import com.alonsoruibal.chess.util.StringUtils;
 public class ExperimentalEvaluator extends Evaluator {
 	private static final Logger logger = Logger.getLogger("ExperimentalEvaluator");
 
-	public final static int W = 0;
-	public final static int B = 1;
-
-	public final static int PAWN = 100;
-	public final static int KNIGHT = 325;
-	public final static int BISHOP = 325;
-	public final static int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
-	public final static int ROOK = 500;
-	public final static int QUEEN = 975;
-
-	public final static int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, 9999};
-
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private final static int[][] MOBILITY = {
 			{}, {},
@@ -257,14 +245,14 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		ai.build(board);
 
-		pawnMaterial[W] = PAWN * whitePawns;
-		pawnMaterial[B] = PAWN * blackPawns;
-		material[W] = KNIGHT * whiteKnights + BISHOP * whiteBishops + ROOK * whiteRooks + QUEEN * whiteQueens + //
+		pawnMaterial[W] = Config.PAWN * whitePawns;
+		pawnMaterial[B] = Config.PAWN * blackPawns;
+		material[W] = Config.KNIGHT * whiteKnights + Config.BISHOP * whiteBishops + Config.ROOK * whiteRooks + Config.QUEEN * whiteQueens + //
 				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
-		material[B] = KNIGHT * blackKnights + BISHOP * blackBishops + ROOK * blackRooks + QUEEN * blackQueens + //
+						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? Config.BISHOP_PAIR : 0);
+		material[B] = Config.KNIGHT * blackKnights + Config.BISHOP * blackBishops + Config.ROOK * blackRooks + Config.QUEEN * blackQueens + //
 				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? Config.BISHOP_PAIR : 0);
 
 		center[W] = 0;
 		center[B] = 0;
