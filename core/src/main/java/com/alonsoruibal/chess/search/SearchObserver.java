@@ -2,8 +2,8 @@ package com.alonsoruibal.chess.search;
 
 public interface SearchObserver {
 
-	public void info(SearchStatusInfo info);
+	void info(SearchStatusInfo info);
 
-	public void bestMove(int bestMove, int ponder);
+	void bestMove(int bestMove, int ponder);
 
 }

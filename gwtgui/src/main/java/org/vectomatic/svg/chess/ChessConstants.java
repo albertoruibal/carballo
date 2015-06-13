@@ -21,55 +21,55 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
 
 public interface ChessConstants extends Constants {
-	public static final ChessConstants INSTANCE =  GWT.create(ChessConstants.class);
-	public String whitesVsBlacks();
-	public String whitesVsComputer();
-	public String blacksVsComputer();
+	ChessConstants INSTANCE =  GWT.create(ChessConstants.class);
+	String whitesVsBlacks();
+	String whitesVsComputer();
+	String blacksVsComputer();
 
-	public String computerVsComputer();
+	String computerVsComputer();
 
-	public String white();
-	public String black();
+	String white();
+	String black();
 	
-	public String infoTab();
-	public String settingsTab();
-	public String aboutTab();
+	String infoTab();
+	String settingsTab();
+	String aboutTab();
 
-	public String actions();
-	public String status();
-	public String mode();
-	public String reflectionTime();
-	public String player();
-	public String history();
-	public String fen();
-	public String advanced();
+	String actions();
+	String status();
+	String mode();
+	String reflectionTime();
+	String player();
+	String history();
+	String fen();
+	String advanced();
 	
-	public String undo();
-	public String redo();
-	public String restart();
-	public String setFen();
+	String undo();
+	String redo();
+	String restart();
+	String setFen();
 
-	public String thinking();
-	public String userMove();
-	public String whitesWin();
-	public String blacksWin();
-	public String draw();
-	public String confirmRestart();
-	public String confirmYes();
-	public String confirmNo();
-	public String waitMessage();
+	String thinking();
+	String userMove();
+	String whitesWin();
+	String blacksWin();
+	String draw();
+	String confirmRestart();
+	String confirmYes();
+	String confirmNo();
+	String waitMessage();
 
-	public String mt1s();
-	public String mt3s();
-	public String mt5s();
-	public String mt7s();
-	public String mt10s();
-	public String mt15s();
-	public String mt30s();
+	String mt1s();
+	String mt3s();
+	String mt5s();
+	String mt7s();
+	String mt10s();
+	String mt15s();
+	String mt30s();
 
-	public String standard();
+	String standard();
 
-	public String chess960();
+	String chess960();
 
-	public String about();
+	String about();
 }

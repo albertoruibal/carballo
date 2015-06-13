@@ -404,7 +404,7 @@ public class Move {
 		if (disambiguate) {
 			if (fileEqual && rankEqual) {
 				sb.append(fromSq);
-			} else if (fileEqual && !rankEqual) {
+			} else if (fileEqual) {
 				sb.append(fromSq.charAt(1));
 			} else {
 				sb.append(fromSq.charAt(0));

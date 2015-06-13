@@ -217,7 +217,7 @@ public class EpdTest implements SearchObserver {
 			solutionNodes = info.getNodes();
 		}
 
-		boolean found = bestMoves.length > 0 ? false : true;
+		boolean found = bestMoves.length <= 0;
 		for (int move : bestMoves) {
 			if (move == search.getBestMove()) {
 				found = true;

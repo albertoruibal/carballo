@@ -89,7 +89,7 @@ public class Uci implements SearchObserver {
 						nameSB.append(tok);
 					}
 					String name = nameSB.toString();
-					String value = tokens[index++];
+					String value = tokens[index];
 
 					if ("Hash".equals(name)) {
 						config.setTranspositionTableSize(Integer.parseInt(value));

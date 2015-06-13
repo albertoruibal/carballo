@@ -1,7 +1,6 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
@@ -39,7 +38,7 @@ public class EndgameSearchTest {
 		searchParams = new SearchParameters();
 		searchParams.setNodes(30000);
 		search.go(searchParams);
-		assertTrue("Whites capture the pawn in 6th and win", search.getBestMoveScore() < -ExperimentalEvaluator.QUEEN);
+		assertTrue("Whites capture the pawn in 6th and win", search.getBestMoveScore() < -Config.QUEEN);
 	}
 
 	@Test

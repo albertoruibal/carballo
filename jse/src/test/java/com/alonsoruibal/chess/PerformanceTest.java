@@ -63,7 +63,6 @@ public class PerformanceTest {
 		legalMovegen = new LegalMoveGenerator();
 		// To initialize static things 
 		BitboardUtils b = new BitboardUtils();
-		b.toString(); // to avoid waiting
 		testBoards = new Board[tests.length];
 		for (int i = 0; i < tests.length; i++) {
 			testBoards[i] = new Board();

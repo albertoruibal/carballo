@@ -31,7 +31,7 @@ public class KPKBitbaseTest {
 		fen = "8/5k1P/8/8/8/7K/8/8 b - - 0 0";
 		board.setFen(fen);
 		System.out.print(board.toString());
-		assertTrue("Pawn captured after promotion", kpkBitbase.probe(board) == false);
+		assertTrue("Pawn captured after promotion", !kpkBitbase.probe(board));
 	}
 
 	@Test

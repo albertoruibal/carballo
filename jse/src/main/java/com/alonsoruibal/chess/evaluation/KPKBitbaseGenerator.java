@@ -48,7 +48,7 @@ public class KPKBitbaseGenerator {
 		int result;
 
 		public KPKPosition(int idx) {
-			whiteKingIndex = (idx >>> 0) & 0x3F;
+			whiteKingIndex = idx & 0x3F;
 			blackKingIndex = (idx >>> 6) & 0x3F;
 			whiteToMove = ((idx >>> 12) & 0x01) != 0;
 			pawnIndex = 7 - ((idx >>> 13) & 0x03) + ((RANK_7 - (idx >>> 15)) << 3);

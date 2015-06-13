@@ -22,10 +22,10 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 
 public interface Resources extends ClientBundle {
-	public static final Resources INSTANCE =  GWT.create(Resources.class);
+	Resources INSTANCE =  GWT.create(Resources.class);
 	@Source("chess.svg")
-	public TextResource getBoard();
+	TextResource getBoard();
 	@Source("chess.css")
-	public ChessCss getCss();
+	ChessCss getCss();
 
 }

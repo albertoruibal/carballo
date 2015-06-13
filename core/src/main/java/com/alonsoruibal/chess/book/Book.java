@@ -12,5 +12,5 @@ public interface Book {
 	/**
 	 * Gets a random move from the book taking care of weights
 	 */
-	public int getMove(Board board);
+	int getMove(Board board);
 }
