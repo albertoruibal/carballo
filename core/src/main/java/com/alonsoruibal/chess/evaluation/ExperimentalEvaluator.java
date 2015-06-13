@@ -677,8 +677,4 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		return attacks;
 	}
-
-	private String formatOE(int value) {
-		return StringUtils.padLeft(String.valueOf(o(value)), 8) + " " + StringUtils.padLeft(String.valueOf(e(value)), 8);
-	}
 }

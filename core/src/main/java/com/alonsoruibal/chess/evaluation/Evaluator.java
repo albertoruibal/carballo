@@ -3,6 +3,7 @@ package com.alonsoruibal.chess.evaluation;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
+import com.alonsoruibal.chess.util.StringUtils;
 
 public abstract class Evaluator {
 	public final static int W = 0;
@@ -44,5 +45,9 @@ public abstract class Evaluator {
 
 	public static int e(int oe) {
 		return (short) (oe & 0xffff);
+	}
+
+	String formatOE(int value) {
+		return StringUtils.padLeft(String.valueOf(o(value)), 8) + " " + StringUtils.padLeft(String.valueOf(e(value)), 8);
 	}
 }
