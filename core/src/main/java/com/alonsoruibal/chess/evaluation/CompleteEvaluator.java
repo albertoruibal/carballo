@@ -276,7 +276,6 @@ public class CompleteEvaluator extends Evaluator {
 				int them = (isWhite ? B : W);
 				long mines = (isWhite ? board.whites : board.blacks);
 				long others = (isWhite ? board.blacks : board.whites);
-				long otherPawnAttacks = (isWhite ? ai.pawnAttacks[B] : ai.pawnAttacks[W]);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
 				int file = 7 - index & 7;
@@ -286,7 +285,7 @@ public class CompleteEvaluator extends Evaluator {
 				if ((square & board.pawns) != 0) {
 					center[us] += pawnPcsq[pcsqIndex];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += PAWN_ATTACKS_KING;
 					}
 
@@ -317,7 +316,7 @@ public class CompleteEvaluator extends Evaluator {
 							&& myPawnsBesideAndBehindAdjacent == 0
 							&& (pieceAttacks & otherPawns) == 0 // No backwards if it can capture
 							&& (BitboardUtils.RANK_AND_BACKWARD[us][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
-							routeToPromotion & (board.pawns | otherPawnAttacks)) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
+							routeToPromotion & (board.pawns | ai.pawnAttacks[them])) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
 					if (debug) {
 						boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
@@ -404,7 +403,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += KNIGHT_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
@@ -419,7 +418,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
+					if ((pieceAttacks & squaresNearKing[them] & ~~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += BISHOP_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
@@ -438,7 +437,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += ROOK_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
@@ -471,7 +470,7 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~otherPawnAttacks) != 0) {
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += QUEEN_ATTACKS_KING;
 						kingAttackersCount[us]++;
 					}
