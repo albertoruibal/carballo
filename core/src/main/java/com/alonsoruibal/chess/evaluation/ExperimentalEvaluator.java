@@ -104,9 +104,9 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int QUEEN_7_P_78_K_8_R_7 = oe(10, 15); // Queen in 7th my rook in 7th defending queen and opposite king in 8th
 
 	// King
-	// Sums for each pawn attacking an square near the king
+	// Sums for each piece attacking an square near the king
 	private final static int PIECE_ATTACKS_KING[] = {0, oe(1, 0), oe(4, 0), oe(2, 0), oe(3, 0), oe(5, 0)};
-	private final static int KING_PAWN_SHIELD = oe(5, 0);  // Protection: sums for each pawn near king
+	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king
 	// Ponder kings attacks by the number of attackers (not pawns)
 	private final static int[] KING_SAFETY_PONDER = {0, 1, 2, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 

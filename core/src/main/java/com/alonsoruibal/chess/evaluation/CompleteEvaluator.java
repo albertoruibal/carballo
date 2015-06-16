@@ -90,11 +90,12 @@ public class CompleteEvaluator extends Evaluator {
 
 	// Queen
 
-	// King Safety: not in endgame!!!
+	// King
+	// Sums for each piece attacking an square near the king
 	private final static int PIECE_ATTACKS_KING[] = {0, oe(1, 0), oe(4, 0), oe(2, 0), oe(3, 0), oe(5, 0)};
 	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king
-	// Ponder kings attacks by the number of attackers (not pawns) later divided by 8
-	private final static int[] KING_SAFETY_PONDER = {0, 1, 4, 8, 16, 25, 36, 49, 50, 50, 50, 50, 50, 50, 50, 50};
+	// Ponder kings attacks by the number of attackers (not pawns)
+	private final static int[] KING_SAFETY_PONDER = {0, 1, 2, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 
 	// Tempo
 	public final static int TEMPO = 9; // Add to moving side score
@@ -502,8 +503,8 @@ public class CompleteEvaluator extends Evaluator {
 				+ oeMul(config.getEvalMobility(), mobility[W] - mobility[B])
 				+ oeMul(config.getEvalPawnStructure(), pawnStructure[W] - pawnStructure[B])
 				+ oeMul(config.getEvalPassedPawns(), passedPawns[W] - passedPawns[B])
-				+ oeMul(config.getEvalKingSafety(), kingDefense[W] - kingDefense[B])
-				+ oeMul(config.getEvalKingSafety() >>> 3, (KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
+				+ oeMul(config.getEvalKingSafety(), kingDefense[W] - kingDefense[B]
+				+ (KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
 
 		value += (gamePhase * o(oe)) / (256 * 100); // divide by 256
 		value += ((256 - gamePhase) * e(oe)) / (256 * 100);
@@ -522,7 +523,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("mobility          = " + formatOE(mobility[W] - mobility[B]));
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W] - pawnStructure[B]));
 			logger.debug("passedPawns       = " + formatOE(passedPawns[W] - passedPawns[B]));
-			logger.debug("kingSafety x8     = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
+			logger.debug("kingSafety        = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
 			logger.debug("kingDefense       = " + formatOE(kingDefense[W] - kingDefense[B]));
 			logger.debug("value             = " + value);
 		}
