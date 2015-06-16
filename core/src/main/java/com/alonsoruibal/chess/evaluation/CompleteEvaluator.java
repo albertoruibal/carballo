@@ -39,6 +39,25 @@ public class CompleteEvaluator extends Evaluator {
 			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
 
+	private final static int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
+	private final static int PINNED_PIECE = oe(25, 35);
+
+	// Pawns
+	private final static int PAWN_UNSUPPORTED = oe(-2, -1);
+	private final static int PAWN_BACKWARDS = oe(-10, -15);
+	// Array is not opposed, opposed
+	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
+	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
+
+	// Array by relative rank
+	private final static int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
+	private final static int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
+	private final static int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, 0, oe(2, 5), oe(5, 10), oe(10, 20), 0}; // no opposite pawns at left or at right
+	private final static int[] PAWN_PASSER_CONNECTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(20, 30), 0};
+	private final static int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
+	private final static int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
+	private final static int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
+
 	// Knights
 	private final static int[] KNIGTH_OUTPOST = {
 			0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,35 +91,10 @@ public class CompleteEvaluator extends Evaluator {
 	// Queen
 
 	// King Safety: not in endgame!!!
-	private final static int PAWN_ATTACKS_KING = oe(1, 0);
-	private final static int KNIGHT_ATTACKS_KING = oe(4, 0);
-	private final static int BISHOP_ATTACKS_KING = oe(2, 0);
-	private final static int ROOK_ATTACKS_KING = oe(3, 0);
-	private final static int QUEEN_ATTACKS_KING = oe(5, 0);
-
-	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king (opening)
-
+	private final static int PIECE_ATTACKS_KING[] = {0, oe(1, 0), oe(4, 0), oe(2, 0), oe(3, 0), oe(5, 0)};
+	private final static int KING_PAWN_SHIELD = oe(5, 0); // Protection: sums for each pawn near king
 	// Ponder kings attacks by the number of attackers (not pawns) later divided by 8
 	private final static int[] KING_SAFETY_PONDER = {0, 1, 4, 8, 16, 25, 36, 49, 50, 50, 50, 50, 50, 50, 50, 50};
-
-	// Pawns
-	private final static int PAWN_UNSUPPORTED = oe(-2, -1);
-	private final static int PAWN_BACKWARDS = oe(-10, -15);
-	// Array is not opposed, opposed
-	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
-	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
-
-	// Array by relative rank
-	private final static int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
-	private final static int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
-	private final static int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, 0, oe(2, 5), oe(5, 10), oe(10, 20), 0}; // no opposite pawns at left or at right
-	private final static int[] PAWN_PASSER_CONNECTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(20, 30), 0};
-	private final static int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
-	private final static int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
-	private final static int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
-
-	private final static int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
-	private final static int PINNED_PIECE = oe(25, 35);
 
 	// Tempo
 	public final static int TEMPO = 9; // Add to moving side score
@@ -281,7 +275,7 @@ public class CompleteEvaluator extends Evaluator {
 					center[us] += pawnPcsq[pcsqIndex];
 
 					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
-						kingSafety[us] += PAWN_ATTACKS_KING;
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.PAWN];
 					}
 
 					long myPawns = board.pawns & mines;
@@ -399,7 +393,7 @@ public class CompleteEvaluator extends Evaluator {
 					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
 					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
-						kingSafety[us] += KNIGHT_ATTACKS_KING;
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT];
 						kingAttackersCount[us]++;
 					}
 
@@ -413,8 +407,8 @@ public class CompleteEvaluator extends Evaluator {
 
 					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~~ai.pawnAttacks[them]) != 0) {
-						kingSafety[us] += BISHOP_ATTACKS_KING;
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP];
 						kingAttackersCount[us]++;
 					}
 
@@ -430,10 +424,10 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.rooks) != 0) {
 					center[us] += rookPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
-						kingSafety[us] += ROOK_ATTACKS_KING;
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them]) != 0) {
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK];
 						kingAttackersCount[us]++;
 					}
 
@@ -463,10 +457,10 @@ public class CompleteEvaluator extends Evaluator {
 				} else if ((square & board.queens) != 0) {
 					center[us] += queenPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them])];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
-						kingSafety[us] += QUEEN_ATTACKS_KING;
+					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them]) != 0) {
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN];
 						kingAttackersCount[us]++;
 					}
 
@@ -490,7 +484,7 @@ public class CompleteEvaluator extends Evaluator {
 		}
 
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
-		// opening=> gamephase = 255 / ending => gamephase ~= 0
+		// opening=> gamephase = 256 / ending => gamephase = 0
 		int nonPawnMaterial = material[W] + material[B];
 		int gamePhase = nonPawnMaterial >= Config.NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
 				nonPawnMaterial <= Config.NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
