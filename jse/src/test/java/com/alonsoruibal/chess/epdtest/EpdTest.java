@@ -71,8 +71,6 @@ public class EpdTest implements SearchObserver {
 
 	long processEpdFile(InputStream is, int timeLimit) {
 		Config config = new Config();
-		config.setBook(new FileBook("/book_small.bin"));
-
 		return processEpdFile(config, is, timeLimit);
 	}
 

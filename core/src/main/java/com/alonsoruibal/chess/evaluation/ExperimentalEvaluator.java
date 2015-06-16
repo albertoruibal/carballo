@@ -480,7 +480,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.rooks) != 0) {
 					center[us] += rookPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them])];
 
 					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += ROOK_ATTACKS_KING;
@@ -548,7 +548,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.queens) != 0) {
 					center[us] += queenPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them])];
 
 					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
 						kingSafety[us] += QUEEN_ATTACKS_KING;
