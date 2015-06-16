@@ -10,14 +10,15 @@ import java.util.Arrays;
  * @author rui
  */
 public class Config {
-	// Valuet that cannot be dinamically changed
+	// Values that cannot be dynamically changed
 	public final static int PAWN = 100;
 	public final static int KNIGHT = 325;
 	public final static int BISHOP = 325;
 	public final static int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
 	public final static int ROOK = 500;
 	public final static int QUEEN = 975;
-	public final static int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, 9999};
+	public final static int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
+	public final static int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
 
 	// Default values are static fields used also from UCIEngine
 	public final static boolean DEFAULT_USE_BOOK = true;

@@ -6,7 +6,6 @@ import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
-import com.alonsoruibal.chess.util.StringUtils;
 
 /**
  * Evaluation is done in centipawns
@@ -41,11 +40,29 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	// Knights
-
+	private final static int[] KNIGTH_OUTPOST = {
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, oe(7, 7), oe(9, 9), oe(9, 9), oe(7, 7), 0, 0,
+			0, oe(5, 5), oe(10, 10), oe(20, 20), oe(20, 20), oe(10, 10), oe(5, 5), 0,
+			0, oe(5, 5), oe(10, 10), oe(20, 20), oe(20, 20), oe(10, 10), oe(5, 5), 0,
+			0, 0, oe(7, 7), oe(9, 9), oe(9, 9), oe(7, 7), 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0
+	};
 
 	// Bishops
-	private final static int BISHOP_TRAPPED = oe(-100, -100);
-
+	private final static int BISHOP_TRAPPED = oe(-40, -40);
+	private final static long[] BISHOP_TRAPPING = {
+			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
+			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
+			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38,
+			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46,
+			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0
+	};
 	// Rooks
 	private final static int ROOK_FILE_OPEN = oe(25, 20); // No pawns in rook file
 	private final static int ROOK_FILE_SEMIOPEN = oe(15, 10); // Only opposite pawns in rook file
@@ -67,7 +84,7 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int[] KING_SAFETY_PONDER = {0, 1, 4, 8, 16, 25, 36, 49, 50, 50, 50, 50, 50, 50, 50, 50};
 
 	// Pawns
-	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
+	private final static int PAWN_UNSUPPORTED = oe(-2, -1);
 	private final static int PAWN_BACKWARDS = oe(-10, -15);
 	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
@@ -86,29 +103,7 @@ public class CompleteEvaluator extends Evaluator {
 	private final static int PINNED_PIECE = oe(25, 35);
 
 	// Tempo
-	public final static int TEMPO = 10; // Add to moving side score
-
-	private final static int[] KNIGTH_OUTPOST = {
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, oe(7, 7), oe(9, 9), oe(9, 9), oe(7, 7), 0, 0,
-			0, oe(5, 5), oe(10, 10), oe(20, 20), oe(20, 20), oe(10, 10), oe(5, 5), 0,
-			0, oe(5, 5), oe(10, 10), oe(20, 20), oe(20, 20), oe(10, 10), oe(5, 5), 0,
-			0, 0, oe(7, 7), oe(9, 9), oe(9, 9), oe(7, 7), 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0
-	};
-
-	private final static long[] BISHOP_TRAPPING = {
-			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
-			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
-			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38,
-			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46,
-			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0
-	};
+	public final static int TEMPO = 9; // Add to moving side score
 
 	private final static int pawnPcsq[] = {
 			oe(-15, 0), oe(-5, 0), oe(0, 0), oe(5, 0), oe(5, 0), oe(0, 0), oe(-5, 0), oe(-15, 0),
@@ -486,7 +481,7 @@ public class CompleteEvaluator extends Evaluator {
 					center[us] += kingPcsq[pcsqIndex];
 
 					// If king is in the first or second rank, we add the pawn shield
-					if ((square & (isWhite ? BitboardUtils.RANK[W] | BitboardUtils.RANK[B] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
+					if ((square & (isWhite ? BitboardUtils.RANK[0] | BitboardUtils.RANK[1] : BitboardUtils.RANK[6] | BitboardUtils.RANK[7])) != 0) {
 						kingDefense[us] += KING_PAWN_SHIELD * BitboardUtils.popCount(pieceAttacks & mines & board.pawns);
 					}
 				}
@@ -496,10 +491,10 @@ public class CompleteEvaluator extends Evaluator {
 
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
 		// opening=> gamephase = 255 / ending => gamephase ~= 0
-		int gamePhase = ((material[W] + material[B]) << 8) / 5000;
-		if (gamePhase > 256) {
-			gamePhase = 256; // Security
-		}
+		int nonPawnMaterial = material[W] + material[B];
+		int gamePhase = nonPawnMaterial >= Config.NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
+				nonPawnMaterial <= Config.NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
+						((nonPawnMaterial - Config.NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (Config.NON_PAWN_MATERIAL_MIDGAME_MAX - Config.NON_PAWN_MATERIAL_ENDGAME_MIN);
 
 		int value = 0;
 		// First Material

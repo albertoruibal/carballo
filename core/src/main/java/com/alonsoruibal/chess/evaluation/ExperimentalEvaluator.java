@@ -6,11 +6,9 @@ import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
-import com.alonsoruibal.chess.util.StringUtils;
 
 /**
  * Evaluation is done in centipawns
- * <p>
  *
  * @author rui
  */
@@ -44,6 +42,16 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int KNIGHT_ATTACKS_KING = oe(4, 2);
 	private final static int KNIGHT_DEFENDS_KING = oe(4, 2);
 	private final static int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
+	private final static int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, oe(7, 7), oe(7, 7), oe(10, 10), oe(10, 10), oe(7, 7), oe(7, 7), 0,
+			0, oe(5, 5), oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), oe(5, 5), 0,
+			0, 0, oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0
+	};
 
 	// Bishops
 	private final static int BISHOP_ATTACKS_KING = oe(2, 1);
@@ -52,6 +60,16 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private final static int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
 	private final static int BISHOP_TRAPPED = oe(-40, -40);
+	private final static long[] BISHOP_TRAPPING = { //
+			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0, //
+			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22, //
+			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30, //
+			0, 0, 0, 0, 0, 0, 0, 0, //
+			0, 0, 0, 0, 0, 0, 0, 0, //
+			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38, //
+			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46, //
+			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0 //
+	};
 
 	// Rooks
 	private final static int ROOK_ATTACKS_KING = oe(3, 1);
@@ -83,7 +101,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	// Pawns
 	private final static int PAWN_ATTACKS_KING = oe(1, 0); // Sums for each pawn attacking an square near the king or the king
 
-	private final static int PAWN_UNSUPPORTED = oe(-2, 4);
+	private final static int PAWN_UNSUPPORTED = oe(-2, -1);
 	private final static int PAWN_BACKWARDS = oe(-10, -15);
 	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
@@ -105,28 +123,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	public final static int TEMPO = 9; // Add to moving side score
 
 	private final static long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
-
-	private final static int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, oe(7, 7), oe(7, 7), oe(10, 10), oe(10, 10), oe(7, 7), oe(7, 7), 0,
-			0, oe(5, 5), oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), oe(5, 5), 0,
-			0, 0, oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0
-	};
-
-	private final static long[] BISHOP_TRAPPING = { //
-			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0, //
-			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22, //
-			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			0, 0, 0, 0, 0, 0, 0, 0, //
-			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38, //
-			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46, //
-			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0 //
-	};
 
 	private final static int pawnPcsq[] = {
 			oe(-21, -4), oe(-9, -6), oe(-3, -8), oe(4, -10), oe(4, -10), oe(-3, -8), oe(-9, -6), oe(-21, -4),
@@ -594,11 +590,11 @@ public class ExperimentalEvaluator extends Evaluator {
 		}
 
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
-		// opening=> gamephase = 255 / ending => gamephase ~= 0
-		int gamePhase = ((material[W] + material[B]) << 8) / 5000;
-		if (gamePhase > 256) {
-			gamePhase = 256; // Security
-		}
+		// opening=> gamephase = 256 / ending => gamephase = 0
+		int nonPawnMaterial = material[W] + material[B];
+		int gamePhase = nonPawnMaterial >= Config.NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
+				nonPawnMaterial <= Config.NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
+						((nonPawnMaterial - Config.NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (Config.NON_PAWN_MATERIAL_MIDGAME_MAX - Config.NON_PAWN_MATERIAL_ENDGAME_MIN);
 
 		int value = 0;
 		// First Material

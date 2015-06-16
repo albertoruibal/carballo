@@ -402,7 +402,24 @@ public class SearchEngine implements Runnable {
 					&& move != ttMove //
 					&& !Move.isPawnPush678(move) //
 					&& futilityBase > -Evaluator.KNOWN_WIN) {
-				int futilityValue = futilityBase + Config.PIECE_VALUES[Move.getPieceCaptured(board, move)];
+				int futilityValue = futilityBase;
+				switch (Move.getPieceCaptured(board, move)) {
+					case Piece.PAWN:
+						futilityValue += Config.PAWN;
+						break;
+					case Piece.KNIGHT:
+						futilityValue += Config.KNIGHT;
+						break;
+					case Piece.BISHOP:
+						futilityValue += Config.BISHOP;
+						break;
+					case Piece.ROOK:
+						futilityValue += Config.ROOK;
+						break;
+					case Piece.QUEEN:
+						futilityValue += Config.QUEEN;
+						break;
+				}
 				if (futilityValue < beta) {
 					bestScore = Math.max(bestScore, futilityValue);
 					continue;
