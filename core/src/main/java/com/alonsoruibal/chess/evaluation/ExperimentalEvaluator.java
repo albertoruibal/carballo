@@ -24,20 +24,18 @@ public class ExperimentalEvaluator extends Evaluator {
 			{oe(0, 0), oe(2, 2), oe(4, 4), oe(6, 6), oe(8, 8), oe(10, 10), oe(12, 12), oe(14, 14), oe(16, 16), oe(18, 18), oe(20, 20), oe(22, 22), oe(24, 24), oe(26, 26), oe(28, 28), oe(30, 30), oe(32, 32), oe(34, 34), oe(36, 36), oe(38, 38), oe(40, 40), oe(42, 42), oe(44, 44), oe(46, 46), oe(48, 48), oe(50, 50), oe(52, 52), oe(54, 54)}
 	};
 
+	// Attacks
 	private final static int[] PAWN_ATTACKS = {
 			0, oe(0, 0), oe(5, 7), oe(5, 7), oe(7, 10), oe(8, 12), 0
 	};
-
 	// Minor piece attacks to pawn undefended pieces
 	private final static int[] MINOR_ATTACKS = {
 			0, oe(3, 4), oe(5, 5), oe(5, 5), oe(7, 10), oe(7, 10), 0
 	};
-
 	// Major piece attacks to pawn undefended pieces
 	private final static int[] MAJOR_ATTACKS = {
 			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
-
 	private final static int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
 	private final static int PINNED_PIECE = oe(25, 35);
 
@@ -47,7 +45,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
 	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
-
 	// Array by relative rank
 	private final static int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
 	private final static int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
