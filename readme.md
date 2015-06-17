@@ -31,20 +31,25 @@ Features
 * Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
 * Quiescent Search (QS) with only good or equal captures (according to SEE) and limited check generation
 * Internal Iterative Deepening to improve sorting
-* Extensions: Check, pawn push and passed pawns and mate threat
+* Extensions: Check, pawn push, passed pawns, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
 * Pruning: Null move Pruning, static null move pruning, futility pruning and aggressive futility pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parameterizable evaluator (only for the complete &amp; experimental evaluators)
+* Selectable ELO level with a UCI parameter
+* Supports Chess960
 * Polyglot opening book support; in the code it includes Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
 * JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WAC, etc.)
 
 Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
-* WinAtChess: 287 positions of 300 (1 second each)
-* SilentButDeadly: 89 positions solved of 134 (5 seconds each)
-* Arasan: 22 positions of 250 (60 seconds each)
+| Test suite       | Time per position |  Result |     1.2 |   
+| ---------------- | -----------------:| -------:| -------:|
+| WinAtChess (New) |          1 second | 289/300 | 287/300 |
+| SilentButDeadly  |          1 second | 116/134 |  89/134 |
+| ECMGCP           |        10 seconds | 128/183 |       ? |
+| Arasan           |        60 seconds |  19/250 |  22/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -57,7 +62,7 @@ Authors
 Building
 ========
 
-Carballo uses the Gradle build system, you need to install Gradle from http://www.gradle.org
+Carballo uses the Gradle build system, you can get Gradle from http://www.gradle.org
 
 Build all the jars and install them to your local Maven repository:
 ```
@@ -94,6 +99,19 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 History
 =======
+
+Version 1.3: A lot of work in the evaluation function and a better positional play
+
+* Now AttacksInfo holds the attacks information by piece type
+* This allowed to improve mobility and king safety evaluation detecting squares attacked by less valuable piece types
+* New MOBILITY[][] array holding mobility bonuses by piece type and number of destiny squares  
+* Removed the king defense bonuses from the Experimental evaluator
+* Simplified the Bishop's Capablanca rule
+* Removed some rook in 7th rank logic
+* Evaluation refactoring using the "W" and "B" constants and the "us" and "them" variables
+* The Attacks evaluation is now done in a separated evalAttacks() method, unifying the attack bonuses in the PAWN_ATTACKS[], MINOR_ATTACKS[] and MAJOR_ATTACKS[] arrays
+* Piece value constants moved to the Config class and removed the PIECE_VALUES[] array
+* Better midgame-to-endgame evaluation scaling with the new NON_PAWN_MATERIAL_MIDGAME_MAX and NON_PAWN_MATERIAL_ENDGAME_MIN constants
 
 Version 1.2: A new MoveIterator, Chess960 and lots of UCI improvements
 
