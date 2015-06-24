@@ -49,26 +49,7 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
 					System.out.println("option name UCI_Chess960 type check default false");
-					System.out.println("option name Null Move type check default " + Config.DEFAULT_NULL_MOVE);
-					System.out.println("option name Static Null Move type check default " + Config.DEFAULT_STATIC_NULL_MOVE);
-					System.out.println("option name LMR type check default " + Config.DEFAULT_LMR);
-					System.out.println("option name IID type check default " + Config.DEFAULT_IID);
-					System.out.println("option name IID Margin type spin default " + Config.DEFAULT_IID_MARGIN + " min 1 max 1000");
-					System.out.println("option name Extensions Check type spin default " + Config.DEFAULT_EXTENSIONS_CHECK + " min 0 max 2");
-					System.out.println("option name Extensions Pawn Push type spin default " + Config.DEFAULT_EXTENSIONS_PAWN_PUSH + " min 0 max 2");
-					System.out.println("option name Extensions Passed Pawn type spin default " + Config.DEFAULT_EXTENSIONS_PASSED_PAWN + " min 0 max 2");
-					System.out.println("option name Extensions Mate Threat type spin default " + Config.DEFAULT_EXTENSIONS_MATE_THREAT + " min 0 max 2");
-					System.out.println("option name Extensions Singular type spin default " + Config.DEFAULT_EXTENSIONS_SINGULAR + " min 0 max 2");
-					System.out.println("option name Singular Extension Margin type spin default " + Config.DEFAULT_SINGULAR_EXTENSION_MARGIN + " min 0 max 300");
 					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
-					System.out.println("option name Aspiration Window type check default " + Config.DEFAULT_ASPIRATION_WINDOW);
-					System.out.println("option name Aspiration Window Sizes type string default " + Config.DEFAULT_ASPIRATION_WINDOW_SIZES);
-					System.out.println("option name Futility type check default " + Config.DEFAULT_FUTILITY);
-					System.out.println("option name Futility Margin QS type spin default " + Config.DEFAULT_FUTILITY_MARGIN_QS + " min 1 max 1000");
-					System.out.println("option name Futility Margin type spin default " + Config.DEFAULT_FUTILITY_MARGIN + " min 1 max 1000");
-					System.out.println("option name Futility Margin Aggressive type spin default " + Config.DEFAULT_FUTILITY_MARGIN_AGGRESSIVE + " min 1 max 1000");
-					System.out.println("option name Razoring type check default " + Config.DEFAULT_RAZORING);
-					System.out.println("option name Razoring Margin type spin default " + Config.DEFAULT_RAZORING_MARGIN + " min 1 max 1000");
 					System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
 					System.out.println("option name Eval Center type spin default " + Config.DEFAULT_EVAL_CENTER + " min 0 max 200");
 					System.out.println("option name Eval Positional type spin default " + Config.DEFAULT_EVAL_POSITIONAL + " min 0 max 200");
@@ -99,44 +80,8 @@ public class Uci implements SearchObserver {
 						config.setUseBook(Boolean.parseBoolean(value));
 					} else if ("UCI_Chess960".equals(name)) {
 						config.setUciChess960(Boolean.parseBoolean(value));
-					} else if ("NullMove".equals(name)) {
-						config.setNullMove(Boolean.parseBoolean(value));
-					} else if ("StaticNullMove".equals(name)) {
-						config.setStaticNullMove(Boolean.parseBoolean(value));
-					} else if ("IID".equals(name)) {
-						config.setIid(Boolean.parseBoolean(value));
-					} else if ("IIDMargin".equals(name)) {
-						config.setIidMargin(Integer.parseInt(value));
-					} else if ("ExtensionsCheck".equals(name)) {
-						config.setExtensionsCheck(Integer.parseInt(value));
-					} else if ("ExtensionsPawnPush".equals(name)) {
-						config.setExtensionsPawnPush(Integer.parseInt(value));
-					} else if ("ExtensionsPassedPawn".equals(name)) {
-						config.setExtensionsPassedPawn(Integer.parseInt(value));
-					} else if ("ExtensionsMateThreat".equals(name)) {
-						config.setExtensionsMateThreat(Integer.parseInt(value));
-					} else if ("ExtensionsSingular".equals(name)) {
-						config.setExtensionsSingular(Integer.parseInt(value));
-					} else if ("SingularExtensionMargin".equals(name)) {
-						config.setSingularExtensionMargin(Integer.parseInt(value));
 					} else if ("Evaluator".equals(name)) {
 						config.setEvaluator(value);
-					} else if ("AspirationWindow".equals(name)) {
-						config.setAspirationWindow(Boolean.parseBoolean(value));
-					} else if ("AspirationWindowSizes".equals(name)) {
-						config.setAspirationWindowSizes(value);
-					} else if ("Futility".equals(name)) {
-						config.setFutility(Boolean.parseBoolean(value));
-					} else if ("FutilityMarginQS".equals(name)) {
-						config.setFutilityMarginQS(Integer.parseInt(value));
-					} else if ("FutilityMargin".equals(name)) {
-						config.setFutilityMargin(Integer.parseInt(value));
-					} else if ("FutilityMarginAggressive".equals(name)) {
-						config.setFutilityMarginAggressive(Integer.parseInt(value));
-					} else if ("Razoring".equals(name)) {
-						config.setRazoring(Boolean.parseBoolean(value));
-					} else if ("RazoringMargin".equals(name)) {
-						config.setRazoringMargin(Integer.parseInt(value));
 					} else if ("ContemptFactor".equals(name)) {
 						config.setContemptFactor(Integer.parseInt(value));
 					} else if ("EvalCenter".equals(name)) {

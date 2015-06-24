@@ -7,8 +7,11 @@ import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
+import com.alonsoruibal.chess.evaluation.CompleteEvaluatorNew;
+import com.alonsoruibal.chess.evaluation.CompleteEvaluatorOld;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
+import com.alonsoruibal.chess.evaluation.ExperimentalEvaluatorNew;
 import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movesort.MoveIterator;
@@ -164,8 +167,14 @@ public class SearchEngine implements Runnable {
 			evaluator = new SimplifiedEvaluator();
 		} else if ("complete".equals(evaluatorName)) {
 			evaluator = new CompleteEvaluator(config);
+		} else if ("completenew".equals(evaluatorName)) {
+			evaluator = new CompleteEvaluatorNew(config);
+		} else if ("completeold".equals(evaluatorName)) {
+			evaluator = new CompleteEvaluatorOld(config);
 		} else if ("experimental".equals(evaluatorName)) {
 			evaluator = new ExperimentalEvaluator(config);
+		} else if ("experimentalnew".equals(evaluatorName)) {
+			evaluator = new ExperimentalEvaluatorNew(config);
 		}
 
 		tt = new TranspositionTable(config.getTranspositionTableSize());
@@ -244,24 +253,26 @@ public class SearchEngine implements Runnable {
 		int ext = 0;
 
 		if (Move.isCheck(move) && moveSee >= 0) {
-			ext += config.getExtensionsCheck();
+			ext += Config.EXTENSIONS_CHECK;
 			if (ext >= PLY) {
 				return PLY;
 			}
 		}
 		if (Move.getPieceMoved(move) == Piece.PAWN) {
-			if (Move.isPawnPush678(move)) {
-				ext += config.getExtensionsPawnPush();
+			if (Config.EXTENSIONS_PAWN_PUSH != 0
+					&& Move.isPawnPush678(move)) {
+				ext += Config.EXTENSIONS_PAWN_PUSH;
 			}
-			if (board.isPassedPawn(Move.getToIndex(move))) {
-				ext += config.getExtensionsPassedPawn();
+			if (Config.EXTENSIONS_PASSED_PAWN != 0
+					&& board.isPassedPawn(Move.getToIndex(move))) {
+				ext += Config.EXTENSIONS_PASSED_PAWN;
 			}
 			if (ext >= PLY) {
 				return PLY;
 			}
 		}
 		if (mateThreat) {
-			ext += config.getExtensionsMateThreat();
+			ext += Config.EXTENSIONS_MATE_THREAT;
 			if (ext >= PLY) {
 				return PLY;
 			}
@@ -377,7 +388,7 @@ public class SearchEngine implements Runnable {
 				return bestScore;
 			}
 
-			futilityBase = eval + config.getFutilityMarginQS();
+			futilityBase = eval + Config.FUTILITY_MARGIN_QS;
 		}
 
 		// If we have more depths than possible...
@@ -395,7 +406,7 @@ public class SearchEngine implements Runnable {
 			validOperations = true;
 
 			// Futility pruning
-			if (config.getFutility() //
+			if (Config.FUTILITY //
 					&& !moveIterator.checkEvasion //
 					&& !Move.isCheck(move) //
 					&& !isPv //
@@ -523,12 +534,12 @@ public class SearchEngine implements Runnable {
 		if (!board.getCheck()) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
-					&& config.getRazoring() //
+					&& Config.RAZORING //
 					&& ttMove == 0 //
 					&& allowNullMove // Not when last was a null move
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval + config.getRazoringMargin() < beta //
+					&& eval + Config.RAZORING_MARGIN < beta //
 					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
@@ -537,7 +548,7 @@ public class SearchEngine implements Runnable {
 					return quiescentSearch(0, alpha, beta);
 				}
 
-				int rbeta = beta - config.getRazoringMargin();
+				int rbeta = beta - Config.RAZORING_MARGIN;
 				int v = quiescentSearch(0, rbeta - 1, rbeta);
 				if (v < rbeta) {
 					razoringHit++;
@@ -547,19 +558,19 @@ public class SearchEngine implements Runnable {
 
 			// Static null move pruning or futility pruning in parent node
 			if (nodeType == NODE_NULL //
-					&& config.getStaticNullMove() //
+					&& Config.STATIC_NULL_MOVE //
 					&& allowNullMove //
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
-					&& eval - config.getFutilityMargin() >= beta //
+					&& eval - Config.FUTILITY_MARGIN >= beta //
 					&& boardAllowsNullMove()) {
-				return eval - config.getFutilityMargin();
+				return eval - Config.FUTILITY_MARGIN;
 			}
 
 			// Null move pruning and mate threat detection
 			if (nodeType == NODE_NULL //
-					&& config.getNullMove() //
+					&& Config.NULL_MOVE //
 					&& allowNullMove //
 					&& depthRemaining >= 2 * PLY //
 					&& Math.abs(beta) < VALUE_IS_MATE //
@@ -597,11 +608,11 @@ public class SearchEngine implements Runnable {
 
 			// Internal Iterative Deepening (IID)
 			// Do a reduced move to search for a ttMove that will improve sorting
-			if (config.getIid() //
+			if (Config.IID //
 					&& ttMove == 0 //
 					&& depthRemaining >= IID_DEPTH[nodeType] //
 					&& allowNullMove //
-					&& (nodeType != NODE_NULL || staticEval + config.getIidMargin() > beta) //
+					&& (nodeType != NODE_NULL || staticEval + Config.IID_MARGIN > beta) //
 					&& excludedMove == 0) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, false, 0);
@@ -611,15 +622,15 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Futility pruning
-			if (nodeType == NODE_NULL && config.getFutility()) {
+			if (nodeType == NODE_NULL && Config.FUTILITY) {
 				if (depthRemaining <= PLY) { // at frontier nodes
-					futilityValue = staticEval + config.getFutilityMargin();
+					futilityValue = staticEval + Config.FUTILITY_MARGIN;
 					if (futilityValue < beta) {
 						futilityHit++;
 						futilityPrune = true;
 					}
 				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-					futilityValue = staticEval + config.getFutilityMarginAggressive();
+					futilityValue = staticEval + Config.FUTILITY_MARGIN_AGGRESSIVE;
 					if (futilityValue < beta) {
 						aggressiveFutilityHit++;
 						futilityPrune = true;
@@ -651,18 +662,18 @@ public class SearchEngine implements Runnable {
 					&& move == ttMove //
 					&& extension < PLY //
 					&& excludedMove == 0 //
-					&& config.getExtensionsSingular() > 0 //
+					&& Config.EXTENSIONS_SINGULAR > 0 //
 					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
 					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
 					&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
 					&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
 				singularExtensionProbe++;
-				int seBeta = ttScore - config.getSingularExtensionMargin();
+				int seBeta = ttScore - Config.SINGULAR_EXTENSION_MARGIN;
 				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
-					extension += config.getExtensionsSingular();
+					extension += Config.EXTENSIONS_SINGULAR;
 					if (extension > PLY) {
 						extension = PLY;
 					}
@@ -706,7 +717,7 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				int reduction = 0;
-				if (config.getLmr() //
+				if (Config.LMR //
 						&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
 						&& !importantMove) {
 					reduction += getReduction(nodeType, depthRemaining, movesDone);
@@ -907,7 +918,7 @@ public class SearchEngine implements Runnable {
 		depth = 1;
 		rootScore = evaluate(tt.search(board, 0, false), 0);
 		tt.newGeneration();
-		aspWindows = config.getAspirationWindowSizes();
+		aspWindows = Config.ASPIRATION_WINDOW_SIZES;
 	}
 
 	private void runStepped() throws SearchFinishedException {
