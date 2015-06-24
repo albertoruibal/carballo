@@ -7,11 +7,8 @@ import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluatorNew;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluatorOld;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluatorNew;
 import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.movesort.MoveIterator;
@@ -167,14 +164,8 @@ public class SearchEngine implements Runnable {
 			evaluator = new SimplifiedEvaluator();
 		} else if ("complete".equals(evaluatorName)) {
 			evaluator = new CompleteEvaluator(config);
-		} else if ("completenew".equals(evaluatorName)) {
-			evaluator = new CompleteEvaluatorNew(config);
-		} else if ("completeold".equals(evaluatorName)) {
-			evaluator = new CompleteEvaluatorOld(config);
 		} else if ("experimental".equals(evaluatorName)) {
 			evaluator = new ExperimentalEvaluator(config);
-		} else if ("experimentalnew".equals(evaluatorName)) {
-			evaluator = new ExperimentalEvaluatorNew(config);
 		}
 
 		tt = new TranspositionTable(config.getTranspositionTableSize());
