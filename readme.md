@@ -36,7 +36,7 @@ Features
 * Pruning: Null move Pruning, static null move pruning, futility pruning and aggressive futility pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Parameterizable evaluator (only for the complete &amp; experimental evaluators)
-* Selectable ELO level with a UCI parameter
+* Selectable ELO level with an UCI parameter
 * Supports Chess960
 * Polyglot opening book support; in the code it includes Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
@@ -44,12 +44,12 @@ Features
 
 Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
-| Test suite       | Time per position |  Result |     1.2 |   
-| ---------------- | -----------------:| -------:| -------:|
-| WinAtChess (New) |          1 second | 289/300 | 287/300 |
-| SilentButDeadly  |          1 second | 116/134 |  89/134 |
-| ECMGCP           |        10 seconds | 128/183 |       ? |
-| Arasan           |        60 seconds |  19/250 |  22/250 |
+| Test suite       | Time per position |  Results 1.3 |     1.2 |   
+| ---------------- | -----------------:| ------------:| -------:|
+| WinAtChess (New) |          1 second |      288/300 | 287/300 |
+| SilentButDeadly  |          1 second |      115/134 |  90/134 |
+| ECMGCP           |        10 seconds |      132/183 | 130/183 |
+| Arasan           |        60 seconds |       19/250 |  22/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -100,18 +100,20 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 History
 =======
 
-Version 1.3: A lot of work in the evaluation function and a better positional play
+Version 1.3: A lot of work in the evaluation function for a better positional play
 
 * Now AttacksInfo holds the attacks information by piece type
-* This allowed to improve mobility and king safety evaluation detecting squares attacked by less valuable piece types
-* New MOBILITY[][] array holding mobility bonuses by piece type and number of destiny squares  
+* This allows to improve mobility and king safety evaluation detecting squares attacked by less valuable pieces
 * Removed the king defense bonuses from the Experimental evaluator
+* New MOBILITY array holding mobility bonuses by piece type and number of destiny squares  
 * Simplified the Bishop's Capablanca rule
 * Removed some rook in 7th rank logic
+* Improved the pawnCanAttack squares detection removing squares that cannot be reached due to opposite pawns
 * Evaluation refactoring using the "W" and "B" constants and the "us" and "them" variables
-* The Attacks evaluation is now done in a separated evalAttacks() method, unifying the attack bonuses in the PAWN_ATTACKS[], MINOR_ATTACKS[] and MAJOR_ATTACKS[] arrays
-* Piece value constants moved to the Config class and removed the PIECE_VALUES[] array
+* The Attacks evaluation is now done in a separated evalAttacks() method, unifying the attack bonuses in the PAWN_ATTACKS, MINOR_ATTACKS and MAJOR_ATTACKS arrays
+* Piece value constants moved to the Config class and removed the PIECE_VALUES array
 * Better midgame-to-endgame evaluation scaling with the new NON_PAWN_MATERIAL_MIDGAME_MAX and NON_PAWN_MATERIAL_ENDGAME_MIN constants
+* Remove some search UCI parameters and change them by constants for a better running optimization
 
 Version 1.2: A new MoveIterator, Chess960 and lots of UCI improvements
 

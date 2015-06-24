@@ -227,8 +227,6 @@ public class ExperimentalEvaluator extends Evaluator {
 			return endGameValue;
 		}
 
-		ai.build(board);
-
 		pawnMaterial[W] = Config.PAWN * whitePawns;
 		pawnMaterial[B] = Config.PAWN * blackPawns;
 		material[W] = Config.KNIGHT * whiteKnights + Config.BISHOP * whiteBishops + Config.ROOK * whiteRooks + Config.QUEEN * whiteQueens + //
@@ -255,9 +253,28 @@ public class ExperimentalEvaluator extends Evaluator {
 		passedPawns[W] = 0;
 		passedPawns[B] = 0;
 
+		mobilitySquares[W] = ~board.whites;
+		mobilitySquares[B] = ~board.blacks;
+
+		ai.build(board);
+
 		// Squares that pawns attack or can attack by advancing
-		pawnCanAttack[W] = ai.pawnAttacks[W] | ai.pawnAttacks[W] << 8 | ai.pawnAttacks[W] << 16 | ai.pawnAttacks[W] << 24 | ai.pawnAttacks[W] << 32 | ai.pawnAttacks[W] << 40;
-		pawnCanAttack[B] = ai.pawnAttacks[B] | ai.pawnAttacks[B] >>> 8 | ai.pawnAttacks[B] >>> 16 | ai.pawnAttacks[B] >>> 24 | ai.pawnAttacks[B] >>> 32 | ai.pawnAttacks[B] >>> 40;
+		pawnCanAttack[W] = ai.pawnAttacks[W];
+		pawnCanAttack[B] = ai.pawnAttacks[B];
+		long whitePawnsAux = board.pawns & board.whites;
+		long blackPawnsAux = board.pawns & board.blacks;
+		for (int i = 0; i < 5; i++) {
+			whitePawnsAux = whitePawnsAux << 8;
+			whitePawnsAux &= ~((board.pawns & board.blacks) | ai.pawnAttacks[B]); // Cannot advance because of a blocking pawn or a opposite pawn attack
+			blackPawnsAux = blackPawnsAux >>> 8;
+			blackPawnsAux &= ~((board.pawns & board.whites) | ai.pawnAttacks[W]); // Cannot advance because of a blocking pawn or a opposite pawn attack
+
+			if (whitePawnsAux == 0 || blackPawnsAux == 0) {
+				break;
+			}
+			pawnCanAttack[W] |= ((whitePawnsAux & ~BitboardUtils.b_l) << 9) | ((whitePawnsAux & ~BitboardUtils.b_r) << 7);
+			pawnCanAttack[B] |= ((blackPawnsAux & ~BitboardUtils.b_r) >>> 9) | ((whitePawnsAux & ~BitboardUtils.b_l) >>> 7);
+		}
 
 		// Calculate attacks
 		attacks[W] = evalAttacks(board, ai, W);
@@ -269,9 +286,6 @@ public class ExperimentalEvaluator extends Evaluator {
 		// Squares surrounding King
 		squaresNearKing[W] = bbAttacks.king[ai.kingIndex[W]];
 		squaresNearKing[B] = bbAttacks.king[ai.kingIndex[B]];
-
-		mobilitySquares[W] = ~board.whites & ~ai.pawnAttacks[B];
-		mobilitySquares[B] = ~board.blacks & ~ai.pawnAttacks[W];
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray;
@@ -408,9 +422,11 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.knights) != 0) {
 					center[us] += knightPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(pieceAttacks & BitboardUtils.RANKS_FORWARD[us][rank] & mobilitySquares[us])];
+					long safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
+					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(safeAttacks & mobilitySquares[us] & BitboardUtils.RANKS_FORWARD[us][rank])];
+
+					if ((safeAttacks & squaresNearKing[them]) != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT];
 						kingAttackersCount[us]++;
 					}
@@ -422,7 +438,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						if ((square & ai.pawnAttacks[us]) != 0) {
 							positional[us] += KNIGHT_OUTPOST;
 							// Attacks squares near king or other pieces pawn undefended
-							if ((pieceAttacks & (squaresNearKing[them] | others) & ~ai.pawnAttacks[them]) != 0) {
+							if ((safeAttacks & (squaresNearKing[them] | others)) != 0) {
 								positional[us] += KNIGHT_OUTPOST_ATTACKS_NK_PU[pcsqIndex];
 							}
 						}
@@ -431,9 +447,11 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.bishops) != 0) {
 					center[us] += bishopPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(pieceAttacks & BitboardUtils.RANKS_FORWARD[us][rank] & mobilitySquares[us])];
+					long safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them]) != 0) {
+					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(safeAttacks & mobilitySquares[us] & BitboardUtils.RANKS_FORWARD[us][rank])];
+
+					if ((safeAttacks & squaresNearKing[them]) != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP];
 						kingAttackersCount[us]++;
 					}
@@ -447,7 +465,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += BISHOP_OUTPOST;
 						// Attacks squares near king or other pieces pawn undefended
-						if ((pieceAttacks & (squaresNearKing[them] | others) & ~ai.pawnAttacks[them]) != 0) {
+						if ((safeAttacks & (squaresNearKing[them] | others)) != 0) {
 							positional[us] += BISHOP_OUTPOST_ATT_NK_PU;
 						}
 					}
@@ -462,9 +480,11 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.rooks) != 0) {
 					center[us] += rookPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them])];
+					long safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them]) != 0) {
+					mobility[us] += MOBILITY[Piece.ROOK][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+
+					if ((safeAttacks & squaresNearKing[them]) != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK];
 						kingAttackersCount[us]++;
 					}
@@ -507,7 +527,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						} else {
 							// There is an opposite backward pawn
 							if ((rookFile & board.pawns & others & pawnCanAttack[them]) == 0) {
-								positional[us] += ROOK_FILE_SEMIOPEN_BP;
+								positional[us] += ROOK_FILE_SEMIOPEN_BP; // TODO Really it may not be a backward pawn
 							}
 						}
 
@@ -527,9 +547,11 @@ public class ExperimentalEvaluator extends Evaluator {
 				} else if ((square & board.queens) != 0) {
 					center[us] += queenPcsq[pcsqIndex];
 
-					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(pieceAttacks & mobilitySquares[us] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them])];
+					long safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them];
 
-					if ((pieceAttacks & squaresNearKing[them] & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them]) != 0) {
+					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+
+					if ((safeAttacks & squaresNearKing[them]) != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN];
 						kingAttackersCount[us]++;
 					}
@@ -547,7 +569,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & rank7) != 0
 							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
 						positional[us] += QUEEN_7_KP_78;
-						if ((board.rooks & mines & rank7 & pieceAttacks) != 0
+						if ((safeAttacks & board.rooks & mines & rank7) != 0
 								&& (board.kings & others & rank8) != 0) {
 							positional[us] += QUEEN_7_P_78_K_8_R_7;
 						}
@@ -616,22 +638,22 @@ public class ExperimentalEvaluator extends Evaluator {
 		int attacks = 0;
 		long others = (us == 0 ? board.blacks : board.whites);
 
-		long attackedByPawn = others & ai.pawnAttacks[us];
+		long attackedByPawn = ai.pawnAttacks[us] & others & ~board.pawns;
 		while (attackedByPawn != 0) {
 			long lsb = BitboardUtils.lsb(attackedByPawn);
 			attacks += PAWN_ATTACKS[board.getPieceIntAt(lsb)];
 			attackedByPawn &= ~lsb;
 		}
 
-		long otherWeak = others & ai.attackedSquares[us] & ~ai.pawnAttacks[1 - us];
+		long otherWeak = ai.attackedSquares[us] & others & ~ai.pawnAttacks[1 - us];
 		if (otherWeak != 0) {
-			long attackedByMinor = otherWeak & (ai.knightAttacks[us] | ai.bishopAttacks[us]);
+			long attackedByMinor = (ai.knightAttacks[us] | ai.bishopAttacks[us]) & otherWeak;
 			while (attackedByMinor != 0) {
 				long lsb = BitboardUtils.lsb(attackedByMinor);
 				attacks += MINOR_ATTACKS[board.getPieceIntAt(lsb)];
 				attackedByMinor &= ~lsb;
 			}
-			long attackedByMajor = otherWeak & (ai.rookAttacks[us] | ai.queenAttacks[us]);
+			long attackedByMajor = (ai.rookAttacks[us] | ai.queenAttacks[us]) & otherWeak;
 			while (attackedByMajor != 0) {
 				long lsb = BitboardUtils.lsb(attackedByMajor);
 				attacks += MAJOR_ATTACKS[board.getPieceIntAt(lsb)];
@@ -639,9 +661,9 @@ public class ExperimentalEvaluator extends Evaluator {
 			}
 		}
 
-		long superiorAttacks = others & ai.pawnAttacks[us] & (board.knights | board.bishops | board.rooks | board.queens)
-				| others & (ai.knightAttacks[us] | ai.bishopAttacks[us]) & (board.rooks | board.queens)
-				| others & ai.rookAttacks[us] & board.queens;
+		long superiorAttacks = ai.pawnAttacks[us] & others & ~board.pawns
+				| (ai.knightAttacks[us] | ai.bishopAttacks[us]) & others & (board.rooks | board.queens)
+				| ai.rookAttacks[us] & others & board.queens;
 		int superiorAttacksCount = BitboardUtils.popCount(superiorAttacks);
 		if (superiorAttacksCount >= 2) {
 			attacks += superiorAttacksCount * HUNG_PIECES;
