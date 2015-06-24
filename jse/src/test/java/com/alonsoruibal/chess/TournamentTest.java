@@ -43,11 +43,8 @@ public class TournamentTest implements SearchObserver {
 		// Change here the parameters in one of the chess engines to test the differences
 		// Example: config1.setElo(2000);
 		// ...
-//		config1.setRazoringMargin(600);
-//		config2.setRazoringMargin(900);
-
-		config1.setSingularExtensionMargin(40);
-		config2.setSingularExtensionMargin(50);
+		config1.setElo(2100);
+		config2.setElo(2000);
 
 		engine1 = new SearchEngine(config1);
 		engine2 = new SearchEngine(config2);
