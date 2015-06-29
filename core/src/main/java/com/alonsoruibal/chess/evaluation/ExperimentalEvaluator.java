@@ -40,7 +40,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int PINNED_PIECE = oe(25, 35);
 
 	// Pawns
-	private final static int PAWN_UNSUPPORTED = oe(-2, -1);
+	private final static int PAWN_UNSUPPORTED = oe(-1, -2);
 	private final static int PAWN_BACKWARDS = oe(-10, -15);
 	// Array is not opposed, opposed
 	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
