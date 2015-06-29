@@ -46,7 +46,7 @@ public class EndgameSearchTest {
 		String fen = "8/7K/8/8/8/8/R7/7k w - - 0 1";
 		search.getBoard().setFen(fen);
 		searchParams = new SearchParameters();
-		searchParams.setDepth(18);
+		searchParams.setDepth(21);
 		search.go(searchParams);
 		assertEquals("Rook mate in 15 PLY", search.getBestMoveScore(), Evaluator.VICTORY - 15);
 	}
