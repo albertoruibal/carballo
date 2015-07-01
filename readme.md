@@ -46,10 +46,10 @@ Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
 | Test suite       | Time per position |  Results 1.3 |     1.2 |   
 | ---------------- | -----------------:| ------------:| -------:|
-| WinAtChess (New) |          1 second |      285/300 | 287/300 |
-| SilentButDeadly  |          1 second |      113/134 |  90/134 |
-| ECMGCP           |        10 seconds |      130/183 | 130/183 |
-| Arasan           |        60 seconds |       29/250 |  19/250 |
+| WinAtChess (New) |          1 second |      288/300 | 287/300 |
+| SilentButDeadly  |          1 second |      115/134 |  90/134 |
+| ECMGCP           |        10 seconds |      132/183 | 130/183 |
+| Arasan           |        60 seconds |       25/250 |  19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -110,6 +110,7 @@ Version 1.3: A lot of work in the evaluation function for a better positional pl
 * Removed some rook in 7th rank logic
 * Improved the pawnCanAttack squares detection removing squares that cannot be reached due to opposite pawns
 * Fixed the unsupported pawn penalty
+* Modify the "rook attacks backward pawn logic" to detect real backward pawns
 * Evaluation refactoring using the "W" and "B" constants and the "us" and "them" variables
 * The Attacks evaluation is now done in a separated evalAttacks() method, unifying the attack bonuses in the PAWN_ATTACKS, MINOR_ATTACKS and MAJOR_ATTACKS arrays
 * Piece value constants moved to the Config class and removed the PIECE_VALUES array

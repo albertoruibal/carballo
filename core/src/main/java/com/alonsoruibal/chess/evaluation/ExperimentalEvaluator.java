@@ -97,7 +97,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private final static int ROOK_OUTPOST_ATT_NK_PU = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
 
 	// Queen
-	private final static int QUEEN_7_KP_78 = oe(5, 25); // Queen in 8th rank and opposite king/pawn in 7/8th rank
+	private final static int QUEEN_7_KP_78 = oe(5, 25); // Queen in 7th rank and opposite king/pawn in 7/8th rank
 	private final static int QUEEN_7_P_78_K_8_R_7 = oe(10, 15); // Queen in 7th my rook in 7th defending queen and opposite king in 8th
 
 	// King
@@ -369,6 +369,11 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 					if (backwards) {
 						pawnStructure[us] += PAWN_BACKWARDS;
+						// TODO this is rook logic in the middle of pawn logic
+						if (!opposed && (routeToPromotion & board.rooks & others) != 0) {
+							// There is an opposite rook attacking the backward pawn
+							positional[them] += ROOK_FILE_SEMIOPEN_BP;
+						}
 					}
 					if (candidate) {
 						passedPawns[us] += PAWN_CANDIDATE[(isWhite ? rank : 7 - rank)];
@@ -524,11 +529,6 @@ public class ExperimentalEvaluator extends Evaluator {
 									positional[us] += ROOK_FILE_OPEN_MG_P;
 								}
 							}
-						} else {
-							// There is an opposite backward pawn
-							if ((rookFile & board.pawns & others & pawnCanAttack[them]) == 0) {
-								positional[us] += ROOK_FILE_SEMIOPEN_BP; // TODO Really it may not be a backward pawn
-							}
 						}
 
 						if ((rookFile & board.kings & others) != 0) {
@@ -539,6 +539,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += ROOK_OUTPOST;
 						// Attacks squares near king or other pieces pawn undefended
+						// TODO test use safeAttacks
 						if ((pieceAttacks & (squaresNearKing[them] | others) & ~ai.pawnAttacks[them]) != 0) {
 							positional[us] += ROOK_OUTPOST_ATT_NK_PU;
 						}
