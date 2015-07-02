@@ -47,9 +47,9 @@ Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 | Test suite       | Time per position |  Results 1.3 |     1.2 |   
 | ---------------- | -----------------:| ------------:| -------:|
 | WinAtChess (New) |          1 second |      288/300 | 287/300 |
-| SilentButDeadly  |          1 second |      115/134 |  90/134 |
-| ECMGCP           |        10 seconds |      132/183 | 130/183 |
-| Arasan           |        60 seconds |       25/250 |  19/250 |
+| SilentButDeadly  |          1 second |      116/134 |  90/134 |
+| ECMGCP           |        10 seconds |      131/183 | 130/183 |
+| Arasan           |        60 seconds |       26/250 |  19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 

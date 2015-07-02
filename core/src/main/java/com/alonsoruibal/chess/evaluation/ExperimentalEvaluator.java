@@ -539,7 +539,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += ROOK_OUTPOST;
 						// Attacks squares near king or other pieces pawn undefended
-						// TODO test use safeAttacks
 						if ((pieceAttacks & (squaresNearKing[them] | others) & ~ai.pawnAttacks[them]) != 0) {
 							positional[us] += ROOK_OUTPOST_ATT_NK_PU;
 						}
@@ -570,7 +569,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & rank7) != 0
 							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
 						positional[us] += QUEEN_7_KP_78;
-						if ((safeAttacks & board.rooks & mines & rank7) != 0
+						if ((pieceAttacks & board.rooks & mines & rank7) != 0
 								&& (board.kings & others & rank8) != 0) {
 							positional[us] += QUEEN_7_P_78_K_8_R_7;
 						}
