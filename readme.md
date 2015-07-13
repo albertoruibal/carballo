@@ -3,7 +3,7 @@ Carballo Chess Engine
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-* UCI: a text interface for chess GUIs like Arena: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.2.tgz
+* UCI: a text interface for chess GUIs like Arena: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.3.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
 
 It is organized into modules:
@@ -40,16 +40,16 @@ Features
 * Supports Chess960
 * Polyglot opening book support; in the code it includes Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
-* JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WAC, etc.)
+* JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
 
 Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
-| Test suite       | Time per position |  Results 1.3 |     1.2 |   
-| ---------------- | -----------------:| ------------:| -------:|
-| WinAtChess (New) |          1 second |      288/300 | 287/300 |
-| SilentButDeadly  |          1 second |      116/134 |  90/134 |
-| ECMGCP           |        10 seconds |      131/183 | 130/183 |
-| Arasan           |        60 seconds |       26/250 |  19/250 |
+| Test suite       | Time per position | Version 1.3 | Version 1.2 |   
+| ---------------- | -----------------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     288/300 |     287/300 |
+| SilentButDeadly  |          1 second |     116/134 |      90/134 |
+| ECMGCP           |        10 seconds |     131/183 |     130/183 |
+| Arasan           |        60 seconds |      26/250 |      19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -86,7 +86,7 @@ Run fast tests:
 ```
 gradle fastTest
 ```
-Run Win at Chess tests:
+Run the "Win at Chess" test suite:
 ```
 cd jse
 gradle -Dtest.single=WinAtChessTest cleanTest test
@@ -115,7 +115,7 @@ Version 1.3: A lot of work in the evaluation function for a better positional pl
 * The Attacks evaluation is now done in a separated evalAttacks() method, unifying the attack bonuses in the PAWN_ATTACKS, MINOR_ATTACKS and MAJOR_ATTACKS arrays
 * Piece value constants moved to the Config class and removed the PIECE_VALUES array
 * Better midgame-to-endgame evaluation scaling with the new NON_PAWN_MATERIAL_MIDGAME_MAX and NON_PAWN_MATERIAL_ENDGAME_MIN constants
-* Remove some search UCI parameters and change them by constants for a better running optimization
+* Remove some UCI parameters and change them by constants for a better running optimization
 
 Version 1.2: A new MoveIterator, Chess960 and lots of UCI improvements
 
