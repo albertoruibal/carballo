@@ -220,6 +220,27 @@ public class Board {
 		return ((whites & square) != 0 ? Character.toUpperCase(p) : p);
 	}
 
+	public char getPieceUnicodeAt(long square) {
+		if ((whites & square) != 0) {
+			return ((pawns & square) != 0 ? '♙' : //
+					((knights & square) != 0 ? '♘' : //
+							((bishops & square) != 0 ? '♗' : //
+									((rooks & square) != 0 ? '♖' : //
+											((queens & square) != 0 ? '♕' : //
+													((kings & square) != 0 ? '♔' : '.'))))));
+
+		} else if ((blacks & square) != 0) {
+			return ((pawns & square) != 0 ? '♟' : //
+					((knights & square) != 0 ? '♞' : //
+							((bishops & square) != 0 ? '♝' : //
+									((rooks & square) != 0 ? '♜' : //
+											((queens & square) != 0 ? '♛' : //
+													((kings & square) != 0 ? '♚' : '.'))))));
+		} else {
+			return '_';
+		}
+	}
+
 	public void setPieceAt(long square, char piece) {
 		pawns &= ~square;
 		queens &= ~square;
@@ -550,7 +571,7 @@ public class Board {
 		int j = 8;
 		long i = BitboardUtils.A8;
 		while (i != 0) {
-			sb.append(getPieceAt(i));
+			sb.append(getPieceUnicodeAt(i));
 			sb.append(" ");
 			if ((i & BitboardUtils.b_r) != 0) {
 				sb.append(j--);
