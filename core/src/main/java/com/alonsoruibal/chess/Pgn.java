@@ -37,6 +37,8 @@ public class Pgn {
 	String black;
 	String whiteElo;
 	String blackElo;
+	String whiteFideId;
+	String blackFideId;
 	String result;
 	String eventType;
 	String eventDate;
@@ -144,6 +146,8 @@ public class Pgn {
 		black = "";
 		whiteElo = "";
 		blackElo = "";
+		whiteFideId = "";
+		blackFideId = "";
 		result = "";
 		eventType = "";
 		eventDate = "";
@@ -174,6 +178,8 @@ public class Pgn {
 						round = headerValue;
 					} else if ("site".equals(headerName)) {
 						site = headerValue;
+					} else if ("eventdate".equals(headerName)) {
+						eventDate = headerValue;
 					} else if ("date".equals(headerName)) {
 						date = headerValue;
 					} else if ("white".equals(headerName)) {
@@ -184,6 +190,10 @@ public class Pgn {
 						whiteElo = headerValue;
 					} else if ("blackelo".equals(headerName)) {
 						blackElo = headerValue;
+					} else if ("whitefideid".equals(headerName)) {
+						whiteFideId = headerValue;
+					} else if ("blackfideid".equals(headerName)) {
+						blackFideId = headerValue;
 					} else if ("result".equals(headerName)) {
 						result = headerValue;
 					} else if ("fen".equals(headerName)) {
@@ -229,17 +239,20 @@ public class Pgn {
 			}
 
 			if (addMove) {
-				if ("*".equals(el)) {
-				} else if ("1/2-1/2".equals(el)) {
-				} else if ("1-0".equals(el)) {
-				} else if ("0-1".equals(el)) {
-				} else if (comment1 == 0 && comment2 == 0) {
-					// Move 1.
-					if (el.contains(".")) {
-						el = el.substring(el.lastIndexOf(".") + 1);
-					}
-					if (el.length() > 0 && !el.contains("$")) {
-						moves.add(el);
+				if (comment1 == 0 && comment2 == 0) {
+					if ("*".equals(el) ||
+							"1/2-1/2".equals(el) ||
+							"1-0".equals(el) ||
+							"0-1".equals(el)) {
+						break;
+					} else {
+						// Move 1.
+						if (el.contains(".")) {
+							el = el.substring(el.lastIndexOf(".") + 1);
+						}
+						if (el.length() > 0 && !el.contains("$")) {
+							moves.add(el);
+						}
 					}
 				}
 			}
@@ -301,6 +314,14 @@ public class Pgn {
 
 	public String getBlackElo() {
 		return blackElo;
+	}
+
+	public String getWhiteFideId() {
+		return whiteFideId;
+	}
+
+	public String getBlackFideId() {
+		return blackFideId;
 	}
 
 	public String getResult() {
