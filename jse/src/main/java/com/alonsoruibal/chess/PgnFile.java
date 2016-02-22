@@ -24,19 +24,24 @@ import java.io.InputStreamReader;
 
 public class PgnFile extends Pgn {
 
-	public String getGameNumber(InputStream is, int gameNumber) {
-		// logger.debug("Loading GameNumber " + gameNumber);
+	public static final String UTF8_BOM = "\uFEFF";
 
+	public String getGameNumber(InputStream is, int gameNumber) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String line;
 		int counter = 0;
 		try {
 			while (true) {
 				line = br.readLine();
-				if (line == null)
+				if (line == null) {
 					break;
+				}
 
-				if (line.indexOf("[Event ") == 0) {
+				if (line.startsWith(UTF8_BOM)) {
+					line = line.substring(1);
+				}
+
+				if (line.startsWith("[Event ")) {
 					if (counter == gameNumber) {
 						StringBuilder pgnSb = new StringBuilder();
 						try {
@@ -44,8 +49,9 @@ public class PgnFile extends Pgn {
 								pgnSb.append(line);
 								pgnSb.append("\n");
 								line = br.readLine();
-								if (line == null || line.indexOf("[Event ") == 0)
+								if (line == null || line.startsWith("[Event ")) {
 									break;
+								}
 							}
 						} catch (IOException ignored) {
 						}
