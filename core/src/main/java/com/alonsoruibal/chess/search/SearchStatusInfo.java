@@ -224,6 +224,19 @@ public class SearchStatusInfo {
 		lowerBound = score >= beta;
 	}
 
+	public boolean isMate() {
+		return (score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE);
+	}
+
+	public int getMateIn() {
+		int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
+		if ((x & 1) != 0) {
+			return (x >> 1) + 1;
+		} else {
+			return x >> 1;
+		}
+	}
+
 	/**
 	 * in UCI format
 	 * TODO complete
@@ -238,14 +251,9 @@ public class SearchStatusInfo {
 			sb.append(" seldepth ");
 			sb.append(selDepth);
 		}
-		if ((score < -SearchEngine.VALUE_IS_MATE) || (score > SearchEngine.VALUE_IS_MATE)) {
+		if (isMate()) {
 			sb.append(" score mate ");
-			int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
-			if ((x & 1) != 0) {
-				sb.append((x >> 1) + 1);
-			} else {
-				sb.append(x >> 1);
-			}
+			sb.append(getMateIn());
 		} else {
 			sb.append(" score cp ");
 			sb.append(score);
