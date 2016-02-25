@@ -36,11 +36,11 @@ public class TranspositionTableTest {
 		b.setFen("8/7K/8/8/8/8/R7/7k w - - 0 1");
 
 		int bestMove = Move.getFromString(b, "a2f2", true);
-		int score = Evaluator.VICTORY - 8;
+		int score = Evaluator.MATE - 8;
 		int depthAnalyzed = 4;
 		// Must store SearchEngine.VALUE_IS_MATE - 4
-		tt.save(b, 4, depthAnalyzed, bestMove, score, -Evaluator.VICTORY, +Evaluator.VICTORY, 0, false);
+		tt.save(b, 4, depthAnalyzed, bestMove, score, -Evaluator.MATE, +Evaluator.MATE, 0, false);
 		tt.search(b, 1, false);
-		assertEquals("It does not fix the mate score in the transposition table", tt.getScore(), Evaluator.VICTORY - 5);
+		assertEquals("It does not fix the mate score in the transposition table", tt.getScore(), Evaluator.MATE - 5);
 	}
 }

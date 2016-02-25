@@ -220,8 +220,13 @@ public class SearchStatusInfo {
 
 	public void setScore(int score, int alpha, int beta) {
 		this.score = score;
-		upperBound = score <= alpha;
-		lowerBound = score >= beta;
+		if (Math.abs(score) == Evaluator.MATE) {
+			upperBound = false;
+			lowerBound = false;
+		} else {
+			upperBound = score <= alpha;
+			lowerBound = score >= beta;
+		}
 	}
 
 	public boolean isMate() {
@@ -229,7 +234,7 @@ public class SearchStatusInfo {
 	}
 
 	public int getMateIn() {
-		int x = (score < 0 ? -Evaluator.VICTORY : Evaluator.VICTORY) - score;
+		int x = (score < 0 ? -Evaluator.MATE : Evaluator.MATE) - score;
 		if ((x & 1) != 0) {
 			return (x >> 1) + 1;
 		} else {

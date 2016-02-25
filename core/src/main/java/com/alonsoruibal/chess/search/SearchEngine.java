@@ -28,7 +28,7 @@ public class SearchEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger("SearchEngine");
 
 	public static final int MAX_DEPTH = 64;
-	public static final int VALUE_IS_MATE = Evaluator.VICTORY - MAX_DEPTH;
+	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
 	private static final int PLY = 2;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int RAZOR_DEPTH = 4 * PLY;
@@ -133,8 +133,8 @@ public class SearchEngine implements Runnable {
 			moveIterators[i] = new MoveIterator(board, attacksInfos[i], sortInfo, i);
 		}
 
-		pvReductionMatrix = new int[64][64];
-		nonPvReductionMatrix = new int[64][64];
+		pvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
+		nonPvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
 		// Init our reduction lookup tables
 		for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) { // OnePly = 2
 			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
@@ -362,8 +362,8 @@ public class SearchEngine implements Runnable {
 		int bestScore = alpha;
 		int bestMove = Move.NONE;
 		int staticEval = Evaluator.NO_VALUE;
-		int eval = -Evaluator.VICTORY;
-		int futilityBase = -Evaluator.VICTORY;
+		int eval = -Evaluator.MATE;
+		int futilityBase = -Evaluator.MATE;
 
 		// Do not allow stand pat when in check
 		if (!board.getCheck()) {
@@ -506,9 +506,9 @@ public class SearchEngine implements Runnable {
 
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
-		int futilityValue = -Evaluator.VICTORY;
-		int staticEval = -Evaluator.VICTORY;
-		int eval = -Evaluator.VICTORY;
+		int futilityValue = -Evaluator.MATE;
+		int staticEval = -Evaluator.MATE;
+		int eval = -Evaluator.MATE;
 
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
@@ -635,8 +635,9 @@ public class SearchEngine implements Runnable {
 
 		int movesDone = 0;
 		boolean validOperations = false;
-		int bestScore = -Evaluator.VICTORY;
+		int bestScore = -Evaluator.MATE;
 		int move, bestMove = Move.NONE;
+		bestMoveScore = -Evaluator.MATE;
 
 		while ((move = moveIterator.next()) != Move.NONE) {
 			validOperations = true;
@@ -738,7 +739,7 @@ public class SearchEngine implements Runnable {
 			// It tracks the best move and...
 			if (score > bestScore &&
 					(config.getRand() == 0 //... insert errors to lower the ELO
-					|| bestScore == -Evaluator.VICTORY // it makes sure that has at least one move
+					|| bestScore == -Evaluator.MATE // it makes sure that has at least one move
 					|| random.nextInt(1000) > config.getRand())){
 				bestMove = move;
 				bestScore = score;
@@ -765,7 +766,7 @@ public class SearchEngine implements Runnable {
 			bestScore = evaluateEndgame(distanceToInitialPly);
 		}
 		// Fix score for excluded moves
-		if (bestScore == -Evaluator.VICTORY) {
+		if (bestScore == -Evaluator.MATE) {
 			bestScore = valueMatedIn(distanceToInitialPly);
 		}
 
@@ -917,8 +918,8 @@ public class SearchEngine implements Runnable {
 		int failHighCount = 0;
 		int failLowCount = 0;
 		int initialScore = rootScore;
-		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY ? initialScore - aspWindows[failLowCount] : -Evaluator.VICTORY);
-		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY ? initialScore + aspWindows[failHighCount] : Evaluator.VICTORY);
+		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.MATE ? initialScore - aspWindows[failLowCount] : -Evaluator.MATE);
+		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.MATE ? initialScore + aspWindows[failHighCount] : Evaluator.MATE);
 		int previousRootScore = rootScore;
 		long time1 = System.currentTimeMillis();
 
@@ -931,12 +932,12 @@ public class SearchEngine implements Runnable {
 
 			if (rootScore <= alpha) {
 				failLowCount++;
-				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.VICTORY) ? initialScore
-						- aspWindows[failLowCount] : -Evaluator.VICTORY - 1);
+				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.MATE) ? initialScore
+						- aspWindows[failLowCount] : -Evaluator.MATE - 1);
 			} else if (rootScore >= beta) {
 				failHighCount++;
-				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.VICTORY) ? initialScore
-						+ aspWindows[failHighCount] : Evaluator.VICTORY + 1);
+				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.MATE) ? initialScore
+						+ aspWindows[failHighCount] : Evaluator.MATE + 1);
 			} else {
 				aspirationWindowHit++;
 				break;
@@ -955,7 +956,9 @@ public class SearchEngine implements Runnable {
 		if ((searchParameters.manageTime() && ( // Under time restrictions and...
 				Math.abs(rootScore) > VALUE_IS_MATE // Mate found or
 						|| (time2 + ((time2 - time1) << 1)) > thinkToTime)) // It will not likely finish the next iteration
-				|| depth == MAX_DEPTH || depth > thinkToDepth) { // Search limit reached
+				|| depth == MAX_DEPTH
+				|| depth > thinkToDepth
+				|| Math.abs(rootScore) == Evaluator.MATE) { // Search limit reached
 			finishRun();
 		}
 		depth++;
@@ -970,14 +973,14 @@ public class SearchEngine implements Runnable {
 	public void finishRun() throws SearchFinishedException {
 		// Go back the board to the initial position
 		board.undoMove(initialPly);
-		searching = false;
 
-		if (observer != null) {
+		if (observer != null && globalBestMove != Move.NONE) {
 			observer.bestMove(globalBestMove, ponderMove);
 		}
 		if (debug) {
 			searchStats();
 		}
+		searching = false;
 		throw new SearchFinishedException();
 	}
 
@@ -1050,11 +1053,11 @@ public class SearchEngine implements Runnable {
 	}
 
 	private int valueMatedIn(int distanceToInitialPly) {
-		return -Evaluator.VICTORY + distanceToInitialPly;
+		return -Evaluator.MATE + distanceToInitialPly;
 	}
 
 	private int valueMateIn(int distanceToInitialPly) {
-		return Evaluator.VICTORY - distanceToInitialPly;
+		return Evaluator.MATE - distanceToInitialPly;
 	}
 
 	public TranspositionTable getTT() {

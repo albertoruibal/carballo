@@ -44,7 +44,7 @@ public class Board {
 	int[] legalMoves = new int[256];
 	int legalMoveCount = -1; // if -1 then legal moves not generated
 	long[] legalMovesKey = {0, 0};
-	public HashMap<Integer, String> sanMoves;
+	public HashMap<Integer, String> movesSan;
 
 	// Bitboard arrays
 	public long whites = 0;
@@ -104,7 +104,7 @@ public class Board {
 
 		moveHistory = new int[MAX_MOVES];
 
-		sanMoves = new HashMap<Integer, String>();
+		movesSan = new HashMap<Integer, String>();
 
 		bbAttacks = BitboardAttacks.getInstance();
 	}
@@ -523,7 +523,7 @@ public class Board {
 				|| (flags & FLAG_TURN) != (tmpFlags & FLAG_TURN)) {
 
 			// board reset
-			sanMoves.clear();
+			movesSan.clear();
 
 			initialFen = fen;
 			initialMoveNumber = fenMoveNumber;
@@ -604,12 +604,12 @@ public class Board {
 		}
 		Arrays.fill(fiftyMovesRuleHistory, 0);
 		Arrays.fill(moveHistory, 0);
-		sanMoves.clear();
+		movesSan.clear();
 	}
 
 	private void saveHistory(int move, boolean fillSanInfo) {
 		if (fillSanInfo) {
-			sanMoves.put(moveNumber, Move.toSan(this, move));
+			movesSan.put(moveNumber, Move.toSan(this, move));
 		}
 
 		moveHistory[moveNumber] = move;
@@ -625,13 +625,6 @@ public class Board {
 		keyHistory[moveNumber][0] = key[0];
 		keyHistory[moveNumber][1] = key[1];
 		fiftyMovesRuleHistory[moveNumber] = fiftyMovesRule;
-	}
-
-	public int getLastMove() {
-		if (moveNumber == 0) {
-			return 0;
-		}
-		return moveHistory[moveNumber - 1];
 	}
 
 	/**
@@ -822,7 +815,7 @@ public class Board {
 
 				if (fillSanInfo) {
 					if (isMate()) { // Append # when mate
-						sanMoves.put(moveNumber - 1, sanMoves.get(moveNumber - 1).replace("+", "#"));
+						movesSan.put(moveNumber - 1, movesSan.get(moveNumber - 1).replace("+", "#"));
 					}
 				}
 			} else {
@@ -1045,10 +1038,96 @@ public class Board {
 	}
 
 	public String getSanMove(int moveNumber) {
-		return sanMoves.get(moveNumber);
+		return movesSan.get(moveNumber);
 	}
 
 	public boolean getMoveTurn(int moveNumber) {
 		return (flagsHistory[moveNumber] & FLAG_TURN) == 0;
 	}
+
+	public String getInitialFen() {
+		return initialFen;
+	}
+
+	public String getMoves() {
+		StringBuffer oSB = new StringBuffer();
+		for (int i = initialMoveNumber; i < moveNumber; i++) {
+			if (oSB.length() > 0) {
+				oSB.append(" ");
+			}
+			oSB.append(Move.toString(moveHistory[i]));
+		}
+		return oSB.toString();
+	}
+
+	public String getMovesSan() {
+		StringBuffer oSB = new StringBuffer();
+		for (int i = initialMoveNumber; i < moveNumber; i++) {
+			if (oSB.length() > 0) {
+				oSB.append(" ");
+			}
+			oSB.append(movesSan.get(i));
+		}
+		return oSB.toString();
+	}
+
+	public String toSanNextMoves(String moves) {
+		if (moves == null || "".equals(moves.trim())) {
+			return null;
+		}
+
+		boolean error = false;
+
+		StringBuffer oSB = new StringBuffer();
+		String movesArray[] = moves.split(" ");
+		int savedMoveNumber = moveNumber;
+
+		for (String moveString : movesArray) {
+			int move = Move.getFromString(this, moveString, true);
+			if (move == Move.NONE || !doMove(move)) {
+				error = true;
+				break;
+			}
+
+			if (oSB.length() > 0) {
+				oSB.append(" ");
+			}
+			oSB.append(getLastMoveSan());
+		}
+		undoMove(savedMoveNumber);
+
+		if (error) {
+			return "";
+		}
+		return oSB.toString();
+	}
+
+	public int getLastMove() {
+		if (moveNumber == 0) {
+			return Move.NONE;
+		}
+		return moveHistory[moveNumber - 1];
+	}
+
+	public String getLastMoveSan() {
+		if (moveNumber == 0) {
+			return null;
+		}
+		return movesSan.get(moveNumber - 1);
+	}
+
+	/**
+	 * Convenience method to apply all the moves in a string separated by spaces
+	 */
+	public void doMoves(String moves) {
+		if (moves == null || "".equals(moves.trim())) {
+			return;
+		}
+		String movesArray[] = moves.split(" ");
+		for (String moveString : movesArray) {
+			int move = Move.getFromString(this, moveString, true);
+			doMove(move);
+		}
+	}
+
 }

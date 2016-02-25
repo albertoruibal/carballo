@@ -48,7 +48,7 @@ public class EndgameSearchTest {
 		searchParams = new SearchParameters();
 		searchParams.setDepth(21);
 		search.go(searchParams);
-		assertEquals("Rook mate in 15 PLY", search.getBestMoveScore(), Evaluator.VICTORY - 15);
+		assertEquals("Rook mate in 15 PLY", search.getBestMoveScore(), Evaluator.MATE - 15);
 	}
 
 	@Test
@@ -58,6 +58,6 @@ public class EndgameSearchTest {
 		searchParams = new SearchParameters();
 		searchParams.setDepth(19);
 		search.go(searchParams);
-		assertEquals("Queen mate in 17 PLY", search.getBestMoveScore(), Evaluator.VICTORY - 17);
+		assertEquals("Queen mate in 17 PLY", search.getBestMoveScore(), Evaluator.MATE - 17);
 	}
 }

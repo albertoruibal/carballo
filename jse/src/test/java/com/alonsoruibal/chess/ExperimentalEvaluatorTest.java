@@ -65,6 +65,14 @@ public class ExperimentalEvaluatorTest {
 		assertEquals("Two candidates", 2, countSubstring("candidate ", evaluator.debugSB.toString()));
 		assertEquals("No backwards", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
 
+		board.setFen("7k/p7/8/PP3ppp/8/5P1P/8/7K w - - 0 0");
+		evaluator.evaluate(board, attacksInfo);
+		assertEquals("Two candidates", 2, countSubstring("candidate ", evaluator.debugSB.toString()));
+
+		board.setFen("7k/8/3p4/1p6/2PP4/8/8/7K w - - 0 0");
+		evaluator.evaluate(board, attacksInfo);
+		assertEquals("Two candidates", 2, countSubstring("candidate ", evaluator.debugSB.toString()));
+
 		board.setFen("7k/3r4/8/3p4/8/8/8/R6K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("Runner", 1, countSubstring("runner ", evaluator.debugSB.toString()));
@@ -139,7 +147,6 @@ public class ExperimentalEvaluatorTest {
 		board.setFen("7k/2P5/pp6/1P6/8/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("No backwards because it can capture", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
-
 	}
 
 	@Test
@@ -184,5 +191,24 @@ public class ExperimentalEvaluatorTest {
 		System.out.println("value1 = " + value1);
 		System.out.println("value2 = " + value2);
 		assertTrue(value1 >= value2 + 40);
+	}
+
+
+	// Compares the eval of two fens
+	public void compareFenEval(String fenBetter, String fenWorse) {
+		Board board = new Board();
+		board.setFen(fenBetter);
+		int valueBetter = evaluator.evaluate(board, attacksInfo);
+		board.setFen(fenWorse);
+		int valueWorse = evaluator.evaluate(board, attacksInfo);
+		System.out.println("valueBetter = " + valueBetter);
+		System.out.println("valueWorse = " + valueWorse);
+		assertTrue(valueBetter > valueWorse);
+	}
+
+	@Test
+	public void testFenCompare() {
+		compareFenEval("6k1/pp1q1pp1/2nBp1bp/P1QpP3/3P4/8/1P2BPPP/6K1 b - - 1 1",
+				"6k1/pp1q1pp1/2nBp1bp/P2pP3/3P4/2Q5/1P2BPPP/6K1 b - - 1 1");
 	}
 }
