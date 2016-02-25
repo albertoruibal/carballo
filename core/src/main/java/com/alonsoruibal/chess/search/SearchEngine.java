@@ -637,7 +637,6 @@ public class SearchEngine implements Runnable {
 		boolean validOperations = false;
 		int bestScore = -Evaluator.MATE;
 		int move, bestMove = Move.NONE;
-		bestMoveScore = -Evaluator.MATE;
 
 		while ((move = moveIterator.next()) != Move.NONE) {
 			validOperations = true;
