@@ -907,7 +907,12 @@ public class SearchEngine implements Runnable {
 		}
 
 		depth = 1;
-		rootScore = evaluate(tt.search(board, 0, false), 0);
+		boolean foundTT = tt.search(board, 0, false);
+		if (canUseTT(0, -Evaluator.MATE, Evaluator.MATE)) {
+			rootScore = tt.getScore();
+		} else {
+			rootScore = evaluate(foundTT, 0);
+		}
 		tt.newGeneration();
 		aspWindows = Config.ASPIRATION_WINDOW_SIZES;
 	}

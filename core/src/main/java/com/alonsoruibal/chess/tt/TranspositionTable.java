@@ -36,7 +36,7 @@ public class TranspositionTable {
 	private int size;
 	private long info;
 	private short eval;
-	private byte generation;
+	private int generation;
 	private int entriesOccupied;
 
 	private int score;
@@ -90,12 +90,12 @@ public class TranspositionTable {
 		return (int) ((info >>> 21) & 0xf);
 	}
 
-	public byte getGeneration() {
-		return (byte) ((info >>> 32) & 0xff);
+	public int getGeneration() {
+		return (int) ((info >>> 32) & 0xff);
 	}
 
-	public byte getDepthAnalyzed() {
-		return (byte) ((info >>> 40) & 0xff);
+	public int getDepthAnalyzed() {
+		return (int) (info >>> 40) & 0xff;
 	}
 
 	public int getScore() {
@@ -107,7 +107,7 @@ public class TranspositionTable {
 	}
 
 	public void newGeneration() {
-		generation++;
+		generation = (generation + 1) & 0xff;
 	}
 
 	public boolean isMyGeneration() {
