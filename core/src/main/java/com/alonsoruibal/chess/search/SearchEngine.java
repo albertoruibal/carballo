@@ -512,7 +512,7 @@ public class SearchEngine implements Runnable {
 
 		if (!board.getCheck()) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
-			boolean evalTT = excludedMove == 0 || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
+			boolean evalTT = excludedMove == Move.NONE || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = evaluate(evalTT, distanceToInitialPly);
 			eval = refineEval(foundTT, staticEval);
 		}
@@ -572,7 +572,7 @@ public class SearchEngine implements Runnable {
 
 				int R = 3 * PLY + (depthRemaining >>> 2);
 
-				board.doMove(0, false, false);
+				board.doMove(Move.NULL, false, false);
 				score = depthRemaining - R < PLY ? -quiescentSearch(0, -beta, -beta + 1) :
 						-search(NODE_NULL, depthRemaining - R, -beta, -beta + 1, false, Move.NONE);
 				board.undoMove();
@@ -604,7 +604,7 @@ public class SearchEngine implements Runnable {
 					&& depthRemaining >= IID_DEPTH[nodeType] //
 					&& allowNullMove //
 					&& (nodeType != NODE_NULL || staticEval + Config.IID_MARGIN > beta) //
-					&& excludedMove == 0) {
+					&& excludedMove == Move.NONE) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, false, 0);
 				if (tt.search(board, distanceToInitialPly, false)) {
@@ -652,7 +652,7 @@ public class SearchEngine implements Runnable {
 			if (nodeType != NODE_ROOT //
 					&& move == ttMove //
 					&& extension < PLY //
-					&& excludedMove == 0 //
+					&& excludedMove == Move.NONE //
 					&& Config.EXTENSIONS_SINGULAR > 0 //
 					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
 					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
@@ -761,7 +761,7 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Checkmate or stalemate
-		if (excludedMove == 0 && !validOperations) {
+		if (excludedMove == Move.NONE && !validOperations) {
 			bestScore = evaluateEndgame(distanceToInitialPly);
 		}
 		// Fix score for excluded moves
@@ -771,7 +771,7 @@ public class SearchEngine implements Runnable {
 
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
-			if (excludedMove == 0 && validOperations) {
+			if (excludedMove == Move.NONE && validOperations) {
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {

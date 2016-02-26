@@ -16,4 +16,12 @@ public class MoveTest {
 		b.doMove(m);
 		assertEquals("Move must not be none", "Qg2#", b.getSanMove(b.getMoveNumber() - 1));
 	}
+
+	@Test
+	public void testMoveNotInTurn() {
+		Board b = new Board();
+		b.setFen("8/8/5B2/8/4b3/1k6/p7/K7 w - - 72 148");
+		int move = Move.getFromString(b, "d4b2", true);
+		assertEquals(Move.NONE, move);
+	}
 }

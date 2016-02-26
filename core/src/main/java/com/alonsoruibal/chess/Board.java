@@ -636,10 +636,10 @@ public class Board {
 
 	/**
 	 * Moves and also updates the board's zobrist key verify legality, if not
-	 * legal undo move and return false 0 is the null move
+	 * legal undo move and return false
 	 */
 	public boolean doMove(int move, boolean verify, boolean fillSanInfo) {
-		if (move == -1) {
+		if (move == Move.NONE) {
 			return false;
 		}
 		// Save history
@@ -667,7 +667,7 @@ public class Board {
 		// and from the flags
 		flags &= ~FLAGS_PASSANT;
 
-		if (move != 0) {
+		if (move != Move.NULL) {
 			assert (from & getMines()) != 0 : "Origin square not valid";
 
 			// Is it is a capture, remove pieces in destination square
@@ -1076,17 +1076,16 @@ public class Board {
 			return null;
 		}
 
-		boolean error = false;
-
 		StringBuffer oSB = new StringBuffer();
 		String movesArray[] = moves.split(" ");
 		int savedMoveNumber = moveNumber;
 
 		for (String moveString : movesArray) {
 			int move = Move.getFromString(this, moveString, true);
+
 			if (move == Move.NONE || !doMove(move)) {
-				error = true;
-				break;
+				undoMove(savedMoveNumber);
+				return "";
 			}
 
 			if (oSB.length() > 0) {
@@ -1095,10 +1094,6 @@ public class Board {
 			oSB.append(getLastMoveSan());
 		}
 		undoMove(savedMoveNumber);
-
-		if (error) {
-			return "";
-		}
 		return oSB.toString();
 	}
 

@@ -20,6 +20,7 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 public class Move {
 	// Predefined moves
 	public static final int NONE = 0;
+	public static final int NULL = -1;
 
 	public static final String PIECE_LETTERS_LOWERCASE = " pnbrqk";
 	public static final String PIECE_LETTERS_UPPERCASE = " PNBRQK";
@@ -164,7 +165,9 @@ public class Move {
 
 		// Ignore checks, captures indicators...
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
-		if ("none".equals(move)) {
+		if ("null".equals(move)) {
+			return Move.NULL;
+		} else if ("none".equals(move)) {
 			return Move.NONE;
 		} else if ("oo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
@@ -247,8 +250,8 @@ public class Move {
 		if (move.length() == 4) { // was algebraic complete e2e4 (=UCI!)
 			from = BitboardUtils.algebraic2Square(move.substring(0, 2));
 		}
-		if (from == 0) {
-			return -1;
+		if (from == 0 || (from & board.getMines()) == 0) {
+			return NONE;
 		}
 
 		// Treats multiple froms, choosing the first Legal Move
@@ -310,7 +313,7 @@ public class Move {
 				return moveInt;
 			}
 		}
-		return -1;
+		return NONE;
 	}
 
 	/**
@@ -320,7 +323,9 @@ public class Move {
 	 * @return
 	 */
 	public static String toString(int move) {
-		if (move == 0 || move == -1) {
+		if (move == NULL) {
+			return "null";
+		} else if (move == NONE) {
 			return "none";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -333,7 +338,9 @@ public class Move {
 	}
 
 	public static String toStringExt(int move) {
-		if (move == 0 || move == -1) {
+		if (move == NULL) {
+			return "null";
+		} else if (move == NONE) {
 			return "none";
 		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
 			return Move.isCheck(move) ? "O-O+" : "O-O";
@@ -432,5 +439,9 @@ public class Move {
 			System.out.print(" ");
 		}
 		System.out.println();
+	}
+
+	public static String sanToFigurines(String in) {
+		return in.replace("N", "♘").replace("B", "♗").replace("R", "♖").replace("Q", "♕").replace("K", "♔");
 	}
 }
