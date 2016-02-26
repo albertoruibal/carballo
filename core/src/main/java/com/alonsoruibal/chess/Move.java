@@ -164,7 +164,9 @@ public class Move {
 
 		// Ignore checks, captures indicators...
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
-		if ("oo".equals(move)) {
+		if ("none".equals(move)) {
+			return Move.NONE;
+		} else if ("oo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
 					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
 		} else if ("ooo".equals(move)) {
