@@ -104,7 +104,7 @@ public class Board {
 
 		moveHistory = new int[MAX_MOVES];
 
-		movesSan = new HashMap<Integer, String>();
+		movesSan = new HashMap<>();
 
 		bbAttacks = BitboardAttacks.getInstance();
 	}
@@ -645,20 +645,12 @@ public class Board {
 		// Save history
 		saveHistory(move, fillSanInfo);
 
-		int fromIndex = Move.getFromIndex(move);
-		int toIndex = Move.getToIndex(move);
-		long from = Move.getFromSquare(move);
-		long to = Move.getToSquare(move);
-		long moveMask = from | to; // Move is as easy as xor with this mask (exceptions are promotions, captures and en-passant captures)
-		int moveType = Move.getMoveType(move);
-		int pieceMoved = Move.getPieceMoved(move);
-		boolean capture = Move.isCapture(move);
-		boolean turn = getTurn();
-		int color = (turn ? 0 : 1);
-
 		// Count consecutive moves without capture or without pawn move
 		fiftyMovesRule++;
 		moveNumber++; // Count Ply moves
+
+		boolean turn = getTurn();
+		int color = (turn ? 0 : 1);
 
 		// Remove passant flags: from the zobrist key
 		if ((flags & FLAGS_PASSANT) != 0) {
@@ -667,143 +659,157 @@ public class Board {
 		// and from the flags
 		flags &= ~FLAGS_PASSANT;
 
-		if (move != Move.NULL) {
-			assert (from & getMines()) != 0 : "Origin square not valid";
+		if (move == Move.NULL) {
+			// Change turn
+			flags ^= FLAG_TURN;
+			key[0] ^= ZobristKey.whiteMove;
+			return true;
+		}
 
-			// Is it is a capture, remove pieces in destination square
-			if (capture) {
+		int fromIndex = Move.getFromIndex(move);
+		int toIndex = Move.getToIndex(move);
+		long from = Move.getFromSquare(move);
+		long to = Move.getToSquare(move);
+		long moveMask = from | to; // Move is as easy as xor with this mask (exceptions are promotions, captures and en-passant captures)
+		int moveType = Move.getMoveType(move);
+		int pieceMoved = Move.getPieceMoved(move);
+		boolean capture = Move.isCapture(move);
+
+		assert (from & getMines()) != 0 : "Origin square not valid";
+
+		// Is it is a capture, remove pieces in destination square
+		if (capture) {
+			fiftyMovesRule = 0;
+			// En-passant pawn captures remove captured pawn, put the pawn in to
+			int toIndexCapture = toIndex;
+			if (moveType == Move.TYPE_PASSANT) {
+				to = (getTurn() ? (to >>> 8) : (to << 8));
+				toIndexCapture += (getTurn() ? -8 : 8);
+			}
+			key[1 - color] ^= ZobristKey.getKeyPieceIndex(toIndexCapture, getPieceAt(to));
+
+			whites &= ~to;
+			blacks &= ~to;
+			pawns &= ~to;
+			queens &= ~to;
+			rooks &= ~to;
+			bishops &= ~to;
+			knights &= ~to;
+		}
+
+		// Pawn movements
+		switch (pieceMoved) {
+			case Piece.PAWN:
 				fiftyMovesRule = 0;
-				// En-passant pawn captures remove captured pawn, put the pawn in to
-				int toIndexCapture = toIndex;
-				if (moveType == Move.TYPE_PASSANT) {
-					to = (getTurn() ? (to >>> 8) : (to << 8));
-					toIndexCapture += (getTurn() ? -8 : 8);
+				// Set new passant flags if pawn is advancing two squares (marks
+				// the destination square where the pawn can be captured)
+				// Set only passant flags when the other side can capture
+				if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
+					flags |= (from << 8);
 				}
-				key[1 - color] ^= ZobristKey.getKeyPieceIndex(toIndexCapture, getPieceAt(to));
+				if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
+					flags |= (from >>> 8);
+				}
+				if ((flags & FLAGS_PASSANT) != 0) {
+					key[color] ^= ZobristKey.passantFile[BitboardUtils.getFile(flags & FLAGS_PASSANT)];
+				}
 
-				whites &= ~to;
-				blacks &= ~to;
-				pawns &= ~to;
-				queens &= ~to;
-				rooks &= ~to;
-				bishops &= ~to;
-				knights &= ~to;
-			}
+				if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_BISHOP
+						|| moveType == Move.TYPE_PROMOTION_ROOK) { // Promotions:
+					// change
+					// the piece
+					pawns &= ~from;
+					key[color] ^= ZobristKey.pawn[color][fromIndex];
+					switch (moveType) {
+						case Move.TYPE_PROMOTION_QUEEN:
+							queens |= to;
+							key[color] ^= ZobristKey.queen[color][toIndex];
+							break;
+						case Move.TYPE_PROMOTION_KNIGHT:
+							knights |= to;
+							key[color] ^= ZobristKey.knight[color][toIndex];
+							break;
+						case Move.TYPE_PROMOTION_BISHOP:
+							bishops |= to;
+							key[color] ^= ZobristKey.bishop[color][toIndex];
+							break;
+						case Move.TYPE_PROMOTION_ROOK:
+							rooks |= to;
+							key[color] ^= ZobristKey.rook[color][toIndex];
+							break;
+					}
+				} else {
+					pawns ^= moveMask;
+					key[color] ^= ZobristKey.pawn[color][fromIndex] ^ ZobristKey.pawn[color][toIndex];
+				}
+				break;
+			case Piece.ROOK:
+				rooks ^= moveMask;
+				key[color] ^= ZobristKey.rook[color][fromIndex] ^ ZobristKey.rook[color][toIndex];
+				break;
+			case Piece.BISHOP:
+				bishops ^= moveMask;
+				key[color] ^= ZobristKey.bishop[color][fromIndex] ^ ZobristKey.bishop[color][toIndex];
+				break;
+			case Piece.KNIGHT:
+				knights ^= moveMask;
+				key[color] ^= ZobristKey.knight[color][fromIndex] ^ ZobristKey.knight[color][toIndex];
+				break;
+			case Piece.QUEEN:
+				queens ^= moveMask;
+				key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
+				break;
+			case Piece.KING: // if castling, moves rooks too
+				if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
+					// {White Kingside, White Queenside, Black Kingside, Black Queenside}
+					int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
 
-			// Pawn movements
-			switch (pieceMoved) {
-				case Piece.PAWN:
-					fiftyMovesRule = 0;
-					// Set new passant flags if pawn is advancing two squares (marks
-					// the destination square where the pawn can be captured)
-					// Set only passant flags when the other side can capture
-					if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
-						flags |= (from << 8);
-					}
-					if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
-						flags |= (from >>> 8);
-					}
-					if ((flags & FLAGS_PASSANT) != 0) {
-						key[color] ^= ZobristKey.passantFile[BitboardUtils.getFile(flags & FLAGS_PASSANT)];
-					}
+					toIndex = CASTLING_KING_DESTINY_INDEX[j];
+					int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
+					int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
+					// Recalculate move mask for chess960 castlings
+					moveMask = from ^ (1L << toIndex);
+					long rookMoveMask = (1L << originRookIndex) ^ (1L << destinyRookIndex);
+					key[color] ^= ZobristKey.rook[color][originRookIndex] ^ ZobristKey.rook[color][destinyRookIndex];
 
-					if (moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_KNIGHT || moveType == Move.TYPE_PROMOTION_BISHOP
-							|| moveType == Move.TYPE_PROMOTION_ROOK) { // Promotions:
-						// change
-						// the piece
-						pawns &= ~from;
-						key[color] ^= ZobristKey.pawn[color][fromIndex];
-						switch (moveType) {
-							case Move.TYPE_PROMOTION_QUEEN:
-								queens |= to;
-								key[color] ^= ZobristKey.queen[color][toIndex];
-								break;
-							case Move.TYPE_PROMOTION_KNIGHT:
-								knights |= to;
-								key[color] ^= ZobristKey.knight[color][toIndex];
-								break;
-							case Move.TYPE_PROMOTION_BISHOP:
-								bishops |= to;
-								key[color] ^= ZobristKey.bishop[color][toIndex];
-								break;
-							case Move.TYPE_PROMOTION_ROOK:
-								rooks |= to;
-								key[color] ^= ZobristKey.rook[color][toIndex];
-								break;
-						}
+					if (getTurn()) {
+						whites ^= rookMoveMask;
 					} else {
-						pawns ^= moveMask;
-						key[color] ^= ZobristKey.pawn[color][fromIndex] ^ ZobristKey.pawn[color][toIndex];
+						blacks ^= rookMoveMask;
 					}
-					break;
-				case Piece.ROOK:
-					rooks ^= moveMask;
-					key[color] ^= ZobristKey.rook[color][fromIndex] ^ ZobristKey.rook[color][toIndex];
-					break;
-				case Piece.BISHOP:
-					bishops ^= moveMask;
-					key[color] ^= ZobristKey.bishop[color][fromIndex] ^ ZobristKey.bishop[color][toIndex];
-					break;
-				case Piece.KNIGHT:
-					knights ^= moveMask;
-					key[color] ^= ZobristKey.knight[color][fromIndex] ^ ZobristKey.knight[color][toIndex];
-					break;
-				case Piece.QUEEN:
-					queens ^= moveMask;
-					key[color] ^= ZobristKey.queen[color][fromIndex] ^ ZobristKey.queen[color][toIndex];
-					break;
-				case Piece.KING: // if castling, moves rooks too
-					if (moveType == Move.TYPE_KINGSIDE_CASTLING || moveType == Move.TYPE_QUEENSIDE_CASTLING) {
-						// {White Kingside, White Queenside, Black Kingside, Black Queenside}
-						int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
+					rooks ^= rookMoveMask;
+				}
+				kings ^= moveMask;
+				key[color] ^= ZobristKey.king[color][fromIndex] ^ ZobristKey.king[color][toIndex];
+				break;
+		}
+		// Move pieces in colour fields
+		if (getTurn()) {
+			whites ^= moveMask;
+		} else {
+			blacks ^= moveMask;
+		}
 
-						toIndex = CASTLING_KING_DESTINY_INDEX[j];
-						int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
-						int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
-						// Recalculate move mask for chess960 castlings
-						moveMask = from ^ (1L << toIndex);
-						long rookMoveMask = (1L << originRookIndex) ^ (1L << destinyRookIndex);
-						key[color] ^= ZobristKey.rook[color][originRookIndex] ^ ZobristKey.rook[color][destinyRookIndex];
-
-						if (getTurn()) {
-							whites ^= rookMoveMask;
-						} else {
-							blacks ^= rookMoveMask;
-						}
-						rooks ^= rookMoveMask;
-					}
-					kings ^= moveMask;
-					key[color] ^= ZobristKey.king[color][fromIndex] ^ ZobristKey.king[color][toIndex];
-					break;
-			}
-			// Move pieces in colour fields
-			if (getTurn()) {
-				whites ^= moveMask;
-			} else {
-				blacks ^= moveMask;
-			}
-
-			// Tests to disable castling
-			if ((flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Piece.KING) || from == castlingRooks[0] || to == castlingRooks[0])) {
-				flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
-				key[0] ^= ZobristKey.whiteKingSideCastling;
-			}
-			if ((flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0 && //
-					((turn && pieceMoved == Piece.KING) || from == castlingRooks[1] || to == castlingRooks[1])) {
-				flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
-				key[0] ^= ZobristKey.whiteQueenSideCastling;
-			}
-			if ((flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Piece.KING) || from == castlingRooks[2] || to == castlingRooks[2])) {
-				flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
-				key[1] ^= ZobristKey.blackKingSideCastling;
-			}
-			if ((flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0 && //
-					((!turn && pieceMoved == Piece.KING) || from == castlingRooks[3] || to == castlingRooks[3])) {
-				flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
-				key[1] ^= ZobristKey.blackQueenSideCastling;
-			}
+		// Tests to disable castling
+		if ((flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0 && //
+				((turn && pieceMoved == Piece.KING) || from == castlingRooks[0] || to == castlingRooks[0])) {
+			flags &= ~FLAG_WHITE_KINGSIDE_CASTLING;
+			key[0] ^= ZobristKey.whiteKingSideCastling;
+		}
+		if ((flags & FLAG_WHITE_QUEENSIDE_CASTLING) != 0 && //
+				((turn && pieceMoved == Piece.KING) || from == castlingRooks[1] || to == castlingRooks[1])) {
+			flags &= ~FLAG_WHITE_QUEENSIDE_CASTLING;
+			key[0] ^= ZobristKey.whiteQueenSideCastling;
+		}
+		if ((flags & FLAG_BLACK_KINGSIDE_CASTLING) != 0 && //
+				((!turn && pieceMoved == Piece.KING) || from == castlingRooks[2] || to == castlingRooks[2])) {
+			flags &= ~FLAG_BLACK_KINGSIDE_CASTLING;
+			key[1] ^= ZobristKey.blackKingSideCastling;
+		}
+		if ((flags & FLAG_BLACK_QUEENSIDE_CASTLING) != 0 && //
+				((!turn && pieceMoved == Piece.KING) || from == castlingRooks[3] || to == castlingRooks[3])) {
+			flags &= ~FLAG_BLACK_QUEENSIDE_CASTLING;
+			key[1] ^= ZobristKey.blackQueenSideCastling;
 		}
 		// Change turn
 		flags ^= FLAG_TURN;
@@ -899,7 +905,7 @@ public class Board {
 	}
 
 	/**
-	 * checks draw by fiftymoves rule and threefold repetition
+	 * checks draw by fifty move rule and threefold repetition
 	 */
 	public boolean isDraw() {
 		if (fiftyMovesRule >= 100) {
@@ -1083,7 +1089,7 @@ public class Board {
 		for (String moveString : movesArray) {
 			int move = Move.getFromString(this, moveString, true);
 
-			if (move == Move.NONE || !doMove(move)) {
+			if (!doMove(move)) {
 				undoMove(savedMoveNumber);
 				return "";
 			}
