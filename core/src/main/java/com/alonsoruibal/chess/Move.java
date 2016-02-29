@@ -22,6 +22,9 @@ public class Move {
 	public static final int NONE = 0;
 	public static final int NULL = -1;
 
+	public static final String NONE_STRING = "none";
+	public static final String NULL_STRING = "null";
+
 	public static final String PIECE_LETTERS_LOWERCASE = " pnbrqk";
 	public static final String PIECE_LETTERS_UPPERCASE = " PNBRQK";
 
@@ -155,6 +158,12 @@ public class Move {
 	 * @param move
 	 */
 	public static int getFromString(Board board, String move, boolean checkLegality) {
+		if (NULL_STRING.equals(move)) {
+			return Move.NULL;
+		} else if (NONE_STRING.equals(move)) {
+			return Move.NONE;
+		}
+
 		int fromIndex;
 		int toIndex;
 		int moveType = 0;
@@ -165,11 +174,8 @@ public class Move {
 
 		// Ignore checks, captures indicators...
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
-		if ("null".equals(move)) {
-			return Move.NULL;
-		} else if ("none".equals(move)) {
-			return Move.NONE;
-		} else if ("oo".equals(move)) {
+
+		if ("oo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
 					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
 		} else if ("ooo".equals(move)) {
@@ -323,10 +329,10 @@ public class Move {
 	 * @return
 	 */
 	public static String toString(int move) {
-		if (move == NULL) {
-			return "null";
-		} else if (move == NONE) {
-			return "none";
+		if (move == Move.NONE) {
+			return NONE_STRING;
+		} else if (move == Move.NULL) {
+			return NULL_STRING;
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(BitboardUtils.index2Algebraic(Move.getFromIndex(move)));
@@ -338,10 +344,10 @@ public class Move {
 	}
 
 	public static String toStringExt(int move) {
-		if (move == NULL) {
-			return "null";
-		} else if (move == NONE) {
-			return "none";
+		if (move == Move.NONE) {
+			return NONE_STRING;
+		} else if (move == Move.NULL) {
+			return NULL_STRING;
 		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
 			return Move.isCheck(move) ? "O-O+" : "O-O";
 		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
@@ -372,6 +378,11 @@ public class Move {
 	 * @return
 	 */
 	public static String toSan(Board board, int move) {
+		if (move == Move.NONE) {
+			return NONE_STRING;
+		} else if (move == Move.NULL) {
+			return NULL_STRING;
+		}
 		board.generateLegalMoves();
 
 		boolean isLegal = false;
