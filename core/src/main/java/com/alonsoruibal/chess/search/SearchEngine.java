@@ -63,7 +63,6 @@ public class SearchEngine implements Runnable {
 
 	private int bestMoveScore;
 	private int globalBestMove, ponderMove;
-	private String pv;
 
 	private int initialPly; // Initial Ply for search
 	private int depth;
@@ -799,13 +798,11 @@ public class SearchEngine implements Runnable {
 	private void notifyMoveFound(int move, int score, int alpha, int beta) {
 		long time = System.currentTimeMillis();
 
-		getPv(move);
-
 		SearchStatusInfo info = new SearchStatusInfo();
 		info.setDepth(depth);
 		info.setSelDepth(selDepth);
 		info.setTime(time - startTime);
-		info.setPv(pv);
+		info.setPv(getPv(move));
 		info.setScore(score, alpha, beta);
 		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
 		info.setHashFull(tt.getHashFull());
@@ -888,7 +885,6 @@ public class SearchEngine implements Runnable {
 		qsPositionCounter = 0;
 		globalBestMove = Move.NONE;
 		ponderMove = Move.NONE;
-		pv = null;
 
 		initialPly = board.getMoveNumber();
 
@@ -961,7 +957,7 @@ public class SearchEngine implements Runnable {
 				Math.abs(rootScore) > VALUE_IS_MATE // Mate found or
 						|| (time2 + ((time2 - time1) << 1)) > thinkToTime)) // It will not likely finish the next iteration
 				|| depth == MAX_DEPTH
-				|| depth > thinkToDepth
+				|| depth >= thinkToDepth
 				|| Math.abs(rootScore) == Evaluator.MATE) { // Search limit reached
 			finishRun();
 		}
@@ -1000,16 +996,21 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Gets the principal variation from the transposition table
 	 */
-	private void getPv(int firstMove) {
+	private String getPv(int firstMove) {
+		if (firstMove == Move.NONE) {
+			return "";
+		}
+
 		StringBuilder sb = new StringBuilder();
-		List<Long> keys = new ArrayList<Long>(); // To not repeat keys
+		List<Long> keys = new ArrayList<>(); // To not repeat keys
 		sb.append(Move.toString(firstMove));
+		int savedMoveNumber = board.getMoveNumber();
 		board.doMove(firstMove, true, false);
 
 		int i = 1;
 		while (i < 256) {
 			if (tt.search(board, i, false)) {
-				if (tt.getBestMove() == 0 || keys.contains(board.getKey())) {
+				if (tt.getBestMove() == Move.NONE || keys.contains(board.getKey())) {
 					break;
 				}
 				keys.add(board.getKey());
@@ -1029,10 +1030,8 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Now undo moves
-		for (int j = 0; j < i; j++) {
-			board.undoMove();
-		}
-		pv = sb.toString();
+		board.undoMove(savedMoveNumber);
+		return sb.toString();
 	}
 
 	public void stop() {
