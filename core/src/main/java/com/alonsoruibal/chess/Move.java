@@ -160,7 +160,7 @@ public class Move {
 	public static int getFromString(Board board, String move, boolean checkLegality) {
 		if (NULL_STRING.equals(move)) {
 			return Move.NULL;
-		} else if (NONE_STRING.equals(move)) {
+		} else if ("".equals(move) || NONE_STRING.equals(move)) {
 			return Move.NONE;
 		}
 
@@ -403,8 +403,8 @@ public class Move {
 				}
 			}
 		}
-		if (move == 0 || move == -1 || !isLegal) {
-			return "none";
+		if (!isLegal) {
+			return Move.NONE_STRING;
 		} else if (Move.getMoveType(move) == TYPE_KINGSIDE_CASTLING) {
 			return Move.isCheck(move) ? "O-O+" : "O-O";
 		} else if (Move.getMoveType(move) == TYPE_QUEENSIDE_CASTLING) {
