@@ -652,12 +652,12 @@ public class Board {
 		boolean turn = getTurn();
 		int color = (turn ? 0 : 1);
 
-		// Remove passant flags: from the zobrist key
 		if ((flags & FLAGS_PASSANT) != 0) {
+			// Remove passant flags: from the zobrist key
 			key[1 - color] ^= ZobristKey.passantFile[BitboardUtils.getFile(flags & FLAGS_PASSANT)];
+			// and from the flags
+			flags &= ~FLAGS_PASSANT;
 		}
-		// and from the flags
-		flags &= ~FLAGS_PASSANT;
 
 		if (move == Move.NULL) {
 			// Change turn
@@ -667,15 +667,20 @@ public class Board {
 		}
 
 		int fromIndex = Move.getFromIndex(move);
-		int toIndex = Move.getToIndex(move);
 		long from = Move.getFromSquare(move);
+
+		// Check if we are applying a move in the other turn
+		if ((from & getMines()) == 0) {
+			undoMove();
+			return false;
+		}
+
+		int toIndex = Move.getToIndex(move);
 		long to = Move.getToSquare(move);
 		long moveMask = from | to; // Move is as easy as xor with this mask (exceptions are promotions, captures and en-passant captures)
 		int moveType = Move.getMoveType(move);
 		int pieceMoved = Move.getPieceMoved(move);
 		boolean capture = Move.isCapture(move);
-
-		assert (from & getMines()) != 0 : "Origin square not valid";
 
 		// Is it is a capture, remove pieces in destination square
 		if (capture) {
