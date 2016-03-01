@@ -1084,7 +1084,7 @@ public class Board {
 
 	public String toSanNextMoves(String moves) {
 		if (moves == null || "".equals(moves.trim())) {
-			return null;
+			return "";
 		}
 
 		StringBuffer oSB = new StringBuffer();

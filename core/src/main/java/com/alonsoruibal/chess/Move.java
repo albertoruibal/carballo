@@ -453,6 +453,6 @@ public class Move {
 	}
 
 	public static String sanToFigurines(String in) {
-		return in.replace("N", "♘").replace("B", "♗").replace("R", "♖").replace("Q", "♕").replace("K", "♔");
+		return in == null ? null : in.replace("N", "♘").replace("B", "♗").replace("R", "♖").replace("Q", "♕").replace("K", "♔");
 	}
 }
