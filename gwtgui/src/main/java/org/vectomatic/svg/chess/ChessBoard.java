@@ -22,9 +22,22 @@ import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 
-import org.vectomatic.dom.svg.*;
+import org.vectomatic.dom.svg.OMSVGAnimatedString;
+import org.vectomatic.dom.svg.OMSVGDocument;
+import org.vectomatic.dom.svg.OMSVGGElement;
+import org.vectomatic.dom.svg.OMSVGMatrix;
+import org.vectomatic.dom.svg.OMSVGPoint;
+import org.vectomatic.dom.svg.OMSVGRectElement;
+import org.vectomatic.dom.svg.OMSVGSVGElement;
+import org.vectomatic.dom.svg.OMSVGUseElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -253,7 +266,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		mouseIndex = BitboardUtils.algebraic2Index(algebraic);
 		if (setPossibleDestinySquares(mouseIndex)) {
 			// Remove and add piece to be on top
-			char piece = board.getPieceAt(BitboardUtils.index2Square((byte) mouseIndex));
+			char piece = board.getPieceAt(BitboardUtils.index2Square(mouseIndex));
 			removePiece(algebraic);
 			slidingPiece = addPiece(piece, algebraic);
 
@@ -335,7 +348,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 	}
 
 	private boolean pieceOfMovingColor(int fromIndex) {
-		long square = BitboardUtils.index2Square((byte) fromIndex);
+		long square = BitboardUtils.index2Square(fromIndex);
 		return (board.getTurn() ? (board.whites & square) != 0 : (board.blacks & square) != 0);
 	}
 
@@ -382,8 +395,8 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		if (keySquareIndex + 8 <= 63) {
 			int oldKeySquareIndex = keySquareIndex;
 			keySquareIndex += 8;
-			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square((byte) oldKeySquareIndex), false); 
-			updateSquare(keySquareIndex, BitboardUtils.index2Square((byte) keySquareIndex), false);
+			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square(oldKeySquareIndex), false);
+			updateSquare(keySquareIndex, BitboardUtils.index2Square(keySquareIndex), false);
 		}
 	}
 
@@ -392,8 +405,8 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		if (keySquareIndex - 8 >= 0) {
 			int oldKeySquareIndex = keySquareIndex;
 			keySquareIndex -= 8;
-			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square((byte) oldKeySquareIndex), false); 
-			updateSquare(keySquareIndex, BitboardUtils.index2Square((byte) keySquareIndex), false);
+			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square(oldKeySquareIndex), false);
+			updateSquare(keySquareIndex, BitboardUtils.index2Square(keySquareIndex), false);
 		}
 	}
 
@@ -402,8 +415,8 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		if (keySquareIndex % 8 < 7) {
 			int oldKeySquareIndex = keySquareIndex;
 			keySquareIndex++;
-			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square((byte) oldKeySquareIndex), false); 
-			updateSquare(keySquareIndex, BitboardUtils.index2Square((byte) keySquareIndex), false);
+			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square(oldKeySquareIndex), false);
+			updateSquare(keySquareIndex, BitboardUtils.index2Square(keySquareIndex), false);
 		}
 	}
 
@@ -412,8 +425,8 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		if (keySquareIndex % 8 > 0) {
 			int oldKeySquareIndex = keySquareIndex;
 			keySquareIndex--;
-			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square((byte) oldKeySquareIndex), false); 
-			updateSquare(keySquareIndex, BitboardUtils.index2Square((byte) keySquareIndex), false); 
+			updateSquare(oldKeySquareIndex, BitboardUtils.index2Square(oldKeySquareIndex), false);
+			updateSquare(keySquareIndex, BitboardUtils.index2Square(keySquareIndex), false);
 		}
 	}
 

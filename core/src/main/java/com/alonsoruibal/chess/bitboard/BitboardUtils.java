@@ -128,7 +128,7 @@ public class BitboardUtils {
 	/**
 	 * And viceversa
 	 */
-	public static long index2Square(byte index) {
+	public static long index2Square(int index) {
 		return H1 << index;
 	}
 
