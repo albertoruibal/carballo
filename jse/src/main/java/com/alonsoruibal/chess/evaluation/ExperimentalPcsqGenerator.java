@@ -1,42 +1,102 @@
 package com.alonsoruibal.chess.evaluation;
 
-import com.alonsoruibal.chess.util.StringUtils;
-
+/**
+ * Generates the java code with the Piece-Square Values for the evaluator
+ * <p/>
+ * The "Diagonal" value sums twice, the position 0 is the longest diagonal (7 squares)
+ */
 public class ExperimentalPcsqGenerator {
 
-	private final static int OPENING = 0;
-	private final static int ENDGAME = 1;
-
-	private final static int[][] PawnColumn = {{-20, -8, -2, 5, 5, -2, -8, -20}, //
-			{-4, -6, -8, -10, -10, -8, -6, -4}};
-	private final static int[][] PawnRank = {{0, -3, -2, -1, 1, 2, 3, 0}, //
-			{0, -3, -3, -2, -1, 0, 2, 0}};
-	private final static int[][] KnightColumn = {{-26, -10, 1, 5, 5, 1, -10, -26}, //
-			{-4, -1, 2, 4, 4, 2, -1, -4}};
-	private final static int[][] KnightRank = {{-32, -10, 6, 15, 21, 19, 10, -11}, //
-			{-10, -5, -2, 1, 3, 5, 2, -3}};
-	private final static int[][] KnightLine = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{2, 1, 0, -1, -2, -4, -7, -10}};
-	private final static int[][] BishopLine = {{10, 5, 1, -3, -5, -7, -8, -12}, //
-			{3, 2, 0, 0, -2, -2, -3, -3}};
-	private final static int[][] BishopRank = {{-5, 0, 0, 0, 0, 0, 0, 0}, //
-			{0, 0, 0, 0, 0, 0, 0, 0}};
-	private final static int[][] RookColumn = {{-4, 0, 4, 8, 8, 4, 0, -4}, //
-			{0, 0, 0, 0, 0, 0, 0, 0}};
-	private final static int[][] RookRank = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{0, 0, 0, 0, 1, 1, 1, -2}};
-	private final static int[][] QueenColumn = {{-2, 0, 1, 2, 2, 1, 0, -2}, //
-			{-2, 0, 1, 2, 2, 1, 0, -2}};
-	private final static int[][] QueenRank = {{-2, 0, 1, 2, 2, 1, 0, -2}, //
-			{-2, 0, 1, 2, 2, 1, 0, -2}};
-	private final static int[][] QueenLine = {{3, 2, 1, 0, -2, -4, -7, -10}, //
-			{1, 0, -1, -3, -4, -6, -8, -12}};
-	private final static int[][] KingColumn = {{40, 45, 15, -5, -5, 15, 45, 40}, //
-			{-15, 0, 10, 15, 15, 10, 0, -15}};
-	private final static int[][] KingRank = {{4, 1, -2, -5, -10, -15, -25, -35}, //
-			{-15, 0, 10, 15, 15, 10, 0, -15}};
-	private final static int[][] KingLine = {{0, 0, 0, 0, 0, 0, 0, 0}, //
-			{2, 0, -2, -5, -8, -12, -20, -30}};
+	//
+	// PAWN
+	//
+	private final static int[][] PawnColumn = {
+			{-20, -8, -2, 5, 5, -2, -8, -20}, //
+			{-4, -6, -8, -10, -10, -8, -6, -4}
+	};
+	private final static int[][] PawnRank = {
+			{0, -3, -2, -1, 1, 2, 3, 0},
+			{0, -3, -3, -2, -1, 0, 2, 0}
+	};
+	private final static int[][] PawnDiagonal = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	//
+	// KNIGHT
+	//
+	private final static int[][] KnightColumn = {
+			{-26, -10, 1, 5, 5, 1, -10, -26},
+			{-4, -1, 2, 4, 4, 2, -1, -4}
+	};
+	private final static int[][] KnightRank = {
+			{-32, -10, 6, 15, 21, 19, 10, -11},
+			{-10, -5, -2, 1, 3, 5, 2, -3}
+	};
+	private final static int[][] KnightDiagonal = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 1, 0, -1, -2, -4, -7, -10}
+	};
+	//
+	// BISHOP
+	//
+	private final static int[][] BishopColumn = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	private final static int[][] BishopRank = {
+			{-5, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	private final static int[][] BishopDiagonal = {
+			{10, 5, 1, -3, -5, -7, -8, -12},
+			{3, 2, 0, 0, -2, -2, -3, -3}
+	};
+	//
+	// ROOK
+	//
+	private final static int[][] RookColumn = {
+			{-4, 0, 4, 8, 8, 4, 0, -4},
+			{0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	private final static int[][] RookRank = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 1, 1, 1, -2}
+	};
+	private final static int[][] RookDiagonal = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0}
+	};
+	//
+	// QUEEN
+	//
+	private final static int[][] QueenColumn = {
+			{-2, 0, 1, 2, 2, 1, 0, -2},
+			{-2, 0, 1, 2, 2, 1, 0, -2}
+	};
+	private final static int[][] QueenRank = {
+			{-2, 0, 1, 2, 2, 1, 0, -2},
+			{-2, 0, 1, 2, 2, 1, 0, -2}
+	};
+	private final static int[][] QueenDiagonal = {
+			{3, 2, 1, 0, -2, -4, -7, -10},
+			{1, 0, -1, -3, -4, -6, -8, -12}
+	};
+	//
+	// KING
+	//
+	private final static int[][] KingColumn = {
+			{40, 45, 15, -5, -5, 15, 45, 40},
+			{-15, 0, 10, 15, 15, 10, 0, -15}
+	};
+	private final static int[][] KingRank = {
+			{4, 1, -2, -5, -10, -15, -25, -35},
+			{-15, 0, 10, 15, 15, 10, 0, -15}
+	};
+	private final static int[][] KingDiagonal = {
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 0, -2, -5, -8, -12, -20, -30}
+	};
 
 	// Values are rotated for whites, so when white is playing is like shown in the code
 	public int[] pawnPcsq = new int[64];
@@ -46,28 +106,28 @@ public class ExperimentalPcsqGenerator {
 	public int[] queenPcsq = new int[64];
 	public int[] kingPcsq = new int[64];
 
+	private int calculateSquare(int i, int[][] columnValues, int[][] rankValues, int[][] diagonalValues) {
+		int rank = i >> 3;
+		int column = 7 - i & 7;
+		int diagonal1 = (((column - rank) >= 0) ? (column - rank) : -(column - rank));
+		int diagonal2 = (((column + rank - 7) >= 0) ? (column + rank - 7) : -(column + rank - 7));
+
+		return Evaluator.oe(
+				columnValues[0][column] + rankValues[0][rank] + diagonalValues[0][diagonal1] + diagonalValues[0][diagonal2],
+				columnValues[1][column] + rankValues[1][rank] + diagonalValues[1][diagonal1] + diagonalValues[1][diagonal2]
+		);
+	}
+
 	public void generate() {
-		// Initialize Piece square values
 		int i;
 
 		for (i = 0; i < 64; i++) {
-			int rank = i >> 3;
-			int column = 7 - i & 7;
-			int d = (((column - rank) >= 0) ? (column - rank) : -(column - rank));
-			int e = (((column + rank - 7) >= 0) ? (column + rank - 7) : -(column + rank - 7));
-
-			pawnPcsq[i] = Evaluator.oe(PawnColumn[OPENING][column] + PawnRank[OPENING][rank],
-					PawnColumn[ENDGAME][column] + PawnRank[ENDGAME][rank]);
-			knightPcsq[i] = Evaluator.oe(KnightColumn[OPENING][column] + KnightRank[OPENING][rank] + KnightLine[OPENING][d] + KnightLine[OPENING][e],
-					KnightColumn[ENDGAME][column] + KnightRank[ENDGAME][rank] + KnightLine[ENDGAME][d] + KnightLine[ENDGAME][e]);
-			bishopPcsq[i] = Evaluator.oe(BishopRank[OPENING][rank] + BishopLine[OPENING][d] + BishopLine[OPENING][e],
-					BishopRank[ENDGAME][rank] + BishopLine[ENDGAME][d] + BishopLine[ENDGAME][e]);
-			rookPcsq[i] = Evaluator.oe(RookColumn[OPENING][column] + RookRank[OPENING][rank],
-					RookColumn[ENDGAME][column] + RookRank[ENDGAME][rank]);
-			queenPcsq[i] = Evaluator.oe(QueenColumn[OPENING][column] + QueenRank[OPENING][rank] + QueenLine[OPENING][d] + QueenLine[OPENING][e],
-					QueenColumn[ENDGAME][column] + QueenRank[ENDGAME][rank] + QueenLine[ENDGAME][d] + QueenLine[ENDGAME][e]);
-			kingPcsq[i] = Evaluator.oe(KingColumn[OPENING][column] + KingRank[OPENING][rank] + KingLine[OPENING][d] + KingLine[OPENING][e],
-					KingColumn[ENDGAME][column] + KingRank[ENDGAME][rank] + KingLine[ENDGAME][d] + KingLine[ENDGAME][e]);
+			pawnPcsq[i] = calculateSquare(i, PawnColumn, PawnRank, PawnDiagonal);
+			knightPcsq[i] = calculateSquare(i, KnightColumn, KnightRank, KnightDiagonal);
+			bishopPcsq[i] = calculateSquare(i, BishopColumn, BishopRank, BishopDiagonal);
+			rookPcsq[i] = calculateSquare(i, RookColumn, RookRank, RookDiagonal);
+			queenPcsq[i] = calculateSquare(i, QueenColumn, QueenRank, QueenDiagonal);
+			kingPcsq[i] = calculateSquare(i, KingColumn, KingRank, KingDiagonal);
 		}
 
 		// Pawn opening corrections
@@ -103,7 +163,7 @@ public class ExperimentalPcsqGenerator {
 	private static void printPcsq(int pcsq[]) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < 64; i++) {
-			String aux = "oe(" + StringUtils.padLeft(String.valueOf(Evaluator.o(pcsq[i])), 4) + ", " + StringUtils.padLeft(String.valueOf(Evaluator.e(pcsq[i])), 4) + ")";
+			String aux = "oe(" + Evaluator.o(pcsq[i]) + ", " + Evaluator.e(pcsq[i]) + ")";
 			sb.append(aux);
 			if (i % 8 != 7) {
 				sb.append(", ");
