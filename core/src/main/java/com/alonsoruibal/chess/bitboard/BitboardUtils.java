@@ -6,6 +6,7 @@ public class BitboardUtils {
 
 	public static final long BLACK_SQUARES = 0x55aa55aa55aa55aaL;
 	public static final long WHITE_SQUARES = 0xaa55aa55aa55aa55L;
+	public static final long ALL_SQUARES   = 0xffffffffffffffffL;
 
 	// Board borders
 	public static final long b_d = 0x00000000000000ffL; // down
@@ -96,7 +97,7 @@ public class BitboardUtils {
 			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7] //
 	};
 
-	// Ranks fordward in pawn direction
+	// Ranks forward in pawn direction W, B
 	public static final long[][] RANKS_FORWARD = {RANKS_UPWARDS, RANKS_DOWNWARDS};
 	public static final long[][] RANKS_BACKWARD = {RANKS_DOWNWARDS, RANKS_UPWARDS};
 	public static final long[][] RANK_AND_BACKWARD = {RANK_AND_DOWNWARDS, RANK_AND_UPWARDS};
@@ -152,7 +153,7 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * prints a BitBoard to standard output
+	 * Prints a BitBoard to standard output
 	 */
 	public static String toString(long b) {
 		StringBuilder sb = new StringBuilder();
