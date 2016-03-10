@@ -181,11 +181,11 @@ public class BitboardAttacks {
 	 * without magic bitboards, too expensive, but uses less memory
 	 */
 	public long getRookAttacks(int index, long all) {
-		return getRookShiftAttacks(BitboardUtils.index2Square((byte) index), all);
+		return getRookShiftAttacks(BitboardUtils.index2Square(index), all);
 	}
 
 	public long getBishopAttacks(int index, long all) {
-		return getBishopShiftAttacks(BitboardUtils.index2Square((byte) index), all);
+		return getBishopShiftAttacks(BitboardUtils.index2Square(index), all);
 	}
 
 	public long getRookShiftAttacks(long square, long all) {
