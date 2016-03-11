@@ -827,7 +827,7 @@ public class SearchEngine implements Runnable {
 			try {
 				prepareRun();
 				run();
-			} catch (Exception e) {
+			} catch (SearchFinishedException e) {
 			}
 		}
 	}
