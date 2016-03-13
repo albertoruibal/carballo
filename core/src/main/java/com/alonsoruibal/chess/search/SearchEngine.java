@@ -599,7 +599,7 @@ public class SearchEngine implements Runnable {
 			// Internal Iterative Deepening (IID)
 			// Do a reduced move to search for a ttMove that will improve sorting
 			if (Config.IID //
-					&& ttMove == 0 //
+					&& ttMove == Move.NONE //
 					&& depthRemaining >= IID_DEPTH[nodeType] //
 					&& allowNullMove //
 					&& (nodeType != NODE_NULL || staticEval + Config.IID_MARGIN > beta) //
