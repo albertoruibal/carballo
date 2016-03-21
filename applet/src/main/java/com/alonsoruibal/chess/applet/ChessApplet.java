@@ -5,8 +5,6 @@ import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.Pgn;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.book.FileBook;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
-import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngineThreaded;
 import com.alonsoruibal.chess.search.SearchObserver;
@@ -38,7 +36,6 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 	
 	boolean userToMove;
 	
-	Evaluator evaluator; 
 	SearchEngineThreaded engine;
 	BoardJPanel boardPanel;
 	SearchParameters searchParameters;
@@ -69,7 +66,6 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		config.setTranspositionTableSize(8); // Due to memory limits, TT is set to 8 MB
 		engine = new SearchEngineThreaded(config);
 		engine.getConfig().setBook(new FileBook("/book_small.bin"));
-		evaluator = new CompleteEvaluator(config); 
 		searchParameters = new SearchParameters();
 		searchParameters.setMoveTime(timeValues[timeDefaultIndex]);
 		engine.setObserver(this);
