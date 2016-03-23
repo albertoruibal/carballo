@@ -575,13 +575,17 @@ public class Board {
 			sb.append(" ");
 			if ((i & BitboardUtils.b_r) != 0) {
 				sb.append(j--);
+				if (i == BitboardUtils.H1) {
+					sb.append(" ");
+					sb.append(getFen());
+				}
 				sb.append("\n");
 			}
 			i >>>= 1;
 		}
-		sb.append("a b c d e f g h  ");
-		sb.append((getTurn() ? "white move " : "blacks move "));
-		sb.append((getWhiteKingsideCastling() ? "K" : "") + (getWhiteQueensideCastling() ? "Q" : "") + (getBlackKingsideCastling() ? "k" : "") + (getBlackQueensideCastling() ? "q" : ""));
+		sb.append("a b c d e f g h   ");
+		sb.append((getTurn() ? "white moves " : "black moves "));
+		sb.append((getWhiteKingsideCastling() ? " W:0-0" : "") + (getWhiteQueensideCastling() ? " W:0-0-0" : "") + (getBlackKingsideCastling() ? " B:0-0" : "") + (getBlackQueensideCastling() ? " B:0-0-0" : ""));
 
 		return sb.toString();
 	}
@@ -917,7 +921,6 @@ public class Board {
 			return true;
 		}
 		int repetitions = 0;
-		// logger.debug("My keys key0=" + key[0] + " " + " key1=" + key[1]);
 		for (int i = 0; i < (moveNumber - 1); i++) {
 			if (keyHistory[i][0] == key[0] && keyHistory[i][1] == key[1]) {
 				repetitions++;
@@ -927,10 +930,16 @@ public class Board {
 			}
 		}
 		// Draw by no material to mate
+		// Kk, KNk, KNNk, KBK by FIDE rules, be careful: KNnk IS NOT a draw
 		return (pawns == 0 && rooks == 0 && queens == 0) &&
 				((bishops == 0 && knights == 0) || //
-						(bishops == 0 && BitboardUtils.popCount(knights) == 1) || //
-						(knights == 0 && BitboardUtils.popCount(bishops) == 1));
+						(knights == 0 && BitboardUtils.popCount(bishops) == 1) ||
+						(bishops == 0 &&
+								(BitboardUtils.popCount(knights) == 1 ||
+										(BitboardUtils.popCount(knights) == 2 && // KNNk, check same color
+												(BitboardUtils.popCount(knights & whites) == 2 ||
+														BitboardUtils.popCount(knights & ~whites) == 2))))
+				);
 	}
 
 	public int see(int move) {
@@ -938,8 +947,9 @@ public class Board {
 	}
 
 	public int see(int move, AttacksInfo attacksInfo) {
-		if ((attacksInfo.attackedSquares[getTurn() ? 1 : 0] & Move.getToSquare(move)) == 0
-				&& (attacksInfo.mayPin & Move.getFromSquare(move)) == 0) {
+		int them = getTurn() ? 1 : 0;
+		if ((attacksInfo.attackedSquares[them] & Move.getToSquare(move)) == 0
+				&& (attacksInfo.mayPin[them] & Move.getFromSquare(move)) == 0) {
 			return Move.isCapture(move) ? Board.SEE_PIECE_VALUES[Move.getPieceCaptured(this, move)] : 0;
 		} else {
 			return see(move);
@@ -960,8 +970,7 @@ public class Board {
 		seeGain[d] = SEE_PIECE_VALUES[targetPiece];
 		do {
 			long side = (d & 1) == 0 ? getOthers() : getMines();
-			d++; // next depth and side
-			// speculative store, if defended
+			d++; // next depth and side speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
 			attacks ^= fromSquare; // reset bit in set to traverse
 			all ^= fromSquare; // reset bit in temporary occupancy (for X-Rays)

@@ -45,20 +45,10 @@ public class EndgameEvaluator {
 		int whiteMaterial = whiteNoPawnMaterial + whitePawns;
 		int blackMaterial = blackNoPawnMaterial + blackPawns;
 
+		// Do not put here endgames already detected by Board
+
 		// Endgames without pawns
 		if (whitePawns == 0 && blackPawns == 0) {
-			if ((blackMaterial == 0 && whiteMaterial == 1 && whiteKnights == 1) || //
-					(whiteMaterial == 0 && blackMaterial == 1 && blackKnights == 1)) {
-				return Evaluator.DRAW; // KNk is draw
-			}
-			if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 2) || //
-					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 2)) {
-				return Evaluator.DRAW; // KNNk is draw
-			}
-			if ((blackMaterial == 0 && whiteMaterial == 1 && whiteBishops == 1) || //
-					(whiteMaterial == 0 && blackMaterial == 1 && blackBishops == 1)) {
-				return Evaluator.DRAW; // KBk is draw
-			}
 			if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 1 && whiteBishops == 1) || //
 					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
 				return EndgameEvaluator.endgameKBNK(board, whiteMaterial > blackMaterial);
