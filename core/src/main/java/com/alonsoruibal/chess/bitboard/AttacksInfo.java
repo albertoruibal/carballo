@@ -3,11 +3,9 @@ package com.alonsoruibal.chess.bitboard;
 import com.alonsoruibal.chess.Board;
 
 /**
- * Holds all the possible attacks for a board
- *
- * It is used by the evaluators and the move iterator, and also to speed the SEE calculations detecting not attacked squares
- *
- * Calculates the checking pieces and the interpose squares to avoid checks
+ * Holds all the possible attacks for a board.
+ * It is used by the evaluators and the move iterator, and also to speed the SEE calculations detecting not attacked squares.
+ * Calculates the checking pieces and the interpose squares to avoid checks.
  */
 public class AttacksInfo {
 	public final static int W = 0;
@@ -16,8 +14,11 @@ public class AttacksInfo {
 	BitboardAttacks bbAttacks;
 
 	public long boardKey = 0;
-	public long attacksFromSquare[] = new long[64];
+	// Includes attacks by pinned pieces that cannot move to the square, but limit king mobility
+	public long attackedSquaresAlsoPinned[] = {0, 0};
+	// The other attacks do not include those from pinned pieces
 	public long attackedSquares[] = {0, 0};
+	public long attacksFromSquare[] = new long[64];
 	public long pawnAttacks[] = {0, 0};
 	public long knightAttacks[] = {0, 0};
 	public long bishopAttacks[] = {0, 0};
@@ -25,18 +26,64 @@ public class AttacksInfo {
 	public long queenAttacks[] = {0, 0};
 	public long kingAttacks[] = {0, 0};
 	public int kingIndex[] = {0, 0};
+	public long pinnedMobility[] = new long[64];
 	//
 	// Squares with possible ray attacks to the kings: used to detect check and move legality
 	//
 	public long bishopAttacksKing[] = {0, 0};
 	public long rookAttacksKing[] = {0, 0};
 
-	public long mayPin; // bot my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
+	public long mayPin[] = {0, 0}; // both my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
 	public long piecesGivingCheck;
 	public long interposeCheckSquares;
+	public long pinnedPieces;
 
 	public AttacksInfo() {
 		this.bbAttacks = BitboardAttacks.getInstance();
+	}
+
+	/**
+	 * Checks for a pinned piece in each ray
+	 */
+	private void checkPinnerRay(long ray, long mines, long attackerSlider) {
+		long pinner = ray & attackerSlider;
+		if (pinner != 0) {
+			long pinned = ray & mines;
+			pinnedPieces |= pinned;
+			pinnedMobility[BitboardUtils.square2Index(pinned)] = ray;
+		}
+	}
+
+	private void checkPinnerBishop(int kingIndex, long bishopSliderAttacks, long all, long mines, long otherBishopsOrQueens) {
+		if ((bishopSliderAttacks & mines) == 0 || (bbAttacks.bishop[kingIndex] & otherBishopsOrQueens) == 0) {
+			return;
+		}
+		long xray = bbAttacks.getBishopAttacks(kingIndex, all & ~(mines & bishopSliderAttacks));
+		if ((xray & ~bishopSliderAttacks & otherBishopsOrQueens) != 0) {
+			int rank = kingIndex >> 3;
+			int file = 7 - kingIndex & 7;
+
+			checkPinnerRay(xray & BitboardUtils.RANKS_UPWARDS[rank] & BitboardUtils.FILES_LEFT[file], mines, otherBishopsOrQueens);
+			checkPinnerRay(xray & BitboardUtils.RANKS_UPWARDS[rank] & BitboardUtils.FILES_RIGHT[file], mines, otherBishopsOrQueens);
+			checkPinnerRay(xray & BitboardUtils.RANKS_DOWNWARDS[rank] & BitboardUtils.FILES_LEFT[file], mines, otherBishopsOrQueens);
+			checkPinnerRay(xray & BitboardUtils.RANKS_DOWNWARDS[rank] & BitboardUtils.FILES_RIGHT[file], mines, otherBishopsOrQueens);
+		}
+	}
+
+	private void checkPinnerRook(int kingIndex, long rookSliderAttacks, long all, long mines, long otherRooksOrQueens) {
+		if ((rookSliderAttacks & mines) == 0 || (bbAttacks.rook[kingIndex] & otherRooksOrQueens) == 0) {
+			return;
+		}
+		long xray = bbAttacks.getRookAttacks(kingIndex, all & ~(mines & rookSliderAttacks));
+		if ((xray & ~rookSliderAttacks & otherRooksOrQueens) != 0) {
+			int rank = kingIndex >> 3;
+			int file = 7 - kingIndex & 7;
+
+			checkPinnerRay(xray & BitboardUtils.RANKS_UPWARDS[rank], mines, otherRooksOrQueens);
+			checkPinnerRay(xray & BitboardUtils.FILES_LEFT[file], mines, otherRooksOrQueens);
+			checkPinnerRay(xray & BitboardUtils.RANKS_DOWNWARDS[rank], mines, otherRooksOrQueens);
+			checkPinnerRay(xray & BitboardUtils.FILES_RIGHT[file], mines, otherRooksOrQueens);
+		}
 	}
 
 	/**
@@ -52,15 +99,8 @@ public class AttacksInfo {
 		long myKing = board.kings & mines;
 		int us = board.getTurn() ? 0 : 1;
 
-		kingIndex[W] = BitboardUtils.square2Index(board.kings & board.whites);
-		kingIndex[B] = BitboardUtils.square2Index(board.kings & board.blacks);
-
-		bishopAttacksKing[W] = bbAttacks.getBishopAttacks(kingIndex[W], all);
-		bishopAttacksKing[B] = bbAttacks.getBishopAttacks(kingIndex[B], all);
-
-		rookAttacksKing[W] = bbAttacks.getRookAttacks(kingIndex[W], all);
-		rookAttacksKing[B] = bbAttacks.getRookAttacks(kingIndex[B], all);
-
+		attackedSquaresAlsoPinned[W] = 0;
+		attackedSquaresAlsoPinned[B] = 0;
 		pawnAttacks[W] = 0;
 		pawnAttacks[B] = 0;
 		knightAttacks[W] = 0;
@@ -73,9 +113,24 @@ public class AttacksInfo {
 		queenAttacks[B] = 0;
 		kingAttacks[W] = 0;
 		kingAttacks[B] = 0;
-		mayPin = 0;
+		mayPin[0] = 0;
+		mayPin[1] = 0;
+		pinnedPieces = 0;
 		piecesGivingCheck = 0;
 		interposeCheckSquares = 0;
+
+		kingIndex[W] = BitboardUtils.square2Index(board.kings & board.whites);
+		kingIndex[B] = BitboardUtils.square2Index(board.kings & board.blacks);
+
+		bishopAttacksKing[W] = bbAttacks.getBishopAttacks(kingIndex[W], all);
+		checkPinnerBishop(kingIndex[W], bishopAttacksKing[W], all, board.whites, (board.bishops | board.queens) & board.blacks);
+		bishopAttacksKing[B] = bbAttacks.getBishopAttacks(kingIndex[B], all);
+		checkPinnerBishop(kingIndex[B], bishopAttacksKing[B], all, board.blacks, (board.bishops | board.queens) & board.whites);
+
+		rookAttacksKing[W] = bbAttacks.getRookAttacks(kingIndex[W], all);
+		checkPinnerRook(kingIndex[W], rookAttacksKing[W], all, board.whites, (board.rooks | board.queens) & board.blacks);
+		rookAttacksKing[B] = bbAttacks.getRookAttacks(kingIndex[B], all);
+		checkPinnerRook(kingIndex[B], rookAttacksKing[B], all, board.blacks, (board.rooks | board.queens) & board.whites);
 
 		long pieceAttacks;
 		int index;
@@ -84,6 +139,7 @@ public class AttacksInfo {
 			if ((square & all) != 0) {
 				boolean isWhite = ((board.whites & square) != 0);
 				int color = isWhite ? W : B;
+				long pinnedSquares = (square & pinnedPieces) != 0 ? pinnedMobility[index] : BitboardUtils.ALL_SQUARES;
 
 				pieceAttacks = 0;
 				if ((square & board.pawns) != 0) {
@@ -91,7 +147,7 @@ public class AttacksInfo {
 					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
 						piecesGivingCheck |= square;
 					}
-					pawnAttacks[color] |= pieceAttacks;
+					pawnAttacks[color] |= pieceAttacks & pinnedSquares;
 
 				} else if ((square & board.knights) != 0) {
 					pieceAttacks = bbAttacks.knight[index];
@@ -107,7 +163,7 @@ public class AttacksInfo {
 						interposeCheckSquares |= pieceAttacks & bishopAttacksKing[us]; // And with only the diagonal attacks to the king
 					}
 					bishopAttacks[color] |= pieceAttacks;
-					mayPin |= all & pieceAttacks;
+					mayPin[color] |= all & pieceAttacks;
 
 				} else if ((square & board.rooks) != 0) {
 					pieceAttacks = bbAttacks.getRookAttacks(index, all);
@@ -116,7 +172,7 @@ public class AttacksInfo {
 						interposeCheckSquares |= pieceAttacks & rookAttacksKing[us]; // And with only the rook attacks to the king
 					}
 					rookAttacks[color] |= pieceAttacks;
-					mayPin |= all & pieceAttacks;
+					mayPin[color] |= all & pieceAttacks;
 
 				} else if ((square & board.queens) != 0) {
 					long bishopSliderAttacks = bbAttacks.getBishopAttacks(index, all);
@@ -131,14 +187,15 @@ public class AttacksInfo {
 					}
 					pieceAttacks = rookSliderAttacks | bishopSliderAttacks;
 					queenAttacks[color] |= pieceAttacks;
-					mayPin |= all & pieceAttacks;
+					mayPin[color] |= all & pieceAttacks;
 
 				} else if ((square & board.kings) != 0) {
 					pieceAttacks = bbAttacks.king[index];
 					kingAttacks[color] |= pieceAttacks;
 				}
 
-				attacksFromSquare[index] = pieceAttacks;
+				attackedSquaresAlsoPinned[color] |= pieceAttacks;
+				attacksFromSquare[index] = pieceAttacks & pinnedSquares;
 			} else {
 				attacksFromSquare[index] = 0;
 			}

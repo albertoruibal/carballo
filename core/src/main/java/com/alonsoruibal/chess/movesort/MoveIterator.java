@@ -277,7 +277,7 @@ public class MoveIterator {
 				} else if ((square & board.queens) != 0) { // Queen
 					generateMovesFromAttacks(Piece.QUEEN, index, square, ai.attacksFromSquare[index] & others, true);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & others & ~ai.attackedSquares[them], true);
+					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & others & ~ai.attackedSquaresAlsoPinned[them], true);
 				} else if ((square & board.knights) != 0) { // Knight
 					generateMovesFromAttacks(Piece.KNIGHT, index, square, ai.attacksFromSquare[index] & others, true);
 				} else if ((square & board.pawns) != 0) { // Pawns
@@ -312,7 +312,7 @@ public class MoveIterator {
 				} else if ((square & board.queens) != 0) { // Queen
 					generateMovesFromAttacks(Piece.QUEEN, index, square, ai.attacksFromSquare[index] & ~all, false);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & ~all & ~ai.attackedSquares[them], false);
+					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
 				} else if ((square & board.knights) != 0) { // Knight
 					generateMovesFromAttacks(Piece.KNIGHT, index, square, ai.attacksFromSquare[index] & ~all, false);
 				}
@@ -339,7 +339,7 @@ public class MoveIterator {
 				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& (ai.attackedSquares[them] & kingRoute) == 0) {
+						&& (ai.attackedSquaresAlsoPinned[them] & kingRoute) == 0) {
 					addMove(Piece.KING, ai.kingIndex[us], kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_KINGSIDE_CASTLING);
 				}
 			}
@@ -352,7 +352,7 @@ public class MoveIterator {
 				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
 
 				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& (ai.attackedSquares[them] & kingRoute) == 0) {
+						&& (ai.attackedSquaresAlsoPinned[them] & kingRoute) == 0) {
 					addMove(Piece.KING, ai.kingIndex[us], kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
 				}
 			}
@@ -361,7 +361,7 @@ public class MoveIterator {
 
 	public void generateCheckEvasionCaptures() {
 		// King can capture one of the checking pieces if two pieces giving check
-		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, others & ai.attacksFromSquare[ai.kingIndex[us]] & ~ai.attackedSquares[them], true);
+		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, others & ai.attacksFromSquare[ai.kingIndex[us]] & ~ai.attackedSquaresAlsoPinned[them], true);
 
 		if (BitboardUtils.popCount(ai.piecesGivingCheck) == 1) {
 			long square = 1;
@@ -406,7 +406,7 @@ public class MoveIterator {
 
 	public void generateCheckEvasionsNonCaptures() {
 		// Moving king (without captures)
-		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, ai.attacksFromSquare[ai.kingIndex[us]] & ~all & ~ai.attackedSquares[them], false);
+		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, ai.attacksFromSquare[ai.kingIndex[us]] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
 
 		// Interpose: Cannot interpose with more than one piece giving check
 		if (BitboardUtils.popCount(ai.piecesGivingCheck) == 1) {
@@ -452,15 +452,19 @@ public class MoveIterator {
 	 */
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long from, long attacks, boolean capture) {
 		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
+			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
 			addMove(pieceMoved, fromIndex, from, to, capture, 0);
 			attacks ^= to;
 		}
 	}
 
 	private void generatePawnCapturesOrGoodPromos(int fromIndex, long from, long attacks, long passant) {
+		if ((ai.pinnedPieces & from) != 0) {
+			attacks &= ai.pinnedMobility[fromIndex]; // Be careful with pawn advance moves, the pawn may be pinned
+		}
+
 		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
+			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
 			if ((to & passant) != 0) {
 				addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PASSANT);
 			} else {
@@ -482,8 +486,12 @@ public class MoveIterator {
 	}
 
 	private void generatePawnNonCapturesAndBadPromos(int fromIndex, long from, long attacks) {
+		if ((ai.pinnedPieces & from) != 0) {
+			attacks &= ai.pinnedMobility[fromIndex]; // Be careful with pawn advance moves, the pawn may be pinned
+		}
+
 		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
+			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
 			if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
 				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_KNIGHT);
 				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_ROOK);
@@ -558,8 +566,12 @@ public class MoveIterator {
 			}
 		}
 
-		// After a promotion to queen or rook there are new sliders transversing the origin square, so mayPin is not valid
-		if ((squaresForDiscovery & ai.mayPin) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP) {
+		/**
+		 *  As AttacksInfo already excludes pinned pieces, we only must take care from en passant captures
+		 *  (they can remove two pieces from 4th rank discovering a check) and king moves when the king is
+		 *  in check by a slider
+		 */
+		if ((squaresForDiscovery & ai.mayPin[them]) != 0 && (moveType == Move.TYPE_PASSANT || ((ai.piecesGivingCheck & (board.rooks | board.bishops | board.queens)) != 0 && pieceMoved == Piece.KING))) {
 			// Candidates to leave the king in check after moving
 			if (((squaresForDiscovery & ai.bishopAttacksKing[us]) != 0) ||
 					((ai.piecesGivingCheck & (board.bishops | board.queens)) != 0 && pieceMoved == Piece.KING)) { // Moving the king when the king is in check by a slider
@@ -577,16 +589,19 @@ public class MoveIterator {
 					return; // Illegal move
 				}
 			}
+		}
 
+		// After a promotion to queen or rook there are new sliders transversing the origin square, so mayPin is not valid
+		if (!check && ((squaresForDiscovery & ai.mayPin[us]) != 0 || moveType == Move.TYPE_PROMOTION_QUEEN || moveType == Move.TYPE_PROMOTION_ROOK || moveType == Move.TYPE_PROMOTION_BISHOP)) {
 			// Discovered checks
-			if (!check && (squaresForDiscovery & ai.bishopAttacksKing[them]) != 0) {
+			if ((squaresForDiscovery & ai.bishopAttacksKing[them]) != 0) {
 				// Regenerate bishop attacks to the other king
 				long newBishopAttacks = bbAttacks.getBishopAttacks(ai.kingIndex[them], allAfterMove);
 				if ((newBishopAttacks & bishopSlidersAfterMove & minesAfterMove) != 0) {
 					check = true;
 				}
 			}
-			if (!check && (squaresForDiscovery & ai.rookAttacksKing[them]) != 0) {
+			if ((squaresForDiscovery & ai.rookAttacksKing[them]) != 0) {
 				// Regenerate rook attacks to the other king
 				long newRookAttacks = bbAttacks.getRookAttacks(ai.kingIndex[them], allAfterMove);
 				if ((newRookAttacks & rookSlidersAfterMove & minesAfterMove) != 0) {
@@ -628,7 +643,7 @@ public class MoveIterator {
 			// and the piece cannot pin an attack to the see square,
 			// the see will be the captured piece value
 			if ((ai.attackedSquares[them] & to) == 0
-					&& (ai.mayPin & from) == 0) {
+					&& (ai.mayPin[them] & from) == 0) {
 				see = capture ? Board.SEE_PIECE_VALUES[pieceCaptured] : 0;
 			} else {
 				see = board.see(fromIndex, toIndex, pieceMoved, pieceCaptured);
