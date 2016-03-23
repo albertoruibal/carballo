@@ -46,6 +46,9 @@ public class MoveIteratorPerftTest {
 		}
 	}
 
+	/**
+	 * This tests is a bit long, it runs for more than 6 hours
+	 */
 	@Test
 	@Category(SlowTest.class)
 	public void testInitialPosition() {
@@ -178,10 +181,19 @@ public class MoveIteratorPerftTest {
 					if (Move.isCheck(move) && board.isMate()) { // SLOW
 						checkMates[depth]++;
 					}
+					if (Move.isCheck(move) != board.getCheck()) {
+						System.out.println("\n" + board);
+						System.out.println("Check not properly generated: " + Move.toStringExt(move));
+					}
 
 					recursive(depth + 1, depthRemaining - 1);
 				}
 				board.undoMove();
+			} else {
+				if (Move.isCheck(move) != board.getCheck()) {
+					System.out.println("\n" + board);
+					System.out.println("Move could not be applied: " + Move.toStringExt(move));
+				}
 			}
 		}
 		if (moveList.size() > 0) {
