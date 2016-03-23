@@ -11,11 +11,11 @@ import com.alonsoruibal.chess.bitboard.AttacksInfo;
  */
 public class SimplifiedEvaluator extends Evaluator {
 
-	final static int PAWN = 100;
-	final static int KNIGHT = 320;
-	final static int BISHOP = 330;
-	final static int ROOK = 500;
-	final static int QUEEN = 900;
+	static final int PAWN = 100;
+	static final int KNIGHT = 320;
+	static final int BISHOP = 330;
+	static final int ROOK = 500;
+	static final int QUEEN = 900;
 
 	// Values are rotated for whites, so when white is playing is like shown in the code TODO at the moment must be symmetric
 	public static final int[] pawnSquare = { //

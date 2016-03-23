@@ -19,15 +19,15 @@ import java.util.Arrays;
 public class TranspositionTable {
 	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
 
-	public final static int DEPTH_QS_CHECKS = 1;
-	public final static int DEPTH_QS_NO_CHECKS = 0;
+	public static final int DEPTH_QS_CHECKS = 1;
+	public static final int DEPTH_QS_NO_CHECKS = 0;
 
-	public final static int TYPE_EVAL = 0;
-	public final static int TYPE_EXACT_SCORE = 1;
-	public final static int TYPE_FAIL_LOW = 2;
-	public final static int TYPE_FAIL_HIGH = 3;
+	public static final int TYPE_EVAL = 0;
+	public static final int TYPE_EXACT_SCORE = 1;
+	public static final int TYPE_FAIL_LOW = 2;
+	public static final int TYPE_FAIL_HIGH = 3;
 
-	private final static int MAX_PROBES = 4;
+	private static final int MAX_PROBES = 4;
 
 	public long[] keys;
 	public long[] infos;

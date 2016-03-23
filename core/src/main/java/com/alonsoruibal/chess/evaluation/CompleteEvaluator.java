@@ -15,7 +15,7 @@ public class CompleteEvaluator extends Evaluator {
 	private static final Logger logger = Logger.getLogger("CompleteEvaluator");
 
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
-	private final static int[][] MOBILITY = {
+	private static final int[][] MOBILITY = {
 			{}, {},
 			{oe(0, 0), oe(6, 8), oe(12, 16), oe(18, 24), oe(24, 32), oe(30, 40), oe(36, 48), oe(42, 56), oe(48, 64)},
 			{oe(0, 0), oe(5, 5), oe(10, 10), oe(15, 15), oe(20, 20), oe(25, 25), oe(30, 30), oe(35, 35), oe(40, 40), oe(45, 45), oe(50, 50), oe(55, 55), oe(60, 60), oe(65, 65)},
@@ -24,46 +24,46 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	// Attacks
-	private final static int[] PAWN_ATTACKS = {
+	private static final int[] PAWN_ATTACKS = {
 			0, oe(0, 0), oe(5, 7), oe(5, 7), oe(7, 10), oe(8, 12), 0
 	};
 	// Minor piece attacks to pawn undefended pieces
-	private final static int[] MINOR_ATTACKS = {
+	private static final int[] MINOR_ATTACKS = {
 			0, oe(3, 4), oe(5, 5), oe(5, 5), oe(7, 10), oe(7, 10), 0
 	};
 	// Major piece attacks to pawn undefended pieces
-	private final static int[] MAJOR_ATTACKS = {
+	private static final int[] MAJOR_ATTACKS = {
 			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
-	private final static int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
-	private final static int PINNED_PIECE = oe(5, 10);
+	private static final int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
+	private static final int PINNED_PIECE = oe(5, 10);
 
 	// Pawns
-	private final static int PAWN_UNSUPPORTED = oe(-1, -2);
+	private static final int PAWN_UNSUPPORTED = oe(-1, -2);
 	// Array is not opposed, opposed
 	// If not opposed, it can be easily attacked but if opposed, it is easily stopped
-	private final static int[] PAWN_BACKWARDS = {oe(-10, -15), oe(-10, -15)};
-	private final static int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
-	private final static int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
+	private static final int[] PAWN_BACKWARDS = {oe(-10, -15), oe(-10, -15)};
+	private static final int[] PAWN_ISOLATED = {oe(-15, -20), oe(-12, -16)};
+	private static final int[] PAWN_DOUBLED = {oe(-2, -4), oe(-4, -8)};
 	// Array by relative rank
-	private final static int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
-	private final static int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
-	private final static int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, 0, oe(2, 5), oe(5, 10), oe(10, 20), 0}; // no opposite pawns at left or at right
-	private final static int[] PAWN_PASSER_CONNECTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(20, 30), 0};
-	private final static int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
-	private final static int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
-	private final static int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
-	private final static int[] PAWN_SHIELD = {0, oe(15, 0), oe(7, 0), oe(0, 0), 0, 0, 0, 0};
-	private final static int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
+	private static final int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
+	private static final int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, 0, oe(2, 5), oe(5, 10), oe(10, 20), 0}; // no opposite pawns at left or at right
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(20, 30), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
+	private static final int[] PAWN_SHIELD = {0, oe(15, 0), oe(7, 0), oe(0, 0), 0, 0, 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
-	private final static int[] KNIGHT_OUTPOST = {oe(10, 15), oe(20, 30)}; // Array is Not defended by pawn, defended by pawn
+	private static final int[] KNIGHT_OUTPOST = {oe(10, 15), oe(20, 30)}; // Array is Not defended by pawn, defended by pawn
 
 	// Bishops
-	private final static int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
-	private final static int[] BISHOP_OUTPOST = {oe(5, 7), oe(10, 15)};
-	private final static int BISHOP_TRAPPED = oe(-40, -40);
-	private final static long[] BISHOP_TRAPPING = {
+	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
+	private static final int[] BISHOP_OUTPOST = {oe(5, 7), oe(10, 15)};
+	private static final int BISHOP_TRAPPED = oe(-40, -40);
+	private static final long[] BISHOP_TRAPPING = {
 			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
 			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
 			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
@@ -75,25 +75,25 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	// Rooks
-	private final static int ROOK_FILE_OPEN = oe(10, 10); // No pawns in rook file
-	private final static int ROOK_FILE_SEMIOPEN = oe(7, 5); // Only opposite pawns in rook file
-	private final static int ROOK_7 = oe(10, 20); // Rook 5, 6, 7th rank and pawn in the same file
+	private static final int ROOK_FILE_OPEN = oe(10, 10); // No pawns in rook file
+	private static final int ROOK_FILE_SEMIOPEN = oe(7, 5); // Only opposite pawns in rook file
+	private static final int ROOK_7 = oe(10, 20); // Rook 5, 6, 7th rank and pawn in the same file
 
 	// Queen
-	private final static int QUEEN_7 = oe(5, 10); // Queen in 5, 6, 7th rank and pawn in the same file
+	private static final int QUEEN_7 = oe(5, 10); // Queen in 5, 6, 7th rank and pawn in the same file
 
 	// King
 	// Sums for each piece attacking an square near the king
-	private final static int PIECE_ATTACKS_KING[] = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
+	private static final int PIECE_ATTACKS_KING[] = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
 	// Ponder kings attacks by the number of attackers (not pawns)
-	private final static int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
+	private static final int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
 
 	// Tempo
-	public final static int TEMPO = 9; // Add to moving side score
+	public static final int TEMPO = 9; // Add to moving side score
 
-	private final static long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
+	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
-	private final static int pawnPcsq[] = {
+	private static final int pawnPcsq[] = {
 			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4),
 			oe(-23, -7), oe(-11, -9), oe(-5, -11), oe(2, -13), oe(2, -13), oe(-5, -11), oe(-11, -9), oe(-23, -7),
 			oe(-22, -7), oe(-10, -9), oe(-4, -11), oe(13, -13), oe(13, -13), oe(-4, -11), oe(-10, -9), oe(-22, -7),
@@ -103,7 +103,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-17, -2), oe(-5, -4), oe(1, -6), oe(8, -8), oe(8, -8), oe(1, -6), oe(-5, -4), oe(-17, -2),
 			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4)
 	};
-	private final static int knightPcsq[] = {
+	private static final int knightPcsq[] = {
 			oe(-58, -22), oe(-42, -17), oe(-31, -12), oe(-27, -9), oe(-27, -9), oe(-31, -12), oe(-42, -17), oe(-58, -22),
 			oe(-36, -15), oe(-20, -8), oe(-9, -4), oe(-5, -2), oe(-5, -2), oe(-9, -4), oe(-20, -8), oe(-36, -15),
 			oe(-20, -10), oe(-4, -4), oe(7, 1), oe(11, 3), oe(11, 3), oe(7, 1), oe(-4, -4), oe(-20, -10),
@@ -113,7 +113,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-16, -8), oe(0, -1), oe(11, 3), oe(15, 5), oe(15, 5), oe(11, 3), oe(0, -1), oe(-16, -8),
 			oe(-37, -15), oe(-21, -10), oe(-10, -5), oe(-6, -2), oe(-6, -2), oe(-10, -5), oe(-21, -10), oe(-37, -15)
 	};
-	private final static int bishopPcsq[] = {
+	private static final int bishopPcsq[] = {
 			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
@@ -123,7 +123,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-2, 0), oe(-3, -1), oe(-6, -2), oe(-8, -2), oe(-8, -2), oe(-6, -2), oe(-3, -1), oe(-2, 0)
 	};
-	private final static int rookPcsq[] = {
+	private static final int rookPcsq[] = {
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
@@ -133,7 +133,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
 			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
-	private final static int queenPcsq[] = {
+	private static final int queenPcsq[] = {
 			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15),
 			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
 			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
@@ -143,7 +143,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
 			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15)
 	};
-	private final static int kingPcsq[] = {
+	private static final int kingPcsq[] = {
 			oe(44, -58), oe(49, -35), oe(19, -19), oe(-1, -13), oe(-1, -13), oe(19, -19), oe(49, -35), oe(44, -58),
 			oe(41, -35), oe(46, -10), oe(16, 2), oe(-4, 8), oe(-4, 8), oe(16, 2), oe(46, -10), oe(41, -35),
 			oe(38, -19), oe(43, 2), oe(13, 17), oe(-7, 23), oe(-7, 23), oe(13, 17), oe(43, 2), oe(38, -19),

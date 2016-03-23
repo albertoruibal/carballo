@@ -105,14 +105,14 @@ public class MagicNumbersGenerator {
 		byte index;
 		MagicNumbersGenerator magic = new MagicNumbersGenerator();
 
-		System.out.print("public final static long rookMagicNumber[] = {");
+		System.out.print("public static final long rookMagicNumber[] = {");
 		for (index = 0; index < 64; index++) {
 			System.out.print("0x" + Long.toHexString(magic.findMagics(index, BitboardAttacksMagic.rookShiftBits[index], false)) + "L"
 					+ (index != 63 ? ", " : ""));
 		}
 		System.out.println("};");
 
-		System.out.print("public final static long bishopMagicNumber[] = {");
+		System.out.print("public static final long bishopMagicNumber[] = {");
 		for (index = 0; index < 64; index++) {
 			System.out.print("0x" + Long.toHexString(magic.findMagics(index, BitboardAttacksMagic.bishopShiftBits[index], true)) + "L"
 					+ (index != 63 ? ", " : ""));

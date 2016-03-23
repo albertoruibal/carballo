@@ -7,9 +7,9 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 public class EndgameEvaluator {
 
-	public final static int[] closerSquares = {0, 0, 100, 80, 60, 40, 20, 10};
+	public static final int[] closerSquares = {0, 0, 100, 80, 60, 40, 20, 10};
 
-	private final static int[] toCorners = { //
+	private static final int[] toCorners = { //
 			100, 90, 80, 70, 70, 80, 90, 100, //
 			90, 70, 60, 50, 50, 60, 70, 90, //
 			80, 60, 40, 30, 30, 40, 60, 80, //
@@ -20,7 +20,7 @@ public class EndgameEvaluator {
 			100, 90, 80, 70, 70, 80, 90, 100,//
 	};
 
-	private final static int[] toColorCorners = {
+	private static final int[] toColorCorners = {
 			200, 190, 180, 170, 160, 150, 140, 130,
 			190, 180, 170, 160, 150, 140, 130, 140,
 			180, 170, 155, 140, 140, 125, 140, 150,

@@ -8,8 +8,8 @@ import com.alonsoruibal.chess.Board;
  * Calculates the checking pieces and the interpose squares to avoid checks.
  */
 public class AttacksInfo {
-	public final static int W = 0;
-	public final static int B = 1;
+	public static final int W = 0;
+	public static final int B = 1;
 
 	BitboardAttacks bbAttacks;
 

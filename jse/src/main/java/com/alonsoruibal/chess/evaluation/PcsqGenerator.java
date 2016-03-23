@@ -10,90 +10,90 @@ public class PcsqGenerator {
 	//
 	// PAWN
 	//
-	private final static int[][] PawnColumn = {
+	private static final int[][] PawnColumn = {
 			{-20, -8, -2, 5, 5, -2, -8, -20}, //
 			{-4, -6, -8, -10, -10, -8, -6, -4}
 	};
-	private final static int[][] PawnRank = {
+	private static final int[][] PawnRank = {
 			{0, -3, -2, -1, 1, 2, 3, 0},
 			{0, -3, -3, -2, -1, 0, 2, 0}
 	};
-	private final static int[][] PawnDiagonal = {
+	private static final int[][] PawnDiagonal = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0}
 	};
 	//
 	// KNIGHT
 	//
-	private final static int[][] KnightColumn = {
+	private static final int[][] KnightColumn = {
 			{-26, -10, 1, 5, 5, 1, -10, -26},
 			{-4, -1, 2, 4, 4, 2, -1, -4}
 	};
-	private final static int[][] KnightRank = {
+	private static final int[][] KnightRank = {
 			{-32, -10, 6, 15, 21, 19, 10, -11},
 			{-10, -5, -2, 1, 3, 5, 2, -3}
 	};
-	private final static int[][] KnightDiagonal = {
+	private static final int[][] KnightDiagonal = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{2, 1, 0, -1, -2, -4, -7, -10}
 	};
 	//
 	// BISHOP
 	//
-	private final static int[][] BishopColumn = {
+	private static final int[][] BishopColumn = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0}
 	};
-	private final static int[][] BishopRank = {
+	private static final int[][] BishopRank = {
 			{-5, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0}
 	};
-	private final static int[][] BishopDiagonal = {
+	private static final int[][] BishopDiagonal = {
 			{10, 5, 1, -3, -5, -7, -8, -12},
 			{3, 2, 0, 0, -2, -2, -3, -3}
 	};
 	//
 	// ROOK
 	//
-	private final static int[][] RookColumn = {
+	private static final int[][] RookColumn = {
 			{-4, 0, 4, 8, 8, 4, 0, -4},
 			{0, 0, 0, 0, 0, 0, 0, 0}
 	};
-	private final static int[][] RookRank = {
+	private static final int[][] RookRank = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 1, 1, 1, -2}
 	};
-	private final static int[][] RookDiagonal = {
+	private static final int[][] RookDiagonal = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0}
 	};
 	//
 	// QUEEN
 	//
-	private final static int[][] QueenColumn = {
+	private static final int[][] QueenColumn = {
 			{-2, 0, 1, 2, 2, 1, 0, -2},
 			{-2, 0, 1, 2, 2, 1, 0, -2}
 	};
-	private final static int[][] QueenRank = {
+	private static final int[][] QueenRank = {
 			{-2, 0, 1, 2, 2, 1, 0, -2},
 			{-2, 0, 1, 2, 2, 1, 0, -2}
 	};
-	private final static int[][] QueenDiagonal = {
+	private static final int[][] QueenDiagonal = {
 			{3, 2, 1, 0, -2, -4, -7, -10},
 			{1, 0, -1, -3, -4, -6, -8, -12}
 	};
 	//
 	// KING
 	//
-	private final static int[][] KingColumn = {
+	private static final int[][] KingColumn = {
 			{40, 45, 15, -5, -5, 15, 45, 40},
 			{-15, 0, 10, 15, 15, 10, 0, -15}
 	};
-	private final static int[][] KingRank = {
+	private static final int[][] KingRank = {
 			{4, 1, -2, -5, -10, -15, -25, -35},
 			{-15, 0, 10, 15, 15, 10, 0, -15}
 	};
-	private final static int[][] KingDiagonal = {
+	private static final int[][] KingDiagonal = {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{2, 0, -2, -5, -8, -12, -20, -30}
 	};
@@ -140,22 +140,22 @@ public class PcsqGenerator {
 	}
 
 	public void print() {
-		System.out.println("private final static int pawnPcsq[] = {");
+		System.out.println("private static final int pawnPcsq[] = {");
 		printPcsq(pawnPcsq);
 		System.out.println("};");
-		System.out.println("private final static int knightPcsq[] = {");
+		System.out.println("private static final int knightPcsq[] = {");
 		printPcsq(knightPcsq);
 		System.out.println("};");
-		System.out.println("private final static int bishopPcsq[] = {");
+		System.out.println("private static final int bishopPcsq[] = {");
 		printPcsq(bishopPcsq);
 		System.out.println("};");
-		System.out.println("private final static int rookPcsq[] = {");
+		System.out.println("private static final int rookPcsq[] = {");
 		printPcsq(rookPcsq);
 		System.out.println("};");
-		System.out.println("private final static int queenPcsq[] = {");
+		System.out.println("private static final int queenPcsq[] = {");
 		printPcsq(queenPcsq);
 		System.out.println("};");
-		System.out.println("private final static int kingPcsq[] = {");
+		System.out.println("private static final int kingPcsq[] = {");
 		printPcsq(kingPcsq);
 		System.out.println("};");
 	}

@@ -15,24 +15,24 @@ public class MoveIterator {
 	//
 	// Kind of moves to generate
 	// In check evasions all moves are always generated
-	public final static int GENERATE_ALL = 0;
-	public final static int GENERATE_CAPTURES_PROMOS = 1; // Generates only good/equal captures and queen promotions
-	public final static int GENERATE_CAPTURES_PROMOS_CHECKS = 2; // Generates only good/equal captures, queen promotions and checks
+	public static final int GENERATE_ALL = 0;
+	public static final int GENERATE_CAPTURES_PROMOS = 1; // Generates only good/equal captures and queen promotions
+	public static final int GENERATE_CAPTURES_PROMOS_CHECKS = 2; // Generates only good/equal captures, queen promotions and checks
 	//
 	// Move generation phases
 	//
-	public final static int PHASE_TT = 0;
-	public final static int PHASE_GEN_CAPTURES = 1;
-	public final static int PHASE_GOOD_CAPTURES_AND_PROMOS = 2;
-	public final static int PHASE_EQUAL_CAPTURES = 3;
-	public final static int PHASE_GEN_NON_CAPTURES = 4;
-	public final static int PHASE_KILLER1 = 5;
-	public final static int PHASE_KILLER2 = 6;
-	public final static int PHASE_KILLER3 = 7;
-	public final static int PHASE_KILLER4 = 8;
-	public final static int PHASE_NON_CAPTURES = 9;
-	public final static int PHASE_BAD_CAPTURES = 10;
-	public final static int PHASE_END = 11;
+	public static final int PHASE_TT = 0;
+	public static final int PHASE_GEN_CAPTURES = 1;
+	public static final int PHASE_GOOD_CAPTURES_AND_PROMOS = 2;
+	public static final int PHASE_EQUAL_CAPTURES = 3;
+	public static final int PHASE_GEN_NON_CAPTURES = 4;
+	public static final int PHASE_KILLER1 = 5;
+	public static final int PHASE_KILLER2 = 6;
+	public static final int PHASE_KILLER3 = 7;
+	public static final int PHASE_KILLER4 = 8;
+	public static final int PHASE_NON_CAPTURES = 9;
+	public static final int PHASE_BAD_CAPTURES = 10;
+	public static final int PHASE_END = 11;
 
 	private static final int[] VICTIM_PIECE_VALUES = {0, 100, 325, 330, 500, 975, 10000};
 	private static final int[] AGGRESSOR_PIECE_VALUES = {0, 10, 32, 33, 50, 97, 99};
@@ -40,7 +40,7 @@ public class MoveIterator {
 	private static final int SCORE_UNDERPROMOTION = Integer.MIN_VALUE + 1;
 	private static final int SCORE_LOWEST = Integer.MIN_VALUE;
 
-	public final static int SEE_NOT_CALCULATED = Short.MAX_VALUE;
+	public static final int SEE_NOT_CALCULATED = Short.MAX_VALUE;
 
 	private Board board;
 	private AttacksInfo ai;
