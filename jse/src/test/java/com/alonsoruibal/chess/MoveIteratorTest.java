@@ -263,8 +263,6 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testGenerateCapturesInQuiescence() {
-
-
 		testPositionCountingMoves("8/1kb2p2/4b1p1/8/2Q2NB1/8/8/K7 w - - 0 1", MoveIterator.GENERATE_CAPTURES_PROMOS, Move.NONE, 2, 2, 0, 0);
 	}
 
@@ -281,6 +279,11 @@ public class MoveIteratorTest {
 	@Test
 	public void testChess960CastlingRookSameSquareGivesCheck() {
 		testPositionCountingMoves("8/8/8/8/8/8/8/3RK2k w Q - 0 1", MoveIterator.GENERATE_ALL, Move.NONE, 15, 0, 0, 4);
+	}
+
+	@Test
+	public void testPawnPushDoesNotLeaveTheKingInCheck() {
+		testPositionCountingMoves("5rk1/6P1/2Q5/b5Pp/p6P/8/1rPK4/q3R1R1 w - - 3 6", MoveIterator.GENERATE_ALL, Move.NONE, 4, 0, 0, 0);
 	}
 
 	@Test
