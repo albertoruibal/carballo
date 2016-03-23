@@ -38,7 +38,7 @@ public class EndgameSearchTest {
 		searchParams = new SearchParameters();
 		searchParams.setNodes(30000);
 		search.go(searchParams);
-		assertTrue("Whites capture the pawn in 6th and win", search.getBestMoveScore() < -Config.QUEEN);
+		assertTrue("Whites capture the pawn in 6th and win", search.getBestMoveScore() < -Evaluator.QUEEN);
 	}
 
 	@Test
