@@ -5,7 +5,7 @@ package com.alonsoruibal.chess.evaluation;
  * <p/>
  * The "Diagonal" value sums twice, the position 0 is the longest diagonal (7 squares)
  */
-public class ExperimentalPcsqGenerator {
+public class PcsqGenerator {
 
 	//
 	// PAWN
@@ -178,7 +178,7 @@ public class ExperimentalPcsqGenerator {
 
 	public static void main(String args[]) {
 		// Prints Pcsq in java array format
-		ExperimentalPcsqGenerator generator = new ExperimentalPcsqGenerator();
+		PcsqGenerator generator = new PcsqGenerator();
 		generator.generate();
 		generator.print();
 	}
