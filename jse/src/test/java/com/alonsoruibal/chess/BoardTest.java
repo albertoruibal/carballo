@@ -119,6 +119,10 @@ public class BoardTest {
 		assertEquals(b.isDraw(), true);
 		b.setFen("7k/8/8/8/8/8/8/6NK b - - 0 0");
 		assertEquals(b.isDraw(), true);
+		b.setFen("7k/8/nn6/8/8/8/8/8K b - - 0 0");
+		assertEquals(b.isDraw(), true);
+		b.setFen("7k/8/Nn6/8/8/8/8/8K b - - 0 0");
+		assertEquals(b.isDraw(), false);
 		b.setFen("7k/7p/8/8/8/8/8/6NK b - - 0 0");
 		assertEquals(b.isDraw(), false);
 	}
