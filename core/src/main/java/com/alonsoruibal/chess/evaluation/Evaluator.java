@@ -39,6 +39,13 @@ public abstract class Evaluator {
 		return (((oeValue >> 16) * factor) << 16) | ((oeValue & 0xffff) * factor) & 0xffff;
 	}
 
+	/**
+	 * shift right each part by factor positions
+	 */
+	public static int oeShr(int factor, int oeValue) {
+		return (((oeValue >> (16 + factor))) << 16) | ((oeValue & 0xffff) >> factor) & 0xffff;
+	}
+
 	public static int o(int oe) {
 		return oe >> 16;
 	}

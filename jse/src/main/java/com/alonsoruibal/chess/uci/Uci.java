@@ -51,13 +51,6 @@ public class Uci implements SearchObserver {
 					System.out.println("option name UCI_Chess960 type check default false");
 					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
 					System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
-					System.out.println("option name Eval Center type spin default " + Config.DEFAULT_EVAL_CENTER + " min 0 max 200");
-					System.out.println("option name Eval Positional type spin default " + Config.DEFAULT_EVAL_POSITIONAL + " min 0 max 200");
-					System.out.println("option name Eval Attacks type spin default " + Config.DEFAULT_EVAL_ATTACKS + " min 0 max 200");
-					System.out.println("option name Eval Mobility type spin default " + Config.DEFAULT_EVAL_MOBILITY + " min 0 max 200");
-					System.out.println("option name Eval Pawn Structure type spin default " + Config.DEFAULT_EVAL_PAWN_STRUCTURE + " min 0 max 200");
-					System.out.println("option name Eval Passed Pawns type spin default " + Config.DEFAULT_EVAL_PASSED_PAWNS + " min 0 max 200");
-					System.out.println("option name Eval King Safety type spin default " + Config.DEFAULT_EVAL_KING_SAFETY + " min 0 max 200");
 					System.out.println("option name Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
 					System.out.println("uciok");
 
@@ -84,20 +77,6 @@ public class Uci implements SearchObserver {
 						config.setEvaluator(value);
 					} else if ("ContemptFactor".equals(name)) {
 						config.setContemptFactor(Integer.parseInt(value));
-					} else if ("EvalCenter".equals(name)) {
-						config.setEvalCenter(Integer.parseInt(value));
-					} else if ("EvalPositional".equals(name)) {
-						config.setEvalPositional(Integer.parseInt(value));
-					} else if ("EvalAttacks".equals(name)) {
-						config.setEvalAttacks(Integer.parseInt(value));
-					} else if ("EvalMobility".equals(name)) {
-						config.setEvalMobility(Integer.parseInt(value));
-					} else if ("EvalPawnStructure".equals(name)) {
-						config.setEvalPawnStructure(Integer.parseInt(value));
-					} else if ("EvalPassedPawns".equals(name)) {
-						config.setEvalPassedPawns(Integer.parseInt(value));
-					} else if ("EvalKingSafety".equals(name)) {
-						config.setEvalKingSafety(Integer.parseInt(value));
 					} else if ("Elo".equals(name)) {
 						config.setElo(Integer.parseInt(value));
 					}

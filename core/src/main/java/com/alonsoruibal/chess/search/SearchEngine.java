@@ -135,8 +135,8 @@ public class SearchEngine implements Runnable {
 		pvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
 		nonPvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
 		// Init our reduction lookup tables
-		for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) { // OnePly = 2
-			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
+		for (int depthRemaining = 1; depthRemaining < MAX_DEPTH; depthRemaining++) { // OnePly = 2
+			for (int moveNumber = 1; moveNumber < MAX_DEPTH; moveNumber++) {
 				double pvRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 6.0;
 				double nonPVRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 3.0;
 				pvReductionMatrix[depthRemaining][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
@@ -162,9 +162,9 @@ public class SearchEngine implements Runnable {
 		if ("simplified".equals(evaluatorName)) {
 			evaluator = new SimplifiedEvaluator();
 		} else if ("complete".equals(evaluatorName)) {
-			evaluator = new CompleteEvaluator(config);
+			evaluator = new CompleteEvaluator();
 		} else if ("experimental".equals(evaluatorName)) {
-			evaluator = new ExperimentalEvaluator(config);
+			evaluator = new ExperimentalEvaluator();
 		}
 
 		tt = new TranspositionTable(config.getTranspositionTableSize());
