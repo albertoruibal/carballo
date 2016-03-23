@@ -74,7 +74,7 @@ public class PerformanceTest {
 	@Category(SlowTest.class)
 	public void testCompleteEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
-		Evaluator completeEvaluator = new CompleteEvaluator(new Config());
+		Evaluator completeEvaluator = new CompleteEvaluator();
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
@@ -94,7 +94,7 @@ public class PerformanceTest {
 	@Category(SlowTest.class)
 	public void testExperimentalEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
-		Evaluator experimentalEvaluator = new ExperimentalEvaluator(new Config());
+		Evaluator experimentalEvaluator = new ExperimentalEvaluator();
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;

@@ -20,7 +20,7 @@ public class EndgameEvaluatorTest {
 	@Before
 	public void setUp() throws Exception {
 		attacksInfo = new AttacksInfo();
-		evaluator = new ExperimentalEvaluator(new Config());
+		evaluator = new ExperimentalEvaluator();
 		evaluator.debug = true;
 	}
 
