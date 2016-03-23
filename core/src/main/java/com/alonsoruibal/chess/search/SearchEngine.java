@@ -31,34 +31,35 @@ public class SearchEngine implements Runnable {
 
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
+
+	private static final int NODE_ROOT = 0;
+	private static final int NODE_PV = 1;
+	private static final int NODE_NULL = 2;
+
 	private static final int PLY = 2;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int RAZOR_DEPTH = 4 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {6 * PLY, 6 * PLY, 8 * PLY};
 	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
 
-	public static final int NODE_ROOT = 0;
-	public static final int NODE_PV = 1;
-	public static final int NODE_NULL = 2;
-
-	public static final boolean NULL_MOVE = true;
-	public static final boolean STATIC_NULL_MOVE = true;
-	public static final boolean IID = true;
-	public static final int IID_MARGIN = 300;
-	public static final boolean LMR = true;
-	public static final int EXTENSIONS_CHECK = 2; // 2 = 1 PLY
-	public static final int EXTENSIONS_MATE_THREAT = 2;
-	public static final int EXTENSIONS_PAWN_PUSH = 0;
-	public static final int EXTENSIONS_PASSED_PAWN = 0;
-	public static final int EXTENSIONS_SINGULAR = 2;
-	public static final int SINGULAR_EXTENSION_MARGIN = 50;
-	public static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
-	public static final boolean FUTILITY = true;
-	public static final int FUTILITY_MARGIN_QS = 80;
-	public static final int FUTILITY_MARGIN = 100;
-	public static final int FUTILITY_MARGIN_AGGRESSIVE = 150;
-	public static final boolean RAZORING = true;
-	public static final int RAZORING_MARGIN = 325;
+	private static final boolean NULL_MOVE = true;
+	private static final boolean STATIC_NULL_MOVE = true;
+	private static final boolean IID = true;
+	private static final int IID_MARGIN = 300;
+	private static final boolean LMR = true;
+	private static final int EXTENSIONS_CHECK = PLY;
+	private static final int EXTENSIONS_MATE_THREAT = PLY;
+	private static final int EXTENSIONS_PAWN_PUSH = 0;
+	private static final int EXTENSIONS_PASSED_PAWN = 0;
+	private static final int EXTENSIONS_SINGULAR = PLY;
+	private static final int SINGULAR_EXTENSION_MARGIN = 50;
+	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
+	private static final boolean FUTILITY = true;
+	private static final int FUTILITY_MARGIN_QS = 80;
+	private static final int FUTILITY_MARGIN = 100;
+	private static final int FUTILITY_MARGIN_AGGRESSIVE = 150;
+	private static final boolean RAZORING = true;
+	private static final int RAZORING_MARGIN = 325;
 
 	private SearchParameters searchParameters;
 
@@ -695,7 +696,7 @@ public class SearchEngine implements Runnable {
 					|| Move.isCheck(move) //
 					|| Move.isCapture(move) // Include ALL captures
 					|| Move.isPawnPush678(move) // Includes promotions
-					|| Move.isCastling(move)
+					|| Move.isCastling(move) //
 					|| move == ttMove //
 					|| sortInfo.isKiller(move, distanceToInitialPly + 1);
 
