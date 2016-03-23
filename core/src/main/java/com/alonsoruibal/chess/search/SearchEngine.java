@@ -27,6 +27,8 @@ import java.util.Random;
 public class SearchEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger("SearchEngine");
 
+	public boolean debug = false;
+
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
 	private static final int PLY = 2;
@@ -39,7 +41,24 @@ public class SearchEngine implements Runnable {
 	public static final int NODE_PV = 1;
 	public static final int NODE_NULL = 2;
 
-	public boolean debug = false;
+	public static final boolean NULL_MOVE = true;
+	public static final boolean STATIC_NULL_MOVE = true;
+	public static final boolean IID = true;
+	public static final int IID_MARGIN = 300;
+	public static final boolean LMR = true;
+	public static final int EXTENSIONS_CHECK = 2; // 2 = 1 PLY
+	public static final int EXTENSIONS_MATE_THREAT = 2;
+	public static final int EXTENSIONS_PAWN_PUSH = 0;
+	public static final int EXTENSIONS_PASSED_PAWN = 0;
+	public static final int EXTENSIONS_SINGULAR = 2;
+	public static final int SINGULAR_EXTENSION_MARGIN = 50;
+	public static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
+	public static final boolean FUTILITY = true;
+	public static final int FUTILITY_MARGIN_QS = 80;
+	public static final int FUTILITY_MARGIN = 100;
+	public static final int FUTILITY_MARGIN_AGGRESSIVE = 150;
+	public static final boolean RAZORING = true;
+	public static final int RAZORING_MARGIN = 325;
 
 	private SearchParameters searchParameters;
 
@@ -243,26 +262,26 @@ public class SearchEngine implements Runnable {
 		int ext = 0;
 
 		if (Move.isCheck(move) && moveSee >= 0) {
-			ext += Config.EXTENSIONS_CHECK;
+			ext += EXTENSIONS_CHECK;
 			if (ext >= PLY) {
 				return PLY;
 			}
 		}
 		if (Move.getPieceMoved(move) == Piece.PAWN) {
-			if (Config.EXTENSIONS_PAWN_PUSH != 0
+			if (EXTENSIONS_PAWN_PUSH != 0
 					&& Move.isPawnPush678(move)) {
-				ext += Config.EXTENSIONS_PAWN_PUSH;
+				ext += EXTENSIONS_PAWN_PUSH;
 			}
-			if (Config.EXTENSIONS_PASSED_PAWN != 0
+			if (EXTENSIONS_PASSED_PAWN != 0
 					&& board.isPassedPawn(Move.getToIndex(move))) {
-				ext += Config.EXTENSIONS_PASSED_PAWN;
+				ext += EXTENSIONS_PASSED_PAWN;
 			}
 			if (ext >= PLY) {
 				return PLY;
 			}
 		}
 		if (mateThreat) {
-			ext += Config.EXTENSIONS_MATE_THREAT;
+			ext += EXTENSIONS_MATE_THREAT;
 			if (ext >= PLY) {
 				return PLY;
 			}
@@ -378,7 +397,7 @@ public class SearchEngine implements Runnable {
 				return bestScore;
 			}
 
-			futilityBase = eval + Config.FUTILITY_MARGIN_QS;
+			futilityBase = eval + FUTILITY_MARGIN_QS;
 		}
 
 		// If we have more depths than possible...
@@ -396,7 +415,7 @@ public class SearchEngine implements Runnable {
 			validOperations = true;
 
 			// Futility pruning
-			if (Config.FUTILITY //
+			if (FUTILITY //
 					&& !moveIterator.checkEvasion //
 					&& !Move.isCheck(move) //
 					&& !isPv //
@@ -524,12 +543,12 @@ public class SearchEngine implements Runnable {
 		if (!board.getCheck()) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
-					&& Config.RAZORING //
+					&& RAZORING //
 					&& ttMove == 0 //
 					&& allowNullMove // Not when last was a null move
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval + Config.RAZORING_MARGIN < beta //
+					&& eval + RAZORING_MARGIN < beta //
 					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
@@ -538,7 +557,7 @@ public class SearchEngine implements Runnable {
 					return quiescentSearch(0, alpha, beta);
 				}
 
-				int rbeta = beta - Config.RAZORING_MARGIN;
+				int rbeta = beta - RAZORING_MARGIN;
 				int v = quiescentSearch(0, rbeta - 1, rbeta);
 				if (v < rbeta) {
 					razoringHit++;
@@ -548,19 +567,19 @@ public class SearchEngine implements Runnable {
 
 			// Static null move pruning or futility pruning in parent node
 			if (nodeType == NODE_NULL //
-					&& Config.STATIC_NULL_MOVE //
+					&& STATIC_NULL_MOVE //
 					&& allowNullMove //
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
-					&& eval - Config.FUTILITY_MARGIN >= beta //
+					&& eval - FUTILITY_MARGIN >= beta //
 					&& boardAllowsNullMove()) {
-				return eval - Config.FUTILITY_MARGIN;
+				return eval - FUTILITY_MARGIN;
 			}
 
 			// Null move pruning and mate threat detection
 			if (nodeType == NODE_NULL //
-					&& Config.NULL_MOVE //
+					&& NULL_MOVE //
 					&& allowNullMove //
 					&& depthRemaining >= 2 * PLY //
 					&& Math.abs(beta) < VALUE_IS_MATE //
@@ -598,11 +617,11 @@ public class SearchEngine implements Runnable {
 
 			// Internal Iterative Deepening (IID)
 			// Do a reduced move to search for a ttMove that will improve sorting
-			if (Config.IID //
+			if (IID //
 					&& ttMove == Move.NONE //
 					&& depthRemaining >= IID_DEPTH[nodeType] //
 					&& allowNullMove //
-					&& (nodeType != NODE_NULL || staticEval + Config.IID_MARGIN > beta) //
+					&& (nodeType != NODE_NULL || staticEval + IID_MARGIN > beta) //
 					&& excludedMove == Move.NONE) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, false, 0);
@@ -612,15 +631,15 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Futility pruning
-			if (nodeType == NODE_NULL && Config.FUTILITY) {
+			if (nodeType == NODE_NULL && FUTILITY) {
 				if (depthRemaining <= PLY) { // at frontier nodes
-					futilityValue = staticEval + Config.FUTILITY_MARGIN;
+					futilityValue = staticEval + FUTILITY_MARGIN;
 					if (futilityValue < beta) {
 						futilityHit++;
 						futilityPrune = true;
 					}
 				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-					futilityValue = staticEval + Config.FUTILITY_MARGIN_AGGRESSIVE;
+					futilityValue = staticEval + FUTILITY_MARGIN_AGGRESSIVE;
 					if (futilityValue < beta) {
 						aggressiveFutilityHit++;
 						futilityPrune = true;
@@ -652,18 +671,18 @@ public class SearchEngine implements Runnable {
 					&& move == ttMove //
 					&& extension < PLY //
 					&& excludedMove == Move.NONE //
-					&& Config.EXTENSIONS_SINGULAR > 0 //
+					&& EXTENSIONS_SINGULAR > 0 //
 					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
 					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
 					&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
 					&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
 				singularExtensionProbe++;
-				int seBeta = ttScore - Config.SINGULAR_EXTENSION_MARGIN;
+				int seBeta = ttScore - SINGULAR_EXTENSION_MARGIN;
 				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
-					extension += Config.EXTENSIONS_SINGULAR;
+					extension += EXTENSIONS_SINGULAR;
 					if (extension > PLY) {
 						extension = PLY;
 					}
@@ -707,7 +726,7 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				int reduction = 0;
-				if (Config.LMR //
+				if (LMR //
 						&& depthRemaining >= LMR_DEPTHS_NOT_REDUCED //
 						&& !importantMove) {
 					reduction += getReduction(nodeType, depthRemaining, movesDone);
@@ -910,7 +929,7 @@ public class SearchEngine implements Runnable {
 			rootScore = evaluate(foundTT, 0);
 		}
 		tt.newGeneration();
-		aspWindows = Config.ASPIRATION_WINDOW_SIZES;
+		aspWindows = ASPIRATION_WINDOW_SIZES;
 	}
 
 	private void runStepped() throws SearchFinishedException {

@@ -9,47 +9,28 @@ import com.alonsoruibal.chess.book.Book;
  */
 public class Config {
 	// Values that cannot be dynamically changed
-	public final static int PAWN = 100;
-	public final static int KNIGHT = 325;
-	public final static int BISHOP = 325;
-	public final static int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
-	public final static int ROOK = 500;
-	public final static int QUEEN = 975;
-	public final static int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
-	public final static int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
-
-	public final static boolean NULL_MOVE = true;
-	public final static boolean STATIC_NULL_MOVE = true;
-	public final static boolean IID = true;
-	public final static int IID_MARGIN = 300;
-	public final static boolean LMR = true;
-	public final static int EXTENSIONS_CHECK = 2; // 2 = 1 PLY
-	public final static int EXTENSIONS_MATE_THREAT = 2;
-	public final static int EXTENSIONS_PAWN_PUSH = 0;
-	public final static int EXTENSIONS_PASSED_PAWN = 0;
-	public final static int EXTENSIONS_SINGULAR = 2;
-	public final static int SINGULAR_EXTENSION_MARGIN = 50;
-	public final static int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
-	public final static boolean FUTILITY = true;
-	public final static int FUTILITY_MARGIN_QS = 80;
-	public final static int FUTILITY_MARGIN = 100;
-	public final static int FUTILITY_MARGIN_AGGRESSIVE = 150;
-	public final static boolean RAZORING = true;
-	public final static int RAZORING_MARGIN = 325;
+	public static final int PAWN = 100;
+	public static final int KNIGHT = 325;
+	public static final int BISHOP = 325;
+	public static final int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
+	public static final int ROOK = 500;
+	public static final int QUEEN = 975;
+	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
+	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
 
 	// Default values are static fields used also from UCIEngine
-	public final static int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
-	public final static boolean DEFAULT_PONDER = true;
-	public final static boolean DEFAULT_USE_BOOK = true;
-	public final static int DEFAULT_BOOK_KNOWGLEDGE = 100;
-	public final static String DEFAULT_EVALUATOR = "experimental";
+	public static final int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
+	public static final boolean DEFAULT_PONDER = true;
+	public static final boolean DEFAULT_USE_BOOK = true;
+	public static final int DEFAULT_BOOK_KNOWGLEDGE = 100;
+	public static final String DEFAULT_EVALUATOR = "experimental";
 
 	// >0 refuses draw <0 looks for draw
-	public final static int DEFAULT_CONTEMPT_FACTOR = 90;
+	public static final int DEFAULT_CONTEMPT_FACTOR = 90;
 
-	public final static int DEFAULT_RAND = 0;
-	public final static int DEFAULT_ELO = 2100;
-	public final static boolean DEFAULT_UCI_CHESS960 = false;
+	public static final int DEFAULT_RAND = 0;
+	public static final int DEFAULT_ELO = 2100;
+	public static final boolean DEFAULT_UCI_CHESS960 = false;
 
 	private int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
 	private boolean ponder = DEFAULT_PONDER;
