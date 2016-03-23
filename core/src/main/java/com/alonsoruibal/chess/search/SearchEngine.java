@@ -425,19 +425,19 @@ public class SearchEngine implements Runnable {
 				int futilityValue = futilityBase;
 				switch (Move.getPieceCaptured(board, move)) {
 					case Piece.PAWN:
-						futilityValue += Config.PAWN;
+						futilityValue += Evaluator.PAWN;
 						break;
 					case Piece.KNIGHT:
-						futilityValue += Config.KNIGHT;
+						futilityValue += Evaluator.KNIGHT;
 						break;
 					case Piece.BISHOP:
-						futilityValue += Config.BISHOP;
+						futilityValue += Evaluator.BISHOP;
 						break;
 					case Piece.ROOK:
-						futilityValue += Config.ROOK;
+						futilityValue += Evaluator.ROOK;
 						break;
 					case Piece.QUEEN:
-						futilityValue += Config.QUEEN;
+						futilityValue += Evaluator.QUEEN;
 						break;
 				}
 				if (futilityValue < beta) {

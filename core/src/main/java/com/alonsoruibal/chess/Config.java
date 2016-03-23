@@ -8,15 +8,6 @@ import com.alonsoruibal.chess.book.Book;
  * @author rui
  */
 public class Config {
-	// Values that cannot be dynamically changed
-	public static final int PAWN = 100;
-	public static final int KNIGHT = 325;
-	public static final int BISHOP = 325;
-	public static final int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
-	public static final int ROOK = 500;
-	public static final int QUEEN = 975;
-	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
-	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
 
 	// Default values are static fields used also from UCIEngine
 	public static final int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;

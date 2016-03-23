@@ -2,7 +2,6 @@ package com.alonsoruibal.chess.evaluation;
 
 
 import com.alonsoruibal.chess.Board;
-import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
@@ -73,10 +72,10 @@ public class EndgameEvaluator {
 		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
 		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
 		int value = Evaluator.KNOWN_WIN +
-				knights * Config.KNIGHT +
-				bishops * Config.BISHOP +
-				rooks * Config.ROOK +
-				queens * Config.QUEEN +
+				knights * Evaluator.KNIGHT +
+				bishops * Evaluator.BISHOP +
+				rooks * Evaluator.ROOK +
+				queens * Evaluator.QUEEN +
 				closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] +//
 				(whiteDominant ? toCorners[blackKingIndex] : toCorners[whiteKingIndex]);
 
@@ -105,8 +104,8 @@ public class EndgameEvaluator {
 		}
 
 		return whiteDominant ?
-				Evaluator.KNOWN_WIN + Config.PAWN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
-				-Evaluator.KNOWN_WIN - Config.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
+				Evaluator.KNOWN_WIN + Evaluator.PAWN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
+				-Evaluator.KNOWN_WIN - Evaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
 	}
 
 	private static int endgameKRKR(Board board) {

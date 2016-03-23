@@ -6,13 +6,22 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.util.StringUtils;
 
 public abstract class Evaluator {
-	public final static int W = 0;
-	public final static int B = 1;
+	public static final int W = 0;
+	public static final int B = 1;
 
-	public final static int NO_VALUE = Short.MAX_VALUE;
-	public final static int MATE = 30000;
-	public final static int KNOWN_WIN = 20000;
-	public final static int DRAW = 0;
+	public static final int NO_VALUE = Short.MAX_VALUE;
+	public static final int MATE = 30000;
+	public static final int KNOWN_WIN = 20000;
+	public static final int DRAW = 0;
+
+	public static final int PAWN = 100;
+	public static final int KNIGHT = 325;
+	public static final int BISHOP = 325;
+	public static final int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
+	public static final int ROOK = 500;
+	public static final int QUEEN = 975;
+	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
+	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
 
 	public BitboardAttacks bbAttacks;
 

@@ -1,7 +1,6 @@
 package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
-import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
@@ -193,18 +192,18 @@ public class CompleteEvaluator extends Evaluator {
 		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
 
 		int endGameValue = EndgameEvaluator.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
-		if (endGameValue != Evaluator.NO_VALUE) {
+		if (endGameValue != NO_VALUE) {
 			return endGameValue;
 		}
 
-		pawnMaterial[W] = Config.PAWN * whitePawns;
-		pawnMaterial[B] = Config.PAWN * blackPawns;
-		material[W] = Config.KNIGHT * whiteKnights + Config.BISHOP * whiteBishops + Config.ROOK * whiteRooks + Config.QUEEN * whiteQueens + //
+		pawnMaterial[W] = PAWN * whitePawns;
+		pawnMaterial[B] = PAWN * blackPawns;
+		material[W] = KNIGHT * whiteKnights + BISHOP * whiteBishops + ROOK * whiteRooks + QUEEN * whiteQueens + //
 				((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? Config.BISHOP_PAIR : 0);
-		material[B] = Config.KNIGHT * blackKnights + Config.BISHOP * blackBishops + Config.ROOK * blackRooks + Config.QUEEN * blackQueens + //
+						&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+		material[B] = KNIGHT * blackKnights + BISHOP * blackBishops + ROOK * blackRooks + QUEEN * blackQueens + //
 				((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? Config.BISHOP_PAIR : 0);
+						&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
 
 		center[W] = 0;
 		center[B] = 0;
@@ -488,9 +487,9 @@ public class CompleteEvaluator extends Evaluator {
 		// Ponder opening and Endgame value depending of the non-pawn pieces:
 		// opening=> gamephase = 256 / ending => gamephase = 0
 		int nonPawnMaterial = material[W] + material[B];
-		int gamePhase = nonPawnMaterial >= Config.NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
-				nonPawnMaterial <= Config.NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
-						((nonPawnMaterial - Config.NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (Config.NON_PAWN_MATERIAL_MIDGAME_MAX - Config.NON_PAWN_MATERIAL_ENDGAME_MIN);
+		int gamePhase = nonPawnMaterial >= NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
+				nonPawnMaterial <= NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
+						((nonPawnMaterial - NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
 
 		int value = 0;
 		// First Material
@@ -526,7 +525,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("kingSafety        = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
 			logger.debug("value             = " + value);
 		}
-		assert Math.abs(value) < Evaluator.KNOWN_WIN : "Eval is outside limits";
+		assert Math.abs(value) < KNOWN_WIN : "Eval is outside limits";
 		return value;
 	}
 
