@@ -7,6 +7,7 @@ import com.alonsoruibal.chess.tt.TranspositionTable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SearchEngineTest {
 
@@ -60,5 +61,35 @@ public class SearchEngineTest {
 		search.getBoard().setFen("r7/4K1q1/r7/1p5p/4k3/8/8/8 w - - 8 75");
 		search.go(SearchParameters.get(1));
 		assertEquals(Move.NONE, search.getBestMove());
+	}
+
+	@Test
+	public void testBishopTrapped() {
+		SearchEngine search = new SearchEngine(new Config());
+		search.getBoard().setFen("4k3/5ppp/8/8/8/8/2B5/K7 w - - 8 75");
+		SearchParameters sp = new SearchParameters();
+		sp.setDepth(10);
+		search.go(sp);
+		assertNotEquals(Move.getFromString(search.getBoard(), "Bxh7", true), search.getBestMove());
+	}
+
+	@Test
+	public void testE2E4() {
+		SearchEngine search = new SearchEngine(new Config());
+		search.getBoard().setFen(Board.FEN_START_POSITION);
+		SearchParameters sp = new SearchParameters();
+		sp.setDepth(10);
+		search.go(sp);
+		assertEquals(Move.getFromString(search.getBoard(), "e2e4", true), search.getBestMove());
+	}
+
+	@Test
+	public void testAnalysisMateCrash() {
+		SearchEngine search = new SearchEngine(new Config());
+		SearchParameters analysisParameters = new SearchParameters();
+		analysisParameters.setInfinite(true);
+
+		search.getBoard().setFen("8/8/8/8/8/k7/8/K6r w - - 1 1");
+		search.go(analysisParameters);
 	}
 }
