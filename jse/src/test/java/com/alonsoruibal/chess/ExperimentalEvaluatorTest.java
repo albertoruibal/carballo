@@ -2,7 +2,6 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
-import com.alonsoruibal.chess.log.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class ExperimentalEvaluatorTest {
-	private static final Logger logger = Logger.getLogger("ExperimentalEvaluatorTest");
-
 	ExperimentalEvaluator evaluator;
 	AttacksInfo attacksInfo;
 
@@ -182,23 +179,8 @@ public class ExperimentalEvaluatorTest {
 		assertTrue(value > 0);
 	}
 
-	@Test
-	public void testBishopBonus() {
-		String fen1 = "3BB2k/8/8/8/8/8/p7/7K w QKqk - 0 0";
-		String fen2 = "2B1B2k/8/8/8/8/8/p7/7K w QKqk - 0 0";
-		Board board = new Board();
-		board.setFen(fen1);
-		int value1 = evaluator.evaluate(board, attacksInfo);
-		board.setFen(fen2);
-		int value2 = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value1 = " + value1);
-		System.out.println("value2 = " + value2);
-		assertTrue(value1 >= value2 + 40);
-	}
-
-
 	// Compares the eval of two fens
-	private void compareFenEval(String fenBetter, String fenWorse) {
+	private void compareFenEval(String fenBetter, String fenWorse, int requiredDifference) {
 		System.out.println("*\n* Comparing two board evaluations (first must be better for white):\n*");
 		Board board = new Board();
 		board.setFen(fenBetter);
@@ -207,18 +189,17 @@ public class ExperimentalEvaluatorTest {
 		int valueWorse = evaluator.evaluate(board, attacksInfo);
 		System.out.println("valueBetter = " + valueBetter);
 		System.out.println("valueWorse = " + valueWorse);
-		assertTrue(valueBetter > valueWorse);
+		assertTrue(valueBetter > valueWorse + requiredDifference);
 	}
 
 	@Test
-	public void testFenCompare() {
-		compareFenEval("6k1/pp1q1pp1/2nBp1bp/P1QpP3/3P4/8/1P2BPPP/6K1 b - - 1 1",
-				"6k1/pp1q1pp1/2nBp1bp/P2pP3/3P4/2Q5/1P2BPPP/6K1 b - - 1 1");
+	public void testBishopBonus() {
+		compareFenEval("3BB2k/8/8/8/8/8/p7/7K w QKqk - 0 0", "2B1B2k/8/8/8/8/8/p7/7K w QKqk - 0 0", 40);
 	}
 
 	@Test
 	public void testSBDCastling() {
 		compareFenEval("r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1",
-				"2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1");
+				"2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1", 0);
 	}
 }
