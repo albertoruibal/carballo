@@ -3,8 +3,6 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.log.Logger;
-import com.alonsoruibal.chess.movesort.MoveIterator;
-import com.alonsoruibal.chess.movesort.SortInfo;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +22,6 @@ public class ExperimentalEvaluatorTest {
 		attacksInfo = new AttacksInfo();
 		evaluator = new ExperimentalEvaluator();
 		evaluator.debug = true;
-		evaluator.debugPawns = true;
 	}
 
 	public static int countSubstring(String subStr, String str) {
@@ -53,6 +50,8 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testPawnClassification() {
+		evaluator.debugPawns = true;
+
 		Board board = new Board();
 		board.setFen("8/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
@@ -150,6 +149,7 @@ public class ExperimentalEvaluatorTest {
 		board.setFen("7k/2P5/pp6/1P6/8/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("No backwards because it can capture", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		evaluator.debugPawns = false;
 	}
 
 	@Test
@@ -199,6 +199,7 @@ public class ExperimentalEvaluatorTest {
 
 	// Compares the eval of two fens
 	private void compareFenEval(String fenBetter, String fenWorse) {
+		System.out.println("*\n* Comparing two board evaluations (first must be better):\n*");
 		Board board = new Board();
 		board.setFen(fenBetter);
 		int valueBetter = evaluator.evaluate(board, attacksInfo);
@@ -213,6 +214,12 @@ public class ExperimentalEvaluatorTest {
 	public void testFenCompare() {
 		compareFenEval("6k1/pp1q1pp1/2nBp1bp/P1QpP3/3P4/8/1P2BPPP/6K1 b - - 1 1",
 				"6k1/pp1q1pp1/2nBp1bp/P2pP3/3P4/2Q5/1P2BPPP/6K1 b - - 1 1");
+	}
+
+	@Test
+	public void testSBDCastling() {
+		compareFenEval("2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1",
+				"r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1");
 	}
 
 	@Test
@@ -231,22 +238,5 @@ public class ExperimentalEvaluatorTest {
 		compareFenEval(fen1, fen2);
 	}
 
-	@Test
-	public void testSBDCastling() {
-		compareFenEval("2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1",
-				"r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1");
-	}
 
-	@Test
-	public void kona() {
-		Board b = new Board();
-		AttacksInfo ai = new AttacksInfo();
-		b.setFen("r3kr2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1");
-		ai.build(b);
-		MoveIterator mi = new MoveIterator(b, ai, new SortInfo(), 0);
-		int move;
-		while ((move = mi.next()) != Move.NONE) {
-			System.out.println(Move.toSan(b, move));
-		}
-	}
 }
