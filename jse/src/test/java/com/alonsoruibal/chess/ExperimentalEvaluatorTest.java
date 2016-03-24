@@ -199,7 +199,7 @@ public class ExperimentalEvaluatorTest {
 
 	// Compares the eval of two fens
 	private void compareFenEval(String fenBetter, String fenWorse) {
-		System.out.println("*\n* Comparing two board evaluations (first must be better):\n*");
+		System.out.println("*\n* Comparing two board evaluations (first must be better for white):\n*");
 		Board board = new Board();
 		board.setFen(fenBetter);
 		int valueBetter = evaluator.evaluate(board, attacksInfo);
@@ -218,25 +218,7 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testSBDCastling() {
-		compareFenEval("2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1",
-				"r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1");
+		compareFenEval("r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1",
+				"2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1");
 	}
-
-	@Test
-	public void testE2E4() {
-		Board b = new Board();
-		b.startPosition();
-
-		b.doMove(Move.getFromString(b, "e4", true));
-		String fen1 = b.getFen();
-		b.undoMove();
-
-		b.doMove(Move.getFromString(b, "Nf3", true));
-		String fen2 = b.getFen();
-		b.undoMove();
-
-		compareFenEval(fen1, fen2);
-	}
-
-
 }
