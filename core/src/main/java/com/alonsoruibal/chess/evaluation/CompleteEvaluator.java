@@ -53,15 +53,15 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
-	private static final int[] PAWN_SHIELD = {0, oe(15, 0), oe(7, 0), oe(0, 0), 0, 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
 	private static final int[] KNIGHT_OUTPOST = {oe(10, 15), oe(20, 30)}; // Array is Not defended by pawn, defended by pawn
 
 	// Bishops
-	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int[] BISHOP_OUTPOST = {oe(5, 7), oe(10, 15)};
+	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED = oe(-40, -40);
 	private static final long[] BISHOP_TRAPPING = {
 			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,

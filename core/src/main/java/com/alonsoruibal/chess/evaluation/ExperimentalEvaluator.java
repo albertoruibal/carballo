@@ -53,7 +53,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
-	private static final int[] PAWN_SHIELD = {0, oe(15, 0), oe(7, 0), oe(0, 0), 0, 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
@@ -70,9 +70,9 @@ public class ExperimentalEvaluator extends Evaluator {
 	};
 
 	// Bishops
-	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private static final int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
+	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED = oe(-40, -40);
 	private static final long[] BISHOP_TRAPPING = {
 			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
@@ -86,6 +86,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	};
 
 	// Rooks
+	private static final int ROOK_OUTPOST = oe(1, 2); // Only if defended by pawn
+	private static final int ROOK_OUTPOST_ATT_NK_PU = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
 	private static final int ROOK_FILE_OPEN_NO_MG = oe(20, 10); // No pawns in rook file and no minor guarded
 	private static final int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
 	private static final int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
@@ -95,8 +97,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int ROOK_8_KING_8 = oe(5, 10); // Rook in 8th rank and opposite king in 8th rank
 	private static final int ROOK_7_KP_78 = oe(10, 30); // Rook in 7th rank and opposite king or pawn in 7/8th rank
 	private static final int ROOK_6_KP_678 = oe(5, 15); // Rook in 6th rank and opposite king or pawns in 6/7/8th
-	private static final int ROOK_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int ROOK_OUTPOST_ATT_NK_PU = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
 
 	// Queen
 	private static final int QUEEN_7_KP_78 = oe(5, 25); // Queen in 7th rank and opposite king/pawn in 7/8th rank
@@ -536,7 +536,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
 						positional[us] += ROOK_OUTPOST;
 						// Attacks squares near king or other pieces pawn undefended
-						if ((pieceAttacks & (kingZone[them] | others) & ~ai.pawnAttacks[them]) != 0) {
+						if ((safeAttacks & (kingZone[them] | others)) != 0) {
 							positional[us] += ROOK_OUTPOST_ATT_NK_PU;
 						}
 					}
