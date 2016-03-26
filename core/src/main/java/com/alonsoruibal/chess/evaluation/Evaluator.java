@@ -6,8 +6,8 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.util.StringUtils;
 
 public abstract class Evaluator {
-	public static final int W = 0;
-	public static final int B = 1;
+	public static final int W = Color.W;
+	public static final int B = Color.B;
 
 	public static final int NO_VALUE = Short.MAX_VALUE;
 	public static final int MATE = 30000;
@@ -38,29 +38,36 @@ public abstract class Evaluator {
 	 * Merges two short Opening - Ending values in one int
 	 */
 	public static int oe(int opening, int endgame) {
-		return (opening << 16) | (endgame & 0xffff);
+		return ((opening < 0 ? opening - 1 : opening) << 16) | (endgame & 0xffff);
+	}
+
+	/**
+	 * Get the "Opening" part
+	 */
+	public static int o(int oe) {
+		int i = oe >> 16;
+		return i < 0 ? i + 1 : i;
+	}
+
+	/**
+	 * Get the "Endgame" part
+	 */
+	public static int e(int oe) {
+		return (short) (oe & 0xffff);
 	}
 
 	/**
 	 * Multiply with negative numbers (in the factor or in one of the oe components) cannot be done directly
 	 */
 	public static int oeMul(int factor, int oeValue) {
-		return (((oeValue >> 16) * factor) << 16) | ((oeValue & 0xffff) * factor) & 0xffff;
+		return oe((o(oeValue) * factor), e(oeValue) * factor);
 	}
 
 	/**
-	 * shift right each part by factor positions
+	 * Shift right each part by factor positions
 	 */
 	public static int oeShr(int factor, int oeValue) {
 		return (((oeValue >> (16 + factor))) << 16) | ((oeValue & 0xffff) >> factor) & 0xffff;
-	}
-
-	public static int o(int oe) {
-		return oe >> 16;
-	}
-
-	public static int e(int oe) {
-		return (short) (oe & 0xffff);
 	}
 
 	String formatOE(int value) {

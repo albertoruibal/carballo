@@ -33,10 +33,38 @@ public class EvaluatorOpeningEndgameTest {
 	}
 
 	@Test
-	public void addNegative() {
+	public void addTwoNegatives() {
+		int value = Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8);
+		assertEquals("Sub O", -16, Evaluator.o(value));
+		assertEquals("Sub E", -16, Evaluator.e(value));
+	}
+
+	@Test
+	public void addThreeNegatives() {
+		int value = Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8);
+		assertEquals("Sub O", -24, Evaluator.o(value));
+		assertEquals("Sub E", -24, Evaluator.e(value));
+	}
+
+	@Test
+	public void addNegativeA() {
+		int value = Evaluator.oe(10, 10) + Evaluator.oe(-2, -2);
+		assertEquals("Sub O", 8, Evaluator.o(value));
+		assertEquals("Sub E", 8, Evaluator.e(value));
+	}
+
+	@Test
+	public void addNegativeB() {
 		int value = Evaluator.oe(12, 38) + Evaluator.oe(-20, -48);
 		assertEquals("AddNegative O", -8, Evaluator.o(value));
 		assertEquals("AddNegative E", -10, Evaluator.e(value));
+	}
+
+	@Test
+	public void subNegative() {
+		int value = Evaluator.oe(10, 10) - Evaluator.oe(-8, -8);
+		assertEquals("Sub O", 18, Evaluator.o(value));
+		assertEquals("Sub E", 18, Evaluator.e(value));
 	}
 
 	@Test
