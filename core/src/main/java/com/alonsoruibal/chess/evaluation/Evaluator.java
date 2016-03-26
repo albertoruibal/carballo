@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.util.StringUtils;
