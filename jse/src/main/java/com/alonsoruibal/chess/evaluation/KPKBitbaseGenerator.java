@@ -1,5 +1,6 @@
 package com.alonsoruibal.chess.evaluation;
 
+import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
@@ -56,7 +57,7 @@ public class KPKBitbaseGenerator {
 
 			long blackKingSquare = BitboardUtils.index2Square((byte) blackKingIndex);
 			long pawnSquare = BitboardUtils.index2Square((byte) (pawnIndex));
-			long pawnAttacks = BitboardAttacks.getInstance().pawnUpwards[pawnIndex];
+			long pawnAttacks = BitboardAttacks.getInstance().pawn[Color.W][pawnIndex];
 
 			long pawnSquareNextRank = BitboardUtils.index2Square((byte) (pawnIndex + 8));
 			long whiteKingAttacks = BitboardAttacks.getInstance().king[whiteKingIndex];

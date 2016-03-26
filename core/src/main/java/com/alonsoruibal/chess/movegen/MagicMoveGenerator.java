@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.movegen;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
@@ -52,18 +53,20 @@ public class MagicMoveGenerator implements MoveGenerator {
 						if (((square << 8) & all) == 0) {
 							addMoves(Piece.PAWN, index, index + 8, false, 0);
 							// Two squares if it is in he first row	
-							if (((square & BitboardUtils.b2_d) != 0) && (((square << 16) & all) == 0))
+							if (((square & BitboardUtils.b2_d) != 0) && (((square << 16) & all) == 0)) {
 								addMoves(Piece.PAWN, index, index + 16, false, 0);
+							}
 						}
-						generatePawnCapturesFromAttacks(index, bbAttacks.pawnUpwards[index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, bbAttacks.pawn[Color.W][index], board.getPassantSquare());
 					} else {
 						if (((square >>> 8) & all) == 0) {
 							addMoves(Piece.PAWN, index, index - 8, false, 0);
 							// Two squares if it is in he first row	
-							if (((square & BitboardUtils.b2_u) != 0) && (((square >>> 16) & all) == 0))
+							if (((square & BitboardUtils.b2_u) != 0) && (((square >>> 16) & all) == 0)) {
 								addMoves(Piece.PAWN, index, index - 16, false, 0);
+							}
 						}
-						generatePawnCapturesFromAttacks(index, bbAttacks.pawnDownwards[index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, bbAttacks.pawn[Color.B][index], board.getPassantSquare());
 					}
 				}
 			}

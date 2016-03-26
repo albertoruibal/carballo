@@ -239,7 +239,7 @@ public class Move {
 				}
 			}
 			if (move.length() == 3) { // Pawn capture
-				from = board.pawns & mines & (turn ? bbAttacks.pawnDownwards[toIndex] : bbAttacks.pawnUpwards[toIndex]);
+				from = board.pawns & mines &  bbAttacks.pawn[turn ? Color.B : Color.W][toIndex];
 			}
 		}
 		if (move.length() == 3) { // now disambiaguate

@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.bitboard;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.log.Logger;
 
 /**
@@ -13,8 +14,7 @@ public class BitboardAttacks {
 	public long[] bishop;
 	public long[] knight;
 	public long[] king;
-	public long[] pawnDownwards;
-	public long[] pawnUpwards;
+	public long[][] pawn;
 
 	/**
 	 * If disabled, does not use Magic Bitboards, improves loading speed in GWT
@@ -66,8 +66,7 @@ public class BitboardAttacks {
 		bishop = new long[64];
 		knight = new long[64];
 		king = new long[64];
-		pawnDownwards = new long[64];
-		pawnUpwards = new long[64];
+		pawn = new long[2][64];
 
 		long square = 1;
 		byte i = 0;
@@ -91,10 +90,10 @@ public class BitboardAttacks {
 					| squareAttackedAux(square, -6, BitboardUtils.b_d | BitboardUtils.b2_l) //
 					| squareAttackedAux(square, -10, BitboardUtils.b_d | BitboardUtils.b2_r);
 
-			pawnUpwards[i] = squareAttackedAux(square, 7, BitboardUtils.b_u | BitboardUtils.b_r) //
+			pawn[Color.W][i] = squareAttackedAux(square, 7, BitboardUtils.b_u | BitboardUtils.b_r) //
 					| squareAttackedAux(square, 9, BitboardUtils.b_u | BitboardUtils.b_l);
 
-			pawnDownwards[i] = squareAttackedAux(square, -7, BitboardUtils.b_d | BitboardUtils.b_l) //
+			pawn[Color.B][i] = squareAttackedAux(square, -7, BitboardUtils.b_d | BitboardUtils.b_l) //
 					| squareAttackedAux(square, -9, BitboardUtils.b_d | BitboardUtils.b_r);
 
 			king[i] = squareAttackedAux(square, +8, BitboardUtils.b_u) //
@@ -142,7 +141,7 @@ public class BitboardAttacks {
 		long others = (white ? board.blacks : board.whites);
 		long all = board.getAll();
 
-		if (((white ? pawnUpwards[index] : pawnDownwards[index]) & board.pawns & others) != 0) {
+		if ((pawn[white ? Color.W : Color.B][index] & board.pawns & others) != 0) {
 			return true;
 		} else if ((king[index] & board.kings & others) != 0) {
 			return true;
@@ -165,7 +164,7 @@ public class BitboardAttacks {
 		}
 		long all = board.getAll();
 
-		return ((board.blacks & pawnUpwards[index] | board.whites & pawnDownwards[index]) & board.pawns) | (king[index] & board.kings)
+		return ((board.blacks & pawn[Color.W][index] | board.whites & pawn[Color.B][index]) & board.pawns) | (king[index] & board.kings)
 				| (knight[index] & board.knights)
 				| (getRookAttacks(index, all) & (board.rooks | board.queens)) | (getBishopAttacks(index, all) & (board.bishops | board.queens));
 	}

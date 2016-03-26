@@ -113,8 +113,8 @@ public class AttacksInfo {
 		queenAttacks[B] = 0;
 		kingAttacks[W] = 0;
 		kingAttacks[B] = 0;
-		mayPin[0] = 0;
-		mayPin[1] = 0;
+		mayPin[W] = 0;
+		mayPin[B] = 0;
 		pinnedPieces = 0;
 		piecesGivingCheck = 0;
 		interposeCheckSquares = 0;
@@ -137,13 +137,12 @@ public class AttacksInfo {
 		long square = 1;
 		for (index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
-				boolean isWhite = ((board.whites & square) != 0);
-				int color = isWhite ? W : B;
+				int color = (board.whites & square) != 0 ? W : B;
 				long pinnedSquares = (square & pinnedPieces) != 0 ? pinnedMobility[index] : BitboardUtils.ALL_SQUARES;
 
 				pieceAttacks = 0;
 				if ((square & board.pawns) != 0) {
-					pieceAttacks = (isWhite ? bbAttacks.pawnUpwards[index] : bbAttacks.pawnDownwards[index]);
+					pieceAttacks = bbAttacks.pawn[color][index];
 					if ((square & mines) == 0 && (pieceAttacks & myKing) != 0) {
 						piecesGivingCheck |= square;
 					}

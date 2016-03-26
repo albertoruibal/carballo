@@ -654,7 +654,7 @@ public class Board {
 		moveNumber++; // Count Ply moves
 
 		boolean turn = getTurn();
-		int color = (turn ? 0 : 1);
+		int color = turn ? Color.W : Color.B;
 
 		if ((flags & FLAGS_PASSANT) != 0) {
 			// Remove passant flags: from the zobrist key
@@ -713,10 +713,10 @@ public class Board {
 				// Set new passant flags if pawn is advancing two squares (marks
 				// the destination square where the pawn can be captured)
 				// Set only passant flags when the other side can capture
-				if (((from << 16) & to) != 0 && (bbAttacks.pawnUpwards[toIndex - 8] & pawns & getOthers()) != 0) { // white
+				if (((from << 16) & to) != 0 && (bbAttacks.pawn[Color.W][toIndex - 8] & pawns & getOthers()) != 0) { // white
 					flags |= (from << 8);
 				}
-				if (((from >>> 16) & to) != 0 && (bbAttacks.pawnDownwards[toIndex + 8] & pawns & getOthers()) != 0) { // blask
+				if (((from >>> 16) & to) != 0 && (bbAttacks.pawn[Color.B][toIndex + 8] & pawns & getOthers()) != 0) { // blask
 					flags |= (from >>> 8);
 				}
 				if ((flags & FLAGS_PASSANT) != 0) {

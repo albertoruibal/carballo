@@ -562,7 +562,7 @@ public class MoveIterator {
 				bishopSlidersAfterMove |= to;
 				rookSlidersAfterMove |= to;
 			} else if (pieceMoved == Piece.PAWN) {
-				check = (to & (turn ? bbAttacks.pawnDownwards[ai.kingIndex[them]] : bbAttacks.pawnUpwards[ai.kingIndex[them]])) != 0;
+				check = (to & bbAttacks.pawn[them][ai.kingIndex[them]]) != 0;
 			}
 		}
 
