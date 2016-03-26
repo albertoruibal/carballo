@@ -141,11 +141,11 @@ public class SearchEngine implements Runnable {
 			moveIterators[i] = new MoveIterator(board, attacksInfos[i], sortInfo, i);
 		}
 
-		pvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
-		nonPvReductionMatrix = new int[MAX_DEPTH][MAX_DEPTH];
+		pvReductionMatrix = new int[64][64];
+		nonPvReductionMatrix = new int[64][64];
 		// Init our reduction lookup tables
-		for (int depthRemaining = 1; depthRemaining < MAX_DEPTH; depthRemaining++) { // OnePly = 2
-			for (int moveNumber = 1; moveNumber < MAX_DEPTH; moveNumber++) {
+		for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
+			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
 				double pvRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 6.0;
 				double nonPVRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 3.0;
 				pvReductionMatrix[depthRemaining][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
@@ -204,8 +204,8 @@ public class SearchEngine implements Runnable {
 
 	private int getReduction(int nodeType, int depth, int movecount) {
 		return nodeType == NODE_PV || nodeType == NODE_ROOT ? //
-				pvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)] : //
-				nonPvReductionMatrix[Math.min(depth / PLY, 63)][Math.min(movecount, 63)];
+				pvReductionMatrix[Math.min(depth >> 1 /* Because PLY = 2 */, 63)][Math.min(movecount, 63)] : //
+				nonPvReductionMatrix[Math.min(depth >> 1 /* Because PLY = 2*/, 63)][Math.min(movecount, 63)];
 	}
 
 	public void setObserver(SearchObserver observer) {
@@ -573,7 +573,7 @@ public class SearchEngine implements Runnable {
 					&& (nodeType != NODE_NULL || staticEval + IID_MARGIN > beta) //
 					&& excludedMove == Move.NONE) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
-				search(nodeType, d, alpha, beta, false, 0);
+				search(nodeType, d, alpha, beta, false, Move.NONE);
 				if (tt.search(board, distanceToInitialPly, false)) {
 					ttMove = tt.getBestMove();
 				}
