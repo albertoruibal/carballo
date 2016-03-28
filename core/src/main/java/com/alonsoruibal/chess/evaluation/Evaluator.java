@@ -18,9 +18,9 @@ public abstract class Evaluator {
 	public static final int PAWN = 100;
 	public static final int KNIGHT = 325;
 	public static final int BISHOP = 325;
-	public static final int BISHOP_PAIR = 50; // Bonus by having two bishops in different colors
 	public static final int ROOK = 500;
 	public static final int QUEEN = 975;
+	public static final int BISHOP_PAIR = Evaluator.oe(50, 50); // Bonus by having two bishops in different colors
 	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
 	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
 
@@ -55,13 +55,6 @@ public abstract class Evaluator {
 	 */
 	public static int e(int oe) {
 		return (short) (oe & 0xffff);
-	}
-
-	/**
-	 * Multiply with negative numbers (in the factor or in one of the oe components) cannot be done directly
-	 */
-	public static int oeMul(int factor, int oeValue) {
-		return oe((o(oeValue) * factor), e(oeValue) * factor);
 	}
 
 	/**

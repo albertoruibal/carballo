@@ -62,7 +62,7 @@ public class ExperimentalEvaluatorTest {
 		board.setFen("7k/p6p/PP6/6P1/8/7P/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("Two candidates", 2, countSubstring("candidate ", evaluator.debugSB.toString()));
-		assertEquals("No backwards", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("No backward", 0, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/p7/8/PP3ppp/8/5P1P/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
@@ -98,54 +98,54 @@ public class ExperimentalEvaluatorTest {
 
 		board.setFen("R7/3p3p/8/3P2P1/3k4/1p5p/1P1NKP1P/7q w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/8/8/3p1p2/1p1P1Pp1/1P2P1P1/P1P4P/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("Five backwards", 5, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("Five backward", 5, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/7P/8/5p2/8/8/6P1/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/8/Pp6/8/8/1P6/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/8/P1p5/8/8/1P6/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/2p5/P7/8/8/1P6/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/2p5/8/P7/8/1P6/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("No backwards", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("No backward", 0, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/8/8/P7/2p5/1P6/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("No backwards", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("No backward", 0, countSubstring("backward ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/8/4p3/8/4pp2/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One Backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 		assertEquals("One Doubled", 1, countSubstring("doubled ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/4p3/8/5p2/4p3/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("No Backwards", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("No backward", 0, countSubstring("backward ", evaluator.debugSB.toString()));
 		assertEquals("One Doubled", 1, countSubstring("doubled ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/4p3/8/5p2/3Pp3/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("One Backwards", 1, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("One backward", 1, countSubstring("backward ", evaluator.debugSB.toString()));
 		assertEquals("One Doubled", 1, countSubstring("doubled ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/2P5/pp6/1P6/8/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
-		assertEquals("No backwards because it can capture", 0, countSubstring("backwards ", evaluator.debugSB.toString()));
+		assertEquals("No backward because it can capture", 0, countSubstring("backward ", evaluator.debugSB.toString()));
 		evaluator.debugPawns = false;
 	}
 

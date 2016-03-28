@@ -33,38 +33,24 @@ public class EvaluatorOpeningEndgameTest {
 	}
 
 	@Test
-	public void addTwoNegatives() {
-		int value = Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8);
+	public void subFromNegative() {
+		int value = Evaluator.oe(-8, -8) - Evaluator.oe(8, 8);
 		assertEquals("Sub O", -16, Evaluator.o(value));
 		assertEquals("Sub E", -16, Evaluator.e(value));
 	}
 
 	@Test
-	public void addThreeNegatives() {
-		int value = Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8) + Evaluator.oe(-8, -8);
+	public void subThreeNegatives() {
+		int value = Evaluator.oe(-8, -8) - Evaluator.oe(8, 8) - Evaluator.oe(8, 8);
 		assertEquals("Sub O", -24, Evaluator.o(value));
 		assertEquals("Sub E", -24, Evaluator.e(value));
 	}
 
 	@Test
-	public void addNegativeA() {
-		int value = Evaluator.oe(10, 10) + Evaluator.oe(-2, -2);
-		assertEquals("Sub O", 8, Evaluator.o(value));
-		assertEquals("Sub E", 8, Evaluator.e(value));
-	}
-
-	@Test
-	public void addNegativeB() {
-		int value = Evaluator.oe(12, 38) + Evaluator.oe(-20, -48);
-		assertEquals("AddNegative O", -8, Evaluator.o(value));
-		assertEquals("AddNegative E", -10, Evaluator.e(value));
-	}
-
-	@Test
-	public void subNegative() {
-		int value = Evaluator.oe(10, 10) - Evaluator.oe(-8, -8);
-		assertEquals("Sub O", 18, Evaluator.o(value));
-		assertEquals("Sub E", 18, Evaluator.e(value));
+	public void subSwitchToNegativeA() {
+		int value = Evaluator.oe(10, 10) - Evaluator.oe(12, 12);
+		assertEquals("Sub O", -2, Evaluator.o(value));
+		assertEquals("Sub E", -2, Evaluator.e(value));
 	}
 
 	@Test
@@ -72,34 +58,6 @@ public class EvaluatorOpeningEndgameTest {
 		int value = 5 * Evaluator.oe(4, 50);
 		assertEquals("Multiply O", 20, Evaluator.o(value));
 		assertEquals("Multiply E", 250, Evaluator.e(value));
-	}
-
-	@Test
-	public void mutiplyNegativeA() {
-		int value = Evaluator.oeMul(5, Evaluator.oe(-10, 3));
-		assertEquals("Mutiply in O", -50, Evaluator.o(value));
-		assertEquals("Mutiply in E", 15, Evaluator.e(value));
-	}
-
-	@Test
-	public void mutiplyNegativeB() {
-		int value = Evaluator.oeMul(5, Evaluator.oe(10, -3));
-		assertEquals("Mutiply in O", 50, Evaluator.o(value));
-		assertEquals("Mutiply in E", -15, Evaluator.e(value));
-	}
-
-	@Test
-	public void mutiplyNegativeC() {
-		int value = Evaluator.oeMul(-5, Evaluator.oe(5, -1));
-		assertEquals("Mutiply in O", -25, Evaluator.o(value));
-		assertEquals("Mutiply in E", 5, Evaluator.e(value));
-	}
-
-	@Test
-	public void mutiplyNegativeD() {
-		int value = Evaluator.oeMul(-5, Evaluator.oe(-5, 1));
-		assertEquals("Mutiply in O", 25, Evaluator.o(value));
-		assertEquals("Mutiply in E", -5, Evaluator.e(value));
 	}
 
 	@Test

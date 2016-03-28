@@ -106,15 +106,15 @@ public class PcsqGenerator {
 	public int[] queenPcsq = new int[64];
 	public int[] kingPcsq = new int[64];
 
-	private int calculateSquare(int i, int[][] columnValues, int[][] rankValues, int[][] diagonalValues) {
+	private int calculateSquare(int i, int pieceOpening, int pieceEndgame, int[][] columnValues, int[][] rankValues, int[][] diagonalValues) {
 		int rank = i >> 3;
 		int column = 7 - i & 7;
 		int diagonal1 = (((column - rank) >= 0) ? (column - rank) : -(column - rank));
 		int diagonal2 = (((column + rank - 7) >= 0) ? (column + rank - 7) : -(column + rank - 7));
 
 		return Evaluator.oe(
-				columnValues[0][column] + rankValues[0][rank] + diagonalValues[0][diagonal1] + diagonalValues[0][diagonal2],
-				columnValues[1][column] + rankValues[1][rank] + diagonalValues[1][diagonal1] + diagonalValues[1][diagonal2]
+				pieceOpening + columnValues[0][column] + rankValues[0][rank] + diagonalValues[0][diagonal1] + diagonalValues[0][diagonal2],
+				pieceEndgame + columnValues[1][column] + rankValues[1][rank] + diagonalValues[1][diagonal1] + diagonalValues[1][diagonal2]
 		);
 	}
 
@@ -122,12 +122,12 @@ public class PcsqGenerator {
 		int i;
 
 		for (i = 0; i < 64; i++) {
-			pawnPcsq[i] = calculateSquare(i, PawnColumn, PawnRank, PawnDiagonal);
-			knightPcsq[i] = calculateSquare(i, KnightColumn, KnightRank, KnightDiagonal);
-			bishopPcsq[i] = calculateSquare(i, BishopColumn, BishopRank, BishopDiagonal);
-			rookPcsq[i] = calculateSquare(i, RookColumn, RookRank, RookDiagonal);
-			queenPcsq[i] = calculateSquare(i, QueenColumn, QueenRank, QueenDiagonal);
-			kingPcsq[i] = calculateSquare(i, KingColumn, KingRank, KingDiagonal);
+			pawnPcsq[i] = calculateSquare(i, Evaluator.PAWN, Evaluator.PAWN, PawnColumn, PawnRank, PawnDiagonal);
+			knightPcsq[i] = calculateSquare(i, Evaluator.KNIGHT, Evaluator.KNIGHT, KnightColumn, KnightRank, KnightDiagonal);
+			bishopPcsq[i] = calculateSquare(i, Evaluator.BISHOP, Evaluator.BISHOP, BishopColumn, BishopRank, BishopDiagonal);
+			rookPcsq[i] = calculateSquare(i, Evaluator.ROOK, Evaluator.ROOK, RookColumn, RookRank, RookDiagonal);
+			queenPcsq[i] = calculateSquare(i, Evaluator.QUEEN, Evaluator.QUEEN, QueenColumn, QueenRank, QueenDiagonal);
+			kingPcsq[i] = calculateSquare(i, 1000, 1000, KingColumn, KingRank, KingDiagonal); // Use 100 only to avoid negative oe values
 		}
 
 		// Pawn opening corrections
