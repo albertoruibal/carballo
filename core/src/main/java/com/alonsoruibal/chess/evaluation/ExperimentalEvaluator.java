@@ -590,8 +590,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		int gamePhase = nonPawnMaterial >= NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
 				nonPawnMaterial <= NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
 						((nonPawnMaterial - NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
-		int value = (gamePhase * o(oe)) >> 8; // divide by 256
-		value += ((256 - gamePhase) * e(oe)) >> 8;
+		int value = (gamePhase * o(oe) + (256 - gamePhase) * e(oe)) >> 8; // divide by 256
 
 		if (debug) {
 			logger.debug(debugSB);
