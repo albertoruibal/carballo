@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
+import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class ExperimentalEvaluatorTest {
 		board.setFen(fen);
 		int value = evaluator.evaluate(board, attacksInfo);
 		System.out.println("value = " + value);
-		assertEquals(ExperimentalEvaluator.TEMPO, value);
+		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), value);
 	}
 
 	@Test
@@ -42,7 +43,7 @@ public class ExperimentalEvaluatorTest {
 		board.setFen(fen);
 		int value = evaluator.evaluate(board, attacksInfo);
 		System.out.println("value = " + value);
-		assertEquals(ExperimentalEvaluator.TEMPO, value);
+		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), value);
 	}
 
 	@Test
@@ -86,9 +87,6 @@ public class ExperimentalEvaluatorTest {
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("No Runner", 0, countSubstring("runner ", evaluator.debugSB.toString()));
 		assertEquals("No Mobile", 0, countSubstring("mobile ", evaluator.debugSB.toString()));
-
-		board.setFen("7k/5ppp/8/2p5/P7/8/5PPP/7K w - - 0 0");
-		assertTrue("Outside passer superior to inside passer", evaluator.evaluate(board, attacksInfo) > 10);
 
 		board.setFen("7k/8/8/5P2/5P2/8/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
