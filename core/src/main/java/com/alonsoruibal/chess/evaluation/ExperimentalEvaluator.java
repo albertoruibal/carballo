@@ -368,7 +368,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					}
 					if (passed) {
 						long backFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
-						// If has has root/queen behind consider all the route to promotion attacked or defended
+						// If it has a rook or queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
 										~((routeToPromotion & ai.attackedSquares[us]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
@@ -595,8 +595,6 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		if (debug) {
 			logger.debug(debugSB);
-			logger.debug("tempo             = " + (board.getTurn() ? TEMPO : -TEMPO));
-			logger.debug("gamePhase         = " + gamePhase);
 			logger.debug("                     Opening  Endgame");
 			logger.debug("pcsq              = " + formatOE(pcsq[W] - pcsq[B]));
 			logger.debug("positional        = " + formatOE(positional[W] - positional[B]));
@@ -605,7 +603,10 @@ public class ExperimentalEvaluator extends Evaluator {
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W] - pawnStructure[B]));
 			logger.debug("passedPawns       = " + formatOE(passedPawns[W] - passedPawns[B]));
 			logger.debug("kingSafety        = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
-			logger.debug("value             = " + value);
+			logger.debug("tempo             = " + formatOE(board.getTurn() ? TEMPO : -TEMPO));
+			logger.debug("                    -----------------");
+			logger.debug("TOTAL:              " + formatOE(oe));
+			logger.debug("gamePhase = " + gamePhase + " => value = " + value);
 		}
 		assert Math.abs(value) < KNOWN_WIN : "Eval is outside limits";
 		return value;
