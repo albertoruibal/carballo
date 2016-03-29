@@ -146,12 +146,12 @@ public class SearchParameters {
 		int timeAvailable = engineIsWhite ? wtime : btime;
 		int timeInc = engineIsWhite ? winc : binc;
 		if (timeAvailable > 0) {
-			calcTime = timeAvailable / 40 + (timeInc >>> 1);
+			calcTime = timeAvailable / 30 + timeInc;
 		}
-		if (panicTime) {
+		if (panicTime) { // x 4
 			calcTime = calcTime << 2;
 		}
-		calcTime = Math.min(calcTime, timeAvailable >>> 4);
+		calcTime = Math.min(calcTime, timeAvailable >>> 3); // Never consume more than time / 8
 
 		logger.debug("Thinking for " + calcTime + "Ms");
 		return startTime + calcTime;
