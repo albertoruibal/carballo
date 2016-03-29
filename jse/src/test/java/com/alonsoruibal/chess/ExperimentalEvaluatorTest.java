@@ -57,7 +57,7 @@ public class ExperimentalEvaluatorTest {
 		assertEquals("One outside passed", 1, countSubstring("outside ", evaluator.debugSB.toString()));
 		assertEquals("Three supported", 3, countSubstring("supported ", evaluator.debugSB.toString()));
 		assertEquals("Six connected", 6, countSubstring("connected ", evaluator.debugSB.toString()));
-		assertEquals("Three isolated", 3, countSubstring("isolated ", evaluator.debugSB.toString()));
+		assertEquals("Two isolated", 2, countSubstring("isolated ", evaluator.debugSB.toString()));
 		assertEquals("Four opposed", 4, countSubstring("opposed ", evaluator.debugSB.toString()));
 
 		board.setFen("7k/p6p/PP6/6P1/8/7P/8/7K w - - 0 0");
@@ -87,6 +87,9 @@ public class ExperimentalEvaluatorTest {
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("No Runner", 0, countSubstring("runner ", evaluator.debugSB.toString()));
 		assertEquals("No Mobile", 0, countSubstring("mobile ", evaluator.debugSB.toString()));
+
+		board.setFen("7k/5ppp/8/2p5/P7/8/5PPP/7K w - - 0 0");
+		assertTrue("Outside passer superior to inside passer", evaluator.evaluate(board, attacksInfo) > 10);
 
 		board.setFen("7k/8/8/5P2/5P2/8/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);

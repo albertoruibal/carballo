@@ -44,21 +44,23 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_ISOLATED = {oe(20, 20), oe(10, 20)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_DOUBLED = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
 	private static final int PAWN_UNSUPPORTED = oe(1, 2); // Not backwards or isolated
+
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, 0, 0, oe(5, 5), oe(10, 12), oe(20, 25), 0, 0}; // Candidates to pawn passer
-	private static final int[] PAWN_PASSER = {0, 0, 0, oe(10, 10), oe(20, 25), oe(40, 50), oe(60, 75), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, 0, oe(2, 5), oe(5, 10), oe(10, 20), 0}; // no opposite pawns at left or at right
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(20, 30), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, 0, oe(5, 10), oe(10, 15), oe(15, 25), 0}; // defended by pawn
+	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 10), oe(11, 16), oe(17, 25), 0, 0}; // Candidates to pawn passer
+	private static final int[] PAWN_PASSER = {0, oe(10, 15), oe(10, 15), oe(14, 21), oe(22, 33), oe(34, 51), oe(50, 75), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(4, 10), oe(7, 14), oe(10, 20), 0}; // no opposite pawns at left or at right
+	private static final int[] PAWN_PASSER_CONNECTED = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(5, 10), oe(8, 14), oe(12, 20), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, oe(5, 10), oe(6, 12), oe(8, 15), oe(11, 19), oe(15, 25), 0}; // defended by pawn
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
+
 	private static final int[] PAWN_SHIELD = {0, oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
 	private static final int[] KNIGHT_OUTPOST = {oe(10, 15), oe(20, 30)}; // Array is Not defended by pawn, defended by pawn
 
-	// Bishops2
+	// Bishops
 	private static final int[] BISHOP_OUTPOST = {oe(5, 7), oe(10, 15)};
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
@@ -271,74 +273,66 @@ public class CompleteEvaluator extends Evaluator {
 					long ranksForward = BitboardUtils.RANKS_FORWARD[us][rank];
 					long pawnFile = BitboardUtils.FILE[file];
 					long routeToPromotion = pawnFile & ranksForward;
-					long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[us][rank] & adjacentFiles & myPawns;
-					long myPawnsAheadAdjacent = ranksForward & adjacentFiles & myPawns;
 					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
 
-					boolean isolated = (myPawns & adjacentFiles) == 0;
 					boolean supported = (square & ai.pawnAttacks[us]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
 					boolean opposed = (otherPawns & routeToPromotion) != 0;
 					boolean passed = !doubled
 							&& !opposed
 							&& otherPawnsAheadAdjacent == 0;
-					boolean candidate = !doubled
-							&& !opposed
-							&& !passed
-							&& (((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
-							(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
-					boolean backward = !isolated
-							&& !passed
-							&& !candidate
-							&& myPawnsBesideAndBehindAdjacent == 0
-							&& (pieceAttacks & otherPawns) == 0 // No backwards if it can capture
-							&& (BitboardUtils.RANK_AND_BACKWARD[us][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
-							routeToPromotion & (board.pawns | ai.pawnAttacks[them])) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
-					if (debugPawns) {
-						boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
-						debugSB.append("PAWN " + //
-								index + //
-								(isWhite ? " WHITE " : " BLACK ") + //
-								BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) + " " + BitboardUtils.popCount(otherPawnsAheadAdjacent) + " " + //
-								(isolated ? "isolated " : "") + //
-								(supported ? "supported " : "") + //
-								(connected ? "connected " : "") + //
-								(doubled ? "doubled " : "") + //
-								(opposed ? "opposed " : "") + //
-								(passed ? "passed " : "") + //
-								(candidate ? "candidate " : "") + //
-								(backward ? "backward " : "") + //
-								"\n"
-						);
-					}
+					if (!passed) {
+						long myPawnsAheadAdjacent = ranksForward & adjacentFiles & myPawns;
+						long myPawnsBesideAndBehindAdjacent = BitboardUtils.RANK_AND_BACKWARD[us][rank] & adjacentFiles & myPawns;
+						boolean isolated = (myPawns & adjacentFiles) == 0;
+						boolean candidate = !doubled
+								&& !opposed
+								&& (((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
+								(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
+						boolean backward = !isolated
+								&& !candidate
+								&& myPawnsBesideAndBehindAdjacent == 0
+								&& (pieceAttacks & otherPawns) == 0 // No backwards if it can capture
+								&& (BitboardUtils.RANK_AND_BACKWARD[us][isWhite ? BitboardUtils.getRankLsb(myPawnsAheadAdjacent) : BitboardUtils.getRankMsb(myPawnsAheadAdjacent)] &
+								routeToPromotion & (board.pawns | ai.pawnAttacks[them])) != 0; // Other pawns stopping it from advance, opposing or capturing it before reaching my pawns
 
-					if (backward) {
-						pawnStructure[us] -= PAWN_BACKWARDS[opposed ? 1 : 0];
-					}
-					if (isolated) {
-						pawnStructure[us] -= PAWN_ISOLATED[opposed ? 1 : 0];
-					}
-					if (doubled) {
-						pawnStructure[us] -= PAWN_DOUBLED[opposed ? 1 : 0];
-					}
-					if (!supported
-							&& !isolated
-							&& !backward) {
-						pawnStructure[us] -= PAWN_UNSUPPORTED;
-					}
-					// Pawn is part of the king shield
-					if ((pawnFile & kingZone[us]) != 0) {
-						pawnStructure[us] += PAWN_SHIELD[relativeRank];
-					}
-					// Pawn Storm
-					if ((pawnFile & kingZone[them]) != 0) {
-						pawnStructure[us] += PAWN_STORM[relativeRank];
-					}
-					if (candidate) {
-						passedPawns[us] += PAWN_CANDIDATE[relativeRank];
-					}
-					if (passed) {
+						if (debugPawns) {
+							boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
+							debugSB.append("PAWN " + index +
+									(isWhite ? " WHITE " : " BLACK ") +
+									(isolated ? "isolated " : "") +
+									(supported ? "supported " : "") +
+									(connected ? "connected " : "") +
+									(doubled ? "doubled " : "") +
+									(opposed ? "opposed " : "") +
+									(candidate ? "candidate " : "") +
+									(backward ? "backward " : "") +
+									"\n"
+							);
+						}
+
+						if (backward) {
+							pawnStructure[us] -= PAWN_BACKWARDS[opposed ? 1 : 0];
+						}
+						if (isolated) {
+							pawnStructure[us] -= PAWN_ISOLATED[opposed ? 1 : 0];
+						}
+						if (doubled) {
+							pawnStructure[us] -= PAWN_DOUBLED[opposed ? 1 : 0];
+						}
+						if (!supported
+								&& !isolated
+								&& !backward) {
+							pawnStructure[us] -= PAWN_UNSUPPORTED;
+						}
+						if (candidate) {
+							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
+						}
+					} else {
+						//
+						// Passed Pawn
+						//
 						long backFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
 						// If it has a rook or queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute = //
@@ -356,10 +350,14 @@ public class CompleteEvaluator extends Evaluator {
 								&& attackedAndNotDefendedRoute == 0;
 
 						if (debug) {
-							debugSB.append("        PASSER " + //
-									(outside ? "outside " : "") + //
-									(mobile ? "mobile " : "") + //
-									(runner ? "runner " : "") + //
+							debugSB.append("PAWN " + index +
+									(isWhite ? " WHITE " : " BLACK ") +
+									"passed " +
+									(supported ? "supported " : "") +
+									(connected ? "connected " : "") +
+									(outside ? "outside " : "") +
+									(mobile ? "mobile " : "") +
+									(runner ? "runner " : "") +
 									"\n"
 							);
 						}
@@ -368,8 +366,7 @@ public class CompleteEvaluator extends Evaluator {
 
 						if (supported) {
 							passedPawns[us] += PAWN_PASSER_SUPPORTED[relativeRank];
-						}
-						if (connected) {
+						} else if (connected) {
 							passedPawns[us] += PAWN_PASSER_CONNECTED[relativeRank];
 						}
 						if (outside) {
@@ -381,6 +378,14 @@ public class CompleteEvaluator extends Evaluator {
 						if (runner) {
 							passedPawns[us] += PAWN_PASSER_RUNNER[relativeRank];
 						}
+					}
+					// Pawn is part of the king shield
+					if ((pawnFile & kingZone[us]) != 0) {
+						pawnStructure[us] += PAWN_SHIELD[relativeRank];
+					}
+					// Pawn Storm
+					if ((pawnFile & kingZone[them]) != 0) {
+						pawnStructure[us] += PAWN_STORM[relativeRank];
 					}
 
 				} else if ((square & board.knights) != 0) {
@@ -503,14 +508,14 @@ public class CompleteEvaluator extends Evaluator {
 
 		if (debug) {
 			logger.debug(debugSB);
-			logger.debug("                     Opening  Endgame");
-			logger.debug("pcsq              = " + formatOE(pcsq[W] - pcsq[B]));
-			logger.debug("positional        = " + formatOE(positional[W] - positional[B]));
-			logger.debug("attacks           = " + formatOE(attacks[W] - attacks[B]));
-			logger.debug("mobility          = " + formatOE(mobility[W] - mobility[B]));
-			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W] - pawnStructure[B]));
-			logger.debug("passedPawns       = " + formatOE(passedPawns[W] - passedPawns[B]));
-			logger.debug("kingSafety        = " + formatOE(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]));
+			logger.debug("                    WOpening WEndgame BOpening BEndgame");
+			logger.debug("pcsq              = " + formatOE(pcsq[W]) + " " + formatOE(pcsq[B]));
+			logger.debug("mobility          = " + formatOE(mobility[W]) + " " + formatOE(mobility[B]));
+			logger.debug("positional        = " + formatOE(positional[W]) + " " + formatOE(positional[B]));
+			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W]) + " " + formatOE(pawnStructure[B]));
+			logger.debug("passedPawns       = " + formatOE(passedPawns[W]) + " " + formatOE(passedPawns[B]));
+			logger.debug("attacks           = " + formatOE(attacks[W]) + " " + formatOE(attacks[B]));
+			logger.debug("kingSafety        = " + formatOE(oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W])) + " " + formatOE(oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B])));
 			logger.debug("tempo             = " + formatOE(board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("                    -----------------");
 			logger.debug("TOTAL:              " + formatOE(oe));
