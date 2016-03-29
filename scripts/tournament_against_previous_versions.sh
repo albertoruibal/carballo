@@ -17,6 +17,7 @@ COMMON="-each proto=uci tc=5+0.1 -concurrency 1 -draw movenumber=100 movecount=5
 
 chmod +x *.jar
 
-$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-1.2 cmd=./carballo-1.2.jar $COMMON
-$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-1.1 cmd=./carballo-1.1.jar $COMMON
-$CUTECHESS -engine name=carballo-1.3 cmd=./carballo-1.3.jar -engine name=carballo-0.9 cmd=./carballo-0.9.jar $COMMON
+$CUTECHESS -engine name=carballo-1.4 cmd=./carballo-1.4.jar -engine name=carballo-1.3 cmd=./carballo-1.3.jar $COMMON
+$CUTECHESS -engine name=carballo-1.4 cmd=./carballo-1.4.jar -engine name=carballo-1.2 cmd=./carballo-1.2.jar $COMMON
+$CUTECHESS -engine name=carballo-1.4 cmd=./carballo-1.4.jar -engine name=carballo-1.1 cmd=./carballo-1.1.jar $COMMON
+$CUTECHESS -engine name=carballo-1.4 cmd=./carballo-1.4.jar -engine name=carballo-0.9 cmd=./carballo-0.9.jar $COMMON
