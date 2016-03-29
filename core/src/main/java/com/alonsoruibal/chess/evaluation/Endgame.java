@@ -5,7 +5,7 @@ import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
-public class EndgameEvaluator {
+public class Endgame {
 
 	public static final int[] closerSquares = {0, 0, 100, 80, 60, 40, 20, 10};
 
@@ -50,19 +50,19 @@ public class EndgameEvaluator {
 		if (whitePawns == 0 && blackPawns == 0) {
 			if ((blackMaterial == 0 && whiteMaterial == 2 && whiteKnights == 1 && whiteBishops == 1) || //
 					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
-				return EndgameEvaluator.endgameKBNK(board, whiteMaterial > blackMaterial);
+				return Endgame.endgameKBNK(board, whiteMaterial > blackMaterial);
 			}
 			if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
-				return EndgameEvaluator.endgameKRKR(board); // Not always a draw
+				return Endgame.endgameKRKR(board); // Not always a draw
 			}
 		}
 		if ((blackMaterial == 0 && whiteNoPawnMaterial == 0 && whitePawns == 1) || //
 				(whiteMaterial == 0 && blackNoPawnMaterial == 0 && blackPawns == 1)) {
-			return EndgameEvaluator.endgameKPK(board, whiteMaterial > blackMaterial);
+			return Endgame.endgameKPK(board, whiteMaterial > blackMaterial);
 		}
 		if (blackMaterial == 0 && (whiteBishops >= 2 || whiteRooks > 0 || whiteQueens > 0) || //
 				whiteMaterial == 0 && (whiteBishops >= 2 || blackRooks > 0 || blackQueens > 0)) {
-			return EndgameEvaluator.endgameKXK(board, whiteMaterial > blackMaterial, whiteKnights + blackKnights, whiteBishops + blackBishops, whiteRooks + blackRooks, whiteQueens + blackQueens);
+			return Endgame.endgameKXK(board, whiteMaterial > blackMaterial, whiteKnights + blackKnights, whiteBishops + blackBishops, whiteRooks + blackRooks, whiteQueens + blackQueens);
 		}
 		return Evaluator.NO_VALUE;
 	}

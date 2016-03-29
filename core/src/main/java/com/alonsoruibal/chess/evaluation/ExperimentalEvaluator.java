@@ -212,7 +212,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
 		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
 
-		int endGameValue = EndgameEvaluator.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
+		int endGameValue = Endgame.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
 		if (endGameValue != NO_VALUE) {
 			return endGameValue;
 		}
