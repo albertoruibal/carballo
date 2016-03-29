@@ -322,7 +322,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 						if (debugPawns) {
 							boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
-							debugSB.append("PAWN " + index +
+							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
 									(isWhite ? " WHITE " : " BLACK ") +
 									(isolated ? "isolated " : "") +
 									(supported ? "supported " : "") +
@@ -378,7 +378,7 @@ public class ExperimentalEvaluator extends Evaluator {
 								&& attackedAndNotDefendedRoute == 0;
 
 						if (debug) {
-							debugSB.append("PAWN " + index +
+							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
 									(isWhite ? " WHITE " : " BLACK ") +
 									"passed " +
 									(supported ? "supported " : "") +
