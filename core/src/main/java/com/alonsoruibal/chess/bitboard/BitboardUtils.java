@@ -1,12 +1,8 @@
 package com.alonsoruibal.chess.bitboard;
 
-public class BitboardUtils {
-	public static final long A8 = 0x8000000000000000L;
-	public static final long H1 = 0x0000000000000001L;
+import com.alonsoruibal.chess.Square;
 
-	public static final long BLACK_SQUARES = 0x55aa55aa55aa55aaL;
-	public static final long WHITE_SQUARES = 0xaa55aa55aa55aa55L;
-	public static final long ALL_SQUARES   = 0xffffffffffffffffL;
+public class BitboardUtils {
 
 	// Board borders
 	public static final long b_d = 0x00000000000000ffL; // down
@@ -129,7 +125,7 @@ public class BitboardUtils {
 	 * And viceversa
 	 */
 	public static long index2Square(int index) {
-		return H1 << index;
+		return Square.H1 << index;
 	}
 
 	/**
@@ -157,7 +153,7 @@ public class BitboardUtils {
 	 */
 	public static String toString(long b) {
 		StringBuilder sb = new StringBuilder();
-		long i = A8;
+		long i = Square.A8;
 		while (i != 0) {
 			sb.append(((b & i) != 0 ? "1 " : "0 "));
 			if ((i & b_r) != 0) {
@@ -237,7 +233,7 @@ public class BitboardUtils {
 	}
 
 	public static long algebraic2Square(String name) {
-		long aux = H1;
+		long aux = Square.H1;
 		for (int i = 0; i < 64; i++) {
 			if (name.equals(SQUARE_NAMES[i])) {
 				return aux;
@@ -321,15 +317,15 @@ public class BitboardUtils {
 	}
 
 	public static boolean isWhite(long square) {
-		return (square & WHITE_SQUARES) != 0;
+		return (square & Square.WHITES) != 0;
 	}
 
 	public static boolean isBlack(long square) {
-		return (square & BLACK_SQUARES) != 0;
+		return (square & Square.BLACKS) != 0;
 	}
 
 	public static long getSameColorSquares(long square) {
-		return (square & BitboardUtils.WHITE_SQUARES) != 0 ? BitboardUtils.WHITE_SQUARES : BitboardUtils.BLACK_SQUARES;
+		return (square & Square.WHITES) != 0 ? Square.WHITES : Square.BLACKS;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.bitboard;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Square;
 
 /**
  * Holds all the possible attacks for a board.
@@ -138,7 +139,7 @@ public class AttacksInfo {
 		for (index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
 				int color = (board.whites & square) != 0 ? W : B;
-				long pinnedSquares = (square & pinnedPieces) != 0 ? pinnedMobility[index] : BitboardUtils.ALL_SQUARES;
+				long pinnedSquares = (square & pinnedPieces) != 0 ? pinnedMobility[index] : Square.ALL;
 
 				pieceAttacks = 0;
 				if ((square & board.pawns) != 0) {

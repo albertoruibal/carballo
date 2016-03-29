@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.hash;
 
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Square;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /* 
@@ -61,7 +62,7 @@ public class ZobristKey {
 	public static long[] getKey(Board board) {
 		long key[] = {0, 0};
 
-		long square = BitboardUtils.H1;
+		long square = Square.H1;
 		byte index = 0;
 		int color;
 		while (square != 0) {

@@ -291,7 +291,7 @@ public class Board {
 	 */
 	public String getFen() {
 		StringBuilder sb = new StringBuilder();
-		long i = BitboardUtils.A8;
+		long i = Square.A8;
 		int j = 0;
 		while (i != 0) {
 			char p = getPieceAt(i);
@@ -362,7 +362,7 @@ public class Board {
 		int fenMoveNumber = 0;
 
 		int i = 0;
-		long j = BitboardUtils.A8;
+		long j = Square.A8;
 		String[] tokens = fen.split("[ \\t\\n\\x0B\\f\\r]+");
 		String board = tokens[0];
 
@@ -569,13 +569,13 @@ public class Board {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		int j = 8;
-		long i = BitboardUtils.A8;
+		long i = Square.A8;
 		while (i != 0) {
 			sb.append(getPieceUnicodeAt(i));
 			sb.append(" ");
 			if ((i & BitboardUtils.b_r) != 0) {
 				sb.append(j--);
-				if (i == BitboardUtils.H1) {
+				if (i == Square.H1) {
 					sb.append(" ");
 					sb.append(getFen());
 				}

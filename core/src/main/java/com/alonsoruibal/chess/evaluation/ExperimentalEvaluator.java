@@ -2,6 +2,7 @@ package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Piece;
+import com.alonsoruibal.chess.Square;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
@@ -76,14 +77,14 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
 	private static final long[] BISHOP_TRAPPING = {
-			0, 1L << 10, 0, 0, 0, 0, 1L << 13, 0,
-			1L << 17, 0, 0, 0, 0, 0, 0, 1L << 22,
-			1L << 25, 0, 0, 0, 0, 0, 0, 1L << 30,
+			0, Square.F2, 0, 0, 0, 0, Square.C2, 0,
+			Square.G3, 0, 0, 0, 0, 0, 0, Square.B3,
+			Square.G4, 0, 0, 0, 0, 0, 0, Square.B4,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			1L << 33, 0, 0, 0, 0, 0, 0, 1L << 38,
-			1L << 41, 0, 0, 0, 0, 0, 0, 1L << 46,
-			0, 1L << 50, 0, 0, 0, 0, 1L << 53, 0
+			Square.G5, 0, 0, 0, 0, 0, 0, Square.B5,
+			Square.G6, 0, 0, 0, 0, 0, 0, Square.B6,
+			0, Square.F7, 0, 0, 0, 0, Square.C7, 0
 	};
 
 	// Rooks
@@ -216,10 +217,10 @@ public class ExperimentalEvaluator extends Evaluator {
 			return endGameValue;
 		}
 
-		pcsq[W] = ((board.whites & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-				&& (board.whites & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
-		pcsq[B] = ((board.blacks & board.bishops & BitboardUtils.WHITE_SQUARES) != 0 //
-				&& (board.blacks & board.bishops & BitboardUtils.BLACK_SQUARES) != 0 ? BISHOP_PAIR : 0);
+		pcsq[W] = ((board.whites & board.bishops & Square.WHITES) != 0 //
+				&& (board.whites & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
+		pcsq[B] = ((board.blacks & board.bishops & Square.WHITES) != 0 //
+				&& (board.blacks & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
 
 		positional[W] = 0;
 		positional[B] = 0;
