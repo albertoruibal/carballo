@@ -61,7 +61,7 @@ public abstract class Evaluator {
 	 * Shift right each part by factor positions
 	 */
 	public static int oeShr(int factor, int oeValue) {
-		return (((oeValue >> (16 + factor))) << 16) | ((oeValue & 0xffff) >> factor) & 0xffff;
+		return oe(o(oeValue) >> factor, e(oeValue) >> factor);
 	}
 
 	String formatOE(int value) {
