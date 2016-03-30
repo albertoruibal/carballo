@@ -945,6 +945,7 @@ public class SearchEngine implements Runnable {
 	public void finishRun() throws SearchFinishedException {
 		// Go back the board to the initial position
 		board.undoMove(initialPly);
+		searching = false;
 
 		if (observer != null && globalBestMove != Move.NONE) {
 			observer.bestMove(globalBestMove, ponderMove);
@@ -952,7 +953,6 @@ public class SearchEngine implements Runnable {
 		if (debug) {
 			searchStats();
 		}
-		searching = false;
 		throw new SearchFinishedException();
 	}
 
