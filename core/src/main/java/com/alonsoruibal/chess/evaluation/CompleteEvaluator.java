@@ -18,10 +18,10 @@ public class CompleteEvaluator extends Evaluator {
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private static final int[][] MOBILITY = {
 			{}, {},
-			{oe(0, 0), oe(6, 8), oe(12, 16), oe(18, 24), oe(24, 32), oe(30, 40), oe(36, 48), oe(42, 56), oe(48, 64)},
-			{oe(0, 0), oe(5, 5), oe(10, 10), oe(15, 15), oe(20, 20), oe(25, 25), oe(30, 30), oe(35, 35), oe(40, 40), oe(45, 45), oe(50, 50), oe(55, 55), oe(60, 60), oe(65, 65)},
-			{oe(0, 0), oe(2, 3), oe(4, 6), oe(6, 9), oe(8, 12), oe(10, 15), oe(12, 18), oe(14, 21), oe(16, 24), oe(18, 27), oe(20, 30), oe(22, 33), oe(24, 36), oe(26, 39), oe(28, 42)},
-			{oe(0, 0), oe(2, 2), oe(4, 4), oe(6, 6), oe(8, 8), oe(10, 10), oe(12, 12), oe(14, 14), oe(16, 16), oe(18, 18), oe(20, 20), oe(22, 22), oe(24, 24), oe(26, 26), oe(28, 28), oe(30, 30), oe(32, 32), oe(34, 34), oe(36, 36), oe(38, 38), oe(40, 40), oe(42, 42), oe(44, 44), oe(46, 46), oe(48, 48), oe(50, 50), oe(52, 52), oe(54, 54)}
+			{oe(0, 0), oe(12, 16), oe(18, 24), oe(21, 28), oe(24, 32)},
+			{oe(0, 0), oe(11, 11), oe(18, 18), oe(22, 22), oe(25, 25), oe(28, 28), oe(30, 30), oe(32, 32)},
+			{oe(0, 0), oe(6, 9), oe(10, 15), oe(13, 20), oe(15, 23), oe(17, 26), oe(19, 29), oe(21, 31), oe(22, 33), oe(23, 35), oe(24, 37), oe(25, 38), oe(26, 39), oe(27, 41), oe(28, 42)},
+			{oe(0, 0), oe(7, 7), oe(12, 12), oe(16, 16), oe(20, 20), oe(23, 23), oe(26, 26), oe(28, 28), oe(30, 30), oe(33, 33), oe(34, 34), oe(36, 36), oe(38, 38), oe(39, 39), oe(41, 41), oe(42, 42), oe(43, 43), oe(44, 44), oe(46, 46), oe(47, 47), oe(48, 48), oe(49, 49), oe(50, 50), oe(51, 51), oe(52, 52), oe(52, 52), oe(53, 53), oe(54, 54)}
 	};
 
 	// Attacks
@@ -47,15 +47,15 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(1, 2); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 10), oe(11, 16), oe(17, 25), 0, 0}; // Candidates to pawn passer
-	private static final int[] PAWN_PASSER = {0, oe(10, 15), oe(10, 15), oe(14, 21), oe(22, 33), oe(34, 51), oe(50, 75), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(4, 10), oe(7, 14), oe(10, 20), 0}; // no opposite pawns at left or at right
-	private static final int[] PAWN_PASSER_CONNECTED = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(5, 10), oe(8, 14), oe(12, 20), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, oe(5, 10), oe(6, 12), oe(8, 15), oe(11, 19), oe(15, 25), 0}; // defended by pawn
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 2), oe(2, 3), oe(3, 5), oe(5, 10), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, 0, oe(5, 10), oe(10, 20), oe(20, 40), 0};
+	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 9), oe(10, 14), oe(14, 21), oe(20, 30), 0};
+	private static final int[] PAWN_PASSER = {0, oe(10, 20), oe(10, 20), oe(13, 25), oe(19, 35), oe(28, 50), oe(40, 70), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(4, 10), oe(7, 14), oe(10, 20), 0};
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(1, 2), oe(3, 5), oe(6, 9), oe(10, 15), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 1), oe(2, 3), oe(4, 6), oe(7, 10), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
 
-	private static final int[] PAWN_SHIELD = {0, oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
@@ -330,6 +330,14 @@ public class CompleteEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
+						// Pawn is part of the king shield
+						if ((pawnFile & kingZone[us]) != 0) {
+							pawnStructure[us] += PAWN_SHIELD[relativeRank];
+						}
+						// Pawn Storm
+						if ((pawnFile & kingZone[them]) != 0) {
+							pawnStructure[us] += PAWN_STORM[relativeRank];
+						}
 					} else {
 						//
 						// Passed Pawn
@@ -354,9 +362,9 @@ public class CompleteEvaluator extends Evaluator {
 							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
 									(isWhite ? " WHITE " : " BLACK ") +
 									"passed " +
-									(supported ? "supported " : "") +
-									(connected ? "connected " : "") +
 									(outside ? "outside " : "") +
+									(connected ? "connected " : "") +
+									(supported ? "supported " : "") +
 									(mobile ? "mobile " : "") +
 									(runner ? "runner " : "") +
 									"\n"
@@ -365,28 +373,19 @@ public class CompleteEvaluator extends Evaluator {
 
 						passedPawns[us] += PAWN_PASSER[relativeRank];
 
+						if (outside) {
+							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
+						}
 						if (supported) {
 							passedPawns[us] += PAWN_PASSER_SUPPORTED[relativeRank];
 						} else if (connected) {
 							passedPawns[us] += PAWN_PASSER_CONNECTED[relativeRank];
 						}
-						if (outside) {
-							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
-						}
-						if (mobile) {
-							passedPawns[us] += PAWN_PASSER_MOBILE[relativeRank];
-						}
 						if (runner) {
 							passedPawns[us] += PAWN_PASSER_RUNNER[relativeRank];
+						} else if (mobile) {
+							passedPawns[us] += PAWN_PASSER_MOBILE[relativeRank];
 						}
-					}
-					// Pawn is part of the king shield
-					if ((pawnFile & kingZone[us]) != 0) {
-						pawnStructure[us] += PAWN_SHIELD[relativeRank];
-					}
-					// Pawn Storm
-					if ((pawnFile & kingZone[them]) != 0) {
-						pawnStructure[us] += PAWN_STORM[relativeRank];
 					}
 
 				} else if ((square & board.knights) != 0) {
