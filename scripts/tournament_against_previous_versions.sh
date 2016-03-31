@@ -13,7 +13,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 cd "$SCRIPTPATH/../jse/"
 
 CUTECHESS=/usr/local/cutechess-cli/cutechess-cli.sh
-COMMON="-each proto=uci tc=5+0.1 -concurrency 1 -draw movenumber=100 movecount=50 score=20 -resign movecount=5 score=900 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20"
+COMMON="-each proto=uci option.Hash=256 tc=5+0.1 -concurrency 1 -draw movenumber=100 movecount=50 score=20 -resign movecount=5 score=900 -openings file=src/test/resources/NoomenTestsuite2012.pgn -repeat -games 60 -rounds 20"
 
 chmod +x *.jar
 
