@@ -214,7 +214,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 		StringBuilder buffer = new StringBuilder();
 		int line = 0;
 		for (int i = 0; i < board.getMoveNumber(); i++) {
-			String move = board.getSanMove(i);
+			String move = Move.sanToFigurines(board.getSanMove(i));
 			if (move != null) {
 				if (board.getMoveTurn(i)) {// If turn is white
 					if (buffer.length() != 0) {
