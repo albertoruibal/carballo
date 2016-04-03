@@ -52,8 +52,8 @@ public class SearchEngine implements Runnable {
 
 	private SearchParameters searchParameters;
 
-	private boolean searching = false;
-	private boolean foundOneMove;
+	protected boolean initialized = false;
+	protected boolean searching = false;
 
 	private Config config;
 
@@ -121,8 +121,6 @@ public class SearchEngine implements Runnable {
 	private static long ttUBHit = 0;
 	private static long ttEvalHit = 0;
 	private static long ttEvalProbe = 0;
-
-	private boolean initialized;
 
 	private Random random;
 
@@ -429,8 +427,8 @@ public class SearchEngine implements Runnable {
 	 * Search Root, PV and null window
 	 */
 	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws SearchFinishedException {
-		if (nodeType != NODE_ROOT && foundOneMove && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
-			finishRun();
+		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
+			throw new SearchFinishedException();
 		}
 
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
@@ -717,7 +715,6 @@ public class SearchEngine implements Runnable {
 				if (nodeType == NODE_ROOT) {
 					globalBestMove = move;
 					bestMoveScore = score;
-					foundOneMove = true;
 
 					if (depthRemaining > 6 * PLY) {
 						notifyMoveFound(move, score, alpha, beta);
@@ -791,16 +788,10 @@ public class SearchEngine implements Runnable {
 	 * It searches for the best movement
 	 */
 	public void go(SearchParameters searchParameters) {
-		if (!initialized) {
-			return;
-		}
-		if (!searching) {
-			this.searchParameters = searchParameters;
-			try {
-				prepareRun();
-				run();
-			} catch (SearchFinishedException e) {
-			}
+		if (initialized && !searching) {
+			searching = true;
+			setSearchParameters(searchParameters);
+			run();
 		}
 	}
 
@@ -841,14 +832,11 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
-	public void prepareRun() throws SearchFinishedException {
+	private void prepareRun() throws SearchFinishedException {
 		startTime = System.currentTimeMillis();
 		setSearchLimits(searchParameters, false);
 		panicTime = false;
 		engineIsWhite = board.getTurn();
-
-		foundOneMove = false;
-		searching = true;
 
 		logger.debug("Board\n" + board);
 
@@ -864,10 +852,10 @@ public class SearchEngine implements Runnable {
 				&& (config.getBookKnowledge() == 100 || ((random.nextFloat() * 100) < config.getBookKnowledge()))) {
 			logger.debug("Searching move in book");
 			int bookMove = config.getBook().getMove(board);
-			if (bookMove != 0) {
+			if (bookMove != Move.NONE) {
 				globalBestMove = bookMove;
 				logger.debug("Move found in book");
-				finishRun();
+				throw new SearchFinishedException();
 			} else {
 				logger.debug("Move NOT found in book");
 				board.setOutBookMove(board.getMoveNumber());
@@ -931,21 +919,14 @@ public class SearchEngine implements Runnable {
 				|| depth == MAX_DEPTH
 				|| depth >= thinkToDepth
 				|| Math.abs(rootScore) == Evaluator.MATE) { // Search limit reached
-			finishRun();
+			throw new SearchFinishedException();
 		}
 		depth++;
 	}
 
-	public void setSearchLimits(SearchParameters searchParameters, boolean panicTime) {
-		thinkToNodes = searchParameters.getNodes();
-		thinkToDepth = searchParameters.getDepth();
-		thinkToTime = searchParameters.calculateMoveTime(engineIsWhite, startTime, panicTime);
-	}
-
-	public void finishRun() throws SearchFinishedException {
+	private void finishRun() {
 		// Go back the board to the initial position
 		board.undoMove(initialPly);
-		searching = false;
 
 		if (observer != null && globalBestMove != Move.NONE) {
 			observer.bestMove(globalBestMove, ponderMove);
@@ -953,16 +934,24 @@ public class SearchEngine implements Runnable {
 		if (debug) {
 			searchStats();
 		}
-		throw new SearchFinishedException();
 	}
 
 	public void run() {
 		try {
+			prepareRun();
 			while (true) {
 				runStepped();
 			}
 		} catch (SearchFinishedException ignored) {
 		}
+		finishRun();
+		searching = false;
+	}
+
+	public void setSearchLimits(SearchParameters searchParameters, boolean panicTime) {
+		thinkToNodes = searchParameters.getNodes();
+		thinkToDepth = searchParameters.getDepth();
+		thinkToTime = searchParameters.calculateMoveTime(engineIsWhite, startTime, panicTime);
 	}
 
 	/**

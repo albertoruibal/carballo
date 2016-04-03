@@ -13,16 +13,12 @@ public class SearchEngineThreaded extends SearchEngine {
 	/**
 	 * Threaded version
 	 */
-	public void go(SearchParameters searchParameteres) {
-		if (!isInitialized()) return;
-		if (!isSearching()) {
-			setSearchParameters(searchParameteres);
-			try {
-				prepareRun();
-				thread = new Thread(this);
-				thread.start();
-			} catch (SearchFinishedException ignored) {
-			}
+	public void go(SearchParameters searchParameters) {
+		if (initialized && !searching) {
+			searching = true;
+			setSearchParameters(searchParameters);
+			thread = new Thread(this);
+			thread.start();
 		}
 	}
 
@@ -31,7 +27,7 @@ public class SearchEngineThreaded extends SearchEngine {
 	 */
 	public void stop() {
 		super.stop();
-		while (isSearching()) {
+		while (searching) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
