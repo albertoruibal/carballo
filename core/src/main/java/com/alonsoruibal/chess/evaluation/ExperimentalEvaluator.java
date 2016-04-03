@@ -60,7 +60,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	// Knights
 	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
-	private static final int[] KNIGHT_OUTPOST_ATTACKS_NK_PU = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
+	private static final int[] KNIGHT_OUTPOST_ATTACKING = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
@@ -73,7 +73,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	// Bishops
 	private static final int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int BISHOP_OUTPOST_ATT_NK_PU = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
+	private static final int BISHOP_OUTPOST_ATTACKING = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
 	private static final long[] BISHOP_TRAPPING = {
@@ -89,20 +89,14 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	// Rooks
 	private static final int ROOK_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int ROOK_OUTPOST_ATT_NK_PU = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
+	private static final int ROOK_OUTPOST_ATTACKING = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
 	private static final int ROOK_FILE_OPEN_NO_MG = oe(20, 10); // No pawns in rook file and no minor guarded
 	private static final int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
 	private static final int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
 	private static final int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
 	private static final int ROOK_FILE_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
 	private static final int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
-	private static final int ROOK_8_KING_8 = oe(5, 10); // Rook in 8th rank and opposite king in 8th rank
-	private static final int ROOK_7_KP_78 = oe(10, 30); // Rook in 7th rank and opposite king or pawn in 7/8th rank
-	private static final int ROOK_6_KP_678 = oe(5, 15); // Rook in 6th rank and opposite king or pawns in 6/7/8th
-
-	// Queen
-	private static final int QUEEN_7_KP_78 = oe(5, 25); // Queen in 7th rank and opposite king/pawn in 7/8th rank
-	private static final int QUEEN_7_P_78_K_8_R_7 = oe(10, 15); // Queen in 7th my rook in 7th defending queen and opposite king in 8th
+	private static final int ROOK_7 = oe(15, 20); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 
 	// King
 	// Sums for each piece attacking an square near the king
@@ -437,7 +431,7 @@ public class ExperimentalEvaluator extends Evaluator {
 							positional[us] += KNIGHT_OUTPOST;
 							// Attacks squares near king or other pieces pawn undefended
 							if ((safeAttacks & (kingZone[them] | others)) != 0) {
-								positional[us] += KNIGHT_OUTPOST_ATTACKS_NK_PU[pcsqIndex];
+								positional[us] += KNIGHT_OUTPOST_ATTACKING[pcsqIndex];
 							}
 						}
 					}
@@ -465,7 +459,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						positional[us] += BISHOP_OUTPOST;
 						// Attacks squares near king or other pieces pawn undefended
 						if ((safeAttacks & (kingZone[them] | others)) != 0) {
-							positional[us] += BISHOP_OUTPOST_ATT_NK_PU;
+							positional[us] += BISHOP_OUTPOST_ATTACKING;
 						}
 					}
 
@@ -493,21 +487,21 @@ public class ExperimentalEvaluator extends Evaluator {
 						attacks[us] += PINNED_PIECE;
 					}
 
-					long rank6 = isWhite ? BitboardUtils.RANK[5] : BitboardUtils.RANK[2];
-					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[1];
-					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0];
+					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
+					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
+						positional[us] += ROOK_OUTPOST;
+						// Attacks squares near king or other pieces pawn undefended
+						if ((safeAttacks & (kingZone[them] | others)) != 0) {
+							positional[us] += ROOK_OUTPOST_ATTACKING;
+						}
+					}
 
-					if ((square & rank8) != 0
-							&& (others & board.kings & rank8) != 0) {
-						positional[us] += ROOK_8_KING_8;
-					}
-					if ((square & rank7) != 0
-							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
-						positional[us] += ROOK_7_KP_78;
-					}
-					if ((square & rank6) != 0
-							&& (others & (board.kings | board.pawns) & (rank6 | rank7 | rank8)) != 0) {
-						positional[us] += ROOK_6_KP_678;
+					int relativeRank = isWhite ? rank : 7 - rank;
+					if (relativeRank >= 4) {
+						long pawnsAttacked = pieceAttacks & BitboardUtils.RANK[rank] & board.pawns & others & ~ai.pawnAttacks[them];
+						if (pawnsAttacked != 0) {
+							positional[us] += ROOK_7 * BitboardUtils.popCount(pawnsAttacked);
+						}
 					}
 
 					long rookFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_FORWARD[us][rank];
@@ -529,14 +523,6 @@ public class ExperimentalEvaluator extends Evaluator {
 							positional[us] += ROOK_FILE_SEMIOPEN_K;
 						}
 					}
-					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
-					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
-						positional[us] += ROOK_OUTPOST;
-						// Attacks squares near king or other pieces pawn undefended
-						if ((safeAttacks & (kingZone[them] | others)) != 0) {
-							positional[us] += ROOK_OUTPOST_ATT_NK_PU;
-						}
-					}
 
 				} else if ((square & board.queens) != 0) {
 					pcsq[us] += queenPcsq[pcsqIndex];
@@ -556,18 +542,6 @@ public class ExperimentalEvaluator extends Evaluator {
 							& ~pieceAttacks;
 					if ((pieceAttacksXray & board.kings & others) != 0) {
 						attacks[us] += PINNED_PIECE;
-					}
-
-					long rank7 = isWhite ? BitboardUtils.RANK[6] : BitboardUtils.RANK[1];
-					long rank8 = isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0];
-
-					if ((square & rank7) != 0
-							&& (others & (board.kings | board.pawns) & (rank7 | rank8)) != 0) {
-						positional[us] += QUEEN_7_KP_78;
-						if ((pieceAttacks & board.rooks & mines & rank7) != 0
-								&& (board.kings & others & rank8) != 0) {
-							positional[us] += QUEEN_7_P_78_K_8_R_7;
-						}
 					}
 
 				} else if ((square & board.kings) != 0) {

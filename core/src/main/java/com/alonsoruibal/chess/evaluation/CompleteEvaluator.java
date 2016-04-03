@@ -78,12 +78,8 @@ public class CompleteEvaluator extends Evaluator {
 
 	// Rooks
 	private static final int[] ROOK_OUTPOST = {oe(2, 3), oe(4, 6)}; // Array is Not defended by pawn, defended by pawn
-	private static final int ROOK_FILE_OPEN = oe(10, 10); // No pawns in rook file
-	private static final int ROOK_FILE_SEMIOPEN = oe(7, 5); // Only opposite pawns in rook file
-	private static final int ROOK_7 = oe(10, 20); // Rook 5, 6, 7th rank and pawn in the same file
-
-	// Queen
-	private static final int QUEEN_7 = oe(5, 10); // Queen in 5, 6, 7th rank and pawn in the same file
+	private static final int[] ROOK_FILE = {oe(10, 10), oe(7, 5)} ; // Open / Semi open
+	private static final int ROOK_7 = oe(15, 20); // Rook on 5, 6, 7th rank attacking a pawn in the same rank not defended by pawn
 
 	// King
 	// Sums for each piece attacking an square near the king
@@ -448,16 +444,16 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 					long rookFile = BitboardUtils.FILE[file];
-					if ((rookFile & board.pawns) == 0) {
-						positional[us] += ROOK_FILE_OPEN;
-					} else if ((rookFile & board.pawns & mines) == 0) {
-						positional[us] += ROOK_FILE_SEMIOPEN;
+					if ((rookFile & board.pawns & mines) == 0) {
+						positional[us] += ROOK_FILE[(rookFile & board.pawns) == 0 ? 0 : 1];
 					}
 
-					long ranks567 = isWhite ? BitboardUtils.RANK[4] | BitboardUtils.RANK[5] | BitboardUtils.RANK[6] :
-							BitboardUtils.RANK[1] | BitboardUtils.RANK[2] | BitboardUtils.RANK[3];
-					if ((square & ranks567) != 0 && (BitboardUtils.RANK[rank] & board.pawns & others) != 0) {
-						positional[us] += ROOK_7;
+					int relativeRank = isWhite ? rank : 7 - rank;
+					if (relativeRank >= 4) {
+						long pawnsAttacked = pieceAttacks & BitboardUtils.RANK[rank] & board.pawns & others & ~ai.pawnAttacks[them];
+						if (pawnsAttacked != 0) {
+							positional[us] += ROOK_7 * BitboardUtils.popCount(pawnsAttacked);
+						}
 					}
 
 				} else if ((square & board.queens) != 0) {
@@ -471,12 +467,6 @@ public class CompleteEvaluator extends Evaluator {
 					if (kingAttacks != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * BitboardUtils.popCount(kingAttacks);
 						kingAttackersCount[us]++;
-					}
-
-					long ranks567 = isWhite ? BitboardUtils.RANK[4] | BitboardUtils.RANK[5] | BitboardUtils.RANK[6] :
-							BitboardUtils.RANK[1] | BitboardUtils.RANK[2] | BitboardUtils.RANK[3];
-					if ((square & ranks567) != 0 && (BitboardUtils.RANK[rank] & board.pawns & others) != 0) {
-						positional[us] += QUEEN_7;
 					}
 
 				} else if ((square & board.kings) != 0) {
