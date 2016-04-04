@@ -205,6 +205,7 @@ public class Uci implements SearchObserver {
 	public void info(SearchStatusInfo info) {
 		System.out.print("info ");
 		System.out.println(info.toString());
+		System.out.flush();
 	}
 
 	public static void main(String args[]) {
