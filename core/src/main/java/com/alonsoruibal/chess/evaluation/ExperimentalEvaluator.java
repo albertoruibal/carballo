@@ -73,7 +73,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	// Bishops
 	private static final int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int BISHOP_OUTPOST_ATTACKING = oe(3, 4); // attacks squares Near King or other opposite pieces Pawn Undefended
+	private static final int BISHOP_OUTPOST_ATTACKING = oe(3, 4); // And attacks other piece not defended by pawn or a square in the king zone
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
 	private static final long[] BISHOP_TRAPPING = {
@@ -183,7 +183,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	private int[] pawnStructure = {0, 0};
 	private int[] passedPawns = {0, 0};
 	private long[] pawnCanAttack = {0, 0};
-	private long[] minorPiecesDefendedByPawns = {0, 0};
 	private long[] mobilitySquares = {0, 0};
 	private long[] kingZone = {0, 0}; // Squares surrounding King
 
@@ -255,9 +254,6 @@ public class ExperimentalEvaluator extends Evaluator {
 		// Calculate attacks
 		attacks[W] = evalAttacks(board, ai, W, board.blacks);
 		attacks[B] = evalAttacks(board, ai, B, board.whites);
-
-		minorPiecesDefendedByPawns[W] = board.whites & (board.bishops | board.knights) & ai.pawnAttacks[W];
-		minorPiecesDefendedByPawns[B] = board.blacks & (board.bishops | board.knights) & ai.pawnAttacks[B];
 
 		// Squares surrounding King and three squares towards thew other side
 		kingZone[W] = bbAttacks.king[ai.kingIndex[W]];
@@ -508,10 +504,11 @@ public class ExperimentalEvaluator extends Evaluator {
 					if ((rookFile & board.pawns & mines) == 0) {
 						positional[us] += ROOK_FILE_SEMIOPEN;
 						if ((rookFile & board.pawns) == 0) {
-							if ((rookFile & minorPiecesDefendedByPawns[them]) == 0) {
+							long minorPiecesDefendedByPawns = others & (board.bishops | board.knights) & ai.pawnAttacks[them];
+							if ((rookFile & minorPiecesDefendedByPawns) == 0) {
 								positional[us] += ROOK_FILE_OPEN_NO_MG;
 							} else {
-								if ((rookFile & minorPiecesDefendedByPawns[them] & pawnCanAttack[us]) == 0) {
+								if ((rookFile & minorPiecesDefendedByPawns & pawnCanAttack[us]) == 0) {
 									positional[us] += ROOK_FILE_OPEN_MG_NP;
 								} else {
 									positional[us] += ROOK_FILE_OPEN_MG_P;
