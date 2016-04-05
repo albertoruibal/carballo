@@ -3,7 +3,6 @@ package com.alonsoruibal.chess.search;
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
@@ -314,11 +313,12 @@ public class SearchEngine implements Runnable {
 		}
 
 		boolean isPv = beta - alpha > 1;
+		boolean checkEvasion = board.getCheck();
 		int ttMove = Move.NONE;
 		// Generate checks on PLY 0
 		boolean generateChecks = (qsdepth == 0);
 		// If we generate check, the entry in the TT has depthAnalyzed=1, because is better than without checks (depthAnalyzed=0)
-		int ttDepth = generateChecks ? TranspositionTable.DEPTH_QS_CHECKS : TranspositionTable.DEPTH_QS_NO_CHECKS;
+		int ttDepth = generateChecks || checkEvasion ? TranspositionTable.DEPTH_QS_CHECKS : TranspositionTable.DEPTH_QS_NO_CHECKS;
 
 		ttProbe++;
 		boolean foundTT = tt.search(board, distanceToInitialPly, false);
@@ -336,7 +336,7 @@ public class SearchEngine implements Runnable {
 		int futilityBase = -Evaluator.MATE;
 
 		// Do not allow stand pat when in check
-		if (!board.getCheck()) {
+		if (!checkEvasion) {
 			staticEval = evaluate(foundTT, distanceToInitialPly);
 			eval = refineEval(foundTT, staticEval);
 
@@ -354,7 +354,7 @@ public class SearchEngine implements Runnable {
 
 		// If we have more depths than possible...
 		if (distanceToInitialPly >= MAX_DEPTH - 1) {
-			return board.getCheck() ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
+			return checkEvasion ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
 		}
 
 		boolean validOperations = false;
@@ -396,7 +396,7 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		if (board.getCheck() && !validOperations) {
+		if (checkEvasion && !validOperations) {
 			return valueMatedIn(distanceToInitialPly);
 		}
 		tt.save(board, distanceToInitialPly, ttDepth, bestMove, bestScore, alpha, beta, staticEval, false);
@@ -454,13 +454,14 @@ public class SearchEngine implements Runnable {
 			ttDepthAnalyzed = tt.getDepthAnalyzed();
 		}
 
+		boolean checkEvasion = board.getCheck();
 		boolean mateThreat = false;
 		boolean futilityPrune = false;
 		int futilityValue = -Evaluator.MATE;
 		int staticEval = -Evaluator.MATE;
 		int eval = -Evaluator.MATE;
 
-		if (!board.getCheck()) {
+		if (!checkEvasion) {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == Move.NONE || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = evaluate(evalTT, distanceToInitialPly);
@@ -469,10 +470,10 @@ public class SearchEngine implements Runnable {
 
 		// If we have more depths than possible...
 		if (distanceToInitialPly >= MAX_DEPTH - 1) {
-			return board.getCheck() ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
+			return checkEvasion ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
 		}
 
-		if (!board.getCheck()) {
+		if (!checkEvasion) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
 					&& ttMove == 0 //
@@ -711,7 +712,11 @@ public class SearchEngine implements Runnable {
 
 		// Checkmate or stalemate
 		if (excludedMove == Move.NONE && !validOperations) {
-			bestScore = evaluateEndgame(distanceToInitialPly);
+			if (checkEvasion) {
+				bestScore = valueMatedIn(distanceToInitialPly);
+			} else {
+				bestScore = evaluateDraw(distanceToInitialPly);
+			}
 		}
 		// Fix score for excluded moves
 		if (bestScore == -Evaluator.MATE) {
@@ -980,17 +985,6 @@ public class SearchEngine implements Runnable {
 		thinkToTime = 0;
 		thinkToNodes = 0;
 		thinkToDepth = 0;
-	}
-
-	/**
-	 * Is better to end before. Not necessary to change sign
-	 */
-	public int evaluateEndgame(int distanceToInitialPly) {
-		if (board.getCheck()) {
-			return valueMatedIn(distanceToInitialPly);
-		} else {
-			return evaluateDraw(distanceToInitialPly);
-		}
 	}
 
 	public int evaluateDraw(int distanceToInitialPly) {
