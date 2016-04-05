@@ -20,6 +20,7 @@ public abstract class Evaluator {
 	public static final int BISHOP = 325;
 	public static final int ROOK = 500;
 	public static final int QUEEN = 975;
+	public static final int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN};
 	public static final int BISHOP_PAIR = Evaluator.oe(50, 50); // Bonus by having two bishops in different colors
 	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
 	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;

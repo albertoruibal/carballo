@@ -45,7 +45,7 @@ public class SearchEngine implements Runnable {
 	private static final int IID_MARGIN = 300;
 	private static final int SINGULAR_EXTENSION_MARGIN = 50;
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
-	private static final int FUTILITY_MARGIN_QS = 80;
+	private static final int FUTILITY_MARGIN_QS = 50;
 	private static final int FUTILITY_MARGIN = 100;
 	private static final int FUTILITY_MARGIN_AGGRESSIVE = 150;
 	private static final int RAZORING_MARGIN = 325;
@@ -315,8 +315,8 @@ public class SearchEngine implements Runnable {
 
 		boolean isPv = beta - alpha > 1;
 		int ttMove = Move.NONE;
-		// Generate checks for PV on PLY 0
-		boolean generateChecks = isPv && (qsdepth == 0);
+		// Generate checks on PLY 0
+		boolean generateChecks = (qsdepth == 0);
 		// If we generate check, the entry in the TT has depthAnalyzed=1, because is better than without checks (depthAnalyzed=0)
 		int ttDepth = generateChecks ? TranspositionTable.DEPTH_QS_CHECKS : TranspositionTable.DEPTH_QS_NO_CHECKS;
 
@@ -369,33 +369,14 @@ public class SearchEngine implements Runnable {
 			// Futility pruning
 			if (!moveIterator.checkEvasion //
 					&& !Move.isCheck(move) //
-					&& !isPv //
-					&& move != ttMove //
 					&& !Move.isPawnPush678(move) //
 					&& futilityBase > -Evaluator.KNOWN_WIN) {
-				int futilityValue = futilityBase;
-				switch (Move.getPieceCaptured(board, move)) {
-					case Piece.PAWN:
-						futilityValue += Evaluator.PAWN;
-						break;
-					case Piece.KNIGHT:
-						futilityValue += Evaluator.KNIGHT;
-						break;
-					case Piece.BISHOP:
-						futilityValue += Evaluator.BISHOP;
-						break;
-					case Piece.ROOK:
-						futilityValue += Evaluator.ROOK;
-						break;
-					case Piece.QUEEN:
-						futilityValue += Evaluator.QUEEN;
-						break;
-				}
-				if (futilityValue < beta) {
+				int futilityValue = futilityBase + Evaluator.PIECE_VALUES[Move.getPieceCaptured(board, move)];
+				if (futilityValue <= alpha) {
 					bestScore = Math.max(bestScore, futilityValue);
 					continue;
 				}
-				if (futilityBase < beta && moveIterator.getLastMoveSee() <= 0) {
+				if (futilityBase <= alpha && moveIterator.getLastMoveSee() <= 0) {
 					bestScore = Math.max(bestScore, futilityBase);
 					continue;
 				}
