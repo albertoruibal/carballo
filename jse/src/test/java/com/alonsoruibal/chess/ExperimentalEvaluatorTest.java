@@ -28,22 +28,16 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testEvaluatorSimmetry1() {
-		String fen = "r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0";
 		Board board = new Board();
-		board.setFen(fen);
-		int value = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value = " + value);
-		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), value);
+		board.setFen("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0");
+		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
 	}
 
 	@Test
 	public void testEvaluatorSimmetry2() {
-		String fen = "7k/7p/6p1/3kp3/3PK3/1P6/P7/K7 w - - 0 0";
 		Board board = new Board();
-		board.setFen(fen);
-		int value = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value = " + value);
-		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), value);
+		board.setFen("7k/7p/6p1/3kp3/3PK3/1P6/P7/K7 w - - 0 0");
+		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
 	}
 
 	@Test
@@ -152,32 +146,23 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testPassedPawn1() {
-		String fen = "7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0";
 		Board board = new Board();
-		board.setFen(fen);
-		int value = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value = " + value);
-		assertTrue(value > 0);
+		board.setFen("7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
 	@Test
 	public void testKnightTrapped() {
-		String fen = "NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0";
 		Board board = new Board();
-		board.setFen(fen);
-		int value = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value = " + value);
-		assertTrue(value > 0);
+		board.setFen("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
 	@Test
 	public void testKingSafety() {
-		String fen = "r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0";
 		Board board = new Board();
-		board.setFen(fen);
-		int value = evaluator.evaluate(board, attacksInfo);
-		System.out.println("value = " + value);
-		assertTrue(value > 0);
+		board.setFen("r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
 	// Compares the eval of two fens
