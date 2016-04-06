@@ -19,8 +19,8 @@ import java.util.Arrays;
 public class TranspositionTable {
 	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
 
-	public static final int DEPTH_QS_CHECKS = 1;
-	public static final int DEPTH_QS_NO_CHECKS = 0;
+	public static final int DEPTH_QS_CHECKS = 0;
+	public static final int DEPTH_QS_NO_CHECKS = -1;
 
 	public static final int TYPE_EVAL = 0;
 	public static final int TYPE_EXACT_SCORE = 1;
@@ -95,7 +95,8 @@ public class TranspositionTable {
 	}
 
 	public int getDepthAnalyzed() {
-		return (int) (info >>> 40) & 0xff;
+		int depthAnalyzed = (int) (info >>> 40) & 0xff;
+		return depthAnalyzed == 0xff ? -1 : depthAnalyzed;
 	}
 
 	public int getScore() {
@@ -157,9 +158,9 @@ public class TranspositionTable {
 			}
 
 			// Calculates a value with this TT entry importance
-			int entryImportance = (getNodeType() == TYPE_EXACT_SCORE ? 10 : 0) + // Bonus for the PV entries
-					255 - getGenerationDelta() + // The older the generation, the less importance
-					getDepthAnalyzed(); // The more depth, the more importance
+			int entryImportance = (getNodeType() == TYPE_EXACT_SCORE ? 10 : 0) // Bonus for the PV entries
+					- getGenerationDelta() // The older the generation, the less importance
+					+ getDepthAnalyzed(); // The more depth, the more importance
 
 			// We will replace the less important entry
 			if (entryImportance < replaceImportance) {
