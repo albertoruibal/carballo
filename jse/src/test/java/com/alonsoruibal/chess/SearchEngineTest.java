@@ -78,7 +78,7 @@ public class SearchEngineTest {
 		SearchEngine search = new SearchEngine(new Config());
 		search.getBoard().setFen(Board.FEN_START_POSITION);
 		SearchParameters sp = new SearchParameters();
-		sp.setDepth(11);
+		sp.setDepth(14);
 		search.go(sp);
 		assertEquals(Move.getFromString(search.getBoard(), "e2e4", true), search.getBestMove());
 	}
