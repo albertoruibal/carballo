@@ -41,6 +41,7 @@ public class SearchEngine implements Runnable {
 	private static final int[] SINGULAR_MOVE_DEPTH = {6 * PLY, 6 * PLY, 8 * PLY}; // By node type
 	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
 
+	public static final int CONTEMPT_FACTOR = 90; // >0 refuses draw <0 looks for draw
 	private static final int IID_MARGIN = 300;
 	private static final int SINGULAR_EXTENSION_MARGIN = 50;
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
@@ -140,8 +141,8 @@ public class SearchEngine implements Runnable {
 
 		// Init our reduction lookup tables
 		reductionMatrix = new int[2][64][64];
-		final double[] REDUCTION_COEFS1 = { 0.5, 0.5 };
-		final double[] REDUCTION_COEFS2 = { 3.0, 6.0 };
+		final double[] REDUCTION_COEFS1 = {0.5, 0.5};
+		final double[] REDUCTION_COEFS2 = {3.0, 6.0};
 		for (int pv = 0; pv < 2; pv++) {
 			for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
 				for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
@@ -985,7 +986,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int evaluateDraw(int distanceToInitialPly) {
-		return (distanceToInitialPly & 1) == 0 ? -config.getContemptFactor() : config.getContemptFactor();
+		return (distanceToInitialPly & 1) == 0 ? -CONTEMPT_FACTOR : CONTEMPT_FACTOR;
 	}
 
 	private int valueMatedIn(int distanceToInitialPly) {

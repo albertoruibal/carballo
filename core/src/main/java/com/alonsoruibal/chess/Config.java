@@ -16,9 +16,6 @@ public class Config {
 	public static final int DEFAULT_BOOK_KNOWGLEDGE = 100;
 	public static final String DEFAULT_EVALUATOR = "experimental";
 
-	// >0 refuses draw <0 looks for draw
-	public static final int DEFAULT_CONTEMPT_FACTOR = 90;
-
 	public static final int DEFAULT_RAND = 0;
 	public static final int DEFAULT_ELO = 2100;
 	public static final boolean DEFAULT_UCI_CHESS960 = false;
@@ -29,7 +26,6 @@ public class Config {
 	private Book book;
 	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
 	private String evaluator = DEFAULT_EVALUATOR;
-	private int contemptFactor = DEFAULT_CONTEMPT_FACTOR;
 
 	private int rand = DEFAULT_RAND;
 	private boolean uciChess960 = DEFAULT_UCI_CHESS960;
@@ -80,14 +76,6 @@ public class Config {
 
 	public void setTranspositionTableSize(int transpositionTableSize) {
 		this.transpositionTableSize = transpositionTableSize;
-	}
-
-	public int getContemptFactor() {
-		return contemptFactor;
-	}
-
-	public void setContemptFactor(int contemptFactor) {
-		this.contemptFactor = contemptFactor;
 	}
 
 	public int getRand() {

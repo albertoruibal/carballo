@@ -24,6 +24,6 @@ public class ContemptFactorTest {
 		searchEngine.getBoard().setFen("7k/7p/5P1K/8/8/8/8/8 w");
 		searchEngine.go(SearchParameters.get(1000));
 		searchEngine.getBoard().doMove(searchEngine.getBestMove());
-		assertEquals(-Config.DEFAULT_CONTEMPT_FACTOR, searchEngine.getBestMoveScore());
+		assertEquals(-SearchEngine.CONTEMPT_FACTOR, searchEngine.getBestMoveScore());
 	}
 }

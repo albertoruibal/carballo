@@ -27,7 +27,7 @@ public class EndgameSearchTest {
 		searchParams = new SearchParameters();
 		searchParams.setDepth(10);
 		search.go(searchParams);
-		assertEquals("Black moves and draws", search.getBestMoveScore(), -Config.DEFAULT_CONTEMPT_FACTOR);
+		assertEquals("Black moves and draws", search.getBestMoveScore(), -SearchEngine.CONTEMPT_FACTOR);
 	}
 
 	@Test
