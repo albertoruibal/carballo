@@ -18,7 +18,7 @@ public class TranspositionTableTest {
 		int nodeType = TranspositionTable.TYPE_EXACT_SCORE;
 		int bestMove = Move.getFromString(b, "e2e4", true);
 		int score = -100;
-		byte depthAnalyzed = 10;
+		int depthAnalyzed = -1;
 		short eval = 456;
 		tt.set(b, nodeType, bestMove, score, depthAnalyzed, eval, false);
 		tt.search(b, 0, false);
