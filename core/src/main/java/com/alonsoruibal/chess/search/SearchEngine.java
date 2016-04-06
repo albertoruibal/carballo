@@ -123,7 +123,7 @@ public class SearchEngine implements Runnable {
 
 	private Random random;
 
-	private int[][] pvReductionMatrix, nonPvReductionMatrix;
+	private int[][][] reductionMatrix;
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -138,15 +138,16 @@ public class SearchEngine implements Runnable {
 			moveIterators[i] = new MoveIterator(board, attacksInfos[i], sortInfo, i);
 		}
 
-		pvReductionMatrix = new int[64][64];
-		nonPvReductionMatrix = new int[64][64];
 		// Init our reduction lookup tables
-		for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
-			for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
-				double pvRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 6.0;
-				double nonPVRed = 0.5 + Math.log(depthRemaining) * Math.log(moveNumber) / 3.0;
-				pvReductionMatrix[depthRemaining][moveNumber] = (int) (pvRed >= 1.0 ? Math.floor(pvRed * PLY) : 0);
-				nonPvReductionMatrix[depthRemaining][moveNumber] = (int) (nonPVRed >= 1.0 ? Math.floor(nonPVRed * PLY) : 0);
+		reductionMatrix = new int[2][64][64];
+		final double[] REDUCTION_COEFS1 = { 0.5, 0.5 };
+		final double[] REDUCTION_COEFS2 = { 3.0, 6.0 };
+		for (int pv = 0; pv < 2; pv++) {
+			for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
+				for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
+					double reduction = REDUCTION_COEFS1[pv] + Math.log(depthRemaining) * Math.log(moveNumber) / REDUCTION_COEFS2[pv];
+					reductionMatrix[pv][depthRemaining][moveNumber] = reduction >= 1.0 ? (int) Math.floor(reduction * PLY) : 0;
+				}
 			}
 		}
 
@@ -199,10 +200,8 @@ public class SearchEngine implements Runnable {
 		System.gc();
 	}
 
-	private int getReduction(int nodeType, int depth, int movecount) {
-		return nodeType == NODE_PV || nodeType == NODE_ROOT ? //
-				pvReductionMatrix[Math.min(depth >> 1 /* Because PLY = 2 */, 63)][Math.min(movecount, 63)] : //
-				nonPvReductionMatrix[Math.min(depth >> 1 /* Because PLY = 2*/, 63)][Math.min(movecount, 63)];
+	private int getReduction(int nodeType, int depthRemaining, int movecount) {
+		return reductionMatrix[nodeType == NODE_PV || nodeType == NODE_ROOT ? 1 : 0][Math.min(depthRemaining / PLY, 63)][Math.min(movecount, 63)];
 	}
 
 	public void setObserver(SearchObserver observer) {
@@ -244,7 +243,7 @@ public class SearchEngine implements Runnable {
 	 * Returns true if we can use the value stored on the TT to return from search
 	 */
 	private boolean canUseTT(int depthRemaining, int alpha, int beta) {
-		if (tt.getDepthAnalyzed() >= depthRemaining && tt.isMyGeneration()) {
+		if (tt.getDepthAnalyzed() >= depthRemaining) {
 			switch (tt.getNodeType()) {
 				case TranspositionTable.TYPE_EXACT_SCORE:
 					ttPvHit++;
@@ -518,7 +517,7 @@ public class SearchEngine implements Runnable {
 
 				nullMoveProbe++;
 
-				int R = 3 * PLY + (depthRemaining >>> 2);
+				int R = 3 * PLY + (depthRemaining >> 2);
 
 				board.doMove(Move.NULL, false, false);
 				score = depthRemaining - R < PLY ? -quiescentSearch(0, -beta, -beta + 1) :
@@ -874,8 +873,6 @@ public class SearchEngine implements Runnable {
 			aspirationWindowProbe++;
 			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, Move.NONE);
 
-			// logger.debug("alpha = " + alpha + ", beta = " + beta + ", rootScore=" + rootScore);
-
 			if (rootScore <= alpha) {
 				failLowCount++;
 				alpha = (failLowCount < aspWindows.length && (initialScore - aspWindows[failLowCount] > -Evaluator.MATE) ? initialScore
@@ -1001,10 +998,6 @@ public class SearchEngine implements Runnable {
 
 	public TranspositionTable getTT() {
 		return tt;
-	}
-
-	public boolean isInitialized() {
-		return initialized;
 	}
 
 	public boolean isSearching() {
