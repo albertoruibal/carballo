@@ -35,7 +35,7 @@ public class SearchEngine implements Runnable {
 	private static final int NODE_PV = 1;
 	private static final int NODE_NULL = 2;
 
-	private static final int PLY = 2;
+	private static final int PLY = 1;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int RAZOR_DEPTH = 4 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {6 * PLY, 6 * PLY, 8 * PLY}; // By node type
