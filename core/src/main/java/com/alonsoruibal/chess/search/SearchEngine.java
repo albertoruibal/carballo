@@ -407,7 +407,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Search Root, PV and null window
 	 */
-	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowNullMove, int excludedMove) throws SearchFinishedException {
+	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
 		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
@@ -473,11 +473,11 @@ public class SearchEngine implements Runnable {
 			return checkEvasion ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
 		}
 
-		if (!checkEvasion) {
+		if (!checkEvasion
+				&& allowPrePruning) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL //
 					&& ttMove == 0 //
-					&& allowNullMove // Not when last was a null move
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& eval + RAZORING_MARGIN < beta //
@@ -499,7 +499,6 @@ public class SearchEngine implements Runnable {
 
 			// Static null move pruning or futility pruning in parent node
 			if (nodeType == NODE_NULL //
-					&& allowNullMove //
 					&& depthRemaining < RAZOR_DEPTH //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
@@ -510,7 +509,6 @@ public class SearchEngine implements Runnable {
 
 			// Null move pruning and mate threat detection
 			if (nodeType == NODE_NULL //
-					&& allowNullMove //
 					&& depthRemaining >= 2 * PLY //
 					&& Math.abs(beta) < VALUE_IS_MATE //
 					&& eval >= beta //
@@ -549,30 +547,29 @@ public class SearchEngine implements Runnable {
 			// Do a reduced move to search for a ttMove that will improve sorting
 			if (ttMove == Move.NONE //
 					&& depthRemaining >= IID_DEPTH[nodeType] //
-					&& allowNullMove //
-					&& (nodeType != NODE_NULL || staticEval + IID_MARGIN > beta) //
-					&& excludedMove == Move.NONE) {
+					&& (nodeType != NODE_NULL || staticEval + IID_MARGIN > beta)) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, false, Move.NONE);
 				if (tt.search(board, distanceToInitialPly, false)) {
 					ttMove = tt.getBestMove();
 				}
 			}
+		}
 
-			// Futility pruning
-			if (nodeType == NODE_NULL) {
-				if (depthRemaining <= PLY) { // at frontier nodes
-					futilityValue = staticEval + FUTILITY_MARGIN;
-					if (futilityValue < beta) {
-						futilityHit++;
-						futilityPrune = true;
-					}
-				} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
-					futilityValue = staticEval + FUTILITY_MARGIN_AGGRESSIVE;
-					if (futilityValue < beta) {
-						aggressiveFutilityHit++;
-						futilityPrune = true;
-					}
+		// Futility pruning
+		if (!checkEvasion
+				&& nodeType == NODE_NULL) {
+			if (depthRemaining <= PLY) { // at frontier nodes
+				futilityValue = staticEval + FUTILITY_MARGIN;
+				if (futilityValue < beta) {
+					futilityHit++;
+					futilityPrune = true;
+				}
+			} else if (depthRemaining <= 2 * PLY) { // at pre-frontier nodes
+				futilityValue = staticEval + FUTILITY_MARGIN_AGGRESSIVE;
+				if (futilityValue < beta) {
+					aggressiveFutilityHit++;
+					futilityPrune = true;
 				}
 			}
 		}
