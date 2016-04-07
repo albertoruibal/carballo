@@ -94,7 +94,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
 	private static final int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
 	private static final int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
-	private static final int ROOK_FILE_SEMIOPEN_BP = oe(15, 5); // And attacks a backward pawn
+	private static final int ROOK_FILE_SEMIOPEN_WEAK_PAWN = oe(15, 5); // And attacks a backward or isolated pawn
 	private static final int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
 	private static final int ROOK_7 = oe(15, 20); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 
@@ -328,11 +328,6 @@ public class ExperimentalEvaluator extends Evaluator {
 
 						if (backward) {
 							pawnStructure[us] -= PAWN_BACKWARDS[opposed ? 1 : 0];
-							// TODO this is rook logic in the middle of pawn logic
-							if (!opposed && (routeToPromotion & board.rooks & others) != 0) {
-								// There is an opposite rook attacking the backward pawn
-								positional[them] += ROOK_FILE_SEMIOPEN_BP;
-							}
 						}
 						if (isolated) {
 							pawnStructure[us] -= PAWN_ISOLATED[opposed ? 1 : 0];
@@ -355,6 +350,10 @@ public class ExperimentalEvaluator extends Evaluator {
 						// Pawn Storm
 						if ((pawnFile & kingZone[them]) != 0) {
 							pawnStructure[us] += PAWN_STORM[relativeRank];
+						}
+						// There is an opposite rook attacking this weak pawn
+						if ((backward || isolated) && !opposed && (routeToPromotion & board.rooks & others) != 0) {
+							positional[them] += ROOK_FILE_SEMIOPEN_WEAK_PAWN;
 						}
 					} else {
 						//
