@@ -152,6 +152,25 @@ public class ExperimentalEvaluatorTest {
 	}
 
 	@Test
+	public void testUnstoppabblePasser() {
+		Board board = new Board();
+		board.setFen("8/8/8/8/8/6p1/4PK1k/8 w - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
+
+		board.setFen("8/8/8/8/8/8/6PP/K6k w - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 700);
+
+		board.setFen("8/8/8/8/8/8/5kPP/K7 b - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
+
+		board.setFen("8/8/8/8/8/7P/5kP1/K7 b - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
+
+		board.setFen("8/8/8/8/8/7P/5kP1/K7 w - - 0 0");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 700);
+	}
+
+	@Test
 	public void testKnightTrapped() {
 		Board board = new Board();
 		board.setFen("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0");

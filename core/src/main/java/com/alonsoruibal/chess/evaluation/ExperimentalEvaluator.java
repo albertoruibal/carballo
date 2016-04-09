@@ -54,6 +54,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 1), oe(2, 3), oe(4, 6), oe(7, 10), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
+	private static final int PAWN_PASSER_UNSTOPPABLE = oe(0, 750);
 
 	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
@@ -263,6 +264,8 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttacksXray, safeAttacks, kingAttacks;
+		boolean onlyKingsAndPawns = (board.knights | board.bishops | board.rooks | board.queens) == 0;
+
 		long square = 1;
 		for (int index = 0; index < 64; index++) {
 			if ((square & all) != 0) {
@@ -402,6 +405,22 @@ public class ExperimentalEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_PASSER_RUNNER[relativeRank];
 						} else if (mobile) {
 							passedPawns[us] += PAWN_PASSER_MOBILE[relativeRank];
+						}
+
+						if (onlyKingsAndPawns && runner) {
+							long promotionSquare = routeToPromotion & (isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0]);
+							if ((ai.kingAttacks[us] & promotionSquare) != 0 // The king controls the promotion square
+									&& (ai.kingAttacks[us] & square) != 0) {
+								passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
+							} else {
+								// Simple pawn square rule implementation
+								int ranksToPromo = 7 - relativeRank;
+								int kingToPromo = BitboardUtils.distance(BitboardUtils.square2Index(promotionSquare), ai.kingIndex[them]) +
+										(isWhite != board.getTurn() ? -1 : 0); // The other king can move first
+								if (kingToPromo > ranksToPromo) {
+									passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
+								}
+							}
 						}
 					}
 
