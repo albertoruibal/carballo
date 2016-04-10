@@ -470,11 +470,11 @@ public class SearchEngine implements Runnable {
 		if (!checkEvasion
 				&& allowPrePruning) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
-			if (nodeType == NODE_NULL //
-					&& ttMove == 0 //
-					&& depthRemaining < RAZORING_MARGIN.length //
-					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval + RAZORING_MARGIN[depthRemaining] < beta //
+			if (nodeType == NODE_NULL
+					&& ttMove == 0
+					&& depthRemaining < RAZORING_MARGIN.length
+					&& Math.abs(beta) < VALUE_IS_MATE
+					&& eval + RAZORING_MARGIN[depthRemaining] < beta
 					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
@@ -493,20 +493,20 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Static null move pruning or futility pruning in parent node
-			if (nodeType == NODE_NULL //
-					&& depthRemaining < RAZORING_MARGIN.length //
-					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& Math.abs(eval) < Evaluator.KNOWN_WIN //
-					&& eval - FUTILITY_MARGIN[depthRemaining - PLY] >= beta //
+			if (nodeType == NODE_NULL
+					&& depthRemaining < RAZORING_MARGIN.length
+					&& Math.abs(beta) < VALUE_IS_MATE
+					&& Math.abs(eval) < Evaluator.KNOWN_WIN
+					&& eval - FUTILITY_MARGIN[depthRemaining - PLY] >= beta
 					&& boardAllowsNullMove()) {
 				return eval - FUTILITY_MARGIN[depthRemaining - PLY];
 			}
 
 			// Null move pruning and mate threat detection
-			if (nodeType == NODE_NULL //
-					&& depthRemaining >= 2 * PLY //
-					&& Math.abs(beta) < VALUE_IS_MATE //
-					&& eval >= beta //
+			if (nodeType == NODE_NULL
+					&& depthRemaining >= 2 * PLY
+					&& Math.abs(beta) < VALUE_IS_MATE
+					&& eval >= beta
 					&& boardAllowsNullMove()) {
 
 				nullMoveProbe++;
@@ -524,7 +524,7 @@ public class SearchEngine implements Runnable {
 					}
 
 					// Verification search on initial depths
-					if (depthRemaining < 12 * PLY //
+					if (depthRemaining < 12 * PLY
 							|| (depthRemaining - R < PLY ? quiescentSearch(0, beta - 1, beta) :
 							search(NODE_NULL, depthRemaining - R, beta - 1, beta, false, Move.NONE)) >= beta) {
 						nullMoveHit++;
@@ -540,8 +540,8 @@ public class SearchEngine implements Runnable {
 
 			// Internal Iterative Deepening (IID)
 			// Do a reduced move to search for a ttMove that will improve sorting
-			if (ttMove == Move.NONE //
-					&& depthRemaining >= IID_DEPTH[nodeType] //
+			if (ttMove == Move.NONE
+					&& depthRemaining >= IID_DEPTH[nodeType]
 					&& (nodeType != NODE_NULL || staticEval + IID_MARGIN > beta)) {
 				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
 				search(nodeType, d, alpha, beta, false, Move.NONE);
@@ -579,13 +579,13 @@ public class SearchEngine implements Runnable {
 
 			// Check singular move extension
 			// It also detects singular replies
-			if (nodeType != NODE_ROOT //
-					&& move == ttMove //
-					&& extension < PLY //
-					&& excludedMove == Move.NONE //
-					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType] //
-					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH //
-					&& ttDepthAnalyzed >= depthRemaining - 3 * PLY //
+			if (nodeType != NODE_ROOT
+					&& move == ttMove
+					&& extension < PLY
+					&& excludedMove == Move.NONE
+					&& depthRemaining >= SINGULAR_MOVE_DEPTH[nodeType]
+					&& ttNodeType == TranspositionTable.TYPE_FAIL_HIGH
+					&& ttDepthAnalyzed >= depthRemaining - 3 * PLY
 					&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
 				singularExtensionProbe++;
@@ -599,13 +599,13 @@ public class SearchEngine implements Runnable {
 
 			// If the move is not important
 			if (nodeType != NODE_ROOT
-					&& extension == 0 //
-					&& !checkEvasion //
-					&& !Move.isCheck(move) //
+					&& extension == 0
+					&& !checkEvasion
+					&& !Move.isCheck(move)
 					&& !Move.isCapture(move) // Include ALL captures
 					&& !Move.isPawnPush678(move) // Includes promotions
-					&& !Move.isCastling(move) //
-					&& move != ttMove //
+					&& !Move.isCastling(move)
+					&& move != ttMove
 					&& !sortInfo.isKiller(move, distanceToInitialPly + 1)) {
 
 				// Late move reductions (LMR)
@@ -614,7 +614,7 @@ public class SearchEngine implements Runnable {
 				}
 
 				// Futility Pruning
-				if (bestScore > -Evaluator.KNOWN_WIN) { // There is a move
+				if (bestScore > -Evaluator.KNOWN_WIN) { // There is a best move
 					int newDepth = depthRemaining - PLY - reduction;
 					if (newDepth < FUTILITY_MARGIN.length) {
 						int futilityValue = staticEval + FUTILITY_MARGIN[newDepth];
