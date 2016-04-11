@@ -92,7 +92,10 @@ public class MoveIterator {
 	private BitboardAttacks bbAttacks;
 
 	public int getLastMoveSee() {
-		return lastMoveSee != SEE_NOT_CALCULATED ? lastMoveSee : board.see(move, ai);
+		if (lastMoveSee == SEE_NOT_CALCULATED) {
+			lastMoveSee = board.see(move, ai);
+		}
+		return lastMoveSee;
 	}
 
 	public void genMoves(int ttMove) {
