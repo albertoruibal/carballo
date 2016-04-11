@@ -736,7 +736,7 @@ public class SearchEngine implements Runnable {
 		info.setScore(score, alpha, beta);
 		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
 		info.setHashFull(tt.getHashFull());
-		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / ((time - startTime + 1))));
+		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / (time - startTime + 1)));
 
 		if (observer != null) {
 			observer.info(info);
