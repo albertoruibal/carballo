@@ -37,11 +37,11 @@ public class SearchEngine implements Runnable {
 
 	private static final int PLY = 1;
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
-	private static final int[] SINGULAR_MOVE_DEPTH = {6 * PLY, 6 * PLY, 8 * PLY}; // By node type
+	private static final int[] SINGULAR_MOVE_DEPTH = {0, 6 * PLY, 8 * PLY}; // By node type
 	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
 
 	public static final int CONTEMPT_FACTOR = 90; // > 0 refuses draw, < 0 looks for draw
-	private static final int IID_MARGIN = 300;
+	private static final int IID_MARGIN = 100;
 	private static final int SINGULAR_EXTENSION_MARGIN = 50;
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
@@ -282,13 +282,11 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int refineEval(boolean foundTT, int eval) {
-		if (foundTT &&
-				((tt.getNodeType() == TranspositionTable.TYPE_EXACT_SCORE) ||
-						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW) && (tt.getScore() < eval)) ||
-						((tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH) && (tt.getScore() > eval)))) {
-			return tt.getScore();
-		}
-		return eval;
+		return foundTT
+				&& (tt.getNodeType() == TranspositionTable.TYPE_EXACT_SCORE
+						|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW && tt.getScore() < eval)
+						|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH && tt.getScore() > eval)) ?
+				tt.getScore() : eval;
 	}
 
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
