@@ -97,7 +97,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
 	private static final int ROOK_FILE_SEMIOPEN_WEAK_PAWN = oe(15, 5); // And attacks a backward or isolated pawn
 	private static final int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
-	private static final int ROOK_7 = oe(15, 20); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
+	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 
 	// King
 	// Sums for each piece attacking an square near the king

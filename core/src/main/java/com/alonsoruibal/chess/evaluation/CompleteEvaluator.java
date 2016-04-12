@@ -80,7 +80,7 @@ public class CompleteEvaluator extends Evaluator {
 	// Rooks
 	private static final int[] ROOK_OUTPOST = {oe(2, 3), oe(4, 6)}; // Array is Not defended by pawn, defended by pawn
 	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)} ; // Open / Semi open
-	private static final int ROOK_7 = oe(15, 20); // Rook on 5, 6, 7th rank attacking a pawn in the same rank not defended by pawn
+	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 
 	// King
 	// Sums for each piece attacking an square near the king
