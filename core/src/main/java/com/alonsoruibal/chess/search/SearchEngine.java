@@ -47,7 +47,7 @@ public class SearchEngine implements Runnable {
 	private static final int FUTILITY_MARGIN_QS = 50;
 	// Margins by depthRemaining in PLYs
 	private static final int[] FUTILITY_MARGIN = {100, 180, 260, 340, 420, 500};
-	private static final int[] RAZORING_MARGIN = {250, 275, 300, 325};
+	private static final int[] RAZORING_MARGIN = {310, 315, 320, 325};
 
 	private SearchParameters searchParameters;
 
