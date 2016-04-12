@@ -146,7 +146,7 @@ public class SearchParameters {
 		int timeAvailable = engineIsWhite ? wtime : btime;
 		int timeInc = engineIsWhite ? winc : binc;
 		if (timeAvailable > 0) {
-			calcTime = timeAvailable / 20;
+			calcTime = timeAvailable / 25;
 		}
 		if (panicTime) { // x 4
 			calcTime = calcTime << 2;
