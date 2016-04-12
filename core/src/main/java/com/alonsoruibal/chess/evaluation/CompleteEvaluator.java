@@ -37,7 +37,7 @@ public class CompleteEvaluator extends Evaluator {
 			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
 	private static final int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
-	private static final int PINNED_PIECE = oe(5, 10);
+	private static final int PINNED_PIECE = oe(7, 15);
 
 	// Pawns
 	// Those are all penalties. Array is {not opposed, opposed}: If not opposed, backwards and isolated pawns can be easily attacked
