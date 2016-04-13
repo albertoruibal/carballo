@@ -9,11 +9,11 @@ public class SortInfo {
 
 	public static final int HISTORY_MAX = Integer.MAX_VALUE - 1;
 
-	//  Two killer move slots
+	// Two killer move slots
 	public int[] killerMove1;
 	public int[] killerMove2;
 
-	private int[][] history;
+	private int[][] history; // By piece type and destiny square
 
 	public SortInfo() {
 		killerMove1 = new int[SearchEngine.MAX_DEPTH];
@@ -25,7 +25,9 @@ public class SortInfo {
 	public void clear() {
 		Arrays.fill(killerMove1, 0);
 		Arrays.fill(killerMove2, 0);
-		for (int i = 0; i < 6; i++) Arrays.fill(history[i], 0);
+		for (int i = 0; i < 6; i++) {
+			Arrays.fill(history[i], 0);
+		}
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class SortInfo {
 	 */
 	public void betaCutoff(int move, int depth) {
 		// removes captures and promotions from killers
-		if (move == 0 || Move.isTactical(move)) {
+		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
 		}
 
@@ -56,9 +58,5 @@ public class SortInfo {
 
 	public int getMoveScore(int move) {
 		return history[Move.getPieceMoved(move) - 1][Move.getToIndex(move)];
-	}
-
-	public boolean isKiller(int move, int depth) {
-		return (killerMove1[depth] == move) || (killerMove2[depth] == move);
 	}
 }

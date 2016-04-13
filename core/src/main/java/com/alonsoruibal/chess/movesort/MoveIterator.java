@@ -50,6 +50,7 @@ public class MoveIterator {
 
 	private int move;
 	private int lastMoveSee;
+	private boolean lastMoveIsKiller;
 	private int killer1;
 	private int killer2;
 	private int killer3;
@@ -91,11 +92,24 @@ public class MoveIterator {
 
 	private BitboardAttacks bbAttacks;
 
+	public MoveIterator(Board board, AttacksInfo ai, SortInfo sortInfo, int depth) {
+		this.board = board;
+		this.ai = ai;
+		this.sortInfo = sortInfo;
+		this.depth = depth;
+
+		bbAttacks = BitboardAttacks.getInstance();
+	}
+
 	public int getLastMoveSee() {
 		if (lastMoveSee == SEE_NOT_CALCULATED) {
 			lastMoveSee = board.see(move, ai);
 		}
 		return lastMoveSee;
+	}
+
+	public boolean getLastMoveIsKiller() {
+		return lastMoveIsKiller;
 	}
 
 	public void genMoves(int ttMove) {
@@ -108,7 +122,8 @@ public class MoveIterator {
 
 		phase = PHASE_TT;
 		checkEvasion = board.getCheck();
-		lastMoveSee = 0;
+		lastMoveSee = SEE_NOT_CALCULATED;
+		lastMoveIsKiller = false;
 	}
 
 	private void initMoveGen() {
@@ -143,13 +158,13 @@ public class MoveIterator {
 			case PHASE_TT:
 				phase++;
 				if (ttMove != Move.NONE) {
-					lastMoveSee = Move.isCapture(ttMove) || Move.isCheck(ttMove) ? board.see(ttMove) : 0;
+					move = ttMove;
 					if (checkEvasion //
 							|| movesToGenerate == GENERATE_ALL //
-							|| Move.getMoveType(ttMove) == Move.TYPE_PROMOTION_QUEEN
-							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS && Move.isCapture(ttMove) && lastMoveSee >= 0) //
-							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && (Move.isCapture(ttMove) || Move.isCheck(ttMove)) && lastMoveSee >= 0)) {
-						return ttMove;
+							|| Move.getMoveType(move) == Move.TYPE_PROMOTION_QUEEN
+							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS && Move.isCapture(move) && getLastMoveSee() >= 0) //
+							|| (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && Move.isCaptureOrCheck(move) && getLastMoveSee() >= 0)) {
+						return move;
 					}
 				}
 
@@ -189,31 +204,40 @@ public class MoveIterator {
 				phase++;
 
 			case PHASE_KILLER1:
-				lastMoveSee = SEE_NOT_CALCULATED;
 				phase++;
+				lastMoveIsKiller = true;
 				if (foundKiller1) {
-					return killer1;
+					move = killer1;
+					lastMoveSee = SEE_NOT_CALCULATED;
+					return move;
 				}
 
 			case PHASE_KILLER2:
 				phase++;
 				if (foundKiller2) {
-					return killer2;
+					move = killer2;
+					lastMoveSee = SEE_NOT_CALCULATED;
+					return move;
 				}
 
 			case PHASE_KILLER3:
 				phase++;
 				if (foundKiller3) {
-					return killer3;
+					move = killer3;
+					lastMoveSee = SEE_NOT_CALCULATED;
+					return move;
 				}
 
 			case PHASE_KILLER4:
 				phase++;
 				if (foundKiller4) {
-					return killer4;
+					move = killer4;
+					lastMoveSee = SEE_NOT_CALCULATED;
+					return move;
 				}
 
 			case PHASE_NON_CAPTURES:
+				lastMoveIsKiller = false;
 				move = pickMoveFromArray(nonCaptureIndex, nonCaptures, nonCapturesScores, nonCapturesSee);
 				if (move != Move.NONE) {
 					return move;
@@ -251,15 +275,6 @@ public class MoveIterator {
 		} else {
 			return Move.NONE;
 		}
-	}
-
-	public MoveIterator(Board board, AttacksInfo ai, SortInfo sortInfo, int depth) {
-		this.board = board;
-		this.ai = ai;
-		this.sortInfo = sortInfo;
-		this.depth = depth;
-
-		bbAttacks = BitboardAttacks.getInstance();
 	}
 
 	public void setBoard(Board board) {
@@ -641,6 +656,7 @@ public class MoveIterator {
 
 		int pieceCaptured = capture ? Move.getPieceCaptured(board, move) : 0;
 		int see = SEE_NOT_CALCULATED;
+
 		if (capture || (movesToGenerate == GENERATE_CAPTURES_PROMOS_CHECKS && check)) {
 			// If there aren't pieces attacking the destiny square
 			// and the piece cannot pin an attack to the see square,

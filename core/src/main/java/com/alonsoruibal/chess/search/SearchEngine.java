@@ -599,12 +599,11 @@ public class SearchEngine implements Runnable {
 			if (nodeType != NODE_ROOT
 					&& extension == 0
 					&& !checkEvasion
-					&& !Move.isCheck(move)
-					&& !Move.isCapture(move) // Include ALL captures
+					&& !Move.isCaptureOrCheck(move) // Include ALL captures
 					&& !Move.isPawnPush678(move) // Includes promotions
 					&& !Move.isCastling(move)
 					&& move != ttMove
-					&& !sortInfo.isKiller(move, distanceToInitialPly + 1)) {
+					&& !moveIterator.getLastMoveIsKiller()) {
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
