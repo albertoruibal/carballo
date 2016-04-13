@@ -96,6 +96,10 @@ public class Move {
 		return (move & CHECK_MASK) != 0;
 	}
 
+	public static boolean isCaptureOrCheck(int move) {
+		return (move & (CHECK_MASK | CAPTURE_MASK)) != 0;
+	}
+
 	public static int getMoveType(int move) {
 		return ((move >>> 17) & 0x7);
 	}
