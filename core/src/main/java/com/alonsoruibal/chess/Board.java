@@ -948,7 +948,8 @@ public class Board {
 
 	public int see(int move, AttacksInfo attacksInfo) {
 		int them = getTurn() ? 1 : 0;
-		if ((attacksInfo.attackedSquares[them] & Move.getToSquare(move)) == 0
+		if (attacksInfo.boardKey == getKey()
+				&& (attacksInfo.attackedSquares[them] & Move.getToSquare(move)) == 0
 				&& (attacksInfo.mayPin[them] & Move.getFromSquare(move)) == 0) {
 			return Move.isCapture(move) ? Board.SEE_PIECE_VALUES[Move.getPieceCaptured(this, move)] : 0;
 		} else {
