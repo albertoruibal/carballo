@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess.movesort;
 
 import com.alonsoruibal.chess.Board;
+import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.Piece;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
@@ -124,11 +125,11 @@ public class MoveIterator {
 		checkEvasion = board.getCheck();
 		lastMoveSee = SEE_NOT_CALCULATED;
 		lastMoveIsKiller = false;
+
+		ai.build(board);  // Needed here for ttMove's getLastMoveSee()
 	}
 
 	private void initMoveGen() {
-		ai.build(board);
-
 		killer1 = sortInfo.killerMove1[depth];
 		killer2 = sortInfo.killerMove2[depth];
 		killer3 = depth < 2 ? Move.NONE : sortInfo.killerMove1[depth - 2];
@@ -146,8 +147,8 @@ public class MoveIterator {
 
 		// Only for clarity
 		turn = board.getTurn();
-		us = turn ? 0 : 1;
-		them = turn ? 1 : 0;
+		us = turn ? Color.W : Color.B;
+		them = turn ? Color.B : Color.W;
 		all = board.getAll();
 		mines = board.getMines();
 		others = board.getOthers();
