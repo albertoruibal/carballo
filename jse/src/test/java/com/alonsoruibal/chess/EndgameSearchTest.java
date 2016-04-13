@@ -56,7 +56,7 @@ public class EndgameSearchTest {
 		String fen = "8/8/8/4k3/8/8/8/KQ6 w - - 0 0";
 		search.getBoard().setFen(fen);
 		searchParams = new SearchParameters();
-		searchParams.setDepth(19);
+		searchParams.setDepth(20);
 		search.go(searchParams);
 		assertEquals("Queen mate in 17 PLY", search.getBestMoveScore(), Evaluator.MATE - 17);
 	}
