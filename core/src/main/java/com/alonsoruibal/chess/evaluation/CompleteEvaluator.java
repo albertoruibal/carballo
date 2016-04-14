@@ -393,7 +393,8 @@ public class CompleteEvaluator extends Evaluator {
 								passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
 							} else {
 								// Simple pawn square rule implementation
-								int ranksToPromo = 7 - relativeRank;
+								int ranksToPromo = 7 - relativeRank +
+										(relativeRank == 1 ? -1 : 0); // The pawn can advance two squares
 								int kingToPromo = BitboardUtils.distance(BitboardUtils.square2Index(promotionSquare), ai.kingIndex[them]) +
 										(isWhite != board.getTurn() ? -1 : 0); // The other king can move first
 								if (kingToPromo > ranksToPromo) {
