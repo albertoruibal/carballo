@@ -36,7 +36,7 @@ public class ExperimentalEvaluatorTest {
 	@Test
 	public void testEvaluatorSimmetry2() {
 		Board board = new Board();
-		board.setFen("7k/7p/6p1/3kp3/3PK3/1P6/P7/K7 w - - 0 0");
+		board.setFen("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0");
 		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
 	}
 
