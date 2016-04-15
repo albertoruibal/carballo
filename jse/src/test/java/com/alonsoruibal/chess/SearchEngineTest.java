@@ -92,4 +92,14 @@ public class SearchEngineTest {
 		search.getBoard().setFen("8/8/8/8/8/k7/8/K6r w - - 1 1");
 		search.go(analysisParameters);
 	}
+
+	@Test
+	public void testRetiEndgameStudy() {
+		SearchEngine search = new SearchEngine(new Config());
+		SearchParameters sp = new SearchParameters();
+		sp.setDepth(11);
+		search.getBoard().setFen("7K/8/k1P5/7p/8/8/8/8 w - -");
+		search.go(sp);
+		assertEquals(-SearchEngine.CONTEMPT_FACTOR, search.getBestMoveScore());
+	}
 }
