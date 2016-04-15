@@ -44,7 +44,7 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_BACKWARDS = {oe(20, 15), oe(10, 15)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_ISOLATED = {oe(20, 20), oe(10, 20)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_DOUBLED = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
-	private static final int PAWN_UNSUPPORTED = oe(1, 2); // Not backwards or isolated
+	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
 	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 9), oe(10, 14), oe(14, 21), oe(20, 30), 0};
@@ -60,10 +60,10 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
-	private static final int[] KNIGHT_OUTPOST = {oe(10, 15), oe(20, 30)}; // Array is Not defended by pawn, defended by pawn
+	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(25, 15)}; // Array is Not defended by pawn, defended by pawn
 
 	// Bishops
-	private static final int[] BISHOP_OUTPOST = {oe(5, 7), oe(10, 15)};
+	private static final int[] BISHOP_OUTPOST = {oe(7, 4), oe(12, 7)};
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
 	private static final long[] BISHOP_TRAPPING = {
@@ -78,7 +78,7 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	// Rooks
-	private static final int[] ROOK_OUTPOST = {oe(2, 3), oe(4, 6)}; // Array is Not defended by pawn, defended by pawn
+	private static final int[] ROOK_OUTPOST = {oe(2, 1), oe(3, 2)}; // Array is Not defended by pawn, defended by pawn
 	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)} ; // Open / Semi open
 	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 
