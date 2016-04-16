@@ -44,7 +44,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_BACKWARDS = {oe(20, 15), oe(10, 15)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_ISOLATED = {oe(20, 20), oe(10, 20)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_DOUBLED = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
-	private static final int PAWN_UNSUPPORTED = oe(1, 2); // Not backwards or isolated
+	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
 	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 9), oe(10, 14), oe(14, 21), oe(20, 30), 0};
