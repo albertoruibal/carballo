@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class ExperimentalEvaluatorTest {
 	ExperimentalEvaluator evaluator;
 	AttacksInfo attacksInfo;
+	Board board = new Board();
 
 	@Before
 	public void setUp() throws Exception {
@@ -28,14 +29,12 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testEvaluatorSimmetry1() {
-		Board board = new Board();
 		board.setFen("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0");
 		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
 	}
 
 	@Test
 	public void testEvaluatorSimmetry2() {
-		Board board = new Board();
 		board.setFen("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0");
 		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
 	}
@@ -44,7 +43,6 @@ public class ExperimentalEvaluatorTest {
 	public void testPawnClassification() {
 		evaluator.debugPawns = true;
 
-		Board board = new Board();
 		board.setFen("8/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("Four passers", 4, countSubstring("passed ", evaluator.debugSB.toString()));
@@ -146,14 +144,12 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testPassedPawn1() {
-		Board board = new Board();
 		board.setFen("7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0");
 		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
 	@Test
 	public void testUnstoppabblePasser() {
-		Board board = new Board();
 		board.setFen("8/8/8/8/8/6p1/4PK1k/8 w - - 0 0");
 		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
 
@@ -172,14 +168,12 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testKnightTrapped() {
-		Board board = new Board();
 		board.setFen("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0");
 		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
 	@Test
 	public void testKingSafety() {
-		Board board = new Board();
 		board.setFen("r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0");
 		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
@@ -187,7 +181,6 @@ public class ExperimentalEvaluatorTest {
 	// Compares the eval of two fens
 	private void compareFenEval(String fenBetter, String fenWorse, int requiredDifference) {
 		System.out.println("*\n* Comparing two board evaluations (first must be better for white):\n*");
-		Board board = new Board();
 		board.setFen(fenBetter);
 		int valueBetter = evaluator.evaluate(board, attacksInfo);
 		board.setFen(fenWorse);
@@ -207,4 +200,11 @@ public class ExperimentalEvaluatorTest {
 		compareFenEval("r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1",
 				"2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1", 0);
 	}
+
+	@Test
+	public void testConnectedPassersVsCandidate() {
+		board.setFen("8/p1p5/6pp/PPP2k2/8/4PK2/8/8 w - - 0 43");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+	}
+
 }
