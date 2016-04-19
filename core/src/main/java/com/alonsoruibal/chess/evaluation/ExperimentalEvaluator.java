@@ -36,7 +36,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] MAJOR_ATTACKS = {
 			0, oe(2, 3), oe(4, 5), oe(4, 5), oe(5, 5), oe(5, 5), 0
 	};
-	private static final int HUNG_PIECES = oe(16, 25); // two or more pieces of the other side attacked by inferior pieces
+	private static final int HUNG_PIECES = oe(16, 25); // Two or more pieces of the other side attacked by inferior pieces
 	private static final int PINNED_PIECE = oe(25, 35);
 
 	// Pawns
@@ -346,11 +346,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
-						// Pawn is part of the king shield
-						if ((pawnFile & kingZone[us]) != 0) {
-							pawnStructure[us] += PAWN_SHIELD[relativeRank];
-						}
-						// Pawn Storm
+						// Pawn Storm: It can open a file near the king
 						if ((pawnFile & kingZone[them]) != 0) {
 							pawnStructure[us] += PAWN_STORM[relativeRank];
 						}
@@ -423,6 +419,10 @@ public class ExperimentalEvaluator extends Evaluator {
 								}
 							}
 						}
+					}
+					// Pawn is part of the king shield
+					if ((pawnFile & kingZone[us]) != 0) {
+						pawnStructure[us] += PAWN_SHIELD[relativeRank];
 					}
 
 				} else if ((square & board.knights) != 0) {
