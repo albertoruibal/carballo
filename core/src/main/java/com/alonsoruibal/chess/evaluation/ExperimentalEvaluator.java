@@ -347,7 +347,7 @@ public class ExperimentalEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
 						// Pawn Storm: It can open a file near the king
-						if ((pawnFile & kingZone[them]) != 0) {
+						if ((routeToPromotion & kingZone[them]) != 0) {
 							pawnStructure[us] += PAWN_STORM[relativeRank];
 						}
 						// There is an opposite rook attacking this weak pawn
@@ -421,7 +421,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 					// Pawn is part of the king shield
-					if ((pawnFile & kingZone[us]) != 0) {
+					if ((pawnFile & ~ranksForward & kingZone[us]) != 0) {
 						pawnStructure[us] += PAWN_SHIELD[relativeRank];
 					}
 
