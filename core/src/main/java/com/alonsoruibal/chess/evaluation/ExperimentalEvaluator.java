@@ -56,8 +56,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
 	private static final int PAWN_PASSER_UNSTOPPABLE = oe(750, 750);
 
-	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(20, 0), oe(10, 0), oe(5, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(10, 0), oe(25, 0), oe(50, 0), 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
 	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
