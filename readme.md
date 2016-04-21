@@ -22,20 +22,19 @@ You are free to use, distribute or modify the code, we ask for a mention to the 
 Features
 ========
 
-* UCI interface for chess GUIs like Arena
+* UCI interface for chess GUIs like Arena or SCID
 * It includes a great GWT interface by Lukas Laag and a deprecated Java Applet GUI
 * Based on bitboards with a magic bitboard move generator, it also includes code for magic number generation
 * Move iterator sorting moves with four killer move slots, SEE, MVV/LVA and history heuristic
 * PVS searcher
-* Aspiration window, moves only one border of the window if falls out
+* Aspiration window, moves only one border of the window if it falls out
 * Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
 * Quiescent Search (QS) with only good or equal captures (according to SEE) and limited check generation
 * Internal Iterative Deepening to improve sorting
-* Extensions: Check, pawn push, passed pawns, mate threat and singular move
+* Extensions: Check, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
 * Pruning: Null move Pruning, static null move pruning, futility pruning and aggressive futility pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
-* Parameterizable evaluator (only for the complete &amp; experimental evaluators)
 * Selectable ELO level with an UCI parameter
 * Supports Chess960
 * Polyglot opening book support; in the code it includes Fruit's Small Book
@@ -44,12 +43,13 @@ Features
 
 Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
-| Test suite       | Time per position | Version 1.3 | Version 1.2 |   
-| ---------------- | -----------------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     288/300 |     287/300 |
-| SilentButDeadly  |          1 second |     116/134 |      90/134 |
-| ECMGCP           |        10 seconds |     131/183 |     130/183 |
-| Arasan           |        60 seconds |      26/250 |      19/250 |
+| Test suite       | Time per position | Version 1.4 | Version 1.3 | Version 1.2 |   
+| ---------------- | -----------------:| -----------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     292/300 |     288/300 |     287/300 |
+| SilentButDeadly  |          1 second |     119/134 |     116/134 |      90/134 |
+| ECMGCP           |          1 second |      97/183 |      78/183 |      68/183 |
+| ECMGCP           |        10 seconds |     152/183 |     131/183 |     130/183 |
+| Arasan 18        |        60 seconds |      58/250 |      26/250 |      19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -99,6 +99,28 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 History
 =======
+
+Version 1.4: Another step in the engine strength
+
+* Better understanding of pinned pieces, generating attacks only from legal moves
+* New logarithmic piece mobility bonuses
+* New set of pawn bonuses and changes in passer pawn evaluation adding an unstoppable passer bonus
+* Remove evaluator section Config & UCI parameters speeding up things
+* Changes in king safety evaluation taking into account three more squares in front of the king and modifying bonuses
+* Improve pawn shield logic and add pawn storm evaluation
+* Avoid negative values in the Opening-Endgame (O-E) arithmetic
+* Make the bishop pair and the tempo bonuses O-E
+* Reduce the tempo bonus in the endgame
+* Merge piece values in the piece-square tables
+* Simplify the rook on 5th, 6th, 7th rank logic replacing it by a bonus for each pawn attacked by the rook
+* Remove the queen on 7th rank logic
+* Use the PV value in the TT as the search starting score in each depth iteration
+* Change time management to use more time
+* New futility and razoring margins by depthRemaining, extend futility to more PLYs 
+* In quiescence search (QS), do futility also for PV nodes and generate checks at depth 0 also for non-PV nodes
+* As fractional extensions are no longer used, now PLY is 1
+* Use unicode figurines in the text board and in the GWT Gui SAN notation
+* Fix engine crash analyzing positions already mate
 
 Version 1.3: A lot of work in the evaluation function for a better positional play
 
