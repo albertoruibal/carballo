@@ -623,6 +623,11 @@ public class SearchEngine implements Runnable {
 							continue;
 						}
 					}
+
+					if (depthRemaining < 3 * PLY
+							&& moveIterator.getLastMoveSee() < 0) {
+						continue;
+					}
 				}
 			}
 
