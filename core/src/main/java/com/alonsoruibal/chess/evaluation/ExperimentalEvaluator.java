@@ -47,13 +47,13 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(5, 7), oe(5, 7), oe(7, 9), oe(10, 14), oe(14, 21), oe(20, 30), 0};
-	private static final int[] PAWN_PASSER = {0, oe(10, 20), oe(10, 20), oe(13, 25), oe(19, 35), oe(28, 50), oe(40, 70), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(2, 5), oe(2, 5), oe(3, 7), oe(4, 10), oe(7, 14), oe(10, 20), 0};
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(1, 2), oe(3, 5), oe(6, 9), oe(10, 15), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(1, 1), oe(2, 3), oe(4, 6), oe(7, 10), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(2, 3), oe(6, 9), oe(12, 18), oe(20, 30), 0};
+	private static final int[] PAWN_CANDIDATE = {0, oe(10, 15), oe(11, 17), oe(15, 23), oe(22, 33), oe(33, 50), oe(50, 75), 0};
+	private static final int[] PAWN_PASSER = {0, oe(20, 31), oe(23, 34), oe(31, 45), oe(47, 66), oe(72, 99), oe(110, 150), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(5, 10), oe(5, 11), oe(6, 13), oe(8, 16), oe(11, 22), oe(15, 30), 0};
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, oe(1, 2), oe(5, 8), oe(12, 18), oe(23, 35), oe(40, 60), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, oe(2, 3), oe(6, 9), oe(15, 22), oe(29, 43), oe(50, 75), 0};
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, oe(1, 2), oe(4, 6), oe(9, 13), oe(17, 26), oe(30, 45), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, oe(1, 2), oe(5, 8), oe(12, 18), oe(23, 35), oe(40, 60), 0};
 	private static final int PAWN_PASSER_UNSTOPPABLE = oe(750, 750);
 
 	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};

@@ -207,4 +207,9 @@ public class ExperimentalEvaluatorTest {
 		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
 	}
 
+	@Test
+	public void testTwoPassedConnectedOn6thBetterThanARook() {
+		board.setFen("kr6/8/6PP/8/8/8/8/7K w - - 0 43");
+		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+	}
 }
