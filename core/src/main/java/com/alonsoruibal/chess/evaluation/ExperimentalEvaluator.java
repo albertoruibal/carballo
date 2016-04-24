@@ -47,13 +47,13 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(10, 15), oe(11, 17), oe(15, 23), oe(22, 33), oe(33, 50), oe(50, 75), 0};
-	private static final int[] PAWN_PASSER = {0, oe(20, 31), oe(23, 34), oe(31, 45), oe(47, 66), oe(72, 99), oe(110, 150), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(5, 10), oe(5, 11), oe(6, 13), oe(8, 16), oe(11, 22), oe(15, 30), 0};
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, oe(1, 2), oe(5, 8), oe(12, 18), oe(23, 35), oe(40, 60), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, oe(2, 3), oe(6, 9), oe(15, 22), oe(29, 43), oe(50, 75), 0};
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, oe(1, 2), oe(4, 6), oe(9, 13), oe(17, 26), oe(30, 45), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, oe(1, 2), oe(5, 8), oe(12, 18), oe(23, 35), oe(40, 60), 0};
+	private static final int[] PAWN_CANDIDATE = {0, oe(8, 13), oe(8, 13), oe(13, 20), oe(24, 36), oe(39, 59), oe(60, 90), 0};
+	private static final int[] PAWN_PASSER = {0, oe(17, 25), oe(17, 25), oe(27, 41), oe(48, 72), oe(79, 118), oe(120, 180), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(3, 5), oe(3, 5), oe(5, 8), oe(10, 14), oe(16, 24), oe(24, 36), 0};
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(5, 7), oe(14, 21), oe(28, 42), oe(47, 70), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(5, 8), oe(16, 24), oe(32, 48), oe(53, 80), 0};
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(3, 5), oe(9, 14), oe(18, 27), oe(30, 45), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(4, 6), oe(12, 18), oe(24, 36), oe(40, 60), 0};
 	private static final int PAWN_PASSER_UNSTOPPABLE = oe(750, 750);
 
 	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
@@ -364,11 +364,10 @@ public class ExperimentalEvaluator extends Evaluator {
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
 										~((routeToPromotion & ai.attackedSquares[us]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
 						long pushSquare = isWhite ? square << 8 : square >>> 8;
-						long pawnsLeft = BitboardUtils.FILES_LEFT[file] & board.pawns;
-						long pawnsRight = BitboardUtils.FILES_RIGHT[file] & board.pawns;
-
 						boolean connected = (bbAttacks.king[index] & adjacentFiles & myPawns) != 0;
-						boolean outside = ((pawnsLeft != 0) && (pawnsRight == 0)) || ((pawnsLeft == 0) && (pawnsRight != 0));
+						boolean outside = otherPawns != 0
+								&& (((square & BitboardUtils.FILES_LEFT[3]) != 0 && (board.pawns & BitboardUtils.FILES_LEFT[file]) == 0)
+								|| ((square & BitboardUtils.FILES_RIGHT[4]) != 0 && (board.pawns & BitboardUtils.FILES_RIGHT[file]) == 0));
 						boolean mobile = (pushSquare & (all | attackedAndNotDefendedRoute)) == 0;
 						boolean runner = mobile
 								&& (routeToPromotion & all) == 0
