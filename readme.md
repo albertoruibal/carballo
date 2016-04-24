@@ -25,7 +25,7 @@ Features
 * UCI interface for chess GUIs like Arena or SCID
 * It includes a great GWT interface by Lukas Laag and a deprecated Java Applet GUI
 * Based on bitboards with a magic bitboard move generator, it also includes code for magic number generation
-* Move iterator sorting moves with four killer move slots, SEE, MVV/LVA and history heuristic
+* Move iterator sorting moves with four killer move slots, Static Exchange Evaluation (SEE), Most Valuable Victim/Least Valuable Aggressor (MVV/LVA) and history heuristic
 * PVS searcher
 * Aspiration window, moves only one border of the window if it falls out
 * Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
@@ -43,13 +43,13 @@ Features
 
 Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
-| Test suite       | Time per position | Version 1.4 | Version 1.3 | Version 1.2 |   
-| ---------------- | -----------------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     292/300 |     288/300 |     287/300 |
-| SilentButDeadly  |          1 second |     119/134 |     116/134 |      90/134 |
-| ECMGCP           |          1 second |      97/183 |      78/183 |      68/183 |
-| ECMGCP           |        10 seconds |     152/183 |     131/183 |     130/183 |
-| Arasan 18        |        60 seconds |      58/250 |      26/250 |      19/250 |
+| Test suite       | Time per position | Version 1.5 | Version 1.4 | Version 1.3 | Version 1.2 |
+| ---------------- | -----------------:| -----------:| -----------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     293/300 |     292/300 |     288/300 |     287/300 |
+| SilentButDeadly  |          1 second |     121/134 |     119/134 |     116/134 |      90/134 |
+| ECMGCP           |          1 second |     105/183 |      97/183 |      78/183 |      68/183 |
+| ECMGCP           |        10 seconds |     161/183 |     152/183 |     131/183 |     130/183 |
+| Arasan 18        |        60 seconds |      63/250 |      58/250 |      26/250 |      19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -99,6 +99,13 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 History
 =======
+
+Version 1.5: More search and evaluation tuning
+
+* Prune non capture moves with SEE < 0 when depthRemaining < 3
+* Change the outside passer detection, now only if the pawn is in the files a, b, c  or f, g, h and there are opposite pawns
+* Increase the passer pawn bonuses to match the "Two connected passers on 6th are better than a rook"
+* Added a GCJ compilation script to generate native binaries for Linux
 
 Version 1.4: Another step in the engine strength
 
