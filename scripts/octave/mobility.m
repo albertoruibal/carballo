@@ -2,29 +2,33 @@
 ## Octave file to generate and analyze the evaluator piece mobility bonuses
 ##
 
-knightMobSquares=0:4; # only forward mobility
-knightMobOpening=round(24 * log10(1 + knightMobSquares * 9 / 4));
-knightMobEndgame=round(32 * log10(1 + knightMobSquares * 9 / 4));
-A = [knightMobOpening;knightMobEndgame];
-knightValues = A(:); 
+knightMaxSquares = 4; # Only forward mobility 4 / full mobility 8
+knightMobSquares = 0 : knightMaxSquares;
+knightMobOpening = round(24 * log10(1 + knightMobSquares * 9 / knightMaxSquares));
+knightMobEndgame = round(32 * log10(1 + knightMobSquares * 9 / knightMaxSquares));
+A = [knightMobOpening; knightMobEndgame];
+knightValues = A(:);
 
-bishopMobSquares=0:7; # only forward mobility
-bishopMobOpening=round(32 * log10(1 + bishopMobSquares * 9 / 7));
-bishopMobEndgame=round(32 * log10(1 + bishopMobSquares * 9 / 7));
-A = [bishopMobOpening;bishopMobEndgame];
-bishopValues = A(:); 
+bishopMaxSquares = 7; # Only forward mobility 7 / full mobility 13
+bishopMobSquares = 0 : bishopMaxSquares; 
+bishopMobOpening = round(32 * log10(1 + bishopMobSquares * 9 / bishopMaxSquares));
+bishopMobEndgame = round(32 * log10(1 + bishopMobSquares * 9 / bishopMaxSquares));
+A = [bishopMobOpening; bishopMobEndgame];
+bishopValues = A(:);
 
-rookMobSquares=0:14;
-rookMobOpening=round(28 * log10(1 + rookMobSquares * 9 / 14));
-rookMobEndgame=round(42 * log10(1 + rookMobSquares * 9 / 14));
-A = [rookMobOpening;rookMobEndgame];
-rookValues = A(:); 
+rookMaxSquares = 14
+rookMobSquares = 0 : rookMaxSquares;
+rookMobOpening = round(28 * log10(1 + rookMobSquares * 9 / rookMaxSquares));
+rookMobEndgame = round(42 * log10(1 + rookMobSquares * 9 / rookMaxSquares));
+A = [rookMobOpening; rookMobEndgame];
+rookValues = A(:);
 
-queenMobSquares=0:27;
-queenMobOpening=round(54 * log10(1 + queenMobSquares * 9 / 27));
-queenMobEndgame=round(54 * log10(1 + queenMobSquares * 9 / 27));
-A = [queenMobOpening;queenMobEndgame];
-queenValues = A(:); 
+queenMaxSquares = 27;
+queenMobSquares = 0 : queenMaxSquares;
+queenMobOpening = round(54 * log10(1 + queenMobSquares * 9 / queenMaxSquares));
+queenMobEndgame = round(54 * log10(1 + queenMobSquares * 9 / queenMaxSquares));
+A = [queenMobOpening; queenMobEndgame];
+queenValues = A(:);
 
 # Create a graph with mobility values
 plot(knightMobSquares, knightMobOpening, knightMobSquares, knightMobEndgame, bishopMobSquares, bishopMobOpening, rookMobSquares, rookMobOpening, rookMobSquares, rookMobEndgame, queenMobSquares, queenMobOpening, queenMobSquares, queenMobEndgame);
