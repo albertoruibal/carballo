@@ -16,14 +16,14 @@ PawnDiagonal = [
     [0, 0, 0, 0, 0, 0, 0, 0]
 ];
 PawnOpeningCorrection = [
-  0, 0, 0, 0, 0, 0, 0, 0;
-  0, 0, 0, 0, 0, 0, 0, 0;
-  0, 0, 0, 10, 10, 0, 0, 0;
-  0, 0, 0, 20, 20, 0, 0, 0;
-  0, 0, 0, 10, 10, 0, 0, 0;
-  0, 0, 0, 0, 0, 0, 0, 0;
-  0, 0, 0, 0, 0, 0, 0, 0;
-  0, 0, 0, 0, 0, 0, 0, 0;
+    0, 0, 0, 0, 0, 0, 0, 0;
+    0, 0, 0, 0, 0, 0, 0, 0;
+    0, 0, 0, 10, 10, 0, 0, 0;
+    0, 0, 0, 20, 20, 0, 0, 0;
+    0, 0, 0, 10, 10, 0, 0, 0;
+    0, 0, 0, 0, 0, 0, 0, 0;
+    0, 0, 0, 0, 0, 0, 0, 0;
+    0, 0, 0, 0, 0, 0, 0, 0;
 ];
 # KNIGHT
 KnightColumn = [
@@ -93,16 +93,16 @@ KingDiagonal = [
 
 function A = myDiagonal(D)
     D1 = [
-      D(8), D(7), D(6), D(5);
-      D(7), D(6), D(5), D(4);
-      D(6), D(5), D(4), D(3); 
-      D(5), D(4), D(3), D(2)
+        D(8), D(7), D(6), D(5);
+        D(7), D(6), D(5), D(4);
+        D(6), D(5), D(4), D(3);
+        D(5), D(4), D(3), D(2)
     ];
     D2 = [
-      D(1), D(2), D(3), D(4);
-      D(2), D(1), D(2), D(3);
-      D(3), D(2), D(1), D(2);
-      D(4), D(3), D(2), D(1)
+        D(1), D(2), D(3), D(4);
+        D(2), D(1), D(2), D(3);
+        D(3), D(2), D(1), D(2);
+        D(4), D(3), D(2), D(1)
     ];
     A = [ (D1 + D2) fliplr(D1 + D2); flip(D1 + D2) flip(fliplr(D1 + D2))];
 endfunction
@@ -124,18 +124,17 @@ function out = generatePCSQ(pieceValue,Column4, Rank, Diagonal, OpeningCorrectio
     "\n};\n");
 endfunction
 
-printf(
-strcat(
-"private static final int pawnPcsq[] =",
-generatePCSQ([100, 100], PawnColumn, PawnRank, PawnDiagonal, PawnOpeningCorrection, 1),
-"private static final int knightPcsq[] =",
-generatePCSQ([325, 325], KnightColumn, KnightRank, KnightDiagonal, 0, 3),
-"private static final int bishopPcsq[] =",
-generatePCSQ([325, 325], BishopColumn, BishopRank, BishopDiagonal, 0, 5),
-"private static final int rookPcsq[] =",
-generatePCSQ([500, 500], RookColumn, RookRank, RookDiagonal, 0, 7),
-"private static final int queenPcsq[] =",
-generatePCSQ([975, 975], QueenColumn, QueenRank, QueenDiagonal, 0, 9),
-"private static final int kingPcsq[] =",
-generatePCSQ([1000, 1000], KingColumn, KingRank, KingDiagonal, 0, 11)
-));
+printf(strcat(
+    "private static final int pawnPcsq[] =",
+    generatePCSQ([100, 100], PawnColumn, PawnRank, PawnDiagonal, PawnOpeningCorrection, 1),
+    "private static final int knightPcsq[] =",
+    generatePCSQ([325, 325], KnightColumn, KnightRank, KnightDiagonal, 0, 3),
+    "private static final int bishopPcsq[] =",
+    generatePCSQ([325, 325], BishopColumn, BishopRank, BishopDiagonal, 0, 5),
+    "private static final int rookPcsq[] =",
+    generatePCSQ([500, 500], RookColumn, RookRank, RookDiagonal, 0, 7),
+    "private static final int queenPcsq[] =",
+    generatePCSQ([975, 975], QueenColumn, QueenRank, QueenDiagonal, 0, 9),
+    "private static final int kingPcsq[] =",
+    generatePCSQ([1000, 1000], KingColumn, KingRank, KingDiagonal, 0, 11)
+    ));

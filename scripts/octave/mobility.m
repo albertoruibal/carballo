@@ -32,11 +32,11 @@ legend("Knight Opening", "Knight Endgame", "Bishop", "Rook Opening", "Rook EndGa
 
 # Print values for the Java evaluator
 printf(strcat(
-  "private static final int[][] MOBILITY = {\n",
-	"    {}, {},\n",
-  "    {", substr(sprintf('oe(%i, %i), ', knightValues), 1, -2), "},\n",
-  "    {", substr(sprintf('oe(%i, %i), ', bishopValues), 1, -2), "},\n",
-  "    {", substr(sprintf('oe(%i, %i), ', rookValues), 1, -2), "},\n",
-  "    {", substr(sprintf('oe(%i, %i), ', queenValues), 1, -2), "}\n",
-  "};\n"
-  ));
+    "private static final int[][] MOBILITY = {\n",
+    "    {}, {},\n",
+    "    {", substr(sprintf('oe(%i, %i), ', knightValues), 1, -2), "},\n",
+    "    {", substr(sprintf('oe(%i, %i), ', bishopValues), 1, -2), "},\n",
+    "    {", substr(sprintf('oe(%i, %i), ', rookValues), 1, -2), "},\n",
+    "    {", substr(sprintf('oe(%i, %i), ', queenValues), 1, -2), "}\n",
+    "};\n"
+    ));
