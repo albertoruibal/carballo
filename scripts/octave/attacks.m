@@ -4,7 +4,7 @@
 
 # Pawn, Minor, Major
 pieceTypeBonus = [25, 15, 7];
-AttackFactors = [0.3, 0.6, 0.63, 0.9, 1];
+attackFactors = [0.3, 0.6, 0.63, 0.9, 1];
 
 pawnAttackBase =  pieceTypeBonus(1) * attackFactors;
 pawnAttackBase(1) = 0;
@@ -29,7 +29,7 @@ legend("Pawn Opening", "Pawn Endgame", "Minor Opening", "Minor Endgame", "Major 
 
 # Print values for the Java evaluator
 printf(strrep(strcat(
-    "private static final int[] PAWN_ATTACKS = {0, ", substr(sprintf('oe(%i, %i), ', pawnAttacks), 1, -2), ", 0};\n",
-    "private static final int[] MINOR_ATTACKS = {0, ", substr(sprintf('oe(%i, %i), ', minorAttacks), 1, -2), ", 0}; // Minor piece attacks to pawn undefended pieces\n",
-    "private static final int[] MAJOR_ATTACKS = {0, ", substr(sprintf('oe(%i, %i), ', majorAttacks), 1, -2), ", 0}; // Major piece attacks to pawn undefended pieces\n"
+    "private static final int[] PAWN_ATTACKS = {0, ", substr(sprintf(' oe(%i, %i),', pawnAttacks), 1, -1), ", 0};\n",
+    "private static final int[] MINOR_ATTACKS = {0, ", substr(sprintf(' oe(%i, %i),', minorAttacks), 1, -1), ", 0}; // Minor piece attacks to pawn undefended pieces\n",
+    "private static final int[] MAJOR_ATTACKS = {0, ", substr(sprintf(' oe(%i, %i),', majorAttacks), 1, -1), ", 0}; // Major piece attacks to pawn undefended pieces\n"
     ), "oe(0, 0)", "0"));

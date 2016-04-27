@@ -25,9 +25,9 @@ public class CompleteEvaluator extends Evaluator {
 	};
 
 	// Attacks
-	private static final int[] PAWN_ATTACKS = {0, 0, oe(12, 16), oe(13, 18), oe(17, 23), oe(19, 25), 0};
-	private static final int[] MINOR_ATTACKS = {0, oe(3, 5), oe(7, 10), oe(8, 11), oe(10, 14), oe(11, 15), 0}; // Minor piece attacks to pawn undefended pieces
-	private static final int[] MAJOR_ATTACKS = {0, oe(2, 2), oe(3, 5), oe(4, 5), oe(5, 6), oe(5, 7), 0}; // Major piece attacks to pawn undefended pieces
+	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
+	private static final int[] MINOR_ATTACKS = {0, oe(3, 5), oe(7, 9), oe(7, 9), oe(10, 14), oe(11, 15), 0}; // Minor piece attacks to pawn undefended pieces
+	private static final int[] MAJOR_ATTACKS = {0, oe(2, 2), oe(3, 4), oe(3, 4), oe(5, 6), oe(5, 7), 0}; // Major piece attacks to pawn undefended pieces
 
 	private static final int HUNG_PIECES = oe(16, 25); // Two or more pieces of the other side attacked by inferior pieces
 	private static final int PINNED_PIECE = oe(7, 15);
