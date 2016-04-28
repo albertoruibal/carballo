@@ -33,7 +33,7 @@ Features
 * Internal Iterative Deepening to improve sorting
 * Extensions: Check, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
-* Pruning: Null move Pruning, static null move pruning, futility pruning and aggressive futility pruning
+* Pruning: Null move Pruning, static null move pruning and futility pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Selectable ELO level with an UCI parameter
 * Supports Chess960
