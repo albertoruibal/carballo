@@ -97,8 +97,8 @@ cd jse
 gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 ```
 
-History
-=======
+Changelog
+=========
 
 Version 1.5: More search and evaluation tuning
 
