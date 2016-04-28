@@ -3,7 +3,7 @@ Carballo Chess Engine
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-* UCI: a text interface for chess GUIs like Arena: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.4.tgz
+* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.4.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
 
 It is organized into modules:
@@ -45,11 +45,11 @@ Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
 | Test suite       | Time per position | Version 1.5 | Version 1.4 | Version 1.3 | Version 1.2 |
 | ---------------- | -----------------:| -----------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     292/300 |     292/300 |     288/300 |     287/300 |
+| WinAtChess (New) |          1 second |     293/300 |     292/300 |     288/300 |     287/300 |
 | SilentButDeadly  |          1 second |     125/134 |     119/134 |     116/134 |      90/134 |
 | ECMGCP           |          1 second |     105/183 |      97/183 |      78/183 |      68/183 |
-| ECMGCP           |        10 seconds |     161/183 |     152/183 |     131/183 |     130/183 |
-| Arasan 18        |        60 seconds |      67/250 |      58/250 |      26/250 |      19/250 |
+| ECMGCP           |        10 seconds |     160/183 |     152/183 |     131/183 |     130/183 |
+| Arasan 18        |        60 seconds |      71/250 |      58/250 |      26/250 |      19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -106,7 +106,7 @@ Version 1.5: More search and evaluation tuning
 * Change the outside passer detection, now only if the pawn is in the files a, b, c  or f, g, h and there are opposite pawns
 * Increase the passer pawn bonuses to match the "Two connected passers on 6th are better than a rook"
 * Increase the attack bonuses
-* Added GNU's Octave scripts to generate the mobility/attack bonuses and the Piece-Square table values under scripts/octave 
+* Added GNU's Octave scripts to generate the mobility/attack/passer bonuses and the Piece-Square tables under scripts/octave 
 * Added a GCJ compilation script to generate native binaries for Linux
 
 Version 1.4: Another step in the engine strength
