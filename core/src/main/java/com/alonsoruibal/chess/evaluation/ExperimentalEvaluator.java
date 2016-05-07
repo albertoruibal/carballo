@@ -256,7 +256,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		kingZone[B] |= (kingZone[B] >> 8);
 
 		long all = board.getAll();
-		long pieceAttacks, pieceAttacksXray, safeAttacks, kingAttacks;
+		long pieceAttacks, pieceAttackedXray, safeAttacks, kingAttacks;
 		boolean onlyKingsAndPawns = (board.knights | board.bishops | board.rooks | board.queens) == 0;
 
 		long square = 1;
@@ -456,9 +456,11 @@ public class ExperimentalEvaluator extends Evaluator {
 						kingAttackersCount[us]++;
 					}
 
-					pieceAttacksXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
-					if ((pieceAttacksXray & (board.rooks | board.queens | board.kings) & others) != 0) {
-						attacks[us] += PINNED_PIECE;
+					pieceAttackedXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns))
+							& ~pieceAttacks
+							& (board.rooks | board.queens) & others;
+					if (pieceAttackedXray != 0) {
+						attacks[us] += PINNED_PIECE * BitboardUtils.popCount(pieceAttackedXray);
 					}
 
 					// Bishop Outpost: no opposite pawns can attack the square and defended by one of our pawns
@@ -489,9 +491,11 @@ public class ExperimentalEvaluator extends Evaluator {
 						kingAttackersCount[us]++;
 					}
 
-					pieceAttacksXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) & ~pieceAttacks;
-					if ((pieceAttacksXray & (board.queens | board.kings) & others) != 0) {
-						attacks[us] += PINNED_PIECE;
+					pieceAttackedXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns))
+							& ~pieceAttacks
+							& board.queens & others;
+					if ((pieceAttackedXray) != 0) {
+						attacks[us] += PINNED_PIECE * BitboardUtils.popCount(pieceAttackedXray);
 					}
 
 					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
@@ -543,13 +547,6 @@ public class ExperimentalEvaluator extends Evaluator {
 					if (kingAttacks != 0) {
 						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * BitboardUtils.popCount(kingAttacks);
 						kingAttackersCount[us]++;
-					}
-
-					pieceAttacksXray = (bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)) |
-							bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns)))
-							& ~pieceAttacks;
-					if ((pieceAttacksXray & board.kings & others) != 0) {
-						attacks[us] += PINNED_PIECE;
 					}
 
 				} else if ((square & board.kings) != 0) {
@@ -632,6 +629,10 @@ public class ExperimentalEvaluator extends Evaluator {
 			attacks += superiorAttacksCount * HUNG_PIECES;
 		}
 
+		long pinnedNotPawn = ai.pinnedPieces & ~board.pawns & others;
+		if (pinnedNotPawn != 0) {
+			attacks += PINNED_PIECE * BitboardUtils.popCount(pinnedNotPawn);
+		}
 		return attacks;
 	}
 }
