@@ -69,7 +69,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
 	private static final int BISHOP_OUTPOST_ATTACKING = oe(3, 4); // And attacks other piece not defended by pawn or a square in the king zone
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
-	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
+	private static final int BISHOP_TRAPPED_PENALTY = oe(100, 100);
 	private static final long[] BISHOP_TRAPPING = {
 			0, Square.F2, 0, 0, 0, 0, Square.C2, 0,
 			Square.G3, 0, 0, 0, 0, 0, 0, Square.B3,

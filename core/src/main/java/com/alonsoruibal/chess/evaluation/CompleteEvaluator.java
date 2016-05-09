@@ -58,7 +58,7 @@ public class CompleteEvaluator extends Evaluator {
 	// Bishops
 	private static final int[] BISHOP_OUTPOST = {oe(7, 4), oe(12, 7)};
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
-	private static final int BISHOP_TRAPPED_PENALTY = oe(40, 40);
+	private static final int BISHOP_TRAPPED_PENALTY = oe(100, 100);
 	private static final long[] BISHOP_TRAPPING = {
 			0, Square.F2, 0, 0, 0, 0, Square.C2, 0,
 			Square.G3, 0, 0, 0, 0, 0, 0, Square.B3,

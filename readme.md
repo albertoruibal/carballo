@@ -45,11 +45,11 @@ Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
 
 | Test suite       | Time per position | Version 1.5 | Version 1.4 | Version 1.3 | Version 1.2 |
 | ---------------- | -----------------:| -----------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     292/300 |     292/300 |     288/300 |     287/300 |
-| SilentButDeadly  |          1 second |     123/134 |     119/134 |     116/134 |      90/134 |
-| ECMGCP           |          1 second |     108/183 |      97/183 |      78/183 |      68/183 |
-| ECMGCP           |        10 seconds |     160/183 |     152/183 |     131/183 |     130/183 |
-| Arasan 18        |        60 seconds |      74/250 |      58/250 |      26/250 |      19/250 |
+| WinAtChess (New) |          1 second |     293/300 |     292/300 |     288/300 |     287/300 |
+| SilentButDeadly  |          1 second |     122/134 |     119/134 |     116/134 |      90/134 |
+| ECMGCP           |          1 second |     109/183 |      97/183 |      78/183 |      68/183 |
+| ECMGCP           |        10 seconds |     158/183 |     152/183 |     131/183 |     130/183 |
+| Arasan 18        |        60 seconds |      78/250 |      58/250 |      26/250 |      19/250 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -107,6 +107,7 @@ Version 1.5: More search and evaluation tuning
 * Increase the passer pawn bonuses to match the "Two connected passers on 6th are better than a rook"
 * Increase the attack bonuses
 * Revise the absolute/relative pin logic, adding the bonus one time by each pinned piece
+* Increase the bishop trapped penalty
 * Added GNU's Octave scripts to generate the mobility/attack/passer bonuses and the Piece-Square tables under scripts/octave 
 * Added a GCJ compilation script to generate native binaries for Linux
 
