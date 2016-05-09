@@ -221,11 +221,11 @@ public class CompleteEvaluator extends Evaluator {
 			blackPawnsAux = blackPawnsAux >>> 8;
 			blackPawnsAux &= ~((board.pawns & board.whites) | ai.pawnAttacks[W]); // Cannot advance because of a blocking pawn or a opposite pawn attack
 
-			if (whitePawnsAux == 0 || blackPawnsAux == 0) {
+			if (whitePawnsAux == 0 && blackPawnsAux == 0) {
 				break;
 			}
 			pawnCanAttack[W] |= ((whitePawnsAux & ~BitboardUtils.b_l) << 9) | ((whitePawnsAux & ~BitboardUtils.b_r) << 7);
-			pawnCanAttack[B] |= ((blackPawnsAux & ~BitboardUtils.b_r) >>> 9) | ((whitePawnsAux & ~BitboardUtils.b_l) >>> 7);
+			pawnCanAttack[B] |= ((blackPawnsAux & ~BitboardUtils.b_r) >>> 9) | ((blackPawnsAux & ~BitboardUtils.b_l) >>> 7);
 		}
 
 		// Calculate attacks

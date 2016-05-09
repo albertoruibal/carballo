@@ -108,6 +108,7 @@ Version 1.5: More search and evaluation tuning
 * Increase the attack bonuses
 * Revise the absolute/relative pin logic, adding the bonus one time by each pinned piece
 * Increase the bishop trapped penalty
+* Fix a bug in the pawnCanAttack bitboards
 * Added GNU's Octave scripts to generate the mobility/attack/passer bonuses and the Piece-Square tables under scripts/octave 
 * Added a GCJ compilation script to generate native binaries for Linux
 
