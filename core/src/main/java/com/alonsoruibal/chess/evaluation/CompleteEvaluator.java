@@ -53,10 +53,10 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
-	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(25, 15)}; // Array is Not defended by pawn, defended by pawn
+	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(22, 15)}; // Array is Not defended by pawn, defended by pawn
 
 	// Bishops
-	private static final int[] BISHOP_OUTPOST = {oe(7, 4), oe(12, 7)};
+	private static final int[] BISHOP_OUTPOST = {oe(7, 4), oe(10, 7)};
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
 	private static final int BISHOP_TRAPPED_PENALTY = oe(100, 100);
 	private static final long[] BISHOP_TRAPPING = {
