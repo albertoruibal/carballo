@@ -22,7 +22,9 @@ public class ContemptFactorTest {
 	@Test
 	public void testContemp1() {
 		searchEngine.getBoard().setFen("7k/7p/5P1K/8/8/8/8/8 w");
-		searchEngine.go(SearchParameters.get(1000));
+		SearchParameters sp = new SearchParameters();
+		sp.setDepth(18);
+		searchEngine.go(sp);
 		searchEngine.getBoard().doMove(searchEngine.getBestMove());
 		assertEquals(-SearchEngine.CONTEMPT_FACTOR, searchEngine.getBestMoveScore());
 	}
