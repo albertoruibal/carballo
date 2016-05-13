@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SearchEngineTest {
 
@@ -74,13 +75,14 @@ public class SearchEngineTest {
 	}
 
 	@Test
-	public void testE2E4() {
+	public void testOpenWithE4OrD4() {
 		SearchEngine search = new SearchEngine(new Config());
 		search.getBoard().setFen(Board.FEN_START_POSITION);
 		SearchParameters sp = new SearchParameters();
 		sp.setDepth(14);
 		search.go(sp);
-		assertEquals(Move.getFromString(search.getBoard(), "e2e4", true), search.getBestMove());
+		assertTrue(Move.getFromString(search.getBoard(), "e4", true) == search.getBestMove()
+				|| Move.getFromString(search.getBoard(), "d4", true) == search.getBestMove());
 	}
 
 	@Test
