@@ -3,8 +3,8 @@ apply plugin: 'java'
 archivesBaseName = 'webtvchess'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.7.0'
-    compile 'com.google.gwt:gwt-dev:2.7.0'
+    compile 'com.google.gwt:gwt-user:2.8.0-beta1'
+    compile 'com.google.gwt:gwt-dev:2.8.0-beta1'
     compile 'org.vectomatic:lib-gwt-svg:0.5.10'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
@@ -53,50 +53,27 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
                 //'-XcompilerMetrics',
         ]
 
-    maxHeapSize = '256M'
+    maxHeapSize = '512M'
 }
 
 jar.dependsOn compileGwt
 
-task runSuperDevMode (dependsOn: classes, type: JavaExec) {
-    ext.buildDir = "${project.projectDir}/src/main/webapp/"
-    ext.extraDir = "${project.buildDir}/extra"
+task gwtSuperDev(dependsOn: classes, type: JavaExec) {
 
-    inputs.source sourceSets.main.java.srcDirs
-    inputs.dir sourceSets.main.output.resourcesDir
-    outputs.dir buildDir
-
-    doFirst {
-        file(buildDir).mkdirs()
-        //classpath.each { println it.name}
-    }
-
-    main = 'com.google.gwt.dev.Compiler'
+    main = 'com.google.gwt.dev.codeserver.CodeServer'
 
     classpath {
         [
                 sourceSets.main.java.srcDirs,           // Java source
                 sourceSets.main.output.resourcesDir,    // Generated resources
-                sourceSets.main.output.classesDir,      // Generated classes
-                sourceSets.main.compileClasspath,       // Deps
+                sourceSets.main.runtimeClasspath,       // Deps
         ]
     }
 
     args =
-        [
-                'org.vectomatic.libgwtsvgchess',
-                '-war', buildDir,
-                '-extra', extraDir,
-                '-logLevel', 'INFO',
-                '-localWorkers', '2',
-                //'-optimize', '9',        // No effect?
-                '-XdisableCastChecking',   // Disables runtime checking of cast operations. This can reduce compiled file sizes.
-                '-XdisableClassMetadata',  // Disables some java.lang.Class methods. This can reduce compiled file sizes.
-                //'-XenableClosureCompiler', // This should create smaller JavaScript output. Not compatible with the compile report
-                '-compileReport',
-                '-XsoycDetailed',
-                '-XcompilerMetrics',
-        ]
+            [
+                    'org.vectomatic.libgwtsvgchess'
+            ]
 
-    maxHeapSize = '256M'
+    maxHeapSize = '512M'
 }
