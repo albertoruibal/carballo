@@ -6,7 +6,7 @@ allprojects {
     targetCompatibility = 1.7
 
     group = 'com.alonsoruibal'
-    version = '1.5'
+    version = '1.6'
 
     repositories {
         mavenLocal()

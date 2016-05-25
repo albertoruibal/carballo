@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar carballo-1.5.jar -Xmx512M
+java -jar carballo-1.6.jar -Xmx512M
