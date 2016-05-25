@@ -3,7 +3,7 @@ Carballo Chess Engine
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.4.tgz
+* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.5.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
 
 It is organized into modules:
