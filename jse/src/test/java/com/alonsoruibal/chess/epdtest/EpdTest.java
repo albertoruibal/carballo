@@ -79,8 +79,8 @@ public class EpdTest implements SearchObserver {
 		search.debug = true;
 		search.setObserver(this);
 
-		allSolutionTimes = new ArrayList<Integer>();
-		allSolutionNodes = new ArrayList<Long>();
+		allSolutionTimes = new ArrayList<>();
+		allSolutionNodes = new ArrayList<>();
 
 		totalTime = 0;
 		totalNodes = 0;

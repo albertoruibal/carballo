@@ -100,14 +100,14 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 	int mouseIndex = -1;
 
 	public ChessBoard(OMSVGSVGElement svgElt) {
-		possibleDestinySquares = new ArrayList<Integer>();
+		possibleDestinySquares = new ArrayList<>();
 
 		this.svgElt = svgElt;
 		this.boardDoc = (OMSVGDocument) svgElt.getOwnerDocument();
 		this.boardElt = boardDoc.getElementById("board");
 		this.css = Resources.INSTANCE.getCss();
 		moveOriginIndex = -1;
-		this.algebraicToRects = new HashMap<String, OMSVGRectElement>();
+		this.algebraicToRects = new HashMap<>();
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				int index = j + 8 * i;
@@ -120,7 +120,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		OMSVGRectElement sqElement = algebraicToRects.get("a1");
 		this.sqWidth = (int) sqElement.getWidth().getBaseVal().getValue();
 		this.sqHeight = (int) sqElement.getHeight().getBaseVal().getValue();
-		this.algebraicToPieces = new HashMap<String, OMSVGUseElement>();
+		this.algebraicToPieces = new HashMap<>();
 
 		update();
 

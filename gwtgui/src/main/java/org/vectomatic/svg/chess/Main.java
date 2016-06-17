@@ -120,7 +120,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 	 * The SVG chess board
 	 */
 	ChessBoard chessboard;
-	static Stack<Integer> movesBackward = new Stack<Integer>();
+	static Stack<Integer> movesBackward = new Stack<>();
 
 	/**
 	 * A &lt;div&gt; element to contain the SVG root element

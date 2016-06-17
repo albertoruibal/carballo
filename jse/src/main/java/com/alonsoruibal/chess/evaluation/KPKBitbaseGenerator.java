@@ -136,7 +136,7 @@ public class KPKBitbaseGenerator {
 		long time1 = System.currentTimeMillis();
 		int i;
 		boolean repeat = true;
-		ArrayList<KPKPosition> db = new ArrayList<KPKPosition>();
+		ArrayList<KPKPosition> db = new ArrayList<>();
 
 		// Initialize db with known win / draw positions
 		for (i = 0; i < MAX_INDEX; ++i) {

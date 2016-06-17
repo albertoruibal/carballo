@@ -38,8 +38,8 @@ public class JSONBook implements Book {
 		init();
 	}
 	
-	List<Integer> moves = new ArrayList<Integer>(); 
-	List<Integer> weights = new ArrayList<Integer>();
+	List<Integer> moves = new ArrayList<>();
+	List<Integer> weights = new ArrayList<>();
 	long totalWeight;
 	
 	public List<Integer> getMoves() {
@@ -83,8 +83,8 @@ public class JSONBook implements Book {
 	public void generateMoves(Board board) {
 		String key2Find = "x" + Long.toHexString(board.getKey());
 		totalWeight = 0;
-		moves = new ArrayList<Integer>();
-		weights = new ArrayList<Integer>();
+		moves = new ArrayList<>();
+		weights = new ArrayList<>();
 		JsArray<JsArrayInteger> array = getData(key2Find);
 		if (array != null) {
 			JsArrayInteger moveArray = array.get(0);

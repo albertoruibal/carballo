@@ -24,8 +24,8 @@ public class FileBook implements Book {
 
 	private String bookName;
 
-	List<Integer> moves = new ArrayList<Integer>();
-	List<Integer> weights = new ArrayList<Integer>();
+	List<Integer> moves = new ArrayList<>();
+	List<Integer> weights = new ArrayList<>();
 	long totalWeight;
 
 	private final Random random = new Random();

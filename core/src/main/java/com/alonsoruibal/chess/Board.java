@@ -1071,7 +1071,7 @@ public class Board {
 	}
 
 	public String getMoves() {
-		StringBuffer oSB = new StringBuffer();
+		StringBuilder oSB = new StringBuilder();
 		for (int i = initialMoveNumber; i < moveNumber; i++) {
 			if (oSB.length() > 0) {
 				oSB.append(" ");
@@ -1082,7 +1082,7 @@ public class Board {
 	}
 
 	public String getMovesSan() {
-		StringBuffer oSB = new StringBuffer();
+		StringBuilder oSB = new StringBuilder();
 		for (int i = initialMoveNumber; i < moveNumber; i++) {
 			if (oSB.length() > 0) {
 				oSB.append(" ");
@@ -1097,7 +1097,7 @@ public class Board {
 			return "";
 		}
 
-		StringBuffer oSB = new StringBuffer();
+		StringBuilder oSB = new StringBuilder();
 		String movesArray[] = moves.split(" ");
 		int savedMoveNumber = moveNumber;
 
