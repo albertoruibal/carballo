@@ -3,8 +3,8 @@ apply plugin: 'java'
 archivesBaseName = 'webtvchess'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.8.0-beta1'
-    compile 'com.google.gwt:gwt-dev:2.8.0-beta1'
+    compile 'com.google.gwt:gwt-user:2.8.0-rc2'
+    compile 'com.google.gwt:gwt-dev:2.8.0-rc2'
     compile 'org.vectomatic:lib-gwt-svg:0.5.10'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
