@@ -8,3 +8,13 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     archives sourcesJar
 }
+
+publishing {
+    publications {
+        carballoCore(MavenPublication) {
+            from components.java
+            artifactId = 'carballo-core'
+            artifact sourcesJar
+        }
+    }
+}

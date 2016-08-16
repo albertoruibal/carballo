@@ -56,3 +56,12 @@ task fastTest(type: Test) {
         excludeCategories 'com.alonsoruibal.chess.SlowTest'
     }
 }
+
+publishing {
+    publications {
+        carballoJse(MavenPublication) {
+            from components.java
+            artifactId = 'carballo-jse'
+        }
+    }
+}

@@ -1,6 +1,6 @@
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
@@ -9,7 +9,6 @@ allprojects {
     version = '1.6'
 
     repositories {
-        mavenLocal()
-        mavenCentral()
+        jcenter()
     }
 }
