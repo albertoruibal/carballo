@@ -28,6 +28,9 @@ public class SearchEngine implements Runnable {
 
 	public boolean debug = false;
 
+	Object searchLock = new Object();
+	Object startSearchLock = new Object();
+
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
 
@@ -70,7 +73,7 @@ public class SearchEngine implements Runnable {
 	private MoveIterator[] moveIterators;
 
 	private int bestMoveScore;
-	private int globalBestMove, ponderMove;
+	private int globalBestMove, globalPonderMove;
 
 	private int initialPly; // Initial Ply for search
 	private int depth;
@@ -284,8 +287,8 @@ public class SearchEngine implements Runnable {
 	public int refineEval(boolean foundTT, int eval) {
 		return foundTT
 				&& (tt.getNodeType() == TranspositionTable.TYPE_EXACT_SCORE
-						|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW && tt.getScore() < eval)
-						|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH && tt.getScore() > eval)) ?
+				|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_LOW && tt.getScore() < eval)
+				|| (tt.getNodeType() == TranspositionTable.TYPE_FAIL_HIGH && tt.getScore() > eval)) ?
 				tt.getScore() : eval;
 	}
 
@@ -753,11 +756,14 @@ public class SearchEngine implements Runnable {
 	 * It searches for the best movement
 	 */
 	public void go(SearchParameters searchParameters) {
-		if (initialized && !searching) {
+		synchronized (startSearchLock) {
+			if (!initialized || searching) {
+				return;
+			}
 			searching = true;
-			setSearchParameters(searchParameters);
-			run();
 		}
+		setSearchParameters(searchParameters);
+		run();
 	}
 
 	private void searchStats() {
@@ -808,7 +814,7 @@ public class SearchEngine implements Runnable {
 		pvPositionCounter = 0;
 		qsPositionCounter = 0;
 		globalBestMove = Move.NONE;
-		ponderMove = Move.NONE;
+		globalPonderMove = Move.NONE;
 
 		initialPly = board.getMoveNumber();
 
@@ -886,28 +892,33 @@ public class SearchEngine implements Runnable {
 		depth++;
 	}
 
-	private void finishRun() {
-		// Go back the board to the initial position
-		board.undoMove(initialPly);
-		searching = false;
+	public void run() {
+		int bestMove = Move.NONE, ponderMove = Move.NONE;
+
+		synchronized (searchLock) {
+			try {
+				prepareRun();
+				while (true) {
+					runStepped();
+				}
+			} catch (SearchFinishedException ignored) {
+			}
+
+			// Return the board to the initial position
+			board.undoMove(initialPly);
+
+			bestMove = globalBestMove;
+			ponderMove = globalPonderMove;
+
+			searching = false;
+		}
 
 		if (observer != null) {
-			observer.bestMove(globalBestMove, ponderMove);
+			observer.bestMove(bestMove, ponderMove);
 		}
 		if (debug) {
 			searchStats();
 		}
-	}
-
-	public void run() {
-		try {
-			prepareRun();
-			while (true) {
-				runStepped();
-			}
-		} catch (SearchFinishedException ignored) {
-		}
-		finishRun();
 	}
 
 	public void setSearchLimits(SearchParameters searchParameters, boolean panicTime) {
@@ -938,7 +949,7 @@ public class SearchEngine implements Runnable {
 				}
 				keys.add(board.getKey());
 				if (i == 1) {
-					ponderMove = tt.getBestMove();
+					globalPonderMove = tt.getBestMove();
 				}
 				sb.append(" ");
 				sb.append(Move.toString(tt.getBestMove()));

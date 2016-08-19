@@ -14,12 +14,16 @@ public class SearchEngineThreaded extends SearchEngine {
 	 * Threaded version
 	 */
 	public void go(SearchParameters searchParameters) {
-		if (initialized && !searching) {
+		synchronized (startSearchLock) {
+			if (!initialized || searching) {
+				return;
+			}
 			searching = true;
-			setSearchParameters(searchParameters);
-			thread = new Thread(this);
-			thread.start();
 		}
+
+		setSearchParameters(searchParameters);
+		thread = new Thread(this);
+		thread.start();
 	}
 
 	/**
