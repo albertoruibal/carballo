@@ -443,6 +443,10 @@ public class SearchEngine implements Runnable {
 		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != Move.NONE);
 		if (foundTT) {
 			if (nodeType != NODE_ROOT && canUseTT(depthRemaining, alpha, beta)) {
+				if (distanceToInitialPly + tt.getDepthAnalyzed() > selDepth) {
+					selDepth = distanceToInitialPly + tt.getDepthAnalyzed();
+				}
+
 				return tt.getScore();
 			}
 			ttMove = tt.getBestMove();
