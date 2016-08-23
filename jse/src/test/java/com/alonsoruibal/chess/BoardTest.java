@@ -111,23 +111,6 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testDrawDetection() {
-		Board b = new Board();
-		b.setFen("7k/8/8/8/8/8/8/7K w - - 0 0");
-		assertEquals(b.isDraw(), true);
-		b.setFen("7k/8/8/8/8/8/8/6BK b - - 0 0");
-		assertEquals(b.isDraw(), true);
-		b.setFen("7k/8/8/8/8/8/8/6NK b - - 0 0");
-		assertEquals(b.isDraw(), true);
-		b.setFen("7k/8/nn6/8/8/8/8/8K b - - 0 0");
-		assertEquals(b.isDraw(), true);
-		b.setFen("7k/8/Nn6/8/8/8/8/8K b - - 0 0");
-		assertEquals(b.isDraw(), false);
-		b.setFen("7k/7p/8/8/8/8/8/6NK b - - 0 0");
-		assertEquals(b.isDraw(), false);
-	}
-
-	@Test
 	public void testPassedPawn() {
 		Board b = new Board();
 		// Position from http://en.wikipedia.org/wiki/Passed_pawn

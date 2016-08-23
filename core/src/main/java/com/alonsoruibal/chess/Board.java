@@ -929,16 +929,22 @@ public class Board {
 				return true;
 			}
 		}
-		// Draw by no material to mate
-		// Kk, KNk, KNNk, KBK by FIDE rules, be careful: KNnk IS NOT a draw
+		// Draw by no material to mate by FIDE rules
+		// https://en.wikipedia.org/wiki/Rules_of_chess#Draws
+		// Kk, KNk, KNNk (KNnk IS NOT a draw), KBk, KBbk (with bishops in the same color)
 		return (pawns == 0 && rooks == 0 && queens == 0) &&
-				((bishops == 0 && knights == 0) || //
-						(knights == 0 && BitboardUtils.popCount(bishops) == 1) ||
-						(bishops == 0 &&
-								(BitboardUtils.popCount(knights) == 1 ||
-										(BitboardUtils.popCount(knights) == 2 && // KNNk, check same color
-												(BitboardUtils.popCount(knights & whites) == 2 ||
-														BitboardUtils.popCount(knights & ~whites) == 2))))
+				((bishops == 0 && knights == 0)
+						|| (knights == 0 && BitboardUtils.popCount(bishops) == 1)
+						|| (bishops == 0 &&
+						(BitboardUtils.popCount(knights) == 1
+								|| (BitboardUtils.popCount(knights) == 2 // KNNk, check same color
+								&& (BitboardUtils.popCount(knights & whites) == 2
+								|| BitboardUtils.popCount(knights & ~whites) == 2))))
+						|| (knights == 0
+						&& BitboardUtils.popCount(bishops & whites) == 1
+						&& BitboardUtils.popCount(bishops & ~whites) == 1
+						&& (BitboardUtils.getSameColorSquares(bishops & whites) & bishops & ~whites) != 0
+				)
 				);
 	}
 
