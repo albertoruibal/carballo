@@ -316,11 +316,11 @@ public class BitboardUtils {
 		return (square1 | (square1 - 1)) & ~(square2 - 1);
 	}
 
-	public static boolean isWhite(long square) {
+	public static boolean isWhiteSquare(long square) {
 		return (square & Square.WHITES) != 0;
 	}
 
-	public static boolean isBlack(long square) {
+	public static boolean isBlackSquare(long square) {
 		return (square & Square.BLACKS) != 0;
 	}
 

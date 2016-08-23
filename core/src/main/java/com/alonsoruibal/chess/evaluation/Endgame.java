@@ -87,7 +87,7 @@ public class Endgame {
 		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
 		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
 
-		if (BitboardUtils.isBlack(board.bishops)) {
+		if (BitboardUtils.isBlackSquare(board.bishops)) {
 			whiteKingIndex = BitboardUtils.flipHorizontalIndex(whiteKingIndex);
 			blackKingIndex = BitboardUtils.flipHorizontalIndex(blackKingIndex);
 		}
