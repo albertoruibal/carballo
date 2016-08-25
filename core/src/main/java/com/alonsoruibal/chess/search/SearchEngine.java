@@ -335,6 +335,10 @@ public class SearchEngine implements Runnable {
 		// Do not allow stand pat when in check
 		if (!checkEvasion) {
 			staticEval = evaluate(foundTT, distanceToInitialPly);
+			if (staticEval == Evaluator.KNOWN_DRAW) {
+				return evaluateDraw(distanceToInitialPly);
+			}
+
 			eval = refineEval(foundTT, staticEval);
 
 			// Evaluation functions increase alpha and can originate beta cutoffs
@@ -464,6 +468,9 @@ public class SearchEngine implements Runnable {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == Move.NONE || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = evaluate(evalTT, distanceToInitialPly);
+			if (staticEval == Evaluator.KNOWN_DRAW) {
+				return evaluateDraw(distanceToInitialPly);
+			}
 			eval = refineEval(foundTT, staticEval);
 		}
 
@@ -842,6 +849,9 @@ public class SearchEngine implements Runnable {
 			rootScore = tt.getScore();
 		} else {
 			rootScore = evaluate(foundTT, 0);
+			if (rootScore == Evaluator.KNOWN_DRAW) {
+				rootScore = 0;
+			}
 		}
 		tt.newGeneration();
 		aspWindows = ASPIRATION_WINDOW_SIZES;

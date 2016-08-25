@@ -13,7 +13,7 @@ public abstract class Evaluator {
 	public static final int NO_VALUE = Short.MAX_VALUE;
 	public static final int MATE = 30000;
 	public static final int KNOWN_WIN = 20000;
-	public static final int DRAW = 0;
+	public static final int KNOWN_DRAW = 32000;
 
 	public static final int PAWN = 100;
 	public static final int KNIGHT = 325;

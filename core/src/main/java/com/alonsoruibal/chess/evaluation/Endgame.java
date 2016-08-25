@@ -100,7 +100,7 @@ public class Endgame {
 
 	private static int endgameKPK(Board board, boolean whiteDominant) {
 		if (!kpkBitbase.probe(board)) {
-			return Evaluator.DRAW;
+			return Evaluator.KNOWN_DRAW;
 		}
 
 		return whiteDominant ?
@@ -125,10 +125,10 @@ public class Endgame {
 			// Does the other king capture my rook just after my move?
 			if (BitboardUtils.distance(otherKingIndex, myRookIndex) == 1 &&
 					BitboardUtils.distance(otherRookIndex/*that's my king after after capture*/, myRookIndex) > 1) {
-				return Evaluator.DRAW;
+				return Evaluator.KNOWN_DRAW;
 			}
 			return Evaluator.KNOWN_WIN;
 		}
-		return Evaluator.DRAW;
+		return Evaluator.KNOWN_DRAW;
 	}
 }
