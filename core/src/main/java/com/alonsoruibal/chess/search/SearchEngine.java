@@ -86,9 +86,7 @@ public class SearchEngine implements Runnable {
 	public long startTime;
 
 	// For performance benching
-	private long positionCounter;
-	private long pvPositionCounter;
-	private long qsPositionCounter;
+	private long nodes;
 	private long pvCutNodes;
 	private long pvAllNodes;
 	private long nullCutNodes;
@@ -221,7 +219,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public long getNodes() {
-		return positionCounter + pvPositionCounter + qsPositionCounter;
+		return nodes;
 	}
 
 	public Config getConfig() {
@@ -293,8 +291,6 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
-		qsPositionCounter++;
-
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
@@ -335,10 +331,6 @@ public class SearchEngine implements Runnable {
 		// Do not allow stand pat when in check
 		if (!checkEvasion) {
 			staticEval = evaluate(foundTT, distanceToInitialPly);
-			if (staticEval == Evaluator.KNOWN_DRAW) {
-				return evaluateDraw(distanceToInitialPly);
-			}
-
 			eval = refineEval(foundTT, staticEval);
 
 			// Evaluation functions increase alpha and can originate beta cutoffs
@@ -365,6 +357,7 @@ public class SearchEngine implements Runnable {
 
 		int move;
 		while ((move = moveIterator.next()) != Move.NONE) {
+			nodes++;
 			validOperations = true;
 
 			// Futility pruning
@@ -409,20 +402,16 @@ public class SearchEngine implements Runnable {
 	 * Search Root, PV and null window
 	 */
 	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
-		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || (positionCounter + pvPositionCounter + qsPositionCounter) > thinkToNodes)) {
+		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || nodes > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
 
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		if (nodeType == NODE_PV || nodeType == NODE_ROOT) {
-			pvPositionCounter++;
-
 			if (distanceToInitialPly > selDepth) {
 				selDepth = distanceToInitialPly;
 			}
-		} else {
-			positionCounter++;
 		}
 
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
@@ -468,9 +457,6 @@ public class SearchEngine implements Runnable {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == Move.NONE || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			staticEval = evaluate(evalTT, distanceToInitialPly);
-			if (staticEval == Evaluator.KNOWN_DRAW) {
-				return evaluateDraw(distanceToInitialPly);
-			}
 			eval = refineEval(foundTT, staticEval);
 		}
 
@@ -572,6 +558,7 @@ public class SearchEngine implements Runnable {
 		int move, bestMove = Move.NONE;
 
 		while ((move = moveIterator.next()) != Move.NONE) {
+			nodes++;
 			validOperations = true;
 
 			if (move == excludedMove) {
@@ -752,9 +739,9 @@ public class SearchEngine implements Runnable {
 		info.setTime(time - startTime);
 		info.setPv(getPv(move));
 		info.setScore(score, alpha, beta);
-		info.setNodes(positionCounter + pvPositionCounter + qsPositionCounter);
+		info.setNodes(nodes);
 		info.setHashFull(tt.getHashFull());
-		info.setNps((int) (1000 * (positionCounter + pvPositionCounter + qsPositionCounter) / (time - startTime + 1)));
+		info.setNps((int) (1000 * nodes / (time - startTime + 1)));
 
 		if (observer != null) {
 			observer.info(info);
@@ -778,14 +765,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	private void searchStats() {
-		if ((positionCounter + pvPositionCounter + qsPositionCounter) > 0) {
-			logger.debug("Positions PV      = " + pvPositionCounter + " " //
-					+ (100 * pvPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-			logger.debug("Positions QS      = " + qsPositionCounter + " " //
-					+ (100 * qsPositionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-			logger.debug("Positions Null    = " + positionCounter + " " //
-					+ (100 * positionCounter / (positionCounter + pvPositionCounter + qsPositionCounter)) + "%");
-		}
+		logger.debug("Positions         = " + nodes);
 		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
 		logger.debug("PV All            = " + pvAllNodes);
 		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
@@ -821,9 +801,7 @@ public class SearchEngine implements Runnable {
 
 		logger.debug("Board\n" + board);
 
-		positionCounter = 0;
-		pvPositionCounter = 0;
-		qsPositionCounter = 0;
+		nodes = 0;
 		globalBestMove = Move.NONE;
 		globalPonderMove = Move.NONE;
 
@@ -849,9 +827,6 @@ public class SearchEngine implements Runnable {
 			rootScore = tt.getScore();
 		} else {
 			rootScore = evaluate(foundTT, 0);
-			if (rootScore == Evaluator.KNOWN_DRAW) {
-				rootScore = 0;
-			}
 		}
 		tt.newGeneration();
 		aspWindows = ASPIRATION_WINDOW_SIZES;

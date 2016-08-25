@@ -151,6 +151,8 @@ public class CompleteEvaluator extends Evaluator {
 	public boolean debugPawns = false;
 	public StringBuffer debugSB;
 
+	private int[] gamePhase = {0};
+	private int[] scaleFactor = {0};
 	private int[] pcsq = {0, 0};
 	private int[] positional = {0, 0};
 	private int[] mobility = {0, 0};
@@ -171,20 +173,9 @@ public class CompleteEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
-		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
-		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
-		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
-		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
-		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
-		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
-		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
-		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
-		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
-		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
-
-		int endGameValue = Endgame.endGameValue(board, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
-		if (endGameValue != NO_VALUE) {
-			return endGameValue;
+		int endgameValue = Endgame.evaluateEndgame(board, gamePhase, scaleFactor);
+		if (endgameValue != NO_VALUE) {
+			return endgameValue;
 		}
 
 		pcsq[W] = ((board.whites & board.bishops & Square.WHITES) != 0 //
@@ -497,16 +488,9 @@ public class CompleteEvaluator extends Evaluator {
 				+ passedPawns[W] - passedPawns[B]
 				+ oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]);
 
-		// Ponder opening and Endgame value depending of the non-pawn pieces:
-		// opening=> gamephase = 256 / ending => gamephase = 0
-		int nonPawnMaterial = (whiteKnights + blackKnights) * KNIGHT +
-				(whiteBishops + blackBishops) * BISHOP +
-				(whiteRooks + blackRooks) * ROOK +
-				(whiteQueens + blackQueens) * QUEEN;
-		int gamePhase = nonPawnMaterial >= NON_PAWN_MATERIAL_MIDGAME_MAX ? 256 :
-				nonPawnMaterial <= NON_PAWN_MATERIAL_ENDGAME_MIN ? 0 :
-						((nonPawnMaterial - NON_PAWN_MATERIAL_ENDGAME_MIN) << 8) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
-		int value = (gamePhase * o(oe) + (256 - gamePhase) * e(oe)) >> 8; // divide by 256
+		// Ponder opening and Endgame value depending of the game phase and the scale factor
+		int value = (gamePhase[0] * o(oe)
+				+ (Endgame.GAME_PHASE_MIDGAME - gamePhase[0]) * e(oe) * scaleFactor[0] / Endgame.SCALE_FACTOR_DEFAULT) / Endgame.GAME_PHASE_MIDGAME;
 
 		if (debug) {
 			logger.debug(debugSB);
@@ -521,7 +505,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("tempo             = " + formatOE(board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("                    -----------------");
 			logger.debug("TOTAL:              " + formatOE(oe));
-			logger.debug("gamePhase = " + gamePhase + " => value = " + value);
+			logger.debug("gamePhase = " + gamePhase[0] + " => value = " + value);
 		}
 		assert Math.abs(value) < KNOWN_WIN : "Eval is outside limits";
 		return value;

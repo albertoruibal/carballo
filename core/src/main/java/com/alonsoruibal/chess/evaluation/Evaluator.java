@@ -13,7 +13,7 @@ public abstract class Evaluator {
 	public static final int NO_VALUE = Short.MAX_VALUE;
 	public static final int MATE = 30000;
 	public static final int KNOWN_WIN = 20000;
-	public static final int KNOWN_DRAW = 32000;
+	public static final int DRAW = 0;
 
 	public static final int PAWN = 100;
 	public static final int KNIGHT = 325;
@@ -22,8 +22,6 @@ public abstract class Evaluator {
 	public static final int QUEEN = 975;
 	public static final int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN};
 	public static final int BISHOP_PAIR = Evaluator.oe(50, 50); // Bonus by having two bishops in different colors
-	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
-	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
 
 	public BitboardAttacks bbAttacks;
 

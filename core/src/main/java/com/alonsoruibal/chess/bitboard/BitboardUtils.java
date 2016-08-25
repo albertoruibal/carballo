@@ -96,6 +96,7 @@ public class BitboardUtils {
 	// Ranks forward in pawn direction W, B
 	public static final long[][] RANKS_FORWARD = {RANKS_UPWARDS, RANKS_DOWNWARDS};
 	public static final long[][] RANKS_BACKWARD = {RANKS_DOWNWARDS, RANKS_UPWARDS};
+	public static final long[][] RANK_AND_FORWARD = {RANK_AND_UPWARDS, RANK_AND_DOWNWARDS};
 	public static final long[][] RANK_AND_BACKWARD = {RANK_AND_DOWNWARDS, RANK_AND_UPWARDS};
 
 	public static final String[] SQUARE_NAMES = changeEndianArray64(new String[] //
@@ -328,4 +329,25 @@ public class BitboardUtils {
 		return (square & Square.WHITES) != 0 ? Square.WHITES : Square.BLACKS;
 	}
 
+	public static long frontPawnSpan(long pawn, int color) {
+		int index = square2Index(pawn);
+		int rank = index >> 3;
+		int file = 7 - index & 7;
+
+		return RANKS_FORWARD[color][rank] &
+				(FILE[file] | FILES_ADJACENT[file]);
+	}
+
+	public static long frontFile(long square, int color) {
+		int index = square2Index(square);
+		int rank = index >> 3;
+		int file = 7 - index & 7;
+
+		return RANKS_FORWARD[color][rank] & FILE[file];
+	}
+
+	public static boolean sameRankOrFile(int index1, int index2) {
+		return ((index1 >> 3) == (index2 >> 3)) ||
+				((index1 & 7) == (index2 & 7));
+	}
 }
