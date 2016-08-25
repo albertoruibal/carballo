@@ -177,7 +177,7 @@ public class Move {
 		boolean turn = board.getTurn();
 
 		// Ignore checks, captures indicators...
-		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replaceAll(" ", "").replaceAll("0", "o").replaceAll("O", "o");
+		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replace("?", "").replace("!", "").replace(" ", "").replace("0", "o").replace("O", "o");
 
 		if ("oo".equals(move)) {
 			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
