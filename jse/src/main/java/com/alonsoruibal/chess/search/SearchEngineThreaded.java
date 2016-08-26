@@ -30,12 +30,15 @@ public class SearchEngineThreaded extends SearchEngine {
 	 * Stops thinking
 	 */
 	public void stop() {
-		super.stop();
-		while (searching) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		synchronized (startSearchLock) {
+			super.stop();
+
+			while (searching) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
