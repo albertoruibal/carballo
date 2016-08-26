@@ -95,7 +95,16 @@ public class Endgame {
 				return Endgame.endgameKPK(board, whiteMaterial > blackMaterial);
 			}
 
-			// ...and with a non-pawn piece by each side
+			// Only with a non-pawn piece
+			if ((whiteNoPawnMaterial == 1 && blackNoPawnMaterial == 0)
+					|| (whiteNoPawnMaterial == 0 && blackNoPawnMaterial == 1)) {
+				if ((whiteQueens == 1 && blackPawns == 1)
+						|| (blackQueens == 1 && whitePawns == 1)) {
+					scaleFactor[0] = scaleKQKP(board, whiteQueens > blackQueens);
+				}
+			}
+
+			// With a non-pawn piece by each side
 			if (whiteNoPawnMaterial == 1 && blackNoPawnMaterial == 1) {
 				if (whiteRooks == 1 && blackRooks == 1) {
 					scaleFactor[0] = scaleKRPKR(board, whitePawns > blackPawns);
@@ -197,13 +206,14 @@ public class Endgame {
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
 		int dominantKingIndex = BitboardUtils.square2Index(dominantKing);
 
+		int rank8 = whiteDominant ? 7 : 0;
 		int rank7 = whiteDominant ? 6 : 1;
 		int rank6 = whiteDominant ? 5 : 2;
 		int rank2 = whiteDominant ? 1 : 6;
 
 		long pawn = board.pawns;
 		int pawnIndex = BitboardUtils.square2Index(pawn);
-		int pawnFileIndex = 7 - (BitboardUtils.square2Index(pawn) & 7);
+		int pawnFileIndex = 7 - (pawnIndex & 7);
 		long pawnFile = BitboardUtils.FILE[pawnFileIndex];
 		long pawnFileAndAdjacents = BitboardUtils.FILE[pawnFileIndex] | BitboardUtils.FILES_ADJACENT[pawnFileIndex];
 
@@ -218,7 +228,7 @@ public class Endgame {
 		if ((BitboardUtils.RANK[rank6] & pawn) != 0 // Pawn in rank 6
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFileAndAdjacents & otherKing) != 0 // King defending promotion squares
 				&& ((BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0
-				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 2)))) { // Rook ready to check from behind
+				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 3)))) { // Rook ready to check from behind
 			return SCALE_FACTOR_DRAW;
 		}
 		// If the pawn is in advanced to 7th...
@@ -226,6 +236,45 @@ public class Endgame {
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFile & otherKing) != 0 // King in the promotion squares
 				&& (BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0 // Rook must be already behind
 				&& ((board.getTurn() != whiteDominant) || (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 2))) {
+			return SCALE_FACTOR_DRAW;
+		}
+		// Back rank defense
+		if (((BitboardUtils.FILE[0] | BitboardUtils.FILE[1] | BitboardUtils.FILE[6] | BitboardUtils.FILE[7]) & pawn) != 0
+				&& (BitboardUtils.RANK[rank8] & pawnFileAndAdjacents & otherKing) != 0 // King in rank 8 in front of the pawn
+				&& (BitboardUtils.RANK[rank8] & otherRook) != 0) { // Defending rook in rank 8
+			return SCALE_FACTOR_DRAW;
+		}
+
+		return SCALE_FACTOR_DEFAULT;
+	}
+
+	/**
+	 * This position may be a draw with a the pawn in a, c, f, h and in 7th with the defending king near
+	 */
+	private static int scaleKQKP(Board board, boolean whiteDominant) {
+		long ranks12 = BitboardUtils.RANK[whiteDominant ? 0 : 7] | BitboardUtils.RANK[whiteDominant ? 1 : 6];
+		long pawn = board.pawns;
+		long pawnZone;
+
+		if ((BitboardUtils.FILE[0] & pawn) != 0) {
+			pawnZone = (BitboardUtils.FILES_LEFT[3]) & ranks12;
+		} else if ((BitboardUtils.FILE[2] & pawn) != 0) {
+			pawnZone = (BitboardUtils.FILES_LEFT[4]) & ranks12;
+		} else if ((BitboardUtils.FILE[5] & pawn) != 0) {
+			pawnZone = (BitboardUtils.FILES_RIGHT[3]) & ranks12;
+		} else if ((BitboardUtils.FILE[7] & pawn) != 0) {
+			pawnZone = (BitboardUtils.FILES_RIGHT[4]) & ranks12;
+		} else {
+			return SCALE_FACTOR_DEFAULT;
+		}
+
+		long dominantKing = board.kings & (whiteDominant ? board.whites : board.blacks);
+		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
+
+		int dominantKingIndex = BitboardUtils.square2Index(dominantKing);
+		int pawnIndex = BitboardUtils.square2Index(pawn);
+
+		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 2) {
 			return SCALE_FACTOR_DRAW;
 		}
 
@@ -298,5 +347,4 @@ public class Endgame {
 
 		return SCALE_FACTOR_DEFAULT;
 	}
-
 }
