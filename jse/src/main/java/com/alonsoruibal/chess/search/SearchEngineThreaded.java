@@ -19,7 +19,7 @@ public class SearchEngineThreaded extends SearchEngine {
 				return;
 			}
 			searching = true;
-			setSearchParameters(searchParameters, false);
+			setInitialSearchParameters(searchParameters);
 		}
 
 		thread = new Thread(this);

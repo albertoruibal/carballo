@@ -759,7 +759,7 @@ public class SearchEngine implements Runnable {
 				return;
 			}
 			searching = true;
-			setSearchParameters(searchParameters, false);
+			setInitialSearchParameters(searchParameters);
 		}
 		run();
 	}
@@ -794,13 +794,9 @@ public class SearchEngine implements Runnable {
 	}
 
 	private void prepareRun() throws SearchFinishedException {
-		startTime = System.currentTimeMillis();
-		panicTime = false;
-		engineIsWhite = board.getTurn();
-
 		logger.debug("Board\n" + board);
 
-		nodes = 0;
+		panicTime = false;
 		globalBestMove = Move.NONE;
 		globalPonderMove = Move.NONE;
 
@@ -866,7 +862,7 @@ public class SearchEngine implements Runnable {
 			notifyMoveFound(globalBestMove, bestMoveScore, alpha, beta);
 		} else if (!panicTime && rootScore < previousRootScore - 100) {
 			panicTime = true;
-			setSearchParameters(searchParameters, true);
+			updateSearchParameters(searchParameters);
 		}
 
 		if ((searchParameters.manageTime() && ( // Under time restrictions and...
@@ -909,7 +905,20 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
-	public void setSearchParameters(SearchParameters searchParameters, boolean panicTime) {
+	/**
+	 * Cannot be called during search (!)
+	 */
+	public void setInitialSearchParameters(SearchParameters searchParameters) {
+		engineIsWhite = board.getTurn();
+		startTime = System.currentTimeMillis();
+		nodes = 0;
+		updateSearchParameters(searchParameters);
+	}
+
+	/**
+	 * This is used to update the search parameters while searching
+	 */
+	public void updateSearchParameters(SearchParameters searchParameters) {
 		this.searchParameters = searchParameters;
 
 		thinkToNodes = searchParameters.getNodes();
