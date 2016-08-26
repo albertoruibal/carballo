@@ -29,7 +29,7 @@ public class SearchEngine implements Runnable {
 	public boolean debug = false;
 
 	Object searchLock = new Object();
-	Object startSearchLock = new Object();
+	Object startStopSearchLock = new Object();
 
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
@@ -754,13 +754,13 @@ public class SearchEngine implements Runnable {
 	 * It searches for the best movement
 	 */
 	public void go(SearchParameters searchParameters) {
-		synchronized (startSearchLock) {
+		synchronized (startStopSearchLock) {
 			if (!initialized || searching) {
 				return;
 			}
 			searching = true;
+			setSearchParameters(searchParameters, false);
 		}
-		setSearchParameters(searchParameters);
 		run();
 	}
 
@@ -795,7 +795,6 @@ public class SearchEngine implements Runnable {
 
 	private void prepareRun() throws SearchFinishedException {
 		startTime = System.currentTimeMillis();
-		setSearchLimits(searchParameters, false);
 		panicTime = false;
 		engineIsWhite = board.getTurn();
 
@@ -867,7 +866,7 @@ public class SearchEngine implements Runnable {
 			notifyMoveFound(globalBestMove, bestMoveScore, alpha, beta);
 		} else if (!panicTime && rootScore < previousRootScore - 100) {
 			panicTime = true;
-			setSearchLimits(searchParameters, true);
+			setSearchParameters(searchParameters, true);
 		}
 
 		if ((searchParameters.manageTime() && ( // Under time restrictions and...
@@ -910,7 +909,9 @@ public class SearchEngine implements Runnable {
 		}
 	}
 
-	public void setSearchLimits(SearchParameters searchParameters, boolean panicTime) {
+	public void setSearchParameters(SearchParameters searchParameters, boolean panicTime) {
+		this.searchParameters = searchParameters;
+
 		thinkToNodes = searchParameters.getNodes();
 		thinkToDepth = searchParameters.getDepth();
 		thinkToTime = searchParameters.calculateMoveTime(engineIsWhite, startTime, panicTime);
@@ -981,9 +982,5 @@ public class SearchEngine implements Runnable {
 
 	public boolean isSearching() {
 		return searching;
-	}
-
-	public void setSearchParameters(SearchParameters searchParameters) {
-		this.searchParameters = searchParameters;
 	}
 }

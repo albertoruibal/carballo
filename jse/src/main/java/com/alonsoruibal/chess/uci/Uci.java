@@ -172,7 +172,7 @@ public class Uci implements SearchObserver {
 				} else if ("ponderhit".equals(command)) {
 					if (searchParameters != null) {
 						searchParameters.setPonder(false);
-						engine.setSearchLimits(searchParameters, false);
+						engine.setSearchParameters(searchParameters, false);
 					}
 
 				} else if ("register".equals(command)) {

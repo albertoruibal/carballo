@@ -14,14 +14,14 @@ public class SearchEngineThreaded extends SearchEngine {
 	 * Threaded version
 	 */
 	public void go(SearchParameters searchParameters) {
-		synchronized (startSearchLock) {
+		synchronized (startStopSearchLock) {
 			if (!initialized || searching) {
 				return;
 			}
 			searching = true;
+			setSearchParameters(searchParameters, false);
 		}
 
-		setSearchParameters(searchParameters);
 		thread = new Thread(this);
 		thread.start();
 	}
@@ -30,10 +30,9 @@ public class SearchEngineThreaded extends SearchEngine {
 	 * Stops thinking
 	 */
 	public void stop() {
-		synchronized (startSearchLock) {
-			super.stop();
-
+		synchronized (startStopSearchLock) {
 			while (searching) {
+				super.stop();
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
