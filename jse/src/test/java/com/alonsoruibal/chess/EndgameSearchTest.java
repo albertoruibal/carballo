@@ -15,6 +15,14 @@ public class EndgameSearchTest {
 	SearchEngine search;
 	SearchParameters searchParams;
 
+	private long getSearchScore(String fen, int depth) {
+		search.getBoard().setFen(fen);
+		searchParams = new SearchParameters();
+		searchParams.setDepth(depth);
+		search.go(searchParams);
+		return search.getBestMoveScore();
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		search = new SearchEngine(new Config());
@@ -22,12 +30,7 @@ public class EndgameSearchTest {
 
 	@Test
 	public void testKPk() {
-		String fen = "5k2/8/2K1P3/8/8/8/8/8 b - - 0 0";
-		search.getBoard().setFen(fen);
-		searchParams = new SearchParameters();
-		searchParams.setDepth(10);
-		search.go(searchParams);
-		assertEquals("Black moves and draws", search.getBestMoveScore(), -SearchEngine.CONTEMPT_FACTOR);
+		assertEquals("Black moves and draws", getSearchScore("5k2/8/2K1P3/8/8/8/8/8 b - - 0 0", 10), -SearchEngine.CONTEMPT_FACTOR);
 	}
 
 	@Test
@@ -43,21 +46,18 @@ public class EndgameSearchTest {
 
 	@Test
 	public void testKRk() {
-		String fen = "8/7K/8/8/8/8/R7/7k w - - 0 1";
-		search.getBoard().setFen(fen);
-		searchParams = new SearchParameters();
-		searchParams.setDepth(21);
-		search.go(searchParams);
-		assertEquals("Rook mate in 15 PLY", search.getBestMoveScore(), Evaluator.MATE - 15);
+		assertEquals("Rook mate in 15 PLY", getSearchScore("8/7K/8/8/8/8/R7/7k w - - 0 1", 21), Evaluator.MATE - 15);
 	}
 
 	@Test
 	public void testKQk() {
-		String fen = "8/8/8/4k3/8/8/8/KQ6 w - - 0 0";
-		search.getBoard().setFen(fen);
-		searchParams = new SearchParameters();
-		searchParams.setDepth(20);
-		search.go(searchParams);
-		assertEquals("Queen mate in 17 PLY", search.getBestMoveScore(), Evaluator.MATE - 17);
+		assertEquals("Queen mate in 17 PLY", getSearchScore("8/8/8/4k3/8/8/8/KQ6 w - - 0 0", 20), Evaluator.MATE - 17);
+	}
+
+	@Test
+	public void testKRPKP() {
+		assertTrue("White wins", getSearchScore("2r5/8/5k2/8/2P5/2K5/8/4R3 w - - 0 1", 15) > 50);
+		assertTrue("Back Rank defence", getSearchScore("8/8/8/8/6r1/1pk5/8/1K2R3 w - - 0 1", 15) == Evaluator.DRAW);
+		assertTrue("Draw with a knight pawn", getSearchScore("1r6/8/4k3/8/1P6/1K6/8/3R4 w - - 0 1", 15) == Evaluator.DRAW);
 	}
 }
