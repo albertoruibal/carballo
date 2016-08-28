@@ -15,6 +15,11 @@ import com.alonsoruibal.chess.log.Logger;
 public class CompleteEvaluator extends Evaluator {
 	private static final Logger logger = Logger.getLogger("CompleteEvaluator");
 
+	public static final int GAME_PHASE_MIDGAME = 1000;
+	public static final int GAME_PHASE_ENDGAME = 0;
+	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = Evaluator.QUEEN + Evaluator.ROOK;
+	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * Evaluator.KNIGHT + 2 * Evaluator.BISHOP + 4 * Evaluator.ROOK + 2 * Evaluator.QUEEN;
+
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private static final int[][] MOBILITY = {
 			{}, {},
@@ -87,72 +92,74 @@ public class CompleteEvaluator extends Evaluator {
 	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
 	private static final int pawnPcsq[] = {
-			oe(80, 96), oe(92, 94), oe(98, 92), oe(105, 90), oe(105, 90), oe(98, 92), oe(92, 94), oe(80, 96),
-			oe(77, 93), oe(89, 91), oe(95, 89), oe(102, 87), oe(102, 87), oe(95, 89), oe(89, 91), oe(77, 93),
-			oe(78, 93), oe(90, 91), oe(96, 89), oe(118, 87), oe(118, 87), oe(96, 89), oe(90, 91), oe(78, 93),
-			oe(79, 94), oe(91, 92), oe(97, 90), oe(129, 88), oe(129, 88), oe(97, 90), oe(91, 92), oe(79, 94),
-			oe(81, 95), oe(93, 93), oe(99, 91), oe(121, 89), oe(121, 89), oe(99, 91), oe(93, 93), oe(81, 95),
-			oe(82, 96), oe(94, 94), oe(100, 92), oe(107, 90), oe(107, 90), oe(100, 92), oe(94, 94), oe(82, 96),
-			oe(83, 98), oe(95, 96), oe(101, 94), oe(108, 92), oe(108, 92), oe(101, 94), oe(95, 96), oe(83, 98),
-			oe(80, 96), oe(92, 94), oe(98, 92), oe(105, 90), oe(105, 90), oe(98, 92), oe(92, 94), oe(80, 96)
+			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4),
+			oe(-23, -7), oe(-11, -9), oe(-5, -11), oe(2, -13), oe(2, -13), oe(-5, -11), oe(-11, -9), oe(-23, -7),
+			oe(-22, -7), oe(-10, -9), oe(-4, -11), oe(18, -13), oe(18, -13), oe(-4, -11), oe(-10, -9), oe(-22, -7),
+			oe(-21, -6), oe(-9, -8), oe(-3, -10), oe(29, -12), oe(29, -12), oe(-3, -10), oe(-9, -8), oe(-21, -6),
+			oe(-19, -5), oe(-7, -7), oe(-1, -9), oe(21, -11), oe(21, -11), oe(-1, -9), oe(-7, -7), oe(-19, -5),
+			oe(-18, -4), oe(-6, -6), oe(0, -8), oe(7, -10), oe(7, -10), oe(0, -8), oe(-6, -6), oe(-18, -4),
+			oe(-17, -2), oe(-5, -4), oe(1, -6), oe(8, -8), oe(8, -8), oe(1, -6), oe(-5, -4), oe(-17, -2),
+			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4)
 	};
 	private static final int knightPcsq[] = {
-			oe(267, 303), oe(283, 308), oe(294, 313), oe(298, 316), oe(298, 316), oe(294, 313), oe(283, 308), oe(267, 303),
-			oe(289, 310), oe(305, 317), oe(316, 321), oe(320, 323), oe(320, 323), oe(316, 321), oe(305, 317), oe(289, 310),
-			oe(305, 315), oe(321, 321), oe(332, 326), oe(336, 328), oe(336, 328), oe(332, 326), oe(321, 321), oe(305, 315),
-			oe(314, 319), oe(330, 324), oe(341, 329), oe(345, 333), oe(345, 333), oe(341, 329), oe(330, 324), oe(314, 319),
-			oe(320, 321), oe(336, 326), oe(347, 331), oe(351, 335), oe(351, 335), oe(347, 331), oe(336, 326), oe(320, 321),
-			oe(318, 322), oe(334, 328), oe(345, 333), oe(349, 335), oe(349, 335), oe(345, 333), oe(334, 328), oe(318, 322),
-			oe(309, 317), oe(325, 324), oe(336, 328), oe(340, 330), oe(340, 330), oe(336, 328), oe(325, 324), oe(309, 317),
-			oe(288, 310), oe(304, 315), oe(315, 320), oe(319, 323), oe(319, 323), oe(315, 320), oe(304, 315), oe(288, 310)
+			oe(-58, -22), oe(-42, -17), oe(-31, -12), oe(-27, -9), oe(-27, -9), oe(-31, -12), oe(-42, -17), oe(-58, -22),
+			oe(-36, -15), oe(-20, -8), oe(-9, -4), oe(-5, -2), oe(-5, -2), oe(-9, -4), oe(-20, -8), oe(-36, -15),
+			oe(-20, -10), oe(-4, -4), oe(7, 1), oe(11, 3), oe(11, 3), oe(7, 1), oe(-4, -4), oe(-20, -10),
+			oe(-11, -6), oe(5, -1), oe(16, 4), oe(20, 8), oe(20, 8), oe(16, 4), oe(5, -1), oe(-11, -6),
+			oe(-5, -4), oe(11, 1), oe(22, 6), oe(26, 10), oe(26, 10), oe(22, 6), oe(11, 1), oe(-5, -4),
+			oe(-7, -3), oe(9, 3), oe(20, 8), oe(24, 10), oe(24, 10), oe(20, 8), oe(9, 3), oe(-7, -3),
+			oe(-16, -8), oe(0, -1), oe(11, 3), oe(15, 5), oe(15, 5), oe(11, 3), oe(0, -1), oe(-16, -8),
+			oe(-37, -15), oe(-21, -10), oe(-10, -5), oe(-6, -2), oe(-6, -2), oe(-10, -5), oe(-21, -10), oe(-37, -15)
 	};
 	private static final int bishopPcsq[] = {
-			oe(318, 325), oe(317, 324), oe(314, 323), oe(312, 323), oe(312, 323), oe(314, 323), oe(317, 324), oe(318, 325),
-			oe(322, 324), oe(328, 326), oe(325, 325), oe(323, 325), oe(323, 325), oe(325, 325), oe(328, 326), oe(322, 324),
-			oe(319, 323), oe(325, 325), oe(332, 328), oe(331, 327), oe(331, 327), oe(332, 328), oe(325, 325), oe(319, 323),
-			oe(317, 323), oe(323, 325), oe(331, 327), oe(340, 330), oe(340, 330), oe(331, 327), oe(323, 325), oe(317, 323),
-			oe(317, 323), oe(323, 325), oe(331, 327), oe(340, 330), oe(340, 330), oe(331, 327), oe(323, 325), oe(317, 323),
-			oe(319, 323), oe(325, 325), oe(332, 328), oe(331, 327), oe(331, 327), oe(332, 328), oe(325, 325), oe(319, 323),
-			oe(322, 324), oe(328, 326), oe(325, 325), oe(323, 325), oe(323, 325), oe(325, 325), oe(328, 326), oe(322, 324),
-			oe(323, 325), oe(322, 324), oe(319, 323), oe(317, 323), oe(317, 323), oe(319, 323), oe(322, 324), oe(323, 325)
+			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
+			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
+			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
+			oe(-8, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-8, -2),
+			oe(-8, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-8, -2),
+			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
+			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
+			oe(-2, 0), oe(-3, -1), oe(-6, -2), oe(-8, -2), oe(-8, -2), oe(-6, -2), oe(-3, -1), oe(-2, 0)
 	};
 	private static final int rookPcsq[] = {
-			oe(496, 500), oe(500, 500), oe(504, 500), oe(508, 500), oe(508, 500), oe(504, 500), oe(500, 500), oe(496, 500),
-			oe(496, 500), oe(500, 500), oe(504, 500), oe(508, 500), oe(508, 500), oe(504, 500), oe(500, 500), oe(496, 500),
-			oe(496, 500), oe(500, 500), oe(504, 500), oe(508, 500), oe(508, 500), oe(504, 500), oe(500, 500), oe(496, 500),
-			oe(496, 500), oe(500, 500), oe(504, 500), oe(508, 500), oe(508, 500), oe(504, 500), oe(500, 500), oe(496, 500),
-			oe(496, 501), oe(500, 501), oe(504, 501), oe(508, 501), oe(508, 501), oe(504, 501), oe(500, 501), oe(496, 501),
-			oe(496, 501), oe(500, 501), oe(504, 501), oe(508, 501), oe(508, 501), oe(504, 501), oe(500, 501), oe(496, 501),
-			oe(496, 501), oe(500, 501), oe(504, 501), oe(508, 501), oe(508, 501), oe(504, 501), oe(500, 501), oe(496, 501),
-			oe(496, 498), oe(500, 498), oe(504, 498), oe(508, 498), oe(508, 498), oe(504, 498), oe(500, 498), oe(496, 498)
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
+			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
 	private static final int queenPcsq[] = {
-			oe(964, 960), oe(968, 965), oe(971, 967), oe(973, 968), oe(973, 968), oe(971, 967), oe(968, 965), oe(964, 960),
-			oe(968, 965), oe(974, 970), oe(976, 972), oe(978, 973), oe(978, 973), oe(976, 972), oe(974, 970), oe(968, 965),
-			oe(971, 967), oe(976, 972), oe(980, 975), oe(981, 977), oe(981, 977), oe(980, 975), oe(976, 972), oe(971, 967),
-			oe(973, 968), oe(978, 973), oe(981, 977), oe(984, 980), oe(984, 980), oe(981, 977), oe(978, 973), oe(973, 968),
-			oe(973, 968), oe(978, 973), oe(981, 977), oe(984, 980), oe(984, 980), oe(981, 977), oe(978, 973), oe(973, 968),
-			oe(971, 967), oe(976, 972), oe(980, 975), oe(981, 977), oe(981, 977), oe(980, 975), oe(976, 972), oe(971, 967),
-			oe(968, 965), oe(974, 970), oe(976, 972), oe(978, 973), oe(978, 973), oe(976, 972), oe(974, 970), oe(968, 965),
-			oe(964, 960), oe(968, 965), oe(971, 967), oe(973, 968), oe(973, 968), oe(971, 967), oe(968, 965), oe(964, 960)
+			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15),
+			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
+			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
+			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
+			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
+			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
+			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
+			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15)
 	};
 	private static final int kingPcsq[] = {
-			oe(1044, 942), oe(1049, 965), oe(1019, 981), oe(999, 987), oe(999, 987), oe(1019, 981), oe(1049, 965), oe(1044, 942),
-			oe(1041, 965), oe(1046, 990), oe(1016, 1002), oe(996, 1008), oe(996, 1008), oe(1016, 1002), oe(1046, 990), oe(1041, 965),
-			oe(1038, 981), oe(1043, 1002), oe(1013, 1017), oe(993, 1023), oe(993, 1023), oe(1013, 1017), oe(1043, 1002), oe(1038, 981),
-			oe(1035, 987), oe(1040, 1008), oe(1010, 1023), oe(990, 1032), oe(990, 1032), oe(1010, 1023), oe(1040, 1008), oe(1035, 987),
-			oe(1030, 987), oe(1035, 1008), oe(1005, 1023), oe(985, 1032), oe(985, 1032), oe(1005, 1023), oe(1035, 1008), oe(1030, 987),
-			oe(1025, 981), oe(1030, 1002), oe(1000, 1017), oe(980, 1023), oe(980, 1023), oe(1000, 1017), oe(1030, 1002), oe(1025, 981),
-			oe(1015, 965), oe(1020, 990), oe(990, 1002), oe(970, 1008), oe(970, 1008), oe(990, 1002), oe(1020, 990), oe(1015, 965),
-			oe(1005, 942), oe(1010, 965), oe(980, 981), oe(960, 987), oe(960, 987), oe(980, 981), oe(1010, 965), oe(1005, 942)
+			oe(44, -58), oe(49, -35), oe(19, -19), oe(-1, -13), oe(-1, -13), oe(19, -19), oe(49, -35), oe(44, -58),
+			oe(41, -35), oe(46, -10), oe(16, 2), oe(-4, 8), oe(-4, 8), oe(16, 2), oe(46, -10), oe(41, -35),
+			oe(38, -19), oe(43, 2), oe(13, 17), oe(-7, 23), oe(-7, 23), oe(13, 17), oe(43, 2), oe(38, -19),
+			oe(35, -13), oe(40, 8), oe(10, 23), oe(-10, 32), oe(-10, 32), oe(10, 23), oe(40, 8), oe(35, -13),
+			oe(30, -13), oe(35, 8), oe(5, 23), oe(-15, 32), oe(-15, 32), oe(5, 23), oe(35, 8), oe(30, -13),
+			oe(25, -19), oe(30, 2), oe(0, 17), oe(-20, 23), oe(-20, 23), oe(0, 17), oe(30, 2), oe(25, -19),
+			oe(15, -35), oe(20, -10), oe(-10, 2), oe(-30, 8), oe(-30, 8), oe(-10, 2), oe(20, -10), oe(15, -35),
+			oe(5, -58), oe(10, -35), oe(-20, -19), oe(-40, -13), oe(-40, -13), oe(-20, -19), oe(10, -35), oe(5, -58)
 	};
 
 	public boolean debug = false;
 	public boolean debugPawns = false;
 	public StringBuffer debugSB;
 
-	private int[] gamePhase = {0};
 	private int[] scaleFactor = {0};
+
+	private int[] pawnMaterial = {0, 0};
+	private int[] nonPawnMaterial = {0, 0};
 	private int[] pcsq = {0, 0};
 	private int[] positional = {0, 0};
 	private int[] mobility = {0, 0};
@@ -173,16 +180,39 @@ public class CompleteEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
-		int endgameValue = Endgame.evaluateEndgame(board, gamePhase, scaleFactor);
+		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
+		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
+		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
+		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
+		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
+		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
+		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
+		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
+		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
+		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
+
+		int endgameValue = Endgame.evaluateEndgame(board, scaleFactor, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
 		if (endgameValue != NO_VALUE) {
 			return endgameValue;
 		}
 
-		pcsq[W] = ((board.whites & board.bishops & Square.WHITES) != 0 //
-				&& (board.whites & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
-		pcsq[B] = ((board.blacks & board.bishops & Square.WHITES) != 0 //
+		pawnMaterial[W] = whitePawns * PIECE_VALUES_OE[Piece.PAWN];
+		nonPawnMaterial[W] = whiteKnights * PIECE_VALUES_OE[Piece.KNIGHT] +
+				whiteBishops * PIECE_VALUES_OE[Piece.BISHOP] +
+				whiteRooks * PIECE_VALUES_OE[Piece.ROOK] +
+				whiteQueens * PIECE_VALUES_OE[Piece.QUEEN] +
+				((board.whites & board.bishops & Square.WHITES) != 0 //
+						&& (board.whites & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
+		pawnMaterial[B] = blackPawns * PIECE_VALUES_OE[Piece.PAWN];
+		nonPawnMaterial[B] = blackKnights * PIECE_VALUES_OE[Piece.KNIGHT] +
+				blackBishops * PIECE_VALUES_OE[Piece.BISHOP] +
+				blackRooks * PIECE_VALUES_OE[Piece.ROOK] +
+				blackQueens * PIECE_VALUES_OE[Piece.QUEEN] +
+				((board.blacks & board.bishops & Square.WHITES) != 0 //
 				&& (board.blacks & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
 
+		pcsq[W] = 0;
+		pcsq[B] = 0;
 		positional[W] = 0;
 		positional[B] = 0;
 		mobility[W] = 0;
@@ -480,6 +510,8 @@ public class CompleteEvaluator extends Evaluator {
 		}
 
 		int oe = (board.getTurn() ? TEMPO : -TEMPO)
+				+ pawnMaterial[W] - pawnMaterial[B]
+				+ nonPawnMaterial[W] - nonPawnMaterial[B]
 				+ pcsq[W] - pcsq[B]
 				+ positional[W] - positional[B]
 				+ attacks[W] - attacks[B]
@@ -488,13 +520,20 @@ public class CompleteEvaluator extends Evaluator {
 				+ passedPawns[W] - passedPawns[B]
 				+ oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]);
 
+		int nonPawnMat = e(nonPawnMaterial[W] + nonPawnMaterial[B]);
+		int gamePhase = nonPawnMat >= NON_PAWN_MATERIAL_MIDGAME_MAX ? GAME_PHASE_MIDGAME :
+				nonPawnMat <= NON_PAWN_MATERIAL_ENDGAME_MIN ? GAME_PHASE_ENDGAME :
+						((nonPawnMat - NON_PAWN_MATERIAL_ENDGAME_MIN) * GAME_PHASE_MIDGAME) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
+
 		// Ponder opening and Endgame value depending of the game phase and the scale factor
-		int value = (gamePhase[0] * o(oe)
-				+ (Endgame.GAME_PHASE_MIDGAME - gamePhase[0]) * e(oe) * scaleFactor[0] / Endgame.SCALE_FACTOR_DEFAULT) / Endgame.GAME_PHASE_MIDGAME;
+		int value = (gamePhase * o(oe)
+				+ (GAME_PHASE_MIDGAME - gamePhase) * e(oe) * scaleFactor[0] / Endgame.SCALE_FACTOR_DEFAULT) / GAME_PHASE_MIDGAME;
 
 		if (debug) {
 			logger.debug(debugSB);
 			logger.debug("                    WOpening WEndgame BOpening BEndgame");
+			logger.debug("pawnMaterial      = " + formatOE(pawnMaterial[W]) + " " + formatOE(pawnMaterial[B]));
+			logger.debug("nonPawnMaterial   = " + formatOE(nonPawnMaterial[W]) + " " + formatOE(nonPawnMaterial[B]));
 			logger.debug("pcsq              = " + formatOE(pcsq[W]) + " " + formatOE(pcsq[B]));
 			logger.debug("mobility          = " + formatOE(mobility[W]) + " " + formatOE(mobility[B]));
 			logger.debug("positional        = " + formatOE(positional[W]) + " " + formatOE(positional[B]));
@@ -505,7 +544,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("tempo             = " + formatOE(board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("                    -----------------");
 			logger.debug("TOTAL:              " + formatOE(oe));
-			logger.debug("gamePhase = " + gamePhase[0] + " => value = " + value);
+			logger.debug("gamePhase = " + gamePhase + " => value = " + value);
 		}
 		assert Math.abs(value) < KNOWN_WIN : "Eval is outside limits";
 		return value;

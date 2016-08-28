@@ -21,7 +21,8 @@ public abstract class Evaluator {
 	public static final int ROOK = 500;
 	public static final int QUEEN = 975;
 	public static final int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN};
-	public static final int BISHOP_PAIR = Evaluator.oe(50, 50); // Bonus by having two bishops in different colors
+	public static final int[] PIECE_VALUES_OE = {0, oe(PAWN, PAWN), oe(KNIGHT, KNIGHT), oe(BISHOP, BISHOP), oe(ROOK, ROOK), oe(QUEEN, QUEEN)};
+	public static final int BISHOP_PAIR = oe(50, 50); // Bonus by having two bishops in different colors
 
 	public BitboardAttacks bbAttacks;
 

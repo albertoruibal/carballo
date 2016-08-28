@@ -7,16 +7,9 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 public class Endgame {
-
-	public static final int GAME_PHASE_MIDGAME = 1000;
-	public static final int GAME_PHASE_ENDGAME = 0;
-
 	public static final int SCALE_FACTOR_DRAW = 0;
 	public static final int SCALE_FACTOR_DRAWISH = 100;
 	public static final int SCALE_FACTOR_DEFAULT = 1000;
-
-	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = Evaluator.QUEEN + Evaluator.ROOK;
-	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * Evaluator.KNIGHT + 2 * Evaluator.BISHOP + 4 * Evaluator.ROOK + 2 * Evaluator.QUEEN;
 
 	public static final int[] closerSquares = {0, 0, 100, 80, 60, 40, 20, 10};
 
@@ -51,19 +44,8 @@ public class Endgame {
 	/**
 	 * It may return a perfect knowledge value, a scaleFactor or nothing
 	 */
-	public static int evaluateEndgame(Board board, int[] gamePhase, int[] scaleFactor) {
+	public static int evaluateEndgame(Board board, int[] scaleFactor, int whitePawns, int blackPawns, int whiteKnights, int blackKnights, int whiteBishops, int blackBishops, int whiteRooks, int blackRooks, int whiteQueens, int blackQueens) {
 		scaleFactor[0] = SCALE_FACTOR_DEFAULT;
-
-		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
-		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
-		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
-		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
-		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
-		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
-		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
-		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
-		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
-		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
 
 		// Endgame detection
 		int whiteNoPawnMaterial = whiteKnights + whiteBishops + whiteRooks + whiteQueens;
@@ -138,17 +120,6 @@ public class Endgame {
 		if (scaleFactor[0] == SCALE_FACTOR_DRAW) {
 			return Evaluator.DRAW;
 		}
-
-		// Calculate gamePhase
-		int nonPawnMaterial = (whiteKnights + blackKnights) * Evaluator.KNIGHT +
-				(whiteBishops + blackBishops) * Evaluator.BISHOP +
-				(whiteRooks + blackRooks) * Evaluator.ROOK +
-				(whiteQueens + blackQueens) * Evaluator.QUEEN;
-
-		gamePhase[0] = nonPawnMaterial >= NON_PAWN_MATERIAL_MIDGAME_MAX ? GAME_PHASE_MIDGAME :
-				nonPawnMaterial <= NON_PAWN_MATERIAL_ENDGAME_MIN ? GAME_PHASE_ENDGAME :
-						((nonPawnMaterial - NON_PAWN_MATERIAL_ENDGAME_MIN) * GAME_PHASE_MIDGAME) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
-
 		return Evaluator.NO_VALUE;
 	}
 
