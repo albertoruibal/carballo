@@ -15,11 +15,6 @@ import com.alonsoruibal.chess.log.Logger;
 public class CompleteEvaluator extends Evaluator {
 	private static final Logger logger = Logger.getLogger("CompleteEvaluator");
 
-	public static final int GAME_PHASE_MIDGAME = 1000;
-	public static final int GAME_PHASE_ENDGAME = 0;
-	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = Evaluator.QUEEN + Evaluator.ROOK;
-	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * Evaluator.KNIGHT + 2 * Evaluator.BISHOP + 4 * Evaluator.ROOK + 2 * Evaluator.QUEEN;
-
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private static final int[][] MOBILITY = {
 			{}, {},

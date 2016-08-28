@@ -24,6 +24,11 @@ public abstract class Evaluator {
 	public static final int[] PIECE_VALUES_OE = {0, oe(PAWN, PAWN), oe(KNIGHT, KNIGHT), oe(BISHOP, BISHOP), oe(ROOK, ROOK), oe(QUEEN, QUEEN)};
 	public static final int BISHOP_PAIR = oe(50, 50); // Bonus by having two bishops in different colors
 
+	public static final int GAME_PHASE_MIDGAME = 1000;
+	public static final int GAME_PHASE_ENDGAME = 0;
+	public static final int NON_PAWN_MATERIAL_ENDGAME_MIN = QUEEN + ROOK;
+	public static final int NON_PAWN_MATERIAL_MIDGAME_MAX = 2 * KNIGHT + 2 * BISHOP + 4 * ROOK + 2 * QUEEN;
+
 	public BitboardAttacks bbAttacks;
 
 	public Evaluator() {
