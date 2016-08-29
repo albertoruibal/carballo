@@ -39,6 +39,14 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_DOUBLED = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
+	// Space evaluation
+	private static final long WHITE_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H &
+			(BitboardUtils.R3 | BitboardUtils.R4 | BitboardUtils.R5);
+	private static final long BLACK_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H &
+			(BitboardUtils.R4 | BitboardUtils.R5 | BitboardUtils.R6);
+
+	private static final int[] SPACE = {oe(0, 0), oe(9, 0), oe(15, 0), oe(20, 0), oe(24, 0), oe(27, 0), oe(30, 0), oe(33, 0), oe(35, 0), oe(37, 0), oe(39, 0), oe(41, 0), oe(42, 0), oe(44, 0), oe(45, 0), oe(46, 0), oe(48, 0), oe(49, 0), oe(50, 0)};
+
 	// And now the bonuses. Array by relative rank
 	private static final int[] PAWN_CANDIDATE = {0, oe(8, 13), oe(8, 13), oe(13, 20), oe(24, 36), oe(39, 59), oe(60, 90), 0};
 	private static final int[] PAWN_PASSER = {0, oe(17, 25), oe(17, 25), oe(27, 41), oe(48, 72), oe(79, 118), oe(120, 180), 0};
@@ -104,24 +112,24 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
 	private static final int pawnPcsq[] = {
-			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4),
-			oe(-23, -7), oe(-11, -9), oe(-5, -11), oe(2, -13), oe(2, -13), oe(-5, -11), oe(-11, -9), oe(-23, -7),
-			oe(-22, -7), oe(-10, -9), oe(-4, -11), oe(18, -13), oe(18, -13), oe(-4, -11), oe(-10, -9), oe(-22, -7),
-			oe(-21, -6), oe(-9, -8), oe(-3, -10), oe(29, -12), oe(29, -12), oe(-3, -10), oe(-9, -8), oe(-21, -6),
-			oe(-19, -5), oe(-7, -7), oe(-1, -9), oe(21, -11), oe(21, -11), oe(-1, -9), oe(-7, -7), oe(-19, -5),
-			oe(-18, -4), oe(-6, -6), oe(0, -8), oe(7, -10), oe(7, -10), oe(0, -8), oe(-6, -6), oe(-18, -4),
-			oe(-17, -2), oe(-5, -4), oe(1, -6), oe(8, -8), oe(8, -8), oe(1, -6), oe(-5, -4), oe(-17, -2),
-			oe(-20, -4), oe(-8, -6), oe(-2, -8), oe(5, -10), oe(5, -10), oe(-2, -8), oe(-8, -6), oe(-20, -4)
+			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4),
+			oe(-21, 1), oe(-9, -1), oe(-3, -3), oe(3, -5), oe(3, -5), oe(-3, -3), oe(-9, -1), oe(-21, 1),
+			oe(-20, 1), oe(-8, -1), oe(-2, -3), oe(14, -5), oe(14, -5), oe(-2, -3), oe(-8, -1), oe(-20, 1),
+			oe(-19, 2), oe(-7, 0), oe(-1, -2), oe(25, -4), oe(25, -4), oe(-1, -2), oe(-7, 0), oe(-19, 2),
+			oe(-17, 3), oe(-5, 1), oe(1, -1), oe(17, -3), oe(17, -3), oe(1, -1), oe(-5, 1), oe(-17, 3),
+			oe(-16, 4), oe(-4, 2), oe(2, 0), oe(8, -2), oe(8, -2), oe(2, 0), oe(-4, 2), oe(-16, 4),
+			oe(-15, 6), oe(-3, 4), oe(3, 2), oe(9, 0), oe(9, 0), oe(3, 2), oe(-3, 4), oe(-15, 6),
+			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4)
 	};
 	private static final int knightPcsq[] = {
-			oe(-58, -22), oe(-42, -17), oe(-31, -12), oe(-27, -9), oe(-27, -9), oe(-31, -12), oe(-42, -17), oe(-58, -22),
-			oe(-36, -15), oe(-20, -8), oe(-9, -4), oe(-5, -2), oe(-5, -2), oe(-9, -4), oe(-20, -8), oe(-36, -15),
-			oe(-20, -10), oe(-4, -4), oe(7, 1), oe(11, 3), oe(11, 3), oe(7, 1), oe(-4, -4), oe(-20, -10),
-			oe(-11, -6), oe(5, -1), oe(16, 4), oe(20, 8), oe(20, 8), oe(16, 4), oe(5, -1), oe(-11, -6),
-			oe(-5, -4), oe(11, 1), oe(22, 6), oe(26, 10), oe(26, 10), oe(22, 6), oe(11, 1), oe(-5, -4),
-			oe(-7, -3), oe(9, 3), oe(20, 8), oe(24, 10), oe(24, 10), oe(20, 8), oe(9, 3), oe(-7, -3),
-			oe(-16, -8), oe(0, -1), oe(11, 3), oe(15, 5), oe(15, 5), oe(11, 3), oe(0, -1), oe(-16, -8),
-			oe(-37, -15), oe(-21, -10), oe(-10, -5), oe(-6, -2), oe(-6, -2), oe(-10, -5), oe(-21, -10), oe(-37, -15)
+			oe(-31, -22), oe(-21, -17), oe(-16, -12), oe(-6, -9), oe(-6, -9), oe(-16, -12), oe(-21, -17), oe(-31, -22),
+			oe(-20, -15), oe(-10, -8), oe(-5, -4), oe(5, -2), oe(5, -2), oe(-5, -4), oe(-10, -8), oe(-20, -15),
+			oe(-15, -10), oe(-5, -4), oe(0, 1), oe(10, 3), oe(10, 3), oe(0, 1), oe(-5, -4), oe(-15, -10),
+			oe(-8, -6), oe(2, -1), oe(7, 4), oe(17, 8), oe(17, 8), oe(7, 4), oe(2, -1), oe(-8, -6),
+			oe(-5, -4), oe(5, 1), oe(10, 6), oe(20, 10), oe(20, 10), oe(10, 6), oe(5, 1), oe(-5, -4),
+			oe(-6, -3), oe(4, 3), oe(9, 8), oe(19, 10), oe(19, 10), oe(9, 8), oe(4, 3), oe(-6, -3),
+			oe(-10, -8), oe(0, -1), oe(5, 3), oe(15, 5), oe(15, 5), oe(5, 3), oe(0, -1), oe(-10, -8),
+			oe(-20, -15), oe(-10, -10), oe(-5, -5), oe(5, -2), oe(5, -2), oe(-5, -5), oe(-10, -10), oe(-20, -15)
 	};
 	private static final int bishopPcsq[] = {
 			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
@@ -139,29 +147,29 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
-			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
-			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
-			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
+			oe(-4, 3), oe(0, 3), oe(4, 3), oe(8, 3), oe(8, 3), oe(4, 3), oe(0, 3), oe(-4, 3),
+			oe(-4, 4), oe(0, 4), oe(4, 4), oe(8, 4), oe(8, 4), oe(4, 4), oe(0, 4), oe(-4, 4),
+			oe(-4, 3), oe(0, 3), oe(4, 3), oe(8, 3), oe(8, 3), oe(4, 3), oe(0, 3), oe(-4, 3)
 	};
 	private static final int queenPcsq[] = {
-			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15),
-			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
+			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
+			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
 			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
 			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
 			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
 			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
-			oe(-7, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-7, -10),
-			oe(-11, -15), oe(-7, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-7, -10), oe(-11, -15)
+			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
+			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15)
 	};
 	private static final int kingPcsq[] = {
-			oe(44, -58), oe(49, -35), oe(19, -19), oe(-1, -13), oe(-1, -13), oe(19, -19), oe(49, -35), oe(44, -58),
-			oe(41, -35), oe(46, -10), oe(16, 2), oe(-4, 8), oe(-4, 8), oe(16, 2), oe(46, -10), oe(41, -35),
-			oe(38, -19), oe(43, 2), oe(13, 17), oe(-7, 23), oe(-7, 23), oe(13, 17), oe(43, 2), oe(38, -19),
-			oe(35, -13), oe(40, 8), oe(10, 23), oe(-10, 32), oe(-10, 32), oe(10, 23), oe(40, 8), oe(35, -13),
-			oe(30, -13), oe(35, 8), oe(5, 23), oe(-15, 32), oe(-15, 32), oe(5, 23), oe(35, 8), oe(30, -13),
-			oe(25, -19), oe(30, 2), oe(0, 17), oe(-20, 23), oe(-20, 23), oe(0, 17), oe(30, 2), oe(25, -19),
-			oe(15, -35), oe(20, -10), oe(-10, 2), oe(-30, 8), oe(-30, 8), oe(-10, 2), oe(20, -10), oe(15, -35),
-			oe(5, -58), oe(10, -35), oe(-20, -19), oe(-40, -13), oe(-40, -13), oe(-20, -19), oe(10, -35), oe(5, -58)
+			oe(34, -58), oe(39, -35), oe(14, -19), oe(-6, -13), oe(-6, -13), oe(14, -19), oe(39, -35), oe(34, -58),
+			oe(31, -35), oe(36, -10), oe(11, 2), oe(-9, 8), oe(-9, 8), oe(11, 2), oe(36, -10), oe(31, -35),
+			oe(28, -19), oe(33, 2), oe(8, 17), oe(-12, 23), oe(-12, 23), oe(8, 17), oe(33, 2), oe(28, -19),
+			oe(25, -13), oe(30, 8), oe(5, 23), oe(-15, 32), oe(-15, 32), oe(5, 23), oe(30, 8), oe(25, -13),
+			oe(20, -13), oe(25, 8), oe(0, 23), oe(-20, 32), oe(-20, 32), oe(0, 23), oe(25, 8), oe(20, -13),
+			oe(15, -19), oe(20, 2), oe(-5, 17), oe(-25, 23), oe(-25, 23), oe(-5, 17), oe(20, 2), oe(15, -19),
+			oe(5, -35), oe(10, -10), oe(-15, 2), oe(-35, 8), oe(-35, 8), oe(-15, 2), oe(10, -10), oe(5, -35),
+			oe(-5, -58), oe(0, -35), oe(-25, -19), oe(-45, -13), oe(-45, -13), oe(-25, -19), oe(0, -35), oe(-5, -58)
 	};
 
 	public boolean debug = false;
@@ -173,6 +181,7 @@ public class ExperimentalEvaluator extends Evaluator {
 	private int[] pawnMaterial = {0, 0};
 	private int[] nonPawnMaterial = {0, 0};
 	private int[] pcsq = {0, 0};
+	private int[] space = {0, 0};
 	private int[] positional = {0, 0};
 	private int[] mobility = {0, 0};
 	private int[] attacks = {0, 0};
@@ -223,6 +232,11 @@ public class ExperimentalEvaluator extends Evaluator {
 				((board.blacks & board.bishops & Square.WHITES) != 0 //
 				&& (board.blacks & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
 
+		int nonPawnMat = e(nonPawnMaterial[W] + nonPawnMaterial[B]);
+		int gamePhase = nonPawnMat >= NON_PAWN_MATERIAL_MIDGAME_MAX ? GAME_PHASE_MIDGAME :
+				nonPawnMat <= NON_PAWN_MATERIAL_ENDGAME_MIN ? GAME_PHASE_ENDGAME :
+						((nonPawnMat - NON_PAWN_MATERIAL_ENDGAME_MIN) * GAME_PHASE_MIDGAME) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
+
 		pcsq[W] = 0;
 		pcsq[B] = 0;
 		positional[W] = 0;
@@ -243,11 +257,26 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		ai.build(board);
 
+		long whitePawnsAux = board.pawns & board.whites;
+		long blackPawnsAux = board.pawns & board.blacks;
+
+		// Space evaluation
+		if (gamePhase > 0) {
+			long whiteSafe = ~ai.pawnAttacks[B] & (~ai.attackedSquares[B] | ai.attackedSquares[W]);
+			long blackSafe = ~ai.pawnAttacks[W] & (~ai.attackedSquares[W] | ai.attackedSquares[B]);
+
+//			long whiteBehindPawn = WHITE_SPACE_ZONE & ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
+//			long blackBehindPawn = BLACK_SPACE_ZONE & ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
+
+			space[W] = SPACE[BitboardUtils.popCount(whiteSafe & WHITE_SPACE_ZONE)];
+			space[B] = SPACE[BitboardUtils.popCount(blackSafe & BLACK_SPACE_ZONE)];
+		} else {
+			space[W] = space[B] = 0;
+		}
+
 		// Squares that pawns attack or can attack by advancing
 		pawnCanAttack[W] = ai.pawnAttacks[W];
 		pawnCanAttack[B] = ai.pawnAttacks[B];
-		long whitePawnsAux = board.pawns & board.whites;
-		long blackPawnsAux = board.pawns & board.blacks;
 		for (int i = 0; i < 5; i++) {
 			whitePawnsAux = whitePawnsAux << 8;
 			whitePawnsAux &= ~((board.pawns & board.blacks) | ai.pawnAttacks[B]); // Cannot advance because of a blocking pawn or a opposite pawn attack
@@ -429,7 +458,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 					// Pawn is part of the king shield
-					if ((pawnFile & ~ranksForward & kingZone[us]) != 0) {
+					if ((pawnFile & kingZone[us]) != 0) {
 						pawnStructure[us] += PAWN_SHIELD[relativeRank];
 					}
 
@@ -576,17 +605,13 @@ public class ExperimentalEvaluator extends Evaluator {
 				+ pawnMaterial[W] - pawnMaterial[B]
 				+ nonPawnMaterial[W] - nonPawnMaterial[B]
 				+ pcsq[W] - pcsq[B]
+				+ space[W] - space[B]
 				+ positional[W] - positional[B]
 				+ attacks[W] - attacks[B]
 				+ mobility[W] - mobility[B]
 				+ pawnStructure[W] - pawnStructure[B]
 				+ passedPawns[W] - passedPawns[B]
 				+ oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]);
-
-		int nonPawnMat = e(nonPawnMaterial[W] + nonPawnMaterial[B]);
-		int gamePhase = nonPawnMat >= NON_PAWN_MATERIAL_MIDGAME_MAX ? GAME_PHASE_MIDGAME :
-				nonPawnMat <= NON_PAWN_MATERIAL_ENDGAME_MIN ? GAME_PHASE_ENDGAME :
-						((nonPawnMat - NON_PAWN_MATERIAL_ENDGAME_MIN) * GAME_PHASE_MIDGAME) / (NON_PAWN_MATERIAL_MIDGAME_MAX - NON_PAWN_MATERIAL_ENDGAME_MIN);
 
 		// Ponder opening and Endgame value depending of the game phase and the scale factor
 		int value = (gamePhase * o(oe)
@@ -598,6 +623,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			logger.debug("pawnMaterial      = " + formatOE(pawnMaterial[W]) + " " + formatOE(pawnMaterial[B]));
 			logger.debug("nonPawnMaterial   = " + formatOE(nonPawnMaterial[W]) + " " + formatOE(nonPawnMaterial[B]));
 			logger.debug("pcsq              = " + formatOE(pcsq[W]) + " " + formatOE(pcsq[B]));
+			logger.debug("space             = " + formatOE(space[W]) + " " + formatOE(space[B]));
 			logger.debug("mobility          = " + formatOE(mobility[W]) + " " + formatOE(mobility[B]));
 			logger.debug("positional        = " + formatOE(positional[W]) + " " + formatOE(positional[B]));
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W]) + " " + formatOE(pawnStructure[B]));
