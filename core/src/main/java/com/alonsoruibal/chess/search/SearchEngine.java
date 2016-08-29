@@ -974,7 +974,15 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int evaluateDraw(int distanceToInitialPly) {
-		return (distanceToInitialPly & 1) == 0 ? -CONTEMPT_FACTOR : CONTEMPT_FACTOR;
+		int nonPawnMat = BitboardUtils.popCount(board.knights) * Evaluator.KNIGHT +
+				BitboardUtils.popCount(board.bishops) * Evaluator.BISHOP +
+				BitboardUtils.popCount(board.rooks) * Evaluator.ROOK +
+				BitboardUtils.popCount(board.queens) * Evaluator.QUEEN;
+		int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
+				nonPawnMat <= Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN ? Evaluator.GAME_PHASE_ENDGAME :
+						((nonPawnMat - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN) * Evaluator.GAME_PHASE_MIDGAME) / (Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN);
+
+		return ((distanceToInitialPly & 1) == 0 ? -CONTEMPT_FACTOR : CONTEMPT_FACTOR) * gamePhase / Evaluator.GAME_PHASE_MIDGAME;
 	}
 
 	private int valueMatedIn(int distanceToInitialPly) {
