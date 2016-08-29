@@ -65,7 +65,7 @@ public class Endgame {
 				return Endgame.endgameKBNK(board, whiteMaterial > blackMaterial);
 			}
 			if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
-				scaleFactor[0] = Endgame.scaleKRKR(board);
+				return Evaluator.DRAW;
 			}
 
 		} else if ((whitePawns == 1 && blackPawns == 0) || (whitePawns == 0 && blackPawns == 1)) {
@@ -82,7 +82,7 @@ public class Endgame {
 					|| (whiteNoPawnMaterial == 0 && blackNoPawnMaterial == 1)) {
 				if ((whiteQueens == 1 && blackPawns == 1)
 						|| (blackQueens == 1 && whitePawns == 1)) {
-					scaleFactor[0] = scaleKQKP(board, whiteQueens > blackQueens);
+					return endgameKQKP(board, whiteQueens > blackQueens);
 				}
 			}
 
@@ -92,11 +92,11 @@ public class Endgame {
 					scaleFactor[0] = scaleKRPKR(board, whitePawns > blackPawns);
 				}
 				if (whiteBishops == 1 && blackBishops == 1) {
-					scaleFactor[0] = scaleKBPKB(board, whitePawns > blackPawns);
+					return endgameKBPKB(board, whitePawns > blackPawns);
 				}
 				if ((whiteBishops == 1 && whitePawns == 1 && blackKnights == 1) ||
 						(blackBishops == 1 && blackPawns == 1 && whiteKnights == 1)) {
-					scaleFactor[0] = scaleKBPKN(board, whitePawns > blackPawns);
+					return endgameKBPKN(board, whitePawns > blackPawns);
 				}
 			}
 		}
@@ -164,10 +164,6 @@ public class Endgame {
 				-Evaluator.KNOWN_WIN - Evaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
 	}
 
-	private static int scaleKRKR(Board board) {
-		return SCALE_FACTOR_DRAW;
-	}
-
 	private static int scaleKRPKR(Board board, boolean whiteDominant) {
 		int dominantColor = whiteDominant ? Color.W : Color.B;
 		long dominantRook = board.rooks & (whiteDominant ? board.whites : board.blacks);
@@ -222,7 +218,7 @@ public class Endgame {
 	/**
 	 * This position may be a draw with a the pawn in a, c, f, h and in 7th with the defending king near
 	 */
-	private static int scaleKQKP(Board board, boolean whiteDominant) {
+	private static int endgameKQKP(Board board, boolean whiteDominant) {
 		long ranks12 = BitboardUtils.RANK[whiteDominant ? 0 : 7] | BitboardUtils.RANK[whiteDominant ? 1 : 6];
 		long pawn = board.pawns;
 		long pawnZone;
@@ -236,7 +232,7 @@ public class Endgame {
 		} else if ((BitboardUtils.FILE[7] & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_RIGHT[4]) & ranks12;
 		} else {
-			return SCALE_FACTOR_DEFAULT;
+			return Evaluator.NO_VALUE;
 		}
 
 		long dominantKing = board.kings & (whiteDominant ? board.whites : board.blacks);
@@ -246,13 +242,13 @@ public class Endgame {
 		int pawnIndex = BitboardUtils.square2Index(pawn);
 
 		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 2) {
-			return SCALE_FACTOR_DRAW;
+			return Evaluator.DRAW;
 		}
 
-		return SCALE_FACTOR_DEFAULT;
+		return Evaluator.NO_VALUE;
 	}
 
-	private static int scaleKBPKN(Board board, boolean whiteDominant) {
+	private static int endgameKBPKN(Board board, boolean whiteDominant) {
 		int dominantColor = whiteDominant ? Color.W : Color.B;
 		long dominantBishop = board.bishops & (whiteDominant ? board.whites : board.blacks);
 		long dominantBishopSquares = BitboardUtils.getSameColorSquares(dominantBishop);
@@ -264,12 +260,12 @@ public class Endgame {
 
 		// Other king in front of the pawn in a square different than the bishop color: DRAW
 		if ((pawnRoute & otherKing) != 0 && (dominantBishopSquares & otherKing) == 0) {
-			return SCALE_FACTOR_DRAW;
+			return Evaluator.DRAW;
 		}
-		return SCALE_FACTOR_DEFAULT;
+		return Evaluator.NO_VALUE;
 	}
 
-	private static int scaleKBPKB(Board board, boolean whiteDominant) {
+	private static int endgameKBPKB(Board board, boolean whiteDominant) {
 		int dominantColor = whiteDominant ? Color.W : Color.B;
 		long dominantBishop = board.bishops & (whiteDominant ? board.whites : board.blacks);
 		long dominantBishopSquares = BitboardUtils.getSameColorSquares(dominantBishop);
@@ -282,21 +278,20 @@ public class Endgame {
 
 		// Other king in front of the pawn in a square different than the bishop color: DRAW
 		if ((pawnRoute & otherKing) != 0 && (dominantBishopSquares & otherKing) == 0) {
-			return SCALE_FACTOR_DRAW;
+			return Evaluator.DRAW;
 		}
 
 		// Different bishop colors
 		long otherBishopSquares = BitboardUtils.getSameColorSquares(otherBishop);
 		if (dominantBishopSquares != otherBishopSquares) {
-
 			int otherBishopIndex = BitboardUtils.square2Index(otherBishop);
 			if ((otherBishop & pawnRoute) != 0
 					|| (BitboardAttacks.getInstance().bishop[otherBishopIndex] & pawnRoute) != 0) {
-				return SCALE_FACTOR_DRAW;
+				return Evaluator.DRAW;
 			}
 		}
 
-		return SCALE_FACTOR_DEFAULT;
+		return Evaluator.NO_VALUE;
 	}
 
 	private static int scaleKRPPKRP(Board board, boolean whiteDominant) {
