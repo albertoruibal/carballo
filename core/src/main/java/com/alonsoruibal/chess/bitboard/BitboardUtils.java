@@ -16,8 +16,17 @@ public class BitboardUtils {
 	public static final long b2_r = 0x0303030303030303L; // right
 	public static final long b2_l = 0xC0C0C0C0C0C0C0C0L; // left
 
+	public static final long A = b_l;
+	public static final long B = b_r << 6;
+	public static final long C = b_r << 5;
+	public static final long D = b_r << 4;
+	public static final long E = b_r << 3;
+	public static final long F = b_r << 2;
+	public static final long G = b_r << 1;
+	public static final long H = b_r;
+
 	// 0 is a, 7 is g
-	public static final long[] FILE = {b_l, b_r << 6, b_r << 5, b_r << 4, b_r << 3, b_r << 2, b_r << 1, b_r};
+	public static final long[] FILE = {A, B, C, D, E, F, G, H};
 	public static final long[] FILES_ADJACENT = { //
 			FILE[1], //
 			FILE[0] | FILE[2], //
@@ -51,7 +60,16 @@ public class BitboardUtils {
 			0 //
 	};
 
-	public static final long[] RANK = {b_d, b_d << 8, b_d << 16, b_d << 24, b_d << 32, b_d << 40, b_d << 48, b_d << 56}; // 0 is 1, 7 is 8
+	public static final long R1 = b_d;
+	public static final long R2 = b_d << 8;
+	public static final long R3 = b_d << 16;
+	public static final long R4 = b_d << 24;
+	public static final long R5 = b_d << 32;
+	public static final long R6 = b_d << 40;
+	public static final long R7 = b_d << 48;
+	public static final long R8 = b_d << 56;
+
+	public static final long[] RANK = {R1, R2, R3, R4, R5, R6, R7, R8}; // 0 is 1, 7 is 8
 	public static final long[] RANKS_UPWARDS = { //
 			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
 			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
