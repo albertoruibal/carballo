@@ -16,7 +16,7 @@ bishopMobEndgame = round(32 * log10(1 + bishopMobSquares * 9 / bishopMaxSquares)
 A = [bishopMobOpening; bishopMobEndgame];
 bishopValues = A(:);
 
-rookMaxSquares = 14
+rookMaxSquares = 14;
 rookMobSquares = 0 : rookMaxSquares;
 rookMobOpening = round(28 * log10(1 + rookMobSquares * 9 / rookMaxSquares));
 rookMobEndgame = round(42 * log10(1 + rookMobSquares * 9 / rookMaxSquares));
