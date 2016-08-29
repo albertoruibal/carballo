@@ -57,7 +57,6 @@ public class MagicNumbersGenerator {
 		BitboardAttacksMagic attacks = (BitboardAttacksMagic) BitboardAttacks.getInstance();
 
 		mask = (bishop ? attacks.bishopMask[index] : attacks.rookMask[index]);
-		// System.out.println("mask:\n" + BitboardUtils.toString(mask));
 
 		// Fill Attack tables, those are very big!
 		n = BitboardUtils.popCount(mask);
@@ -66,8 +65,6 @@ public class MagicNumbersGenerator {
 			// System.out.println("b:\n" + BitboardUtils.toString(block[i]));
 			attack[i] = bishop ? attacks.getBishopShiftAttacks(BitboardUtils.index2Square(index), block[i]) : attacks.getRookShiftAttacks(
 					BitboardUtils.index2Square(index), block[i]);
-			// System.out.println("attack:\n" +
-			// BitboardUtils.toString(attack[i]));
 		}
 
 		for (k = 0; k < 1000000000; k++) {
