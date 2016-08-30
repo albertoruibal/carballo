@@ -223,13 +223,13 @@ public class Endgame {
 		long pawn = board.pawns;
 		long pawnZone;
 
-		if ((BitboardUtils.FILE[0] & pawn) != 0) {
+		if ((BitboardUtils.A & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_LEFT[3]) & ranks12;
-		} else if ((BitboardUtils.FILE[2] & pawn) != 0) {
+		} else if ((BitboardUtils.C & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_LEFT[4]) & ranks12;
-		} else if ((BitboardUtils.FILE[5] & pawn) != 0) {
+		} else if ((BitboardUtils.F & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_RIGHT[3]) & ranks12;
-		} else if ((BitboardUtils.FILE[7] & pawn) != 0) {
+		} else if ((BitboardUtils.F & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_RIGHT[4]) & ranks12;
 		} else {
 			return Evaluator.NO_VALUE;
