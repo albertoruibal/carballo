@@ -321,32 +321,6 @@ public class MoveIterator {
 	 * Generates non tactical moves
 	 */
 	public void generateNonCaptures() {
-		long square = 0x1L;
-		for (int index = 0; index < 64; index++) {
-			if ((square & mines) != 0) {
-				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Piece.ROOK, index, square, ai.attacksFromSquare[index] & ~all, false);
-				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Piece.BISHOP, index, square, ai.attacksFromSquare[index] & ~all, false);
-				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Piece.QUEEN, index, square, ai.attacksFromSquare[index] & ~all, false);
-				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
-				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Piece.KNIGHT, index, square, ai.attacksFromSquare[index] & ~all, false);
-				}
-				if ((square & board.pawns) != 0) { // Pawns excluding the already generated promos
-					if (turn) {
-						generatePawnNonCapturesAndBadPromos(index, square, (((square << 8) & all) == 0 ? (square << 8) : 0)
-								| ((square & BitboardUtils.b2_d) != 0 && (((square << 8) | (square << 16)) & all) == 0 ? (square << 16) : 0));
-					} else {
-						generatePawnNonCapturesAndBadPromos(index, square, (((square >>> 8) & all) == 0 ? (square >>> 8) : 0)
-								| ((square & BitboardUtils.b2_u) != 0 && (((square >>> 8) | (square >>> 16)) & all) == 0 ? (square >>> 16) : 0));
-					}
-				}
-			}
-			square <<= 1;
-		}
 		// Castling: disabled when in check or king route attacked
 		if (!board.getCheck()) {
 			if (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
@@ -375,6 +349,33 @@ public class MoveIterator {
 					addMove(Piece.KING, ai.kingIndex[us], kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
 				}
 			}
+		}
+
+		long square = 0x1L;
+		for (int index = 0; index < 64; index++) {
+			if ((square & mines) != 0) {
+				if ((square & board.rooks) != 0) { // Rook
+					generateMovesFromAttacks(Piece.ROOK, index, square, ai.attacksFromSquare[index] & ~all, false);
+				} else if ((square & board.bishops) != 0) { // Bishop
+					generateMovesFromAttacks(Piece.BISHOP, index, square, ai.attacksFromSquare[index] & ~all, false);
+				} else if ((square & board.queens) != 0) { // Queen
+					generateMovesFromAttacks(Piece.QUEEN, index, square, ai.attacksFromSquare[index] & ~all, false);
+				} else if ((square & board.kings) != 0) { // King
+					generateMovesFromAttacks(Piece.KING, index, square, ai.attacksFromSquare[index] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
+				} else if ((square & board.knights) != 0) { // Knight
+					generateMovesFromAttacks(Piece.KNIGHT, index, square, ai.attacksFromSquare[index] & ~all, false);
+				}
+				if ((square & board.pawns) != 0) { // Pawns excluding the already generated promos
+					if (turn) {
+						generatePawnNonCapturesAndBadPromos(index, square, (((square << 8) & all) == 0 ? (square << 8) : 0)
+								| ((square & BitboardUtils.b2_d) != 0 && (((square << 8) | (square << 16)) & all) == 0 ? (square << 16) : 0));
+					} else {
+						generatePawnNonCapturesAndBadPromos(index, square, (((square >>> 8) & all) == 0 ? (square >>> 8) : 0)
+								| ((square & BitboardUtils.b2_u) != 0 && (((square >>> 8) | (square >>> 16)) & all) == 0 ? (square >>> 16) : 0));
+					}
+				}
+			}
+			square <<= 1;
 		}
 	}
 
