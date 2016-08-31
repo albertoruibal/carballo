@@ -1,31 +1,15 @@
 package com.alonsoruibal.chess;
 
-import com.alonsoruibal.chess.search.SearchEngine;
-import com.alonsoruibal.chess.search.SearchParameters;
+import com.alonsoruibal.chess.evaluation.Evaluator;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ContemptFactorTest {
-
-	Config config;
-	SearchEngine searchEngine;
-
-	@Before
-	public void setUp() throws Exception {
-		config = new Config();
-		searchEngine = new SearchEngine(config);
-	}
+public class ContemptFactorTest extends SearchTest {
 
 	@Test
 	public void testContemp1() {
-		searchEngine.getBoard().setFen("7k/7p/5P1K/8/8/8/8/8 w");
-		SearchParameters sp = new SearchParameters();
-		sp.setDepth(18);
-		searchEngine.go(sp);
-		searchEngine.getBoard().doMove(searchEngine.getBestMove());
-		assertEquals(-SearchEngine.CONTEMPT_FACTOR, searchEngine.getBestMoveScore());
+		assertTrue(getSearchScore("7k/7p/5P1K/8/8/8/8/8 w", 18) == Evaluator.DRAW);
 	}
 }

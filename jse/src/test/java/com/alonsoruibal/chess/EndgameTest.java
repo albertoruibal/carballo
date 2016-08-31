@@ -129,39 +129,6 @@ public class EndgameTest {
 	}
 
 	@Test
-	public void testKRKR() {
-		fen = "rk6/8/8/8/8/8/8/RK6 w - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("Most KR vs KR positions are draw", Evaluator.DRAW, evaluator.evaluate(board, attacksInfo));
-
-		fen = "8/8/8/4k3/K7/R3r3/8/8 w - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("Wins capturing with the other rook with my rook", Evaluator.KNOWN_WIN, evaluator.evaluate(board, attacksInfo));
-
-		fen = "8/8/8/8/K7/R3r3/5k2/8 w - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("Cannot capture with the rook because it is defended by the other king", Evaluator.DRAW, evaluator.evaluate(board, attacksInfo));
-
-		fen = "8/8/8/3R4/2k5/4r3/5K2/8 w - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("Both kings capture rooks", Evaluator.DRAW, evaluator.evaluate(board, attacksInfo));
-
-		fen = "8/5K2/4r3/3R4/2k5/8/8/8 w - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("First king captures the rook, the second cannot", Evaluator.KNOWN_WIN, evaluator.evaluate(board, attacksInfo));
-
-		fen = "8/8/8/3R4/2k5/1r6/2K5/8 b - - 0 0";
-		board.setFen(fen);
-		System.out.print(board.toString());
-		assertEquals("Moving my king to capture the rook allows the other king to capture my rook", Evaluator.DRAW, evaluator.evaluate(board, attacksInfo));
-	}
-
-	@Test
 	public void testKRPKRDraw() {
 		board.setFen("5k2/8/r7/1R6/5K2/5P2/8/8 w - - 4 70");
 		assertEquals("Philidor position", Evaluator.DRAW, evaluator.evaluate(board, attacksInfo));

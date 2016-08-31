@@ -1,7 +1,7 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
-import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import org.junit.Test;
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SearchEngineTest {
+public class SearchEngineTest extends SearchTest {
 
 	@Test
 	public void testRefine() {
@@ -58,50 +58,28 @@ public class SearchEngineTest {
 
 	@Test
 	public void testSearchAlreadyMate() {
-		SearchEngine search = new SearchEngine(new Config());
-		search.getBoard().setFen("r7/4K1q1/r7/1p5p/4k3/8/8/8 w - - 8 75");
-		search.go(SearchParameters.get(1));
-		assertEquals(Move.NONE, search.getBestMove());
+		assertTrue("none".equals(getSearchBestMoveSan("r7/4K1q1/r7/1p5p/4k3/8/8/8 w - - 8 75", 1)));
 	}
 
 	@Test
 	public void testBishopTrapped() {
-		SearchEngine search = new SearchEngine(new Config());
-		search.getBoard().setFen("4k3/5ppp/8/8/8/8/2B5/K7 w - - 8 75");
-		SearchParameters sp = new SearchParameters();
-		sp.setDepth(10);
-		search.go(sp);
-		assertNotEquals(Move.getFromString(search.getBoard(), "Bxh7", true), search.getBestMove());
+		String san = getSearchBestMoveSan("4k3/5ppp/8/8/8/8/2B5/K7 w - - 8 75", 10);
+		assertNotEquals("Bxh7", san);
 	}
 
 	@Test
-	public void testOpenWithE4OrD4() {
-		SearchEngine search = new SearchEngine(new Config());
-		search.getBoard().setFen(Board.FEN_START_POSITION);
-		SearchParameters sp = new SearchParameters();
-		sp.setDepth(14);
-		search.go(sp);
-		assertTrue(Move.getFromString(search.getBoard(), "e4", true) == search.getBestMove()
-				|| Move.getFromString(search.getBoard(), "d4", true) == search.getBestMove());
+	public void testOpeningWithE4OrD4() {
+		String san = getSearchBestMoveSan(Board.FEN_START_POSITION, 14);
+		assertTrue("e4".equals(san) || "d4".equals(san));
 	}
 
 	@Test
 	public void testAnalysisMateCrash() {
-		SearchEngine search = new SearchEngine(new Config());
-		SearchParameters analysisParameters = new SearchParameters();
-		analysisParameters.setInfinite(true);
-
-		search.getBoard().setFen("8/8/8/8/8/k7/8/K6r w - - 1 1");
-		search.go(analysisParameters);
+		getSearchScore("8/8/8/8/8/k7/8/K6r w - - 1 1", 15);
 	}
 
 	@Test
 	public void testRetiEndgameStudy() {
-		SearchEngine search = new SearchEngine(new Config());
-		SearchParameters sp = new SearchParameters();
-		sp.setDepth(11);
-		search.getBoard().setFen("7K/8/k1P5/7p/8/8/8/8 w - -");
-		search.go(sp);
-		assertEquals(-SearchEngine.CONTEMPT_FACTOR, search.getBestMoveScore());
+		assertTrue(getSearchScore("7K/8/k1P5/7p/8/8/8/8 w - -", 15) == Evaluator.DRAW);
 	}
 }
