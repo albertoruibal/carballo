@@ -219,7 +219,7 @@ public class Endgame {
 	 * This position may be a draw with a the pawn in a, c, f, h and in 7th with the defending king near
 	 */
 	private static int endgameKQKP(Board board, boolean whiteDominant) {
-		long ranks12 = BitboardUtils.RANK[whiteDominant ? 0 : 7] | BitboardUtils.RANK[whiteDominant ? 1 : 6];
+		long ranks12 = whiteDominant ? BitboardUtils.R1 | BitboardUtils.R2 : BitboardUtils.R7 | BitboardUtils.R8;
 		long pawn = board.pawns;
 		long pawnZone;
 
@@ -229,7 +229,7 @@ public class Endgame {
 			pawnZone = (BitboardUtils.FILES_LEFT[4]) & ranks12;
 		} else if ((BitboardUtils.F & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_RIGHT[3]) & ranks12;
-		} else if ((BitboardUtils.F & pawn) != 0) {
+		} else if ((BitboardUtils.H & pawn) != 0) {
 			pawnZone = (BitboardUtils.FILES_RIGHT[4]) & ranks12;
 		} else {
 			return Evaluator.NO_VALUE;
@@ -241,7 +241,7 @@ public class Endgame {
 		int dominantKingIndex = BitboardUtils.square2Index(dominantKing);
 		int pawnIndex = BitboardUtils.square2Index(pawn);
 
-		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 2) {
+		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 1) {
 			return Evaluator.DRAW;
 		}
 
