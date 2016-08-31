@@ -2,14 +2,14 @@
 ## Octave file to generate and analyze the evaluator piece mobility bonuses
 ##
 
-knightMaxSquares = 4; # Only forward mobility 4 / full mobility 8
+knightMaxSquares = 8; # Only forward mobility 4 / full mobility 8
 knightMobSquares = 0 : knightMaxSquares;
 knightMobOpening = round(24 * log10(1 + knightMobSquares * 9 / knightMaxSquares));
 knightMobEndgame = round(32 * log10(1 + knightMobSquares * 9 / knightMaxSquares));
 A = [knightMobOpening; knightMobEndgame];
 knightValues = A(:);
 
-bishopMaxSquares = 7; # Only forward mobility 7 / full mobility 13
+bishopMaxSquares = 13; # Only forward mobility 7 / full mobility 13
 bishopMobSquares = 0 : bishopMaxSquares; 
 bishopMobOpening = round(32 * log10(1 + bishopMobSquares * 9 / bishopMaxSquares));
 bishopMobEndgame = round(32 * log10(1 + bishopMobSquares * 9 / bishopMaxSquares));

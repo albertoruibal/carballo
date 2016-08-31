@@ -2,12 +2,12 @@
 ## Octave file to generate and analyze the Space values
 ##
 
-spaceMaxSquares = 6 * 3;
+spaceMaxSquares = 4 * 3;
 spaceSquares = 0 : spaceMaxSquares;
-spaceEval = round(50 * log10(1 + spaceSquares * 9 / spaceMaxSquares));
+spaceEval = round(30 * log10(1 + spaceSquares * 9 / spaceMaxSquares));
 
 plot(spaceSquares, spaceEval);
-legend("Knight Opening");
+legend("Space Squares");
 
 # Print values for the Java evaluator
 printf(strcat(

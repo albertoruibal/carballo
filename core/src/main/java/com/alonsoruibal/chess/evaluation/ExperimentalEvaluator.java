@@ -18,12 +18,18 @@ public class ExperimentalEvaluator extends Evaluator {
 	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
 	private static final int[][] MOBILITY = {
 			{}, {},
-			{oe(0, 0), oe(12, 16), oe(18, 24), oe(21, 28), oe(24, 32)},
-			{oe(0, 0), oe(11, 11), oe(18, 18), oe(22, 22), oe(25, 25), oe(28, 28), oe(30, 30), oe(32, 32)},
+			{oe(0, 0), oe(8, 10), oe(12, 16), oe(15, 21), oe(18, 24), oe(20, 26), oe(21, 28), oe(23, 30), oe(24, 32)},
+			{oe(0, 0), oe(7, 7), oe(12, 12), oe(16, 16), oe(18, 18), oe(21, 21), oe(23, 23), oe(25, 25), oe(26, 26), oe(27, 27), oe(29, 29), oe(30, 30), oe(31, 31), oe(32, 32)},
 			{oe(0, 0), oe(6, 9), oe(10, 15), oe(13, 20), oe(15, 23), oe(17, 26), oe(19, 29), oe(21, 31), oe(22, 33), oe(23, 35), oe(24, 37), oe(25, 38), oe(26, 39), oe(27, 41), oe(28, 42)},
 			{oe(0, 0), oe(7, 7), oe(12, 12), oe(16, 16), oe(20, 20), oe(23, 23), oe(26, 26), oe(28, 28), oe(30, 30), oe(33, 33), oe(34, 34), oe(36, 36), oe(38, 38), oe(39, 39), oe(41, 41), oe(42, 42), oe(43, 43), oe(44, 44), oe(46, 46), oe(47, 47), oe(48, 48), oe(49, 49), oe(50, 50), oe(51, 51), oe(52, 52), oe(52, 52), oe(53, 53), oe(54, 54)}
 	};
 
+	// Space
+	private static final long WHITE_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H & ~BitboardUtils.B & ~BitboardUtils.G &
+			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
+	private static final long BLACK_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H & ~BitboardUtils.B & ~BitboardUtils.G &
+			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
+	private static final int[] SPACE = {oe(0, 0), oe(7, 0), oe(12, 0), oe(15, 0), oe(18, 0), oe(20, 0), oe(22, 0), oe(24, 0), oe(25, 0), oe(27, 0), oe(28, 0), oe(29, 0), oe(30, 0)};
 	// Attacks
 	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
 	private static final int[] MINOR_ATTACKS = {0, oe(3, 5), oe(7, 9), oe(7, 9), oe(10, 14), oe(11, 15), 0}; // Minor piece attacks to pawn undefended pieces
@@ -38,14 +44,6 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_ISOLATED = {oe(20, 20), oe(10, 20)}; // Not opposed is worse in the opening
 	private static final int[] PAWN_DOUBLED = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
-
-	// Space evaluation
-	private static final long WHITE_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H &
-			(BitboardUtils.R3 | BitboardUtils.R4 | BitboardUtils.R5);
-	private static final long BLACK_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H &
-			(BitboardUtils.R4 | BitboardUtils.R5 | BitboardUtils.R6);
-
-	private static final int[] SPACE = {oe(0, 0), oe(9, 0), oe(15, 0), oe(20, 0), oe(24, 0), oe(27, 0), oe(30, 0), oe(33, 0), oe(35, 0), oe(37, 0), oe(39, 0), oe(41, 0), oe(42, 0), oe(44, 0), oe(45, 0), oe(46, 0), oe(48, 0), oe(49, 0), oe(50, 0)};
 
 	// And now the bonuses. Array by relative rank
 	private static final int[] PAWN_CANDIDATE = {0, oe(8, 13), oe(8, 13), oe(13, 20), oe(24, 36), oe(39, 59), oe(60, 90), 0};
@@ -262,16 +260,17 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		// Space evaluation
 		if (gamePhase > 0) {
-			long whiteSafe = ~ai.pawnAttacks[B] & (~ai.attackedSquares[B] | ai.attackedSquares[W]);
-			long blackSafe = ~ai.pawnAttacks[W] & (~ai.attackedSquares[W] | ai.attackedSquares[B]);
+			long whiteSafe = WHITE_SPACE_ZONE & ~ai.pawnAttacks[B] & (~ai.attackedSquares[B] | ai.attackedSquares[W]);
+			long blackSafe = BLACK_SPACE_ZONE & ~ai.pawnAttacks[W] & (~ai.attackedSquares[W] | ai.attackedSquares[B]);
 
-//			long whiteBehindPawn = WHITE_SPACE_ZONE & ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
-//			long blackBehindPawn = BLACK_SPACE_ZONE & ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
+			long whiteBehindPawn = ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
+			long blackBehindPawn = ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
 
-			space[W] = SPACE[BitboardUtils.popCount(whiteSafe & WHITE_SPACE_ZONE)];
-			space[B] = SPACE[BitboardUtils.popCount(blackSafe & BLACK_SPACE_ZONE)];
+			space[W] = SPACE[BitboardUtils.popCount(whiteSafe & whiteBehindPawn)];
+			space[B] = SPACE[BitboardUtils.popCount(blackSafe & blackBehindPawn)];
 		} else {
-			space[W] = space[B] = 0;
+			space[W] = 0;
+			space[B] = 0;
 		}
 
 		// Squares that pawns attack or can attack by advancing
@@ -298,7 +297,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		kingZone[W] = bbAttacks.king[ai.kingIndex[W]];
 		kingZone[W] |= (kingZone[W] << 8);
 		kingZone[B] = bbAttacks.king[ai.kingIndex[B]];
-		kingZone[B] |= (kingZone[B] >> 8);
+		kingZone[B] |= (kingZone[B] >>> 8);
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttackedXray, safeAttacks, kingAttacks;
@@ -385,7 +384,7 @@ public class ExperimentalEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
 						// Pawn Storm: It can open a file near the king
-						if ((routeToPromotion & kingZone[them]) != 0) {
+						if ((routeToPromotion & ~BitboardUtils.D & ~BitboardUtils.E & kingZone[them]) != 0) {
 							pawnStructure[us] += PAWN_STORM[relativeRank];
 						}
 						// There is an opposite rook attacking this weak pawn
@@ -458,7 +457,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 					// Pawn is part of the king shield
-					if ((pawnFile & kingZone[us]) != 0) {
+					if ((pawnFile & ~BitboardUtils.D & ~BitboardUtils.E & ~ranksForward & kingZone[us]) != 0) {
 						pawnStructure[us] += PAWN_SHIELD[relativeRank];
 					}
 
@@ -467,7 +466,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(safeAttacks & mobilitySquares[us] & BitboardUtils.RANKS_FORWARD[us][rank])];
+					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
@@ -493,7 +492,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(safeAttacks & mobilitySquares[us] & BitboardUtils.RANKS_FORWARD[us][rank])];
+					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
