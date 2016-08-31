@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SearchEngineTest extends SearchTest {
+public class SearchEngineTest extends BaseTest {
 
 	@Test
 	public void testRefine() {

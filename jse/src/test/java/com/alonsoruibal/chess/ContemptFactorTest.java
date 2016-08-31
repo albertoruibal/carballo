@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class ContemptFactorTest extends SearchTest {
+public class ContemptFactorTest extends BaseTest {
 
 	@Test
 	public void testContemp1() {
