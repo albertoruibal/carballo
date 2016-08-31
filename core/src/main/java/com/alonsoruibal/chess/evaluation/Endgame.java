@@ -64,8 +64,13 @@ public class Endgame {
 					(whiteMaterial == 0 && blackMaterial == 2 && blackKnights == 1 && blackBishops == 1)) {
 				return Endgame.endgameKBNK(board, whiteMaterial > blackMaterial);
 			}
-			if (whiteMaterial == 1 && blackMaterial == 1 && whiteRooks == 1 && blackRooks == 1) {
-				return Evaluator.DRAW;
+			if (whiteMaterial == 1 && blackMaterial == 1) {
+				if (whiteRooks == 1 && blackRooks == 1) {
+					return Evaluator.DRAW;
+				}
+				if (whiteQueens == 1 && blackQueens == 1) {
+					return Evaluator.DRAW;
+				}
 			}
 
 		} else if ((whitePawns == 1 && blackPawns == 0) || (whitePawns == 0 && blackPawns == 1)) {
