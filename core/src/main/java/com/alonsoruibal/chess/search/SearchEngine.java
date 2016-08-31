@@ -472,8 +472,9 @@ public class SearchEngine implements Runnable {
 					&& ttMove == 0
 					&& depthRemaining < RAZORING_MARGIN.length
 					&& Math.abs(beta) < VALUE_IS_MATE
+					&& Math.abs(eval) < Evaluator.KNOWN_WIN
 					&& eval + RAZORING_MARGIN[depthRemaining] < beta
-					&& (board.pawns & ((board.whites & BitboardUtils.b2_u) | (board.blacks & BitboardUtils.b2_d))) == 0) { // No pawns on 7TH
+					&& (board.pawns & ((board.whites & BitboardUtils.R7) | (board.blacks & BitboardUtils.R2))) == 0) { // No pawns on 7TH
 				razoringProbe++;
 
 				if (depthRemaining <= PLY
@@ -961,6 +962,8 @@ public class SearchEngine implements Runnable {
 				break;
 			}
 		}
+
+//		System.out.println(board.toString());
 
 		// Now undo moves
 		board.undoMove(savedMoveNumber);
