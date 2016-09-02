@@ -25,11 +25,12 @@ public class ExperimentalEvaluator extends Evaluator {
 	};
 
 	// Space
-	private static final long WHITE_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H & ~BitboardUtils.B & ~BitboardUtils.G &
+	private static final long WHITE_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
-	private static final long BLACK_SPACE_ZONE = ~BitboardUtils.A & ~BitboardUtils.H & ~BitboardUtils.B & ~BitboardUtils.G &
+	private static final long BLACK_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
-	private static final int[] SPACE = {oe(0, 0), oe(7, 0), oe(12, 0), oe(15, 0), oe(18, 0), oe(20, 0), oe(22, 0), oe(24, 0), oe(25, 0), oe(27, 0), oe(28, 0), oe(29, 0), oe(30, 0)};
+	private static final int SPACE = oe(6, 0);
+
 	// Attacks
 	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
 	private static final int[] MINOR_ATTACKS = {0, oe(3, 5), oe(7, 9), oe(7, 9), oe(10, 14), oe(11, 15), 0}; // Minor piece attacks to pawn undefended pieces
@@ -120,14 +121,14 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4)
 	};
 	private static final int knightPcsq[] = {
-			oe(-31, -22), oe(-21, -17), oe(-16, -12), oe(-6, -9), oe(-6, -9), oe(-16, -12), oe(-21, -17), oe(-31, -22),
-			oe(-20, -15), oe(-10, -8), oe(-5, -4), oe(5, -2), oe(5, -2), oe(-5, -4), oe(-10, -8), oe(-20, -15),
-			oe(-15, -10), oe(-5, -4), oe(0, 1), oe(10, 3), oe(10, 3), oe(0, 1), oe(-5, -4), oe(-15, -10),
-			oe(-8, -6), oe(2, -1), oe(7, 4), oe(17, 8), oe(17, 8), oe(7, 4), oe(2, -1), oe(-8, -6),
-			oe(-5, -4), oe(5, 1), oe(10, 6), oe(20, 10), oe(20, 10), oe(10, 6), oe(5, 1), oe(-5, -4),
-			oe(-6, -3), oe(4, 3), oe(9, 8), oe(19, 10), oe(19, 10), oe(9, 8), oe(4, 3), oe(-6, -3),
-			oe(-10, -8), oe(0, -1), oe(5, 3), oe(15, 5), oe(15, 5), oe(5, 3), oe(0, -1), oe(-10, -8),
-			oe(-20, -15), oe(-10, -10), oe(-5, -5), oe(5, -2), oe(5, -2), oe(-5, -5), oe(-10, -10), oe(-20, -15)
+			oe(-31, -22), oe(-21, -17), oe(-13, -12), oe(-8, -9), oe(-8, -9), oe(-13, -12), oe(-21, -17), oe(-31, -22),
+			oe(-22, -15), oe(-12, -8), oe(-4, -4), oe(1, -2), oe(1, -2), oe(-4, -4), oe(-12, -8), oe(-22, -15),
+			oe(-15, -10), oe(-5, -4), oe(3, 1), oe(8, 3), oe(8, 3), oe(3, 1), oe(-5, -4), oe(-15, -10),
+			oe(-8, -6), oe(2, -1), oe(10, 4), oe(15, 8), oe(15, 8), oe(10, 4), oe(2, -1), oe(-8, -6),
+			oe(-5, -4), oe(5, 1), oe(13, 6), oe(18, 10), oe(18, 10), oe(13, 6), oe(5, 1), oe(-5, -4),
+			oe(-6, -4), oe(4, 2), oe(12, 7), oe(17, 9), oe(17, 9), oe(12, 7), oe(4, 2), oe(-6, -4),
+			oe(-10, -8), oe(0, -1), oe(8, 3), oe(13, 5), oe(13, 5), oe(8, 3), oe(0, -1), oe(-10, -8),
+			oe(-20, -15), oe(-10, -10), oe(-2, -5), oe(3, -2), oe(3, -2), oe(-2, -5), oe(-10, -10), oe(-20, -15)
 	};
 	private static final int bishopPcsq[] = {
 			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
@@ -266,8 +267,8 @@ public class ExperimentalEvaluator extends Evaluator {
 			long whiteBehindPawn = ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
 			long blackBehindPawn = ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
 
-			space[W] = SPACE[BitboardUtils.popCount(whiteSafe & whiteBehindPawn)];
-			space[B] = SPACE[BitboardUtils.popCount(blackSafe & blackBehindPawn)];
+			space[W] = SPACE * (((BitboardUtils.popCount(whiteSafe) + BitboardUtils.popCount(whiteSafe & whiteBehindPawn)) * (whiteKnights + whiteBishops)) / 4);
+			space[B] = SPACE * (((BitboardUtils.popCount(blackSafe) + BitboardUtils.popCount(blackSafe & blackBehindPawn)) * (blackKnights + blackBishops)) / 4);
 		} else {
 			space[W] = 0;
 			space[B] = 0;
