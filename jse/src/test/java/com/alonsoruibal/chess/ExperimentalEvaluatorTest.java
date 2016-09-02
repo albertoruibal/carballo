@@ -4,24 +4,13 @@ import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
-public class ExperimentalEvaluatorTest {
-	ExperimentalEvaluator evaluator;
-	AttacksInfo attacksInfo;
-	Board board = new Board();
-
-	@Before
-	public void setUp() throws Exception {
-		attacksInfo = new AttacksInfo();
-		evaluator = new ExperimentalEvaluator();
-		evaluator.debug = true;
-	}
+public class ExperimentalEvaluatorTest extends BaseTest {
 
 	public static int countSubstring(String subStr, String str) {
 		return (str.length() - str.replace(subStr, "").length()) / subStr.length();
@@ -29,18 +18,20 @@ public class ExperimentalEvaluatorTest {
 
 	@Test
 	public void testEvaluatorSimmetry1() {
-		board.setFen("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0");
-		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
+		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), getEval("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0"));
 	}
 
 	@Test
 	public void testEvaluatorSimmetry2() {
-		board.setFen("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0");
-		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), evaluator.evaluate(board, attacksInfo));
+		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), getEval("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0"));
 	}
 
 	@Test
 	public void testPawnClassification() {
+		Board board = new Board();
+		AttacksInfo attacksInfo = new AttacksInfo();
+		ExperimentalEvaluator evaluator = new ExperimentalEvaluator();
+		evaluator.debug = true;
 		evaluator.debugPawns = true;
 
 		board.setFen("8/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
@@ -139,77 +130,50 @@ public class ExperimentalEvaluatorTest {
 		board.setFen("7k/2P5/pp6/1P6/8/8/8/7K w - -");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals("No backward because it can capture", 0, countSubstring("backward ", evaluator.debugSB.toString()));
-		evaluator.debugPawns = false;
 	}
 
 	@Test
 	public void testPassedPawn1() {
-		board.setFen("7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+		assertTrue(getEval("7k/7p/P7/8/8/6p1/7P/7K w QKqk - 0 0") > 0);
 	}
 
 	@Test
 	public void testUnstoppabblePasser() {
-		board.setFen("8/8/8/8/8/6p1/4PK1k/8 w - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
-
-		board.setFen("8/8/8/8/8/8/6PP/K6k w - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 700);
-
-		board.setFen("8/8/8/8/8/8/5kPP/K7 b - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
-
-		board.setFen("8/8/8/8/8/7P/5kP1/K7 b - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) < 700);
-
-		board.setFen("8/8/8/8/8/7P/5kP1/K7 w - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 700);
+		assertTrue(getEval("8/8/8/8/8/6p1/4PK1k/8 w - - 0 0") < 700);
+		assertTrue(getEval("8/8/8/8/8/8/6PP/K6k w - - 0 0") > 700);
+		assertTrue(getEval("8/8/8/8/8/8/5kPP/K7 b - - 0 0") < 700);
+		assertTrue(getEval("8/8/8/8/8/7P/5kP1/K7 b - - 0 0") < 700);
+		assertTrue(getEval("8/8/8/8/8/7P/5kP1/K7 w - - 0 0") > 700);
 	}
 
 	@Test
 	public void testKnightTrapped() {
-		board.setFen("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+		assertTrue(getEval("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0") > 0);
 	}
 
 	@Test
 	public void testKingSafety() {
-		board.setFen("r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
-	}
-
-	// Compares the eval of two fens
-	private void compareFenEval(String fenBetter, String fenWorse, int requiredDifference) {
-		System.out.println("*\n* Comparing two board evaluations (first must be better for white):\n*");
-		board.setFen(fenBetter);
-		int valueBetter = evaluator.evaluate(board, attacksInfo);
-		board.setFen(fenWorse);
-		int valueWorse = evaluator.evaluate(board, attacksInfo);
-		System.out.println("valueBetter = " + valueBetter);
-		System.out.println("valueWorse = " + valueWorse);
-		assertTrue(valueBetter > valueWorse + requiredDifference);
+		assertTrue(getEval("r6k/1R6/8/7p/7P/8/8/7K w QKqk - 0 0") > 0);
 	}
 
 	@Test
 	public void testBishopBonus() {
-		compareFenEval("3BB2k/8/8/8/8/8/p7/7K w QKqk - 0 0", "2B1B2k/8/8/8/8/8/p7/7K w QKqk - 0 0", 40);
+		compareEval("3BB2k/8/8/8/8/8/p7/7K w QKqk - 0 0", "2B1B2k/8/8/8/8/8/p7/7K w QKqk - 0 0", 40);
 	}
 
 	@Test
 	public void testSBDCastling() {
-		compareFenEval("r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1",
+		compareEval("r4r2/pppbkp2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b q - 0 1",
 				"2kr1r2/pppb1p2/2n3p1/3Bp2p/4P2N/2P5/PP3PPP/2KR3R b - - 0 1", 0);
 	}
 
 	@Test
 	public void testConnectedPassersVsCandidate() {
-		board.setFen("8/p1p5/6pp/PPP2k2/8/4PK2/8/8 w - - 0 43");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+		assertTrue(getEval("8/p1p5/6pp/PPP2k2/8/4PK2/8/8 w - - 0 43") > 0);
 	}
 
 	@Test
 	public void testTwoPassedConnectedOn6thBetterThanARook() {
-		board.setFen("kr6/8/6PP/8/8/8/8/7K w - - 0 43");
-		assertTrue(evaluator.evaluate(board, attacksInfo) > 0);
+		assertTrue(getEval("kr6/8/6PP/8/8/8/8/7K w - - 0 43") > 0);
 	}
 }
