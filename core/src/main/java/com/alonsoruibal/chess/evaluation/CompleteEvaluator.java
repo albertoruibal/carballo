@@ -252,7 +252,7 @@ public class CompleteEvaluator extends Evaluator {
 		kingZone[W] = bbAttacks.king[ai.kingIndex[W]];
 		kingZone[W] |= (kingZone[W] << 8);
 		kingZone[B] = bbAttacks.king[ai.kingIndex[B]];
-		kingZone[B] |= (kingZone[B] >> 8);
+		kingZone[B] |= (kingZone[B] >>> 8);
 
 		long all = board.getAll();
 		long pieceAttacks, safeAttacks, kingAttacks;
