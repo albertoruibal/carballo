@@ -211,7 +211,7 @@ public class Endgame {
 			return SCALE_FACTOR_DRAW;
 		}
 		// Back rank defense
-		if (((BitboardUtils.FILE[0] | BitboardUtils.FILE[1] | BitboardUtils.FILE[6] | BitboardUtils.FILE[7]) & pawn) != 0
+		if (((BitboardUtils.A | BitboardUtils.B | BitboardUtils.G | BitboardUtils.H) & pawn) != 0
 				&& (BitboardUtils.RANK[rank8] & pawnFileAndAdjacents & otherKing) != 0 // King in rank 8 in front of the pawn
 				&& (BitboardUtils.RANK[rank8] & otherRook) != 0) { // Defending rook in rank 8
 			return SCALE_FACTOR_DRAW;
