@@ -44,12 +44,12 @@ public class SearchEngine implements Runnable {
 	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
 
 	private static final int IID_MARGIN = 150;
-	private static final int SINGULAR_EXTENSION_MARGIN = 50;
+	private static final int SINGULAR_EXTENSION_MARGIN_PER_PLY = 5;
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
 	// Margins by depthRemaining in PLYs
-	private static final int[] FUTILITY_MARGIN = {100, 180, 260, 340, 420, 500};
-	private static final int[] RAZORING_MARGIN = {310, 315, 320, 325};
+	private static final int[] FUTILITY_MARGIN = {80, 160, 240, 320, 400, 480};
+	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
 	private SearchParameters searchParameters;
 
@@ -143,7 +143,7 @@ public class SearchEngine implements Runnable {
 			for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
 				for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
 					double reduction = REDUCTION_COEFS1[pv] + Math.log(depthRemaining) * Math.log(moveNumber) / REDUCTION_COEFS2[pv];
-					reductionMatrix[pv][depthRemaining][moveNumber] = reduction >= 1.0 ? (int) Math.floor(reduction * PLY) : 0;
+					reductionMatrix[pv][depthRemaining][moveNumber] = reduction >= 1.0 ? (int) (reduction * PLY) : 0;
 				}
 			}
 		}
@@ -588,7 +588,7 @@ public class SearchEngine implements Runnable {
 					&& Math.abs(ttScore) < Evaluator.KNOWN_WIN) {
 
 				singularExtensionProbe++;
-				int seBeta = ttScore - SINGULAR_EXTENSION_MARGIN;
+				int seBeta = ttScore - SINGULAR_EXTENSION_MARGIN_PER_PLY * depthRemaining / PLY;
 				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, move);
 				if (excScore < seBeta) {
 					singularExtensionHit++;
