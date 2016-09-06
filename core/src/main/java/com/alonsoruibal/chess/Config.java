@@ -16,16 +16,20 @@ public class Config {
 	public static final int DEFAULT_BOOK_KNOWGLEDGE = 100;
 	public static final String DEFAULT_EVALUATOR = "complete";
 
+	// >0 refuses draw <0 looks for draw
+	public static final int DEFAULT_CONTEMPT_FACTOR = 90;
+
 	public static final int DEFAULT_RAND = 0;
 	public static final int DEFAULT_ELO = 2100;
 	public static final boolean DEFAULT_UCI_CHESS960 = false;
 
-	private int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
-	private boolean ponder = DEFAULT_PONDER;
-	private boolean useBook = DEFAULT_USE_BOOK;
-	private Book book;
-	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
-	private String evaluator = DEFAULT_EVALUATOR;
+	public int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
+	public boolean ponder = DEFAULT_PONDER;
+	public boolean useBook = DEFAULT_USE_BOOK;
+	public Book book;
+	public int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
+	public String evaluator = DEFAULT_EVALUATOR;
+	public int contemptFactor = DEFAULT_CONTEMPT_FACTOR;
 
 	private int rand = DEFAULT_RAND;
 	private boolean uciChess960 = DEFAULT_UCI_CHESS960;
@@ -76,6 +80,14 @@ public class Config {
 
 	public void setTranspositionTableSize(int transpositionTableSize) {
 		this.transpositionTableSize = transpositionTableSize;
+	}
+
+	public int getContemptFactor() {
+		return contemptFactor;
+	}
+
+	public void setContemptFactor(int contemptFactor) {
+		this.contemptFactor = contemptFactor;
 	}
 
 	public int getRand() {
