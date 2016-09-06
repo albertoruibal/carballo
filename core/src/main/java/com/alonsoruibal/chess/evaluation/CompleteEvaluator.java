@@ -205,15 +205,15 @@ public class CompleteEvaluator extends Evaluator {
 				whiteBishops * PIECE_VALUES_OE[Piece.BISHOP] +
 				whiteRooks * PIECE_VALUES_OE[Piece.ROOK] +
 				whiteQueens * PIECE_VALUES_OE[Piece.QUEEN] +
-				((board.whites & board.bishops & Square.WHITES) != 0 //
+				((board.whites & board.bishops & Square.WHITES) != 0
 						&& (board.whites & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
 		pawnMaterial[B] = blackPawns * PIECE_VALUES_OE[Piece.PAWN];
 		nonPawnMaterial[B] = blackKnights * PIECE_VALUES_OE[Piece.KNIGHT] +
 				blackBishops * PIECE_VALUES_OE[Piece.BISHOP] +
 				blackRooks * PIECE_VALUES_OE[Piece.ROOK] +
 				blackQueens * PIECE_VALUES_OE[Piece.QUEEN] +
-				((board.blacks & board.bishops & Square.WHITES) != 0 //
-				&& (board.blacks & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
+				((board.blacks & board.bishops & Square.WHITES) != 0
+						&& (board.blacks & board.bishops & Square.BLACKS) != 0 ? BISHOP_PAIR : 0);
 
 		int nonPawnMat = e(nonPawnMaterial[W] + nonPawnMaterial[B]);
 		int gamePhase = nonPawnMat >= NON_PAWN_MATERIAL_MIDGAME_MAX ? GAME_PHASE_MIDGAME :
@@ -378,9 +378,10 @@ public class CompleteEvaluator extends Evaluator {
 						//
 						// Passed Pawn
 						//
-						long backFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
+						// Backfile only to the first piece found
+						long backFile = bbAttacks.getRookAttacks(index, all) & BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
 						// If it has a rook or queen behind consider all the route to promotion attacked or defended
-						long attackedAndNotDefendedRoute = //
+						long attackedAndNotDefendedRoute =
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
 										~((routeToPromotion & ai.attackedSquares[us]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
 						long pushSquare = isWhite ? square << 8 : square >>> 8;
