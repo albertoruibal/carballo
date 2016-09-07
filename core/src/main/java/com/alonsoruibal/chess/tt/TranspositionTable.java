@@ -115,32 +115,21 @@ public class TranspositionTable {
 		return getGeneration() == generation;
 	}
 
-	public void save(Board board, int distanceToInitialPly, int depthAnalyzed, int bestMove, int score, int lowerBound, int upperBound, int eval, boolean exclusion) {
-		// Fix mate score with the real distance to mate from the current PLY, not from the initial PLY
-		int fixedScore = score;
-		if (score >= SearchEngine.VALUE_IS_MATE) {
-			fixedScore += distanceToInitialPly;
-		} else if (score <= -SearchEngine.VALUE_IS_MATE) {
-			fixedScore -= distanceToInitialPly;
-		}
-
-		assert fixedScore >= -Evaluator.MATE && fixedScore <= Evaluator.MATE : "Fixed TT score is outside limits";
-		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.MATE || eval == Evaluator.NO_VALUE : "Storing a eval value in the TT outside limits";
-
-		if (score <= lowerBound) {
-			set(board, TYPE_FAIL_LOW, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
-		} else if (score >= upperBound) {
-			set(board, TYPE_FAIL_HIGH, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
-		} else {
-			set(board, TYPE_EXACT_SCORE, bestMove, fixedScore, depthAnalyzed, eval, exclusion);
-		}
-	}
-
-	public void set(Board board, int nodeType, int bestMove, int score, int depthAnalyzed, int eval, boolean exclusion) {
+	public void set(Board board, int nodeType, int distanceToInitialPly, int depthAnalyzed, int bestMove, int score, int eval, boolean exclusion) {
 		long key2 = board.getKey2();
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
 		int replaceIndex = startIndex;
 		int replaceImportance = Integer.MAX_VALUE; // A higher value, so the first entry will be the default
+
+		// Fix mate score with the real distance to mate from the current PLY, not from the initial PLY
+		if (score >= SearchEngine.VALUE_IS_MATE) {
+			score += distanceToInitialPly;
+		} else if (score <= -SearchEngine.VALUE_IS_MATE) {
+			score -= distanceToInitialPly;
+		}
+
+		assert score >= -Evaluator.MATE && score <= Evaluator.MATE : "Fixed TT score is outside limits";
+		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.MATE || eval == Evaluator.NO_VALUE : "Storing a eval value in the TT outside limits";
 
 		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
 			info = infos[i];

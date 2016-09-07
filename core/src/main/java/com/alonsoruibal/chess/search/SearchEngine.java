@@ -277,7 +277,9 @@ public class SearchEngine implements Runnable {
 		if (!board.getTurn()) {
 			eval = -eval;
 		}
-		tt.set(board, TranspositionTable.TYPE_EVAL, Move.NONE, 0, 0, eval, false);
+		tt.set(board, TranspositionTable.TYPE_EVAL,
+				distanceToInitialPly, 0,
+				Move.NONE, 0, eval, false);
 		return eval;
 	}
 
@@ -336,7 +338,10 @@ public class SearchEngine implements Runnable {
 			bestScore = Math.max(bestScore, eval);
 			if (bestScore >= beta) {
 				if (!foundTT) {
-					tt.set(board, TranspositionTable.TYPE_FAIL_HIGH, Move.NONE, bestScore, TranspositionTable.DEPTH_QS_CHECKS, staticEval, false);
+					tt.set(board,
+							TranspositionTable.TYPE_FAIL_HIGH,
+							distanceToInitialPly, TranspositionTable.DEPTH_QS_CHECKS,
+							Move.NONE, bestScore, staticEval, false);
 				}
 				return bestScore;
 			}
@@ -392,7 +397,12 @@ public class SearchEngine implements Runnable {
 		if (checkEvasion && !validOperations) {
 			return valueMatedIn(distanceToInitialPly);
 		}
-		tt.save(board, distanceToInitialPly, ttDepth, bestMove, bestScore, alpha, beta, staticEval, false);
+		tt.set(board,
+				bestScore <= alpha ? TranspositionTable.TYPE_FAIL_LOW
+						: bestScore >= beta ? TranspositionTable.TYPE_FAIL_HIGH
+						: TranspositionTable.TYPE_EXACT_SCORE,
+				distanceToInitialPly, ttDepth,
+				bestMove, bestScore, staticEval, false);
 
 		return bestScore;
 	}
@@ -722,7 +732,12 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Save in the transposition table
-		tt.save(board, distanceToInitialPly, depthRemaining, bestMove, bestScore, alpha, beta, staticEval, excludedMove != Move.NONE);
+		tt.set(board,
+				bestScore <= alpha ? TranspositionTable.TYPE_FAIL_LOW
+						: bestScore >= beta ? TranspositionTable.TYPE_FAIL_HIGH
+						: TranspositionTable.TYPE_EXACT_SCORE,
+				distanceToInitialPly, depthRemaining,
+				bestMove, bestScore, staticEval, excludedMove != Move.NONE);
 
 		return bestScore;
 	}

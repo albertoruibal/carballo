@@ -20,14 +20,18 @@ public class SearchEngineTest extends BaseTest {
 		int refine;
 		boolean foundTT;
 
-		search.getTT().save(search.getBoard(), 0, 0, 0, 23, 23, 45, eval, false);
+		search.getTT().set(search.getBoard(), TranspositionTable.TYPE_FAIL_LOW,
+				0, 0,
+				Move.NONE, 23, eval, false);
 		foundTT = search.getTT().search(search.getBoard(), 0, false);
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must find it in the TT", true, foundTT);
 		assertEquals("Must be fail low in the TT", TranspositionTable.TYPE_FAIL_LOW, search.getTT().getNodeType());
 		assertEquals("Must not refine", eval, refine);
 
-		search.getTT().save(search.getBoard(), 0, 0, 0, 45, 23, 45, eval, false);
+		search.getTT().set(search.getBoard(), TranspositionTable.TYPE_FAIL_HIGH,
+				0, 0,
+				Move.NONE, 45, eval, false);
 		foundTT = search.getTT().search(search.getBoard(), 0, false);
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must find it in the TT", true, foundTT);
@@ -35,21 +39,27 @@ public class SearchEngineTest extends BaseTest {
 		assertEquals("Must refine", 45, refine);
 
 		eval = 40;
-		search.getTT().save(search.getBoard(), 0, 0, 0, 23, 23, 45, eval, false);
+		search.getTT().set(search.getBoard(), TranspositionTable.TYPE_FAIL_LOW,
+				0, 0,
+				Move.NONE, 23, eval, false);
 		foundTT = search.getTT().search(search.getBoard(), 0, false);
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must be fail low in the TT", TranspositionTable.TYPE_FAIL_LOW, search.getTT().getNodeType());
 		assertEquals("Must refine", 23, refine);
 
 		eval = 40;
-		search.getTT().save(search.getBoard(), 0, 0, 0, 45, 23, 45, eval, false);
+		search.getTT().set(search.getBoard(), TranspositionTable.TYPE_FAIL_HIGH,
+				0, 0,
+				Move.NONE, 45, eval, false);
 		foundTT = search.getTT().search(search.getBoard(), 0, false);
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must be fail high in the TT", TranspositionTable.TYPE_FAIL_HIGH, search.getTT().getNodeType());
 		assertEquals("Must refine", 45, refine);
 
 		eval = 40;
-		search.getTT().save(search.getBoard(), 0, 0, 0, 43, 23, 45, eval, false);
+		search.getTT().set(search.getBoard(), TranspositionTable.TYPE_EXACT_SCORE,
+				0, 0,
+				Move.NONE, 43, eval, false);
 		foundTT = search.getTT().search(search.getBoard(), 0, false);
 		refine = search.refineEval(foundTT, eval);
 		assertEquals("Must be exact score", TranspositionTable.TYPE_EXACT_SCORE, search.getTT().getNodeType());

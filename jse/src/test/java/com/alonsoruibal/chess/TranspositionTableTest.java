@@ -20,7 +20,9 @@ public class TranspositionTableTest {
 		int score = -100;
 		int depthAnalyzed = -1;
 		short eval = 456;
-		tt.set(b, nodeType, bestMove, score, depthAnalyzed, eval, false);
+		tt.set(b, nodeType,
+				0, depthAnalyzed,
+				bestMove, score, eval, false);
 		tt.search(b, 0, false);
 		assertEquals(nodeType, tt.getNodeType());
 		assertEquals(bestMove, tt.getBestMove());
@@ -39,7 +41,9 @@ public class TranspositionTableTest {
 		int score = Evaluator.MATE - 8;
 		int depthAnalyzed = 4;
 		// Must store SearchEngine.VALUE_IS_MATE - 4
-		tt.save(b, 4, depthAnalyzed, bestMove, score, -Evaluator.MATE, +Evaluator.MATE, 0, false);
+		tt.set(b, TranspositionTable.TYPE_EXACT_SCORE,
+				4, depthAnalyzed,
+				bestMove, score, 0, false);
 		tt.search(b, 1, false);
 		assertEquals("It does not fix the mate score in the transposition table", tt.getScore(), Evaluator.MATE - 5);
 	}
