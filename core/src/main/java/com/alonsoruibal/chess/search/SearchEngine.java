@@ -609,12 +609,10 @@ public class SearchEngine implements Runnable {
 
 			// If the move is not important
 			if (nodeType != NODE_ROOT
-					&& extension == 0
+					&& move != ttMove
 					&& !checkEvasion
 					&& !Move.isCaptureOrCheck(move) // Include ALL captures
 					&& !Move.isPawnPush678(move) // Includes promotions
-					&& !Move.isCastling(move)
-					&& move != ttMove
 					&& !moveIterator.getLastMoveIsKiller()) {
 
 				// Late move reductions (LMR)
