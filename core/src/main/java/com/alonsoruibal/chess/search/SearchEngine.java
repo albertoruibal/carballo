@@ -48,7 +48,8 @@ public class SearchEngine implements Runnable {
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
 	// Margins by depthRemaining in PLYs
-	private static final int[] FUTILITY_MARGIN = {80, 160, 240, 320, 400, 480};
+	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240, 320, 400, 480};
+	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500, 580};
 	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
 	private SearchParameters searchParameters;
@@ -502,12 +503,12 @@ public class SearchEngine implements Runnable {
 
 			// Static null move pruning or futility pruning in parent node
 			if (nodeType == NODE_NULL
-					&& depthRemaining < RAZORING_MARGIN.length
+					&& depthRemaining < FUTILITY_MARGIN_PARENT.length
 					&& Math.abs(beta) < VALUE_IS_MATE
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN
-					&& eval - FUTILITY_MARGIN[depthRemaining - PLY] >= beta
+					&& eval - FUTILITY_MARGIN_PARENT[depthRemaining] >= beta
 					&& boardAllowsNullMove()) {
-				return eval - FUTILITY_MARGIN[depthRemaining - PLY];
+				return eval - FUTILITY_MARGIN_PARENT[depthRemaining];
 			}
 
 			// Null move pruning and mate threat detection
@@ -623,9 +624,9 @@ public class SearchEngine implements Runnable {
 
 				// Futility Pruning
 				if (bestScore > -Evaluator.KNOWN_WIN) { // There is a best move
-					int newDepth = depthRemaining - PLY - reduction;
-					if (newDepth < FUTILITY_MARGIN.length) {
-						int futilityValue = staticEval + FUTILITY_MARGIN[newDepth];
+					int newDepth = depthRemaining - PLY + extension - reduction;
+					if (newDepth < FUTILITY_MARGIN_PARENT.length) {
+						int futilityValue = staticEval + FUTILITY_MARGIN_CHILD[newDepth];
 						if (futilityValue <= alpha) {
 							futilityHit++;
 							if (futilityValue > bestScore) {
@@ -976,8 +977,6 @@ public class SearchEngine implements Runnable {
 				break;
 			}
 		}
-
-//		System.out.println(board.toString());
 
 		// Now undo moves
 		board.undoMove(savedMoveNumber);
