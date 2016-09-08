@@ -29,7 +29,7 @@ public class CompleteEvaluator extends Evaluator {
 			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
 	private static final long BLACK_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
-	private static final int SPACE = oe(4, 0);
+	private static final int SPACE = oe(4, 4);
 
 	// Attacks
 	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
