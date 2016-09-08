@@ -502,7 +502,7 @@ public class SearchEngine implements Runnable {
 			}
 
 			// Static null move pruning or futility pruning in parent node
-			if (nodeType == NODE_NULL
+			if (nodeType != NODE_ROOT
 					&& depthRemaining < FUTILITY_MARGIN_PARENT.length
 					&& Math.abs(beta) < VALUE_IS_MATE
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN
