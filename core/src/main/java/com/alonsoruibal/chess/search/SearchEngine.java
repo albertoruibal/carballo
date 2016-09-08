@@ -478,7 +478,7 @@ public class SearchEngine implements Runnable {
 				&& allowPrePruning) {
 			// Hyatt's Razoring http://chessprogramming.wikispaces.com/Razoring
 			if (nodeType == NODE_NULL
-					&& ttMove == 0
+					&& ttMove == Move.NONE
 					&& depthRemaining < RAZORING_MARGIN.length
 					&& Math.abs(beta) < VALUE_IS_MATE
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN
