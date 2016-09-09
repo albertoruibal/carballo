@@ -646,7 +646,7 @@ public class SearchEngine implements Runnable {
 
 			movesDone++;
 
-			int lowBound = (alpha > bestScore ? alpha : bestScore);
+			int lowBound = alpha > bestScore ? alpha : bestScore;
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
 				// PV move not null searched
 				score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
@@ -700,12 +700,10 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Checkmate or stalemate
-		if (excludedMove == Move.NONE && !validOperations) {
-			if (checkEvasion) {
-				bestScore = valueMatedIn(distanceToInitialPly);
-			} else {
-				bestScore = evaluateDraw(distanceToInitialPly);
-			}
+		if (!validOperations) {
+			bestScore = excludedMove != Move.NONE ? alpha :
+					checkEvasion ? valueMatedIn(distanceToInitialPly) :
+							evaluateDraw(distanceToInitialPly);
 		}
 		// Fix score for excluded moves
 		if (bestScore == -Evaluator.MATE) {
