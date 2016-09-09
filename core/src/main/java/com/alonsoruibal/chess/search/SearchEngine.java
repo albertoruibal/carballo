@@ -355,15 +355,14 @@ public class SearchEngine implements Runnable {
 			return checkEvasion ? evaluateDraw(distanceToInitialPly) : eval; // Return a drawish score if we are in check
 		}
 
-		boolean validOperations = false;
-
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
 		moveIterator.genMoves(ttMove, (generateChecks ? MoveIterator.GENERATE_CAPTURES_PROMOS_CHECKS : MoveIterator.GENERATE_CAPTURES_PROMOS));
 
 		int move;
+		int moveCount = 0;
 		while ((move = moveIterator.next()) != Move.NONE) {
 			nodes++;
-			validOperations = true;
+			moveCount++;
 
 			// Futility pruning
 			if (!moveIterator.checkEvasion //
@@ -395,7 +394,7 @@ public class SearchEngine implements Runnable {
 			}
 		}
 
-		if (checkEvasion && !validOperations) {
+		if (checkEvasion && moveCount == 0) {
 			return valueMatedIn(distanceToInitialPly);
 		}
 		tt.set(board,
@@ -563,18 +562,16 @@ public class SearchEngine implements Runnable {
 		MoveIterator moveIterator = moveIterators[distanceToInitialPly];
 		moveIterator.genMoves(ttMove);
 
-		int movesDone = 0;
-		boolean validOperations = false;
 		int bestScore = -Evaluator.MATE;
 		int move, bestMove = Move.NONE;
+		int moveCount = 0;
 
 		while ((move = moveIterator.next()) != Move.NONE) {
-			nodes++;
-			validOperations = true;
-
 			if (move == excludedMove) {
 				continue;
 			}
+			nodes++;
+			moveCount++;
 
 			int extension = 0, reduction = 0;
 			//
@@ -617,7 +614,7 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
-					reduction += getReduction(nodeType, depthRemaining, movesDone + 1);
+					reduction += getReduction(nodeType, depthRemaining, moveCount);
 				}
 
 				// Futility Pruning
@@ -644,10 +641,8 @@ public class SearchEngine implements Runnable {
 			board.doMove(move, false, false);
 			assert board.getCheck() == Move.isCheck(move) : "Check flag not generated properly";
 
-			movesDone++;
-
 			int lowBound = alpha > bestScore ? alpha : bestScore;
-			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && movesDone == 1) {
+			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && moveCount == 1) {
 				// PV move not null searched
 				score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
 						-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, Move.NONE);
@@ -700,19 +695,15 @@ public class SearchEngine implements Runnable {
 		}
 
 		// Checkmate or stalemate
-		if (!validOperations) {
+		if (moveCount == 0) {
 			bestScore = excludedMove != Move.NONE ? alpha :
 					checkEvasion ? valueMatedIn(distanceToInitialPly) :
 							evaluateDraw(distanceToInitialPly);
 		}
-		// Fix score for excluded moves
-		if (bestScore == -Evaluator.MATE) {
-			bestScore = valueMatedIn(distanceToInitialPly);
-		}
 
 		// Tells MoveSorter the move score
 		if (bestScore >= beta) {
-			if (excludedMove == Move.NONE && validOperations) {
+			if (excludedMove == Move.NONE && moveCount > 0) {
 				sortInfo.betaCutoff(bestMove, distanceToInitialPly);
 			}
 			if (nodeType == NODE_NULL) {
