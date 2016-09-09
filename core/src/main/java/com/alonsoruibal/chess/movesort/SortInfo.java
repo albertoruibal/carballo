@@ -33,21 +33,24 @@ public class SortInfo {
 	/**
 	 * we are informed of the score produced by the move at any level
 	 */
-	public void betaCutoff(int move, int depth) {
+	public void betaCutoff(int move, int distanceToInitialPly) {
 		// removes captures and promotions from killers
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
 		}
 
-		if (move != killerMove1[depth]) {
-			killerMove2[depth] = killerMove1[depth];
-			killerMove1[depth] = move;
+		if (move != killerMove1[distanceToInitialPly]) {
+			killerMove2[distanceToInitialPly] = killerMove1[distanceToInitialPly];
+			killerMove1[distanceToInitialPly] = move;
 		}
 
-		history[Move.getPieceMoved(move) - 1][Move.getToIndex(move)]++;
+		int pieceMoved = Move.getPieceMoved(move) - 1;
+		int toIndex = Move.getToIndex(move);
+
+		history[pieceMoved][toIndex]++;
 
 		// Detect history overflows and divide all values by two
-		if (history[Move.getPieceMoved(move) - 1][Move.getToIndex(move)] >= HISTORY_MAX) {
+		if (history[pieceMoved][toIndex] >= HISTORY_MAX) {
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 64; j++) {
 					history[i][j] >>>= 1;
