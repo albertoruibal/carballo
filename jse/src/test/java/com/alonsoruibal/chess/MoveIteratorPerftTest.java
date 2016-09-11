@@ -1,10 +1,9 @@
 package com.alonsoruibal.chess;
 
-import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
-import com.alonsoruibal.chess.movesort.MoveIterator;
-import com.alonsoruibal.chess.movesort.SortInfo;
+import com.alonsoruibal.chess.search.MoveIterator;
+import com.alonsoruibal.chess.search.SearchEngine;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class MoveIteratorPerftTest {
 	private static final int DEPTH = 7;
@@ -26,6 +24,8 @@ public class MoveIteratorPerftTest {
 	int promotions[];
 	int checks[];
 	int checkMates[];
+
+	SearchEngine searchEngine = new SearchEngine(new Config());
 
 	private void reset() {
 		moveCount = new int[DEPTH];
@@ -142,8 +142,7 @@ public class MoveIteratorPerftTest {
 			moveList.add(moves[i]);
 		}
 
-		// Move.printMoves(moves, index);
-		MoveIterator moveIterator = new MoveIterator(board, new AttacksInfo(), new SortInfo(), depth);
+		MoveIterator moveIterator = searchEngine.nodes[depth].moveIterator;
 		moveIterator.genMoves(0);
 		int move;
 		while ((move = moveIterator.next()) != 0) {

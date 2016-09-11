@@ -1,4 +1,4 @@
-package com.alonsoruibal.chess.movesort;
+package com.alonsoruibal.chess.search;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Color;
@@ -44,6 +44,7 @@ public class MoveIterator {
 	public static final int SEE_NOT_CALCULATED = Short.MAX_VALUE;
 
 	private Board board;
+	private SearchEngine searchEngine;
 	private AttacksInfo ai;
 
 	private int ttMove;
@@ -88,18 +89,24 @@ public class MoveIterator {
 	private int[] nonCapturesScores = new int[256];
 
 	private int depth;
-	private SortInfo sortInfo;
 	private int phase;
 
 	private BitboardAttacks bbAttacks;
 
-	public MoveIterator(Board board, AttacksInfo ai, SortInfo sortInfo, int depth) {
-		this.board = board;
+	public MoveIterator(SearchEngine searchEngine, AttacksInfo ai, int depth) {
+		this.board = searchEngine.getBoard();
+		this.searchEngine = searchEngine;
+
 		this.ai = ai;
-		this.sortInfo = sortInfo;
 		this.depth = depth;
 
 		bbAttacks = BitboardAttacks.getInstance();
+	}
+
+	public void destroy() {
+		board = null;
+		searchEngine = null;
+		bbAttacks = null;
 	}
 
 	public int getLastMoveSee() {
@@ -130,10 +137,10 @@ public class MoveIterator {
 	private void initMoveGen() {
 		ai.build(board);
 
-		killer1 = sortInfo.killerMove1[depth];
-		killer2 = sortInfo.killerMove2[depth];
-		killer3 = depth < 2 ? Move.NONE : sortInfo.killerMove1[depth - 2];
-		killer4 = depth < 2 ? Move.NONE : sortInfo.killerMove2[depth - 2];
+		killer1 = searchEngine.nodes[depth].killerMove1;
+		killer2 = searchEngine.nodes[depth].killerMove2;
+		killer3 = depth < 2 ? Move.NONE : searchEngine.nodes[depth - 2].killerMove1;
+		killer4 = depth < 2 ? Move.NONE : searchEngine.nodes[depth - 2].killerMove2;
 
 		foundKiller1 = false;
 		foundKiller2 = false;
@@ -707,7 +714,7 @@ public class MoveIterator {
 		} else {
 			nonCaptures[nonCaptureIndex] = move;
 			nonCapturesSee[nonCaptureIndex] = see;
-			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : sortInfo.getMoveScore(move);
+			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : searchEngine.getMoveScore(move);
 			nonCaptureIndex++;
 		}
 	}

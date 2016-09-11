@@ -10,8 +10,8 @@ import com.alonsoruibal.chess.hash.ZobristKey;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 import com.alonsoruibal.chess.movegen.MagicMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
-import com.alonsoruibal.chess.movesort.MoveIterator;
-import com.alonsoruibal.chess.movesort.SortInfo;
+import com.alonsoruibal.chess.search.MoveIterator;
+import com.alonsoruibal.chess.search.SearchEngine;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -151,8 +151,8 @@ public class PerformanceTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testMoveIteratorNewNewPerf() {
-		SortInfo sortInfo = new SortInfo();
-		MoveIterator moveIterator = new MoveIterator(testBoards[0], new AttacksInfo(), sortInfo, 0);
+		SearchEngine searchEngine = new SearchEngine(new Config());
+		MoveIterator moveIterator = searchEngine.nodes[0].moveIterator;
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;

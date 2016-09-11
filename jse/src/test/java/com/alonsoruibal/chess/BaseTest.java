@@ -45,6 +45,7 @@ public abstract class BaseTest {
 
 	public long getSearchScore(String fen, int depth) {
 		SearchEngine search = new SearchEngine(new Config());
+		search.debug = true;
 		SearchParameters searchParams;
 		search.getBoard().setFen(fen);
 		searchParams = new SearchParameters();
@@ -55,6 +56,7 @@ public abstract class BaseTest {
 
 	public String getSearchBestMoveSan(String fen, int depth) {
 		SearchEngine search = new SearchEngine(new Config());
+		search.debug = true;
 		SearchParameters searchParams;
 		search.getBoard().setFen(fen);
 		searchParams = new SearchParameters();

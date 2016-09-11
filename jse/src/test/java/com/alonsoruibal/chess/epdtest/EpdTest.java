@@ -200,7 +200,7 @@ public class EpdTest implements SearchObserver {
 			return solutionTime;
 		} else {
 			logger.debug("Solution not found, instead played: " + Move.toStringExt(search.getBestMove()));
-			allSolutionNodes.add(search.getNodes());
+			allSolutionNodes.add(search.getNodeCount());
 			allSolutionTimes.add(timeLimit);
 			return timeLimit;
 		}
