@@ -47,7 +47,7 @@ public class SearchEngine implements Runnable {
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
 	// Margins by depthRemaining in PLYs
-	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240, 320, 400, 480};
+	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // It is never [0]
 	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500, 580};
 	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
@@ -134,7 +134,7 @@ public class SearchEngine implements Runnable {
 
 		// Init our reduction lookup tables
 		reductionMatrix = new int[2][64][64];
-		final double[] REDUCTION_COEFS1 = {0.5, 0.5};
+		final double[] REDUCTION_COEFS1 = {0.5, 0.5}; // NO PV, PV
 		final double[] REDUCTION_COEFS2 = {3.0, 6.0};
 		for (int pv = 0; pv < 2; pv++) {
 			for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
@@ -203,10 +203,6 @@ public class SearchEngine implements Runnable {
 			}
 		}
 		System.gc();
-	}
-
-	private int getReduction(int nodeType, int depthRemaining, int movecount) {
-		return reductionMatrix[nodeType == NODE_PV || nodeType == NODE_ROOT ? 1 : 0][Math.min(depthRemaining / PLY, 63)][Math.min(movecount, 63)];
 	}
 
 	public void setObserver(SearchObserver observer) {
@@ -562,7 +558,9 @@ public class SearchEngine implements Runnable {
 			if (node.ttMove == Move.NONE
 					&& depthRemaining >= IID_DEPTH[nodeType]
 					&& (nodeType != NODE_NULL || (node.staticEval + IID_MARGIN) > beta)) {
-				int d = (nodeType == NODE_PV ? depthRemaining - 2 * PLY : depthRemaining >> 1);
+				int d = nodeType != NODE_NULL ?
+						depthRemaining - 2 * PLY : // Root and PV nodes are less reduced
+						depthRemaining >> 1;
 				search(nodeType, d, alpha, beta, false, Move.NONE);
 				if (tt.search(board, distanceToInitialPly, false)) {
 					node.ttMove = tt.getBestMove();
@@ -575,6 +573,14 @@ public class SearchEngine implements Runnable {
 		int bestScore = -Evaluator.MATE;
 		int bestMove = Move.NONE;
 		int moveCount = 0;
+
+		// Check if we have a worse eval than the previous search node with our color
+		// Used to apply further reductions
+		boolean worseEval = nodeType == NODE_NULL
+				&& distanceToInitialPly > 2
+				&& node.staticEval != Evaluator.NO_VALUE
+				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE
+				&& nodes[distanceToInitialPly - 2].staticEval >= (node.staticEval + 5);
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
@@ -618,12 +624,11 @@ public class SearchEngine implements Runnable {
 				node.ttMove = savedMove;
 				node.moveIterator.genMoves(node.ttMove);
 				node.moveIterator.next();
-
-//				printNodeTree(distanceToInitialPly);
-//				System.out.println("seBeta = " + seBeta + " excScore=" + excScore + " extension=" + extension);
 			}
 
+			int newDepth = depthRemaining + extension - PLY;
 			int reduction = 0;
+
 			// If the move is not important
 			if (nodeType != NODE_ROOT
 					&& node.move != node.ttMove
@@ -634,14 +639,17 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
-					reduction += getReduction(nodeType, depthRemaining, moveCount);
+					reduction += reductionMatrix[nodeType == NODE_NULL ? 0 : 1][Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)];
+
+					if (worseEval && depthRemaining - reduction > 2 * PLY) {
+						reduction += PLY;
+					}
 				}
 
 				// Futility Pruning
 				if (bestScore > -Evaluator.KNOWN_WIN) { // There is a best move
-					int newDepth = depthRemaining - PLY + extension - reduction;
-					if (newDepth < FUTILITY_MARGIN_PARENT.length) {
-						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth];
+					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
+						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth - reduction];
 						if (futilityValue <= alpha) {
 							futilityHit++;
 							if (futilityValue > bestScore) {
@@ -651,7 +659,7 @@ public class SearchEngine implements Runnable {
 						}
 					}
 
-					if (depthRemaining < 3 * PLY
+					if (newDepth - reduction < 4 * PLY
 							&& node.moveIterator.getLastMoveSee() < 0) {
 						continue;
 					}
@@ -663,27 +671,27 @@ public class SearchEngine implements Runnable {
 
 			int lowBound = alpha > bestScore ? alpha : bestScore;
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && moveCount == 1) {
-				// PV move not null searched
-				score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
-						-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, Move.NONE);
+				// PV move not null searched nor reduced
+				score = newDepth < PLY ? -quiescentSearch(0, -beta, -lowBound) :
+						-search(NODE_PV, newDepth, -beta, -lowBound, true, Move.NONE);
 			} else {
 				// Try searching null window
 				boolean doFullSearch = true;
 				if (reduction > 0) {
-					score = depthRemaining - reduction - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
-							-search(NODE_NULL, depthRemaining - reduction - PLY, -lowBound - 1, -lowBound, true, Move.NONE);
-					doFullSearch = (score > lowBound);
+					score = newDepth - reduction < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
+							-search(NODE_NULL, newDepth - reduction, -lowBound - 1, -lowBound, true, Move.NONE);
+					doFullSearch = score > lowBound;
 				}
 				if (doFullSearch) {
-					score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
-							-search(NODE_NULL, depthRemaining + extension - PLY, -lowBound - 1, -lowBound, true, Move.NONE);
+					score = newDepth < PLY ? -quiescentSearch(0, -lowBound - 1, -lowBound) :
+							-search(NODE_NULL, newDepth, -lowBound - 1, -lowBound, true, Move.NONE);
 
 					// Finally search as PV if score on window
 					if ((nodeType == NODE_PV || nodeType == NODE_ROOT) //
 							&& score > lowBound //
 							&& (nodeType == NODE_ROOT || score < beta)) {
-						score = depthRemaining + extension - PLY < PLY ? -quiescentSearch(0, -beta, -lowBound) :
-								-search(NODE_PV, depthRemaining + extension - PLY, -beta, -lowBound, true, Move.NONE);
+						score = newDepth < PLY ? -quiescentSearch(0, -beta, -lowBound) :
+								-search(NODE_PV, newDepth, -beta, -lowBound, true, Move.NONE);
 					}
 				}
 			}
@@ -1061,7 +1069,7 @@ public class SearchEngine implements Runnable {
 	private void printNodeTree(int distanceToInitialPly) {
 		for (int i = 0; i <= distanceToInitialPly; i++) {
 			Node node = nodes[i];
-			System.out.print(Move.toString(node.move) + " (" + Move.toString(node.ttMove) + ") ");
+			System.out.print(Move.toString(node.move) + " (" + Move.toString(node.ttMove) + " " + node.staticEval + ") ");
 		}
 		System.out.println();
 	}
