@@ -714,7 +714,7 @@ public class MoveIterator {
 		} else {
 			nonCaptures[nonCaptureIndex] = move;
 			nonCapturesSee[nonCaptureIndex] = see;
-			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : searchEngine.getMoveScore(move);
+			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : searchEngine.getMoveHistory(move);
 			nonCaptureIndex++;
 		}
 	}

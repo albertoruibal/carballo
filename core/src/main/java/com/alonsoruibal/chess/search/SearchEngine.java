@@ -454,6 +454,7 @@ public class SearchEngine implements Runnable {
 					selDepth = distanceToInitialPly + tt.getDepthAnalyzed();
 				}
 
+				historyGood(node, tt.getBestMove(), depthRemaining);
 				return tt.getScore();
 			}
 			node.ttMove = tt.getBestMove();
@@ -637,6 +638,12 @@ public class SearchEngine implements Runnable {
 					&& !Move.isPawnPush678(node.move) // Includes promotions
 					&& !node.moveIterator.getLastMoveIsKiller()) {
 
+				// History based pruning
+				if (depthRemaining <= 4 * PLY
+						&& getMoveHistory(node.move) < 0) {
+					continue;
+				}
+
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
 					reduction += reductionMatrix[nodeType == NODE_NULL ? 0 : 1][Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)];
@@ -719,6 +726,8 @@ public class SearchEngine implements Runnable {
 			// alpha/beta cut (fail high)
 			if (score >= beta) {
 				break;
+			} else if (score <= alpha) {
+				historyBad(node, node.move, depthRemaining);
 			}
 		}
 
@@ -729,10 +738,10 @@ public class SearchEngine implements Runnable {
 							evaluateDraw(distanceToInitialPly);
 		}
 
-		// Tells MoveSorter the move score
+		// Tells history the good move
 		if (bestScore >= beta) {
-			if (excludedMove == Move.NONE && moveCount > 0) {
-				betaCutoff(node, bestMove);
+			if (moveCount > 0) {
+				historyGood(node, bestMove, depthRemaining);
 			}
 			if (nodeType == NODE_NULL) {
 				nullCutNodes++;
@@ -1036,7 +1045,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * We are informed of the score produced by the move at any level
 	 */
-	public void betaCutoff(Node node, int move) {
+	public void historyGood(Node node, int move, int depth) {
 		// removes captures and promotions from killers
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
@@ -1050,19 +1059,23 @@ public class SearchEngine implements Runnable {
 		int pieceMoved = Move.getPieceMoved(move) - 1;
 		int toIndex = Move.getToIndex(move);
 
-		history[pieceMoved][toIndex]++;
-
-		// Detect history overflows and divide all values by two
-		if (history[pieceMoved][toIndex] >= HISTORY_MAX) {
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 64; j++) {
-					history[i][j] >>>= 1;
-				}
-			}
-		}
+		int v = history[pieceMoved][toIndex];
+		history[pieceMoved][toIndex] = v + (((0xff00 - v) * depth) >>> 8);
 	}
 
-	public int getMoveScore(int move) {
+	public void historyBad(Node node, int move, int depth) {
+		if (move == Move.NONE || Move.isTactical(move)) {
+			return;
+		}
+
+		int pieceMoved = Move.getPieceMoved(move) - 1;
+		int toIndex = Move.getToIndex(move);
+
+		int v = history[pieceMoved][toIndex];
+		history[pieceMoved][toIndex] = v - ((v * depth) >>> 8);
+	}
+
+	public int getMoveHistory(int move) {
 		return history[Move.getPieceMoved(move) - 1][Move.getToIndex(move)];
 	}
 
