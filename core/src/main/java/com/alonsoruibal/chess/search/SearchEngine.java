@@ -47,7 +47,7 @@ public class SearchEngine implements Runnable {
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
 	// Margins by depthRemaining in PLYs
-	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // It is never [0]
+	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // [0] is not used
 	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500, 580};
 	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
