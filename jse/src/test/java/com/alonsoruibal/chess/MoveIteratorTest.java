@@ -15,6 +15,7 @@ public class MoveIteratorTest {
 		b.setFen(fen);
 		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen(fen);
 		MoveIterator moveIterator = searchEngine.nodes[0].moveIterator;
 		int ttMove = ttMoveString == null ? Move.NONE : Move.getFromString(b, ttMoveString, true);
 		moveIterator.genMoves(ttMove, generateMoves);
@@ -44,10 +45,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testCheckAfterPromotion() {
-		Board b = new Board();
-		b.setFen("7k/P7/8/8/8/8/8/7K w - - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("7k/P7/8/8/8/8/8/7K w - - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		assertTrue("First move must be check", Move.isCheck(lmi.next()));
@@ -55,10 +55,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testCheckAfterPromotionKingBehind() {
-		Board b = new Board();
-		b.setFen("8/P7/8/k7/8/8/8/7K w - - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("8/P7/8/k7/8/8/8/7K w - - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		assertTrue("First move must be check", Move.isCheck(lmi.next()));
@@ -66,10 +65,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void castlingGivesCheck() {
-		Board b = new Board();
-		b.setFen("5k2/8/8/8/8/8/8/4K2R w K - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("5k2/8/8/8/8/8/8/4K2R w K - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -86,10 +84,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void castlingGivesCheck2() {
-		Board b = new Board();
-		b.setFen("K3k2r/8/8/8/8/8/8/8 b k - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("K3k2r/8/8/8/8/8/8/8 b k - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -106,10 +103,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void cannotCastleAttackedSquare1() {
-		Board b = new Board();
-		b.setFen("4k2r/8/8/8/8/8/K7/5R2 b k - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("4k2r/8/8/8/8/8/K7/5R2 b k - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -126,10 +122,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void cannotCastleAttackedSquare2() {
-		Board b = new Board();
-		b.setFen("4k2r/7B/8/8/8/8/K7/8 b k - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("4k2r/7B/8/8/8/8/K7/8 b k - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -146,10 +141,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void canCastleLongAlthoughThereIsAnAttackedSquareNear() {
-		Board b = new Board();
-		b.setFen("7k/8/8/8/8/8/p5p1/R3K3 w Q - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("7k/8/8/8/8/8/p5p1/R3K3 w Q - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -166,10 +160,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void longCastlingGivesCheck2() {
-		Board b = new Board();
-		b.setFen("8/8/8/8/8/8/8/R3K2k w Q - 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("8/8/8/8/8/8/8/R3K2k w Q - 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -186,10 +179,9 @@ public class MoveIteratorTest {
 
 	@Test
 	public void enPassantGivesCheck() {
-		Board b = new Board();
-		b.setFen("7k/8/8/1b6/1pP5/8/8/5K2 b - c3 0 1");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("7k/8/8/1b6/1pP5/8/8/5K2 b - c3 0 1");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator lmi = searchEngine.nodes[0].moveIterator;
 		lmi.genMoves(Move.NONE);
 		int move;
@@ -336,15 +328,14 @@ public class MoveIteratorTest {
 
 	@Test
 	public void testTtLastMoveSee() {
-		Board b = new Board();
-		b.setFen("rq2r1k1/5p2/p6p/4b1P1/1p2P2P/5Q2/PP4K1/5R1R w - - 0 2");
-		System.out.println(b.toString());
 		SearchEngine searchEngine = new SearchEngine(new Config());
+		searchEngine.getBoard().setFen("rq2r1k1/5p2/p6p/4b1P1/1p2P2P/5Q2/PP4K1/5R1R w - - 0 2");
+		System.out.println(searchEngine.getBoard().toString());
 		MoveIterator moveIterator = searchEngine.nodes[0].moveIterator;
-		int ttMove = Move.getFromString(b, "Qc3", true);
+		int ttMove = Move.getFromString(searchEngine.getBoard(), "Qc3", true);
 		moveIterator.genMoves(ttMove, MoveIterator.GENERATE_ALL);
 		int move = moveIterator.next();
-		assertEquals("Qc3", Move.toSan(b, move));
+		assertEquals("Qc3", Move.toSan(searchEngine.getBoard(), move));
 		assertEquals(-900, moveIterator.getLastMoveSee());
 	}
 }
