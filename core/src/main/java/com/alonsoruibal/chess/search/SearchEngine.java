@@ -31,13 +31,17 @@ public class SearchEngine implements Runnable {
 
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
-	public static final int HISTORY_MAX = Integer.MAX_VALUE - 1;
 
 	private static final int NODE_ROOT = 0;
 	private static final int NODE_PV = 1;
 	private static final int NODE_NULL = 2;
-
 	private static final int PLY = 1;
+
+	public static final int HISTORY_MAX = Short.MAX_VALUE - 1;
+	public static final int HISTORY_MIN = Short.MIN_VALUE + 1;
+	private static final int HISTORY_PRUNING_TRESHOLD = 64;
+	private static final int WORSE_EVAL_NODE_MARGIN = 1;
+
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {0, 6 * PLY, 8 * PLY}; // By node type
 	private static final int[] IID_DEPTH = {5 * PLY, 5 * PLY, 8 * PLY};
@@ -46,6 +50,7 @@ public class SearchEngine implements Runnable {
 	private static final int SINGULAR_EXTENSION_MARGIN_PER_PLY = 1;
 	private static final int[] ASPIRATION_WINDOW_SIZES = {10, 25, 150, 400, 550, 1025};
 	private static final int FUTILITY_MARGIN_QS = 50;
+
 	// Margins by depthRemaining in PLYs
 	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // [0] is not used
 	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500, 580};
@@ -68,7 +73,7 @@ public class SearchEngine implements Runnable {
 	private Evaluator evaluator;
 	private TranspositionTable tt;
 	public Node[] nodes;
-	public int[][] history; // By piece type and destiny square
+	public short[][] history; // By piece type and destiny square
 
 	private int bestMoveScore;
 	private int globalBestMove, globalPonderMove;
@@ -125,7 +130,7 @@ public class SearchEngine implements Runnable {
 		this.config = config;
 		random = new Random();
 		board = new Board();
-		history = new int[6][64];
+		history = new short[6][64];
 		nodes = new Node[MAX_DEPTH];
 
 		for (int i = 0; i < MAX_DEPTH; i++) {
@@ -186,7 +191,7 @@ public class SearchEngine implements Runnable {
 
 	public void clearHistory() {
 		for (int i = 0; i < 6; i++) {
-			Arrays.fill(history[i], 0);
+			Arrays.fill(history[i], (short) HISTORY_MIN);
 		}
 	}
 
@@ -330,8 +335,8 @@ public class SearchEngine implements Runnable {
 			node.ttMove = Move.NONE;
 		}
 
-		int bestScore = alpha;
 		int bestMove = Move.NONE;
+		int bestScore = alpha;
 		node.staticEval = Evaluator.NO_VALUE;
 		int eval = -Evaluator.MATE;
 		int futilityBase = -Evaluator.MATE;
@@ -390,8 +395,8 @@ public class SearchEngine implements Runnable {
 			int score = -quiescentSearch(qsdepth + 1, -beta, -bestScore);
 			board.undoMove();
 			if (score > bestScore) {
-				bestScore = score;
 				bestMove = node.move;
+				bestScore = score;
 				if (score >= beta) {
 					break;
 				}
@@ -571,17 +576,16 @@ public class SearchEngine implements Runnable {
 
 		node.moveIterator.genMoves(node.ttMove);
 
-		int bestScore = -Evaluator.MATE;
 		int bestMove = Move.NONE;
+		int bestScore = -Evaluator.MATE;
 		int moveCount = 0;
 
 		// Check if we have a worse eval than the previous search node with our color
-		// Used to apply further reductions
-		boolean worseEval = nodeType == NODE_NULL
+		boolean worseEvalNode = nodeType == NODE_NULL
 				&& distanceToInitialPly > 2
 				&& node.staticEval != Evaluator.NO_VALUE
 				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE
-				&& nodes[distanceToInitialPly - 2].staticEval >= (node.staticEval + 5);
+				&& nodes[distanceToInitialPly - 2].staticEval >= (node.staticEval + WORSE_EVAL_NODE_MARGIN);
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
@@ -594,7 +598,8 @@ public class SearchEngine implements Runnable {
 			// Calculates the extension of a move in the actual position
 			//
 			int extension = mateThreat ? PLY :
-					(Move.isCheck(node.move) && node.moveIterator.getLastMoveSee() >= 0) ? PLY :
+					Move.isPawnPush678(node.move) ? PLY :
+							Move.isCheck(node.move) && node.moveIterator.getLastMoveSee() >= 0 ? PLY :
 							0;
 
 			// Check singular move extension
@@ -639,22 +644,19 @@ public class SearchEngine implements Runnable {
 					&& !node.moveIterator.getLastMoveIsKiller()) {
 
 				// History based pruning
-				if (depthRemaining <= 4 * PLY
-						&& getMoveHistory(node.move) < 0) {
+				if (bestMove != Move.NONE
+						&& depthRemaining <= 3 * PLY
+						&& getMoveHistory(node.move) < (HISTORY_MIN + HISTORY_PRUNING_TRESHOLD * depthRemaining / PLY)) {
 					continue;
 				}
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
 					reduction += reductionMatrix[nodeType == NODE_NULL ? 0 : 1][Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)];
-
-					if (worseEval && depthRemaining - reduction > 2 * PLY) {
-						reduction += PLY;
-					}
 				}
 
 				// Futility Pruning
-				if (bestScore > -Evaluator.KNOWN_WIN) { // There is a best move
+				if (bestMove != Move.NONE) { // There is a best move
 					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
 						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth - reduction];
 						if (futilityValue <= alpha) {
@@ -671,6 +673,13 @@ public class SearchEngine implements Runnable {
 						continue;
 					}
 				}
+			}
+
+			// Apply more reduction to worse eval nodes
+			if (worseEvalNode
+					&& reduction > 0
+					&& newDepth - reduction > 0) {
+				reduction += PLY;
 			}
 
 			board.doMove(node.move, false, false);
@@ -708,7 +717,7 @@ public class SearchEngine implements Runnable {
 			// It tracks the best move and...
 			if (score > bestScore &&
 					(config.getRand() == 0 //... insert errors to lower the ELO
-							|| bestScore == -Evaluator.MATE // it makes sure that has at least one move
+							|| bestMove != Move.NONE // it makes sure that has at least one move
 							|| random.nextInt(1000) > config.getRand())) {
 				bestMove = node.move;
 				bestScore = score;
@@ -1060,7 +1069,7 @@ public class SearchEngine implements Runnable {
 		int toIndex = Move.getToIndex(move);
 
 		int v = history[pieceMoved][toIndex];
-		history[pieceMoved][toIndex] = v + (((0xff00 - v) * depth) >>> 8);
+		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MAX - v) * depth) >> 8));
 	}
 
 	public void historyBad(Node node, int move, int depth) {
@@ -1072,7 +1081,7 @@ public class SearchEngine implements Runnable {
 		int toIndex = Move.getToIndex(move);
 
 		int v = history[pieceMoved][toIndex];
-		history[pieceMoved][toIndex] = v - ((v * depth) >>> 8);
+		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MIN - v) * depth) >> 8));
 	}
 
 	public int getMoveHistory(int move) {
