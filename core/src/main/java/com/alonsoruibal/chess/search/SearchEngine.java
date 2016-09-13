@@ -39,6 +39,9 @@ public class SearchEngine implements Runnable {
 
 	public static final int HISTORY_MAX = Short.MAX_VALUE - 1;
 	public static final int HISTORY_MIN = Short.MIN_VALUE + 1;
+	private static final int[][] HISTORY_PRUNING_TRESHOLD = { // The bigger the treshold, the more moves are pruned
+			{4800, 3648, 3408, 3264}, {6000, 4680, 5100, 4440}
+	};
 
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {0, 6 * PLY, 8 * PLY}; // By node type
@@ -51,7 +54,7 @@ public class SearchEngine implements Runnable {
 
 	// Margins by depthRemaining in PLYs
 	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // [0] is not used
-	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500, 580};
+	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500};
 	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
 	private SearchParameters searchParameters;
@@ -598,7 +601,7 @@ public class SearchEngine implements Runnable {
 			int extension = mateThreat ? PLY :
 					Move.isPawnPush678(node.move) ? PLY :
 							Move.isCheck(node.move) && node.moveIterator.getLastMoveSee() >= 0 ? PLY :
-							0;
+									0;
 
 			// Check singular move extension
 			// It also detects singular replies
@@ -647,6 +650,13 @@ public class SearchEngine implements Runnable {
 				}
 
 				if (bestMove != Move.NONE) { // There is a best move
+					// History based pruning
+					if (nodeType == NODE_NULL
+							&& newDepth < HISTORY_PRUNING_TRESHOLD[0].length
+							&& node.moveIterator.getLastMoveScore() < (HISTORY_MIN + HISTORY_PRUNING_TRESHOLD[worseEvalNode ? 0 : 1][newDepth])) {
+						continue;
+					}
+
 					// Futility Pruning
 					if (newDepth - reduction < FUTILITY_MARGIN_CHILD.length) {
 						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth - reduction];
@@ -660,7 +670,7 @@ public class SearchEngine implements Runnable {
 					}
 
 					// Prune moves with negative SSEs
-					if (newDepth - reduction < 4 * PLY
+					if (newDepth < 3 * PLY
 							&& node.moveIterator.getLastMoveSee() < 0) {
 						continue;
 					}
