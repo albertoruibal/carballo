@@ -52,6 +52,7 @@ public class MoveIterator {
 
 	private int move;
 	private int lastMoveSee;
+	private int lastMoveScore;
 	private boolean lastMoveIsKiller;
 	private int killer1;
 	private int killer2;
@@ -114,6 +115,10 @@ public class MoveIterator {
 			lastMoveSee = board.see(move, ai);
 		}
 		return lastMoveSee;
+	}
+
+	public int getLastMoveScore() {
+		return lastMoveScore;
 	}
 
 	public boolean getLastMoveIsKiller() {
@@ -278,6 +283,7 @@ public class MoveIterator {
 		if (bestIndex != -1) {
 			int move = arrayMoves[bestIndex];
 			lastMoveSee = arraySee[bestIndex];
+			lastMoveScore = maxScore;
 			arrayScores[bestIndex] = SCORE_LOWEST;
 			return move;
 		} else {
@@ -714,7 +720,7 @@ public class MoveIterator {
 		} else {
 			nonCaptures[nonCaptureIndex] = move;
 			nonCapturesSee[nonCaptureIndex] = see;
-			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : searchEngine.getMoveHistory(move);
+			nonCapturesScores[nonCaptureIndex] = underPromotion ? SCORE_UNDERPROMOTION : searchEngine.history[pieceMoved - 1][toIndex];
 			nonCaptureIndex++;
 		}
 	}

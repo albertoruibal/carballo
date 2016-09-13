@@ -39,8 +39,6 @@ public class SearchEngine implements Runnable {
 
 	public static final int HISTORY_MAX = Short.MAX_VALUE - 1;
 	public static final int HISTORY_MIN = Short.MIN_VALUE + 1;
-	private static final int HISTORY_PRUNING_TRESHOLD = 64;
-	private static final int WORSE_EVAL_NODE_MARGIN = 1;
 
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {0, 6 * PLY, 8 * PLY}; // By node type
@@ -191,7 +189,7 @@ public class SearchEngine implements Runnable {
 
 	public void clearHistory() {
 		for (int i = 0; i < 6; i++) {
-			Arrays.fill(history[i], (short) HISTORY_MIN);
+			Arrays.fill(history[i], (short) 0);
 		}
 	}
 
@@ -585,7 +583,7 @@ public class SearchEngine implements Runnable {
 				&& distanceToInitialPly > 2
 				&& node.staticEval != Evaluator.NO_VALUE
 				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE
-				&& nodes[distanceToInitialPly - 2].staticEval >= (node.staticEval + WORSE_EVAL_NODE_MARGIN);
+				&& nodes[distanceToInitialPly - 2].staticEval > node.staticEval;
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
@@ -643,21 +641,14 @@ public class SearchEngine implements Runnable {
 					&& !Move.isPawnPush678(node.move) // Includes promotions
 					&& !node.moveIterator.getLastMoveIsKiller()) {
 
-				// History based pruning
-				if (bestMove != Move.NONE
-						&& depthRemaining <= 3 * PLY
-						&& getMoveHistory(node.move) < (HISTORY_MIN + HISTORY_PRUNING_TRESHOLD * depthRemaining / PLY)) {
-					continue;
-				}
-
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
 					reduction += reductionMatrix[nodeType == NODE_NULL ? 0 : 1][Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)];
 				}
 
-				// Futility Pruning
 				if (bestMove != Move.NONE) { // There is a best move
-					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
+					// Futility Pruning
+					if (newDepth - reduction < FUTILITY_MARGIN_CHILD.length) {
 						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth - reduction];
 						if (futilityValue <= alpha) {
 							futilityHit++;
@@ -668,6 +659,7 @@ public class SearchEngine implements Runnable {
 						}
 					}
 
+					// Prune moves with negative SSEs
 					if (newDepth - reduction < 4 * PLY
 							&& node.moveIterator.getLastMoveSee() < 0) {
 						continue;
@@ -1082,10 +1074,6 @@ public class SearchEngine implements Runnable {
 
 		int v = history[pieceMoved][toIndex];
 		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MIN - v) * depth) >> 8));
-	}
-
-	public int getMoveHistory(int move) {
-		return history[Move.getPieceMoved(move) - 1][Move.getToIndex(move)];
 	}
 
 	private void printNodeTree(int distanceToInitialPly) {
