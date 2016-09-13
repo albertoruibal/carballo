@@ -53,8 +53,8 @@ public class SearchEngine implements Runnable {
 	private static final int FUTILITY_MARGIN_QS = 50;
 
 	// Margins by depthRemaining in PLYs
-	private static final int[] FUTILITY_MARGIN_PARENT = {0, 80, 160, 240}; // [0] is not used
-	private static final int[] FUTILITY_MARGIN_CHILD = {100, 180, 260, 340, 420, 500};
+	private static final int[] FUTILITY_MARGIN_CHILD = {0, 80, 160, 240}; // [0] is not used
+	private static final int[] FUTILITY_MARGIN_PARENT = {100, 180, 260, 340, 420, 500};
 	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
 	private SearchParameters searchParameters;
@@ -516,12 +516,12 @@ public class SearchEngine implements Runnable {
 
 			// Static null move pruning or futility pruning in parent node
 			if (nodeType != NODE_ROOT
-					&& depthRemaining < FUTILITY_MARGIN_PARENT.length
+					&& depthRemaining < FUTILITY_MARGIN_CHILD.length
 					&& Math.abs(beta) < VALUE_IS_MATE
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN
-					&& eval - FUTILITY_MARGIN_PARENT[depthRemaining] >= beta
+					&& eval - FUTILITY_MARGIN_CHILD[depthRemaining] >= beta
 					&& boardAllowsNullMove()) {
-				return eval - FUTILITY_MARGIN_PARENT[depthRemaining];
+				return eval - FUTILITY_MARGIN_CHILD[depthRemaining];
 			}
 
 			// Null move pruning and mate threat detection
@@ -546,8 +546,8 @@ public class SearchEngine implements Runnable {
 					}
 
 					// Verification search on initial depths
-					if (depthRemaining < 12 * PLY
-							|| (depthRemaining - R < PLY ? quiescentSearch(0, beta - 1, beta) :
+					if (depthRemaining < 12 * PLY || (depthRemaining - R < PLY ?
+							quiescentSearch(0, beta - 1, beta) :
 							search(NODE_NULL, depthRemaining - R, beta - 1, beta, false, Move.NONE)) >= beta) {
 						nullMoveHit++;
 						return score;
@@ -658,8 +658,8 @@ public class SearchEngine implements Runnable {
 					}
 
 					// Futility Pruning
-					if (newDepth - reduction < FUTILITY_MARGIN_CHILD.length) {
-						int futilityValue = node.staticEval + FUTILITY_MARGIN_CHILD[newDepth - reduction];
+					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
+						int futilityValue = node.staticEval + FUTILITY_MARGIN_PARENT[newDepth - reduction];
 						if (futilityValue <= alpha) {
 							futilityHit++;
 							if (futilityValue > bestScore) {
