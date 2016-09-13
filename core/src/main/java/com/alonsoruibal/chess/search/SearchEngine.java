@@ -709,7 +709,7 @@ public class SearchEngine implements Runnable {
 			// It tracks the best move and...
 			if (score > bestScore &&
 					(config.getRand() == 0 //... insert errors to lower the ELO
-							|| bestMove != Move.NONE // it makes sure that has at least one move
+							|| bestMove == Move.NONE // it makes sure that has at least one move
 							|| random.nextInt(1000) > config.getRand())) {
 				bestMove = node.move;
 				bestScore = score;
