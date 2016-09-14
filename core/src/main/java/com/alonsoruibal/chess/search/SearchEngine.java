@@ -52,9 +52,9 @@ public class SearchEngine implements Runnable {
 	private static final int FUTILITY_MARGIN_QS = 50;
 
 	// Margins by depthRemaining in PLYs
+	private static final int[] RAZORING_MARGIN = {0, 225, 230, 235}; // [0] is not used
 	private static final int[] FUTILITY_MARGIN_CHILD = {0, 80, 160, 240}; // [0] is not used
 	private static final int[] FUTILITY_MARGIN_PARENT = {100, 180, 260, 340, 420, 500};
-	private static final int[] RAZORING_MARGIN = {190, 225, 230, 235};
 
 	private SearchParameters searchParameters;
 
@@ -420,6 +420,8 @@ public class SearchEngine implements Runnable {
 	 * Search Root, PV and null window
 	 */
 	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
+		assert depthRemaining > 0 : "Wrong depthRemaining";
+
 		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || nodeCount > thinkToNodes)) {
 			throw new SearchFinishedException();
 		}
