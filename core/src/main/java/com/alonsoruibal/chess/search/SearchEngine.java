@@ -39,9 +39,8 @@ public class SearchEngine implements Runnable {
 
 	public static final int HISTORY_MAX = Short.MAX_VALUE - 1;
 	public static final int HISTORY_MIN = Short.MIN_VALUE + 1;
-	private static final int[][] HISTORY_PRUNING_TRESHOLD = { // The bigger the treshold, the more moves are pruned
-			{4800, 3648, 3408, 3264}, {6000, 4680, 5100, 4440}
-	};
+	// The bigger the treshold, the more moves are pruned
+	private static final int[] HISTORY_PRUNING_TRESHOLD = {7000, 5994, 5087, 5724};
 
 	private static final int LMR_DEPTHS_NOT_REDUCED = 3 * PLY;
 	private static final int[] SINGULAR_MOVE_DEPTH = {0, 6 * PLY, 8 * PLY}; // By node type
@@ -652,8 +651,8 @@ public class SearchEngine implements Runnable {
 				if (bestMove != Move.NONE) { // There is a best move
 					// History based pruning
 					if (nodeType == NODE_NULL
-							&& newDepth < HISTORY_PRUNING_TRESHOLD[0].length
-							&& node.moveIterator.getLastMoveScore() < (HISTORY_MIN + HISTORY_PRUNING_TRESHOLD[worseEvalNode ? 0 : 1][newDepth])) {
+							&& newDepth < HISTORY_PRUNING_TRESHOLD.length
+							&& node.moveIterator.getLastMoveScore() < HISTORY_MIN + HISTORY_PRUNING_TRESHOLD[newDepth]) {
 						continue;
 					}
 
