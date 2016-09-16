@@ -65,8 +65,8 @@ public class CompleteEvaluator extends Evaluator {
 	// Bishops
 	private static final int[] BISHOP_OUTPOST = {oe(7, 4), oe(10, 7)};
 	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
-	private static final int BISHOP_TRAPPED_PENALTY = oe(100, 100);
-	private static final long[] BISHOP_TRAPPING = {
+	private static final int[] BISHOP_TRAPPED_PENALTY = {oe(40, 40), oe(80, 80)}; // By pawn not guarded / guarded
+	private static final long[] BISHOP_TRAPPING = { // Indexed by bishop position, contains the square where a pawn can trap the bishop
 			0, Square.F2, 0, 0, 0, 0, Square.C2, 0,
 			Square.G3, 0, 0, 0, 0, 0, 0, Square.B3,
 			Square.G4, 0, 0, 0, 0, 0, 0, Square.B4,
@@ -76,12 +76,34 @@ public class CompleteEvaluator extends Evaluator {
 			Square.G6, 0, 0, 0, 0, 0, 0, Square.B6,
 			0, Square.F7, 0, 0, 0, 0, Square.C7, 0
 	};
+	private static final long[] BISHOP_TRAPPING_GUARD = { // Indexed by bishop position, contains the square where other pawn defends the trapping pawn
+			0, 0, 0, 0, 0, 0, 0, 0,
+			Square.F2, 0, 0, 0, 0, 0, 0, Square.C2,
+			Square.F3, 0, 0, 0, 0, 0, 0, Square.C3,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			Square.F6, 0, 0, 0, 0, 0, 0, Square.C6,
+			Square.F7, 0, 0, 0, 0, 0, 0, Square.C7,
+			0, 0, 0, 0, 0, 0, 0, 0
+	};
 
 	// Rooks
 	private static final int[] ROOK_OUTPOST = {oe(2, 1), oe(3, 2)}; // Array is Not defended by pawn, defended by pawn
-	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)}; // Open / Semi open
+	private static final int[] ROOK_FILE = {oe(20, 10), oe(7, 5)}; // Open / Semi open
 	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
-	private static final int ROOK_TRAPPED_BY_KING = oe(40, 0);
+	private static final int[] ROOK_TRAPPED_PENALTY = {oe(50, 0), oe(25, 0), oe(12, 0), oe(6, 0)}; // Penalty by number of mobility squares
+	private static final long[] ROOK_TRAPPING = { // Indexed by own king position, contains the squares where a rook may be traped by the king
+			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, 0,
+			0, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, Square.H7 | Square.H8, Square.H7 | Square.H8 | Square.G7 | Square.G8, 0,
+			0, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
+	};
 
 	// King
 	// Sums for each piece attacking an square near the king
@@ -484,7 +506,7 @@ public class CompleteEvaluator extends Evaluator {
 					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * BitboardUtils.popCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
-						mobility[us] -= BISHOP_TRAPPED_PENALTY;
+						mobility[us] -= BISHOP_TRAPPED_PENALTY[(BISHOP_TRAPPING_GUARD[index] & board.pawns & others) != 0 ? 1 : 0];
 					}
 
 				} else if ((square & board.rooks) != 0) {
@@ -519,13 +541,9 @@ public class CompleteEvaluator extends Evaluator {
 					}
 
 					// Rook trapped by king
-					if (relativeRank == 0
-							&& mobilityCount <= 2
-							&& (BitboardUtils.RANK[rank] & board.kings & mines) != 0) {
-						int kingFile = 7 - ai.kingIndex[us] & 7;
-						if ((file > kingFile && kingFile > 4) || (file < kingFile && kingFile < 3)) {
-							positional[us] -= ROOK_TRAPPED_BY_KING;
-						}
+					if ((square & ROOK_TRAPPING[ai.kingIndex[us]]) != 0
+							&& mobilityCount < ROOK_TRAPPED_PENALTY.length) {
+						positional[us] -= ROOK_TRAPPED_PENALTY[mobilityCount];
 					}
 
 				} else if ((square & board.queens) != 0) {
