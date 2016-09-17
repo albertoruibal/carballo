@@ -54,7 +54,6 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(5, 8), oe(16, 24), oe(32, 48), oe(53, 80), 0};
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(3, 5), oe(9, 14), oe(18, 27), oe(30, 45), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(4, 6), oe(12, 18), oe(24, 36), oe(40, 60), 0};
-	private static final int PAWN_PASSER_UNSTOPPABLE = oe(750, 750);
 
 	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
@@ -89,7 +88,7 @@ public class CompleteEvaluator extends Evaluator {
 
 	// Rooks
 	private static final int[] ROOK_OUTPOST = {oe(2, 1), oe(3, 2)}; // Array is Not defended by pawn, defended by pawn
-	private static final int[] ROOK_FILE = {oe(20, 10), oe(7, 5)}; // Open / Semi open
+	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)}; // Open / Semi open
 	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
 	private static final int[] ROOK_TRAPPED_PENALTY = {oe(50, 0), oe(25, 0), oe(12, 0), oe(6, 0)}; // Penalty by number of mobility squares
 	private static final long[] ROOK_TRAPPING = { // Indexed by own king position, contains the squares where a rook may be traped by the king
@@ -154,7 +153,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
 			oe(-4, 3), oe(0, 3), oe(4, 3), oe(8, 3), oe(8, 3), oe(4, 3), oe(0, 3), oe(-4, 3),
 			oe(-4, 5), oe(0, 5), oe(4, 5), oe(8, 5), oe(8, 5), oe(4, 5), oe(0, 5), oe(-4, 5),
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0)
+			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
 	private static final int queenPcsq[] = {
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
@@ -310,7 +309,6 @@ public class CompleteEvaluator extends Evaluator {
 
 		long all = board.getAll();
 		long pieceAttacks, safeAttacks, kingAttacks;
-		boolean onlyKingsAndPawns = (board.knights | board.bishops | board.rooks | board.queens) == 0;
 
 		long square = 1;
 		for (int index = 0; index < 64; index++) {
@@ -443,23 +441,6 @@ public class CompleteEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_PASSER_RUNNER[relativeRank];
 						} else if (mobile) {
 							passedPawns[us] += PAWN_PASSER_MOBILE[relativeRank];
-						}
-
-						if (onlyKingsAndPawns && runner) {
-							long promotionSquare = routeToPromotion & (isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0]);
-							if ((ai.kingAttacks[us] & promotionSquare) != 0 // The king controls the promotion square
-									&& (ai.kingAttacks[us] & square) != 0) {
-								passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
-							} else {
-								// Simple pawn square rule implementation
-								int ranksToPromo = 7 - relativeRank +
-										(relativeRank == 1 ? -1 : 0); // The pawn can advance two squares
-								int kingToPromo = BitboardUtils.distance(BitboardUtils.square2Index(promotionSquare), ai.kingIndex[them]) +
-										(isWhite != board.getTurn() ? -1 : 0); // The other king can move first
-								if (kingToPromo > ranksToPromo) {
-									passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
-								}
-							}
 						}
 					}
 					// Pawn is part of the king shield
