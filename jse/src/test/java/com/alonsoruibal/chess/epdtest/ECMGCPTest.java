@@ -10,6 +10,6 @@ public class ECMGCPTest extends EpdTest {
 	@Test
 	@Category(SlowTest.class)
 	public void testECMGCP() {
-		processEpdFile(this.getClass().getResourceAsStream("/ecmgcp.epd"), 10000);
+		processEpdFile(this.getClass().getResourceAsStream("/ecmgcp.epd"), 5000);
 	}
 }
