@@ -45,7 +45,7 @@ public class Uci implements SearchObserver {
 				if ("uci".equals(command)) {
 					System.out.println("id name " + NAME);
 					System.out.println("id author " + AUTHOR);
-					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 256");
+					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 1024");
 					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
 					System.out.println("option name UCI_Chess960 type check default false");
