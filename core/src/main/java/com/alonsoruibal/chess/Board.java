@@ -165,6 +165,12 @@ public class Board {
 		return (flags & FLAG_TURN) == 0;
 	}
 
+	public boolean canCastle(int color) {
+		return (flags & ((flags & FLAG_TURN) == 0 ?
+				FLAG_WHITE_KINGSIDE_CASTLING | FLAG_WHITE_QUEENSIDE_CASTLING :
+				FLAG_BLACK_KINGSIDE_CASTLING | FLAG_BLACK_QUEENSIDE_CASTLING)) != 0;
+	}
+
 	public boolean getWhiteKingsideCastling() {
 		return (flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0;
 	}

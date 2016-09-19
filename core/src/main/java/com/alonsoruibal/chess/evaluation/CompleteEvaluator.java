@@ -90,18 +90,18 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] ROOK_OUTPOST = {oe(2, 1), oe(3, 2)}; // Array is Not defended by pawn, defended by pawn
 	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)}; // Open / Semi open
 	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
-	private static final int[] ROOK_TRAPPED_PENALTY = {oe(50, 0), oe(25, 0), oe(12, 0), oe(6, 0)}; // Penalty by number of mobility squares
+	private static final int[] ROOK_TRAPPED_PENALTY = {oe(35, 0), oe(28, 0), oe(21, 0), oe(14, 0), oe(7, 0)}; // Penalty by number of mobility squares
 	private static final long[] ROOK_TRAPPING = { // Indexed by own king position, contains the squares where a rook may be traped by the king
-			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, 0,
-			0, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
+			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, Square.H1 | Square.G1 | Square.F1,
+			Square.A1 | Square.B1 | Square.C1, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			0, Square.H7 | Square.H8, Square.H7 | Square.H8 | Square.G7 | Square.G8, 0,
-			0, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
+			0, Square.H7 | Square.H8, Square.H7 | Square.H8 | Square.G7 | Square.G8, Square.H8 | Square.G8 | Square.F8,
+			Square.A8 | Square.B8 | Square.C8, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
 	};
 
 	// King
@@ -521,10 +521,10 @@ public class CompleteEvaluator extends Evaluator {
 						}
 					}
 
-					// Rook trapped by king
+					// Rook trapped by king, double penalty if it cannot castle
 					if ((square & ROOK_TRAPPING[ai.kingIndex[us]]) != 0
 							&& mobilityCount < ROOK_TRAPPED_PENALTY.length) {
-						positional[us] -= ROOK_TRAPPED_PENALTY[mobilityCount];
+						positional[us] -= (board.canCastle(us) ? 1 : 2) * ROOK_TRAPPED_PENALTY[mobilityCount];
 					}
 
 				} else if ((square & board.queens) != 0) {
