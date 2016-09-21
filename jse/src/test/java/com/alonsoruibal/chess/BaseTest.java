@@ -1,8 +1,8 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
+import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
@@ -12,7 +12,7 @@ public abstract class BaseTest {
 
 	public int getEval(String fen) {
 		AttacksInfo attacksInfo = new AttacksInfo();
-		ExperimentalEvaluator evaluator = new ExperimentalEvaluator();
+		CompleteEvaluator evaluator = new CompleteEvaluator();
 		evaluator.debug = true;
 		Board board = new Board();
 		board.setFen(fen);

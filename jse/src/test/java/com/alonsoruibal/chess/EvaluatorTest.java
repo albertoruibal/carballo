@@ -1,6 +1,7 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
+import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
-public class ExperimentalEvaluatorTest extends BaseTest {
+public class EvaluatorTest extends BaseTest {
 
 	public static int countSubstring(String subStr, String str) {
 		return (str.length() - str.replace(subStr, "").length()) / subStr.length();
@@ -30,7 +31,7 @@ public class ExperimentalEvaluatorTest extends BaseTest {
 	public void testPawnClassification() {
 		Board board = new Board();
 		AttacksInfo attacksInfo = new AttacksInfo();
-		ExperimentalEvaluator evaluator = new ExperimentalEvaluator();
+		CompleteEvaluator evaluator = new CompleteEvaluator();
 		evaluator.debug = true;
 		evaluator.debugPawns = true;
 
