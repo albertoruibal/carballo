@@ -29,7 +29,7 @@ public class CompleteEvaluator extends Evaluator {
 			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
 	private static final long BLACK_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
-	private static final int SPACE = oe(4, 4);
+	private static final int SPACE = oe(2, 0);
 
 	// Attacks
 	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
@@ -47,13 +47,15 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(8, 13), oe(8, 13), oe(13, 20), oe(24, 36), oe(39, 59), oe(60, 90), 0};
-	private static final int[] PAWN_PASSER = {0, oe(17, 25), oe(17, 25), oe(27, 41), oe(48, 72), oe(79, 118), oe(120, 180), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(3, 5), oe(3, 5), oe(5, 8), oe(10, 14), oe(16, 24), oe(24, 36), 0};
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(5, 7), oe(14, 21), oe(28, 42), oe(47, 70), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(5, 8), oe(16, 24), oe(32, 48), oe(53, 80), 0};
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(3, 5), oe(9, 14), oe(18, 27), oe(30, 45), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(4, 6), oe(12, 18), oe(24, 36), oe(40, 60), 0};
+	private static final int[] PAWN_CANDIDATE = {0, oe(10, 13), oe(10, 13), oe(12, 15), oe(16, 20), oe(22, 28), oe(30, 38), 0};
+	private static final int[] PAWN_PASSER = {0, oe(20, 25), oe(20, 25), oe(24, 30), oe(32, 40), oe(44, 55), oe(60, 75), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, oe(2, 3), oe(7, 9), oe(14, 18), oe(24, 30), 0};
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(3, 3), oe(8, 8), oe(15, 15), oe(25, 25), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(6, 6), oe(17, 17), oe(33, 33), oe(55, 55), 0};
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(2, 2), oe(6, 6), oe(12, 12), oe(20, 20), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(7, 7), oe(21, 21), oe(42, 42), oe(70, 70), 0};
+	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
+	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 2), oe(0, 3), oe(0, 5), 0};
 
 	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
@@ -90,18 +92,18 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] ROOK_OUTPOST = {oe(2, 1), oe(3, 2)}; // Array is Not defended by pawn, defended by pawn
 	private static final int[] ROOK_FILE = {oe(15, 10), oe(7, 5)}; // Open / Semi open
 	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
-	private static final int[] ROOK_TRAPPED_PENALTY = {oe(35, 0), oe(28, 0), oe(21, 0), oe(14, 0), oe(7, 0)}; // Penalty by number of mobility squares
+	private static final int[] ROOK_TRAPPED_PENALTY = {oe(40, 0), oe(30, 0), oe(20, 0), oe(10, 0)}; // Penalty by number of mobility squares
 	private static final long[] ROOK_TRAPPING = { // Indexed by own king position, contains the squares where a rook may be traped by the king
-			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, Square.H1 | Square.G1 | Square.F1,
-			Square.A1 | Square.B1 | Square.C1, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
+			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, 0,
+			0, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			0, Square.H7 | Square.H8, Square.H7 | Square.H8 | Square.G7 | Square.G8, Square.H8 | Square.G8 | Square.F8,
-			Square.A8 | Square.B8 | Square.C8, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
+			0, Square.H7 | Square.H8, Square.H7 | Square.H8 | Square.G7 | Square.G8, 0,
+			0, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
 	};
 
 	// King
@@ -429,6 +431,11 @@ public class CompleteEvaluator extends Evaluator {
 
 						passedPawns[us] += PAWN_PASSER[relativeRank];
 
+						if (relativeRank >= 2) {
+							int pushIndex = isWhite ? index + 8 : index - 8;
+							passedPawns[us] += BitboardUtils.distance(pushIndex, ai.kingIndex[them]) * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
+									- BitboardUtils.distance(pushIndex, ai.kingIndex[us]) * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
+						}
 						if (outside) {
 							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
 						}
