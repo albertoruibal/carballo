@@ -31,6 +31,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     dontskipnonpubliclibraryclassmembers
     target '1.7'
     keep 'public class com.alonsoruibal.chess.uci.Uci { *; }'
+    keep 'public class EpdTest { *; }'
     doLast {
         logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
     }
