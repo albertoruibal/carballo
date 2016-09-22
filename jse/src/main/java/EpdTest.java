@@ -110,6 +110,7 @@ public class EpdTest {
 
 		engine.stop();
 		engine.ucinewgame();
+
 		String bestMoveStr = null;
 		if (nodes != 0) {
 			bestMoveStr = engine.goNodes(board.getFen(), nodes);
@@ -135,12 +136,13 @@ public class EpdTest {
 
 	public void epdTest(String epdFile, String engineCommand, int time, int nodes) {
 		engine = new UciEngine(engineCommand);
-		engine.init();
+		engine.open(false);
 		try {
 			processEpdFile(new FileInputStream(new File(epdFile)), time, nodes);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		engine.close();
 	}
 
 	public static void main(String args[]) {

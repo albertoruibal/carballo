@@ -4,18 +4,23 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-public class UciEngine {
+public class UciEngine implements Runnable {
 	String command;
 	Process process;
 	PrintWriter pWriter;
 	Scanner scanner;
+
+	Thread thread;
+
+	boolean ready = false;
+	String bestMove = null;
 
 	public UciEngine(String command) {
 		this.command = command;
 		System.out.println(command);
 	}
 
-	public void init() {
+	public void open(boolean ownBook) {
 		if (process != null) {
 			process.destroy();
 		}
@@ -26,15 +31,17 @@ public class UciEngine {
 			InputStreamReader reader = new InputStreamReader(process.getInputStream());
 			scanner = new Scanner(reader);
 
-			pWriter.println("uci");
-			pWriter.println("isready");
-			pWriter.flush();
+			thread = new Thread(this);
+			thread.start();
 
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				System.out.println(line);
-				if (line.startsWith("readyok")) {
-					return;
+			sendCommand("uci");
+			sendCommand("setoption name OwnBook value " + ownBook);
+			sendCommand("isready");
+
+			while (!ready) {
+				try {
+					Thread.sleep(10);
+				} catch (Exception e) {
 				}
 			}
 		} catch (Exception e) {
@@ -42,44 +49,69 @@ public class UciEngine {
 		}
 	}
 
+	public void close() {
+		process.destroy();
+	}
+
+	public void run() {
+		try {
+			while (true) {
+				String line = scanner.nextLine();
+				System.out.println(line);
+				if (line.startsWith("readyok")) {
+					ready = true;
+				} else if (line.startsWith("bestmove")) {
+					String tokens[] = line.split(" ");
+					bestMove = tokens[1];
+				}
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	private void sendCommand(String command) {
+		System.out.println("> " + command);
+		pWriter.println(command);
+		pWriter.flush();
+	}
+
 	public void stop() {
-		pWriter.println("stop");
+		sendCommand("stop");
 	}
 
 	public void ucinewgame() {
-		pWriter.println("ucinewgame");
+		sendCommand("ucinewgame");
 	}
 
 	public String goMovetime(String fen, int movetime) {
-		pWriter.println("position fen " + fen);
-		pWriter.println("go movetime " + movetime);
-		pWriter.flush();
+		bestMove = null;
+		sendCommand("position fen " + fen);
+		sendCommand("go movetime " + movetime);
 		return waitBestMove();
 	}
 
 	public String goNodes(String fen, int nodes) {
-		pWriter.println("position fen " + fen);
-		pWriter.println("go nodes " + nodes);
-		pWriter.flush();
+		bestMove = null;
+		sendCommand("position fen " + fen);
+		sendCommand("go nodes " + nodes);
 		return waitBestMove();
 	}
 
 	public String go(String fen, int wtime, int btime) {
-		pWriter.println("position fen " + fen);
-		pWriter.println("go wtime " + wtime + " btime " + btime);
-		pWriter.flush();
+		bestMove = null;
+		sendCommand("position fen " + fen);
+		sendCommand("go wtime " + wtime + " btime " + btime);
 		return waitBestMove();
 	}
 
 	private String waitBestMove() {
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-			System.out.println(line);
-			if (line.startsWith("bestmove")) {
-				String tokens[] = line.split(" ");
-				return tokens[1];
+		while (bestMove == null) {
+			try {
+				Thread.sleep(10);
+			} catch (Exception e) {
 			}
 		}
-		return null;
+		return bestMove;
 	}
 }
