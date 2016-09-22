@@ -528,10 +528,10 @@ public class CompleteEvaluator extends Evaluator {
 						}
 					}
 
-					// Rook trapped by king, double penalty if it cannot castle
+					// Rook trapped by king
 					if ((square & ROOK_TRAPPING[ai.kingIndex[us]]) != 0
 							&& mobilityCount < ROOK_TRAPPED_PENALTY.length) {
-						positional[us] -= (board.canCastle(us) ? 1 : 2) * ROOK_TRAPPED_PENALTY[mobilityCount];
+						positional[us] -= ROOK_TRAPPED_PENALTY[mobilityCount];
 					}
 
 				} else if ((square & board.queens) != 0) {
