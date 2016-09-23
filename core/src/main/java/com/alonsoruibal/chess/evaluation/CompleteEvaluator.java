@@ -47,18 +47,21 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(10, 13), oe(10, 13), oe(12, 15), oe(16, 20), oe(22, 28), oe(30, 38), 0};
-	private static final int[] PAWN_PASSER = {0, oe(20, 25), oe(20, 25), oe(24, 30), oe(32, 40), oe(44, 55), oe(60, 75), 0};
+	private static final int[] PAWN_CANDIDATE = {0, oe(10, 13), oe(10, 13), oe(14, 18), oe(22, 28), oe(34, 43), oe(50, 63), 0};
+	private static final int[] PAWN_PASSER = {0, oe(20, 25), oe(20, 25), oe(28, 35), oe(44, 55), oe(68, 85), oe(100, 125), 0};
 	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, oe(2, 3), oe(7, 9), oe(14, 18), oe(24, 30), 0};
 	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(3, 3), oe(8, 8), oe(15, 15), oe(25, 25), 0};
 	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(6, 6), oe(17, 17), oe(33, 33), oe(55, 55), 0};
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(2, 2), oe(6, 6), oe(12, 12), oe(20, 20), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(7, 7), oe(21, 21), oe(42, 42), oe(70, 70), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(6, 6), oe(18, 18), oe(36, 36), oe(60, 60), 0};
+
 	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
 	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 2), oe(0, 3), oe(0, 5), 0};
 
-	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
+	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(23, 0), oe(15, 0), oe(8, 0), 0, 0, 0};
+	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(15, 0), oe(30, 0), oe(60, 0), 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(13, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
 	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(22, 15)}; // Array is Not defended by pawn, defended by pawn
@@ -392,9 +395,12 @@ public class CompleteEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
-						// Pawn Storm: It can open a file near the king
-						if ((routeToPromotion & ~BitboardUtils.D & ~BitboardUtils.E & kingZone[them]) != 0) {
-							pawnStructure[us] += PAWN_STORM[relativeRank];
+						// Pawn Storm: It can open a file near the other king
+						if (gamePhase > 0
+								&& (routeToPromotion & kingZone[them]) != 0) {
+							pawnStructure[us] += (pawnFile & board.kings & others) != 0 ?
+									PAWN_STORM_CENTER[relativeRank] :
+									PAWN_STORM[relativeRank];
 						}
 					} else {
 						//
@@ -451,8 +457,12 @@ public class CompleteEvaluator extends Evaluator {
 						}
 					}
 					// Pawn is part of the king shield
-					if ((pawnFile & ~BitboardUtils.D & ~BitboardUtils.E & ~ranksForward & kingZone[us]) != 0) {
-						pawnStructure[us] += PAWN_SHIELD[relativeRank];
+					if (gamePhase > 0
+							&& ((board.kings & mines | square) & (BitboardUtils.D | BitboardUtils.E)) == 0 // Only if the king and the pawn are not in D or E
+							&& (square & ~ranksForward & kingZone[us]) != 0) { // Pawn in the kingzone
+						pawnStructure[us] += (pawnFile & board.kings & mines) != 0 ?
+								PAWN_SHIELD_CENTER[relativeRank] :
+								PAWN_SHIELD[relativeRank];
 					}
 
 				} else if ((square & board.knights) != 0) {
