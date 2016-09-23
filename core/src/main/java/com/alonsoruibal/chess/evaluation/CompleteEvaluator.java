@@ -60,7 +60,6 @@ public class CompleteEvaluator extends Evaluator {
 
 	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
 	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(23, 0), oe(15, 0), oe(8, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(15, 0), oe(30, 0), oe(60, 0), 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(13, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights
@@ -396,11 +395,11 @@ public class CompleteEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
 						// Pawn Storm: It can open a file near the other king
+						// Only if in kingside or queenside
 						if (gamePhase > 0
-								&& (routeToPromotion & kingZone[them]) != 0) {
-							pawnStructure[us] += (pawnFile & board.kings & others) != 0 ?
-									PAWN_STORM_CENTER[relativeRank] :
-									PAWN_STORM[relativeRank];
+								&& (otherPawnsAheadAdjacent & ~BitboardUtils.D & ~BitboardUtils.E) != 0 // Needs pawns in the adjacent files
+								&& (routeToPromotion & kingZone[them] & ~BitboardUtils.D & ~BitboardUtils.E) != 0) {
+							pawnStructure[us] += PAWN_STORM[relativeRank];
 						}
 					} else {
 						//
@@ -458,8 +457,7 @@ public class CompleteEvaluator extends Evaluator {
 					}
 					// Pawn is part of the king shield
 					if (gamePhase > 0
-							&& ((board.kings & mines | square) & (BitboardUtils.D | BitboardUtils.E)) == 0 // Only if the king and the pawn are not in D or E
-							&& (square & ~ranksForward & kingZone[us]) != 0) { // Pawn in the kingzone
+							&& (pawnFile & ~ranksForward & kingZone[us] & ~BitboardUtils.D & ~BitboardUtils.E) != 0) { // Pawn in the kingzone
 						pawnStructure[us] += (pawnFile & board.kings & mines) != 0 ?
 								PAWN_SHIELD_CENTER[relativeRank] :
 								PAWN_SHIELD[relativeRank];
