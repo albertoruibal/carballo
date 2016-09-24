@@ -55,11 +55,11 @@ public class CompleteEvaluator extends Evaluator {
 	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(2, 2), oe(6, 6), oe(12, 12), oe(20, 20), 0};
 	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(6, 6), oe(18, 18), oe(36, 36), oe(60, 60), 0};
 
-	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
-	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 2), oe(0, 3), oe(0, 5), 0};
+	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 2), oe(0, 6), oe(0, 12), oe(0, 20), 0};
+	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
 
 	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
-	private static final int[] PAWN_SHIELD = {0, oe(30, 0), oe(23, 0), oe(15, 0), oe(8, 0), 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(35, 0), oe(26, 0), oe(18, 0), oe(9, 0), 0, 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(13, 0), oe(25, 0), oe(50, 0), 0, 0};
 
 	// Knights

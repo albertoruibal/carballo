@@ -29,18 +29,18 @@ runnerValues = round(bonuses2 * 60);
 
 passerValues = round(passerValues);
 
-otherKingDistanceBonus = round(bonuses * 10);
-myKingDistanceBonus = round(bonuses * 5);
+otherKingDistanceBonus = round(bonuses * 20);
+myKingDistanceBonus = round(bonuses * 10);
 
 #
 # Pawn Shield and Storm
 #
+
 shieldBonuses=[0, 1, 0.75, 0.5, 0.25, 0, 0, 0];
 pawnShieldCenter = round(shieldBonuses * 55);
-pawnShield = round(shieldBonuses * 30);
+pawnShield = round(shieldBonuses * 35);
 
 stormBonuses=[0, 0, 0, 0.25, 0.5, 1, 0, 0];
-pawnStormCenter = round(stormBonuses * 60);
 pawnStorm = round(stormBonuses * 50);
 
 # Print values for the Java evaluator
@@ -77,9 +77,6 @@ printf(strrep(strcat(
     "};\n",
     "private static final int[] PAWN_SHIELD = {",
     substr(sprintf('oe(%i, 0), ', pawnShield), 1, -2),
-    "};\n",
-    "private static final int[] PAWN_STORM_CENTER = {",
-    substr(sprintf('oe(%i, 0), ', pawnStormCenter), 1, -2),
     "};\n",
     "private static final int[] PAWN_STORM = {",
     substr(sprintf('oe(%i, 0), ', pawnStorm), 1, -2),
