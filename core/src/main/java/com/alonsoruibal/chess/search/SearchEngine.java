@@ -187,6 +187,10 @@ public class SearchEngine implements Runnable {
 		clearHistory();
 		// And transposition table
 		tt.clear();
+		// And the killer moves stored in the nodes
+		for (int i = 0; i < MAX_DEPTH; i++) {
+			nodes[i].clear();
+		}
 	}
 
 	public void clearHistory() {
