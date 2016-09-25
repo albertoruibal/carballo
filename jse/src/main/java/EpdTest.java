@@ -108,8 +108,10 @@ public class EpdTest {
 			logger.debug("Lets see if " + bestMovesString + (bestMoves.length > 1 ? " are " : " is ") + "found");
 		}
 
-		engine.stop();
-		engine.ucinewgame();
+		engine.sendStop();
+		engine.sendUciNewGame();
+		engine.sendIsReady();
+		engine.waitReadyOk();
 
 		String bestMoveStr = null;
 		if (nodes != 0) {

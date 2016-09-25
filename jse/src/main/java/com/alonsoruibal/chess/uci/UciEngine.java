@@ -12,7 +12,8 @@ public class UciEngine implements Runnable {
 
 	Thread thread;
 
-	boolean ready = false;
+	boolean uciOk = false;
+	boolean readyOk = false;
 	String bestMove = null;
 
 	public UciEngine(String command) {
@@ -35,15 +36,11 @@ public class UciEngine implements Runnable {
 			thread.start();
 
 			sendCommand("uci");
+			waitUciOk();
 			sendCommand("setoption name OwnBook value " + ownBook);
-			sendCommand("isready");
+			sendIsReady();
 
-			while (!ready) {
-				try {
-					Thread.sleep(10);
-				} catch (Exception e) {
-				}
-			}
+			waitReadyOk();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,9 +54,11 @@ public class UciEngine implements Runnable {
 		try {
 			while (true) {
 				String line = scanner.nextLine();
-				System.out.println(line);
-				if (line.startsWith("readyok")) {
-					ready = true;
+				System.out.println("UCI <- " + line);
+				if (line.startsWith("uciok")) {
+					uciOk = true;
+				} else if (line.startsWith("readyok")) {
+					readyOk = true;
 				} else if (line.startsWith("bestmove")) {
 					String tokens[] = line.split(" ");
 					bestMove = tokens[1];
@@ -71,17 +70,22 @@ public class UciEngine implements Runnable {
 	}
 
 	private void sendCommand(String command) {
-		System.out.println("> " + command);
+		System.out.println("UCI -> " + command);
 		pWriter.println(command);
 		pWriter.flush();
 	}
 
-	public void stop() {
+	public void sendStop() {
 		sendCommand("stop");
 	}
 
-	public void ucinewgame() {
+	public void sendUciNewGame() {
 		sendCommand("ucinewgame");
+	}
+
+	public void sendIsReady() {
+		readyOk = false;
+		sendCommand("isready");
 	}
 
 	public String goMovetime(String fen, int movetime) {
@@ -105,7 +109,25 @@ public class UciEngine implements Runnable {
 		return waitBestMove();
 	}
 
-	private String waitBestMove() {
+	public void waitUciOk() {
+		while (!uciOk) {
+			try {
+				Thread.sleep(10);
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	public void waitReadyOk() {
+		while (!readyOk) {
+			try {
+				Thread.sleep(10);
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	public String waitBestMove() {
 		while (bestMove == null) {
 			try {
 				Thread.sleep(10);
