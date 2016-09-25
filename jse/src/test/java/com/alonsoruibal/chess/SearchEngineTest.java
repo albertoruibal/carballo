@@ -2,6 +2,7 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import org.junit.Test;
@@ -91,5 +92,25 @@ public class SearchEngineTest extends BaseTest {
 	@Test
 	public void testRetiEndgameStudy() {
 		assertTrue(getSearchScore("7K/8/k1P5/7p/8/8/8/8 w - -", 15) == Evaluator.DRAW);
+	}
+
+	@Test
+	public void testSameResultsAfterClear() {
+		String fen = "rnq1nrk1/pp3pbp/6p1/3p4/3P4/5N2/PP2BPPP/R1BQK2R w KQ - 0 1";
+
+		SearchEngine search = new SearchEngine(new Config());
+		search.debug = true;
+		SearchParameters searchParams;
+		search.getBoard().setFen(fen);
+		searchParams = new SearchParameters();
+		searchParams.setDepth(10);
+		search.go(searchParams);
+		long nodes1 = search.getNodeCount();
+
+		search.clear();
+
+		search.go(searchParams);
+		long nodes2 = search.getNodeCount();
+		assertEquals(nodes1, nodes2);
 	}
 }
