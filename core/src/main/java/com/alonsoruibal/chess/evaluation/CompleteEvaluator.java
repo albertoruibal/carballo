@@ -60,7 +60,7 @@ public class CompleteEvaluator extends Evaluator {
 
 	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
 	private static final int[] PAWN_SHIELD = {0, oe(35, 0), oe(26, 0), oe(18, 0), oe(9, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(13, 0), oe(25, 0), oe(50, 0), 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
 
 	// Knights
 	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(22, 15)}; // Array is Not defended by pawn, defended by pawn

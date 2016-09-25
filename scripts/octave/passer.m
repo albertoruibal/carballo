@@ -41,7 +41,7 @@ pawnShieldCenter = round(shieldBonuses * 55);
 pawnShield = round(shieldBonuses * 35);
 
 stormBonuses=[0, 0, 0, 0.25, 0.5, 1, 0, 0];
-pawnStorm = round(stormBonuses * 50);
+pawnStorm = round(stormBonuses * 30);
 
 # Print values for the Java evaluator
 printf(strrep(strcat(
