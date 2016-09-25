@@ -181,12 +181,12 @@ public class Uci implements SearchObserver {
 				} else if ("register".equals(command)) {
 					// not used
 				} else {
-					// System.out.println("Command not recognized: " + in);
+					System.out.println("info string Wrong UCI command");
 				}
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("info string Wrong UCI syntax");
 		}
 	}
 
