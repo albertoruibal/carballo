@@ -29,7 +29,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
 	private static final long BLACK_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
-	private static final int SPACE = oe(4, 4);
+	private static final int SPACE = oe(2, 0);
 
 	// Attacks
 	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
@@ -47,17 +47,21 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int PAWN_UNSUPPORTED = oe(2, 4); // Not backwards or isolated
 
 	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(8, 13), oe(8, 13), oe(13, 20), oe(24, 36), oe(39, 59), oe(60, 90), 0};
-	private static final int[] PAWN_PASSER = {0, oe(17, 25), oe(17, 25), oe(27, 41), oe(48, 72), oe(79, 118), oe(120, 180), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, oe(3, 5), oe(3, 5), oe(5, 8), oe(10, 14), oe(16, 24), oe(24, 36), 0};
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(5, 7), oe(14, 21), oe(28, 42), oe(47, 70), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(5, 8), oe(16, 24), oe(32, 48), oe(53, 80), 0};
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(3, 5), oe(9, 14), oe(18, 27), oe(30, 45), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(4, 6), oe(12, 18), oe(24, 36), oe(40, 60), 0};
-	private static final int PAWN_PASSER_UNSTOPPABLE = oe(750, 750);
+	private static final int[] PAWN_CANDIDATE = {0, oe(10, 13), oe(10, 13), oe(14, 18), oe(22, 28), oe(34, 43), oe(50, 63), 0};
+	private static final int[] PAWN_PASSER = {0, oe(20, 25), oe(20, 25), oe(28, 35), oe(44, 55), oe(68, 85), oe(100, 125), 0};
+	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, oe(2, 3), oe(7, 9), oe(14, 18), oe(24, 30), 0};
+	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(3, 3), oe(8, 8), oe(15, 15), oe(25, 25), 0};
+	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(6, 6), oe(17, 17), oe(33, 33), oe(55, 55), 0};
+	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(2, 2), oe(6, 6), oe(12, 12), oe(20, 20), 0};
+	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(6, 6), oe(18, 18), oe(36, 36), oe(60, 60), 0};
 
-	private static final int[] PAWN_SHIELD = {0, oe(32, 0), oe(24, 0), oe(16, 0), oe(8, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(12, 0), oe(25, 0), oe(50, 0), 0, 0};
+	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 2), oe(0, 6), oe(0, 12), oe(0, 20), 0};
+	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
+
+	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
+	private static final int[] PAWN_SHIELD = {0, oe(35, 0), oe(26, 0), oe(18, 0), oe(9, 0), 0, 0, 0};
+	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(5, 0), oe(10, 0), oe(20, 0), 0, 0};
 
 	// Knights
 	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
@@ -171,7 +175,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
 			oe(-4, 3), oe(0, 3), oe(4, 3), oe(8, 3), oe(8, 3), oe(4, 3), oe(0, 3), oe(-4, 3),
 			oe(-4, 5), oe(0, 5), oe(4, 5), oe(8, 5), oe(8, 5), oe(4, 5), oe(0, 5), oe(-4, 5),
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0)
+			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
 	private static final int queenPcsq[] = {
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
@@ -327,7 +331,6 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		long all = board.getAll();
 		long pieceAttacks, pieceAttackedXray, safeAttacks, kingAttacks;
-		boolean onlyKingsAndPawns = (board.knights | board.bishops | board.rooks | board.queens) == 0;
 
 		long square = 1;
 		for (int index = 0; index < 64; index++) {
@@ -339,6 +342,7 @@ public class ExperimentalEvaluator extends Evaluator {
 				long others = (isWhite ? board.blacks : board.whites);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
+				int relativeRank = isWhite ? rank : 7 - rank;
 				int file = 7 - index & 7;
 
 				pieceAttacks = ai.attacksFromSquare[index];
@@ -346,7 +350,6 @@ public class ExperimentalEvaluator extends Evaluator {
 				if ((square & board.pawns) != 0) {
 					pcsq[us] += pawnPcsq[pcsqIndex];
 
-					int relativeRank = isWhite ? rank : 7 - rank;
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
 					long adjacentFiles = BitboardUtils.FILES_ADJACENT[file];
@@ -409,20 +412,26 @@ public class ExperimentalEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
-						// Pawn Storm: It can open a file near the king
-						if ((routeToPromotion & ~BitboardUtils.D & ~BitboardUtils.E & kingZone[them]) != 0) {
-							pawnStructure[us] += PAWN_STORM[relativeRank];
-						}
-						// There is an opposite rook attacking this weak pawn
-						if ((backward || isolated) && !opposed && (routeToPromotion & board.rooks & others) != 0) {
-							positional[them] += ROOK_FILE_SEMIOPEN_WEAK_PAWN;
+						// Pawn Storm: It can open a file near the other king
+						if (gamePhase > 0 && relativeRank > 2) {
+							// Only if in kingside or queenside
+							long stormedPawns = otherPawnsAheadAdjacent & ~BitboardUtils.D & ~BitboardUtils.E;
+							if (stormedPawns != 0) {
+								// The stormed pawn must be in the other king's adjacent files
+								int otherKingFile = 7 - ai.kingIndex[them] & 7;
+								if ((stormedPawns & BitboardUtils.FILE[otherKingFile]) != 0) {
+									pawnStructure[us] += PAWN_STORM_CENTER[relativeRank];
+								} else if ((stormedPawns & BitboardUtils.FILES_ADJACENT[otherKingFile]) != 0) {
+									pawnStructure[us] += PAWN_STORM[relativeRank];
+								}
+							}
 						}
 					} else {
 						//
 						// Passed Pawn
 						//
 						// Backfile only to the first piece found
-						long backFile = bbAttacks.getRookAttacks(index, all) & BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
+						long backFile = bbAttacks.getRookAttacks(index, all) & pawnFile & BitboardUtils.RANKS_BACKWARD[us][rank];
 						// If it has a rook or queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute =
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
@@ -452,6 +461,11 @@ public class ExperimentalEvaluator extends Evaluator {
 
 						passedPawns[us] += PAWN_PASSER[relativeRank];
 
+						if (relativeRank >= 2) {
+							int pushIndex = isWhite ? index + 8 : index - 8;
+							passedPawns[us] += BitboardUtils.distance(pushIndex, ai.kingIndex[them]) * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
+									- BitboardUtils.distance(pushIndex, ai.kingIndex[us]) * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
+						}
 						if (outside) {
 							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
 						}
@@ -465,27 +479,13 @@ public class ExperimentalEvaluator extends Evaluator {
 						} else if (mobile) {
 							passedPawns[us] += PAWN_PASSER_MOBILE[relativeRank];
 						}
-
-						if (onlyKingsAndPawns && runner) {
-							long promotionSquare = routeToPromotion & (isWhite ? BitboardUtils.RANK[7] : BitboardUtils.RANK[0]);
-							if ((ai.kingAttacks[us] & promotionSquare) != 0 // The king controls the promotion square
-									&& (ai.kingAttacks[us] & square) != 0) {
-								passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
-							} else {
-								// Simple pawn square rule implementation
-								int ranksToPromo = 7 - relativeRank +
-										(relativeRank == 1 ? -1 : 0); // The pawn can advance two squares
-								int kingToPromo = BitboardUtils.distance(BitboardUtils.square2Index(promotionSquare), ai.kingIndex[them]) +
-										(isWhite != board.getTurn() ? -1 : 0); // The other king can move first
-								if (kingToPromo > ranksToPromo) {
-									passedPawns[us] += PAWN_PASSER_UNSTOPPABLE;
-								}
-							}
-						}
 					}
 					// Pawn is part of the king shield
-					if ((pawnFile & ~BitboardUtils.D & ~BitboardUtils.E & ~ranksForward & kingZone[us]) != 0) {
-						pawnStructure[us] += PAWN_SHIELD[relativeRank];
+					if (gamePhase > 0
+							&& (pawnFile & ~ranksForward & kingZone[us] & ~BitboardUtils.D & ~BitboardUtils.E) != 0) { // Pawn in the kingzone
+						pawnStructure[us] += (pawnFile & board.kings & mines) != 0 ?
+								PAWN_SHIELD_CENTER[relativeRank] :
+								PAWN_SHIELD[relativeRank];
 					}
 
 				} else if ((square & board.knights) != 0) {
@@ -579,7 +579,6 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 
-					int relativeRank = isWhite ? rank : 7 - rank;
 					if (relativeRank >= 4) {
 						long pawnsAligned = BitboardUtils.RANK[rank] & board.pawns & others;
 						if (pawnsAligned != 0) {
