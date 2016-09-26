@@ -3,7 +3,7 @@ Carballo Chess Engine
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.5.tgz
+* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.6.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
 
 It is organized into modules:
@@ -31,9 +31,9 @@ Features
 * Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
 * Quiescent Search (QS) with only good or equal captures (according to SEE) and limited check generation
 * Internal Iterative Deepening to improve sorting
-* Extensions: Check, mate threat and singular move
+* Extensions: Check (only with positive SEE), pawn push, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
-* Pruning: Null move Pruning, static null move pruning and futility pruning
+* Pruning: Null move pruning, static null move pruning, futility pruning and history pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
 * Selectable ELO level with an UCI parameter
 * Supports Chess960
@@ -41,15 +41,15 @@ Features
 * FEN notation import/export support, also EPD support for testing
 * JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
 
-Test results in my Intel Core i7-3667U CPU @ 2.00GHz:
+Test results in my Intel Core i7-3667U CPU limited @ 1.9GHz without turbo boost:
 
-| Test suite       | Time per position | Version 1.5 | Version 1.4 | Version 1.3 | Version 1.2 |
-| ---------------- | -----------------:| -----------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     293/300 |     292/300 |     288/300 |     287/300 |
-| SilentButDeadly  |          1 second |     122/134 |     119/134 |     116/134 |      90/134 |
-| ECMGCP           |          1 second |     106/183 |      97/183 |      78/183 |      68/183 |
-| ECMGCP           |        10 seconds |     157/183 |     152/183 |     131/183 |     130/183 |
-| Arasan 18        |        60 seconds |      81/250 |      58/250 |      26/250 |      19/250 |
+| Test suite       | Time per position | Version 1.6 | Version 1.5 |
+| ---------------- | -----------------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     293/300 |     291/300 |
+| SilentButDeadly  |          1 second |     120/134 |     120/134 |
+| ECMGCP           |          1 second |     101/183 |      86/183 |
+| ECMGCP           |         5 seconds |     145/183 |     138/183 |
+| Arasan 19a       |        60 seconds |      40/200 |      35/200 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -66,9 +66,9 @@ Carballo uses the Gradle build system, you can get Gradle from http://www.gradle
 
 Build all the jars and install them to your local Maven repository:
 ```
-gradle install
+gradle publishToMavenLocal
 ```
-Build the UCI interface:
+Build the UCI interface (creates a carballo-${version}.jar in jse/):
 ```
 cd jse
 gradle proguard
@@ -99,6 +99,28 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 Changelog
 =========
+
+Version 1.6: Refactoring, bug fixes, endgames, etc.
+
+* Set the CompleteEvaluator as the new default evaluator
+* Add history pruning
+* Make the singular move margin depth dependent
+* Don't do razoring in positions with known wins
+* Add pawn push extension
+* Fixes in the Opening-Endgame values to two-shorts-in-one-int logic that allows to separate the piece values from the square tables
+* Add logic to detect draws in KQKQ, KRKR, KRPKR, KQKP, KBPKB, KBPKN and KRPPKP endgames
+* Reduce the pawn value in the opening
+* Add space evaluation
+* Add rook trapped logic and improve bishop trapped evaluating pawn guard
+* Change passer pawn logic adding a king distance bonus, remove unstoppable passer logic
+* Improve the king shield and pawn storm logic
+* Do not eval only forward mobility in bishops and knights
+* Scale the contempt factor to 0 in the endgame
+* Fix a bug returning from the excluded search for the singular move extension
+* Add KBKB draw recognition (with same color bishops) https://en.wikipedia.org/wiki/Rules_of_chess#Draws
+* Start to scale from midgame to endgame with 6 minor pieces (previously it was with 4 pieces)
+* Fix some concurrence problems adding thread locks in the SearchEngine and SearchEngineThreaded class
+* Fix seldepth reporting in the UCI interface (sometimes seldepth was lower than depth): if a TT move is returned, add the depth analyzed in the TT  
 
 Version 1.5: More search and evaluation tuning
 
