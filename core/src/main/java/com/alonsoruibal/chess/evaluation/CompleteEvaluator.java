@@ -60,7 +60,8 @@ public class CompleteEvaluator extends Evaluator {
 
 	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
 	private static final int[] PAWN_SHIELD = {0, oe(35, 0), oe(26, 0), oe(18, 0), oe(9, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
+	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
+	private static final int[] PAWN_STORM = {0, 0, 0, oe(5, 0), oe(10, 0), oe(20, 0), 0, 0};
 
 	// Knights
 	private static final int[] KNIGHT_OUTPOST = {oe(15, 10), oe(22, 15)}; // Array is Not defended by pawn, defended by pawn
@@ -324,6 +325,7 @@ public class CompleteEvaluator extends Evaluator {
 				long others = (isWhite ? board.blacks : board.whites);
 				int pcsqIndex = (isWhite ? index : 63 - index);
 				int rank = index >> 3;
+				int relativeRank = isWhite ? rank : 7 - rank;
 				int file = 7 - index & 7;
 
 				pieceAttacks = ai.attacksFromSquare[index];
@@ -331,7 +333,6 @@ public class CompleteEvaluator extends Evaluator {
 				if ((square & board.pawns) != 0) {
 					pcsq[us] += pawnPcsq[pcsqIndex];
 
-					int relativeRank = isWhite ? rank : 7 - rank;
 					long myPawns = board.pawns & mines;
 					long otherPawns = board.pawns & others;
 					long adjacentFiles = BitboardUtils.FILES_ADJACENT[file];
@@ -395,18 +396,25 @@ public class CompleteEvaluator extends Evaluator {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
 						// Pawn Storm: It can open a file near the other king
-						// Only if in kingside or queenside
-						if (gamePhase > 0
-								&& (otherPawnsAheadAdjacent & ~BitboardUtils.D & ~BitboardUtils.E) != 0 // Needs pawns in the adjacent files
-								&& (routeToPromotion & kingZone[them] & ~BitboardUtils.D & ~BitboardUtils.E) != 0) {
-							pawnStructure[us] += PAWN_STORM[relativeRank];
+						if (gamePhase > 0 && relativeRank > 2) {
+							// Only if in kingside or queenside
+							long stormedPawns = otherPawnsAheadAdjacent & ~BitboardUtils.D & ~BitboardUtils.E;
+							if (stormedPawns != 0) {
+								// The stormed pawn must be in the other king's adjacent files
+								int otherKingFile = 7 - ai.kingIndex[them] & 7;
+								if ((stormedPawns & BitboardUtils.FILE[otherKingFile]) != 0) {
+									pawnStructure[us] += PAWN_STORM_CENTER[relativeRank];
+								} else if ((stormedPawns & BitboardUtils.FILES_ADJACENT[otherKingFile]) != 0) {
+									pawnStructure[us] += PAWN_STORM[relativeRank];
+								}
+							}
 						}
 					} else {
 						//
 						// Passed Pawn
 						//
 						// Backfile only to the first piece found
-						long backFile = bbAttacks.getRookAttacks(index, all) & BitboardUtils.FILE[file] & BitboardUtils.RANKS_BACKWARD[us][rank];
+						long backFile = bbAttacks.getRookAttacks(index, all) & pawnFile & BitboardUtils.RANKS_BACKWARD[us][rank];
 						// If it has a rook or queen behind consider all the route to promotion attacked or defended
 						long attackedAndNotDefendedRoute =
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
@@ -528,7 +536,6 @@ public class CompleteEvaluator extends Evaluator {
 						positional[us] += ROOK_FILE[(rookFile & board.pawns) == 0 ? 0 : 1];
 					}
 
-					int relativeRank = isWhite ? rank : 7 - rank;
 					if (relativeRank >= 4) {
 						long pawnsAligned = BitboardUtils.RANK[rank] & board.pawns & others;
 						if (pawnsAligned != 0) {

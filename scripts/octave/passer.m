@@ -40,8 +40,10 @@ shieldBonuses=[0, 1, 0.75, 0.5, 0.25, 0, 0, 0];
 pawnShieldCenter = round(shieldBonuses * 55);
 pawnShield = round(shieldBonuses * 35);
 
+# Storm must be lower than shield
 stormBonuses=[0, 0, 0, 0.25, 0.5, 1, 0, 0];
-pawnStorm = round(stormBonuses * 30);
+pawnStormCenter = round(stormBonuses * 30);
+pawnStorm = round(stormBonuses * 20);
 
 # Print values for the Java evaluator
 printf(strrep(strcat(
@@ -77,6 +79,9 @@ printf(strrep(strcat(
     "};\n",
     "private static final int[] PAWN_SHIELD = {",
     substr(sprintf('oe(%i, 0), ', pawnShield), 1, -2),
+    "};\n",
+    "private static final int[] PAWN_STORM_CENTER = {",
+    substr(sprintf('oe(%i, 0), ', pawnStormCenter), 1, -2),
     "};\n",
     "private static final int[] PAWN_STORM = {",
     substr(sprintf('oe(%i, 0), ', pawnStorm), 1, -2),
