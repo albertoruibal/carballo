@@ -139,15 +139,6 @@ public class EvaluatorTest extends BaseTest {
 	}
 
 	@Test
-	public void testUnstoppabblePasser() {
-		assertTrue(getEval("8/8/8/8/8/6p1/4PK1k/8 w - - 0 0") < 700);
-		assertTrue(getEval("8/8/8/8/8/8/6PP/K6k w - - 0 0") > 700);
-		assertTrue(getEval("8/8/8/8/8/8/5kPP/K7 b - - 0 0") < 700);
-		assertTrue(getEval("8/8/8/8/8/7P/5kP1/K7 b - - 0 0") < 700);
-		assertTrue(getEval("8/8/8/8/8/7P/5kP1/K7 w - - 0 0") > 700);
-	}
-
-	@Test
 	public void testKnightTrapped() {
 		assertTrue(getEval("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0") > 0);
 	}
@@ -171,10 +162,5 @@ public class EvaluatorTest extends BaseTest {
 	@Test
 	public void testConnectedPassersVsCandidate() {
 		assertTrue(getEval("8/p1p5/6pp/PPP2k2/8/4PK2/8/8 w - - 0 43") > 0);
-	}
-
-	@Test
-	public void testTwoPassedConnectedOn6thBetterThanARook() {
-		assertTrue(getEval("kr6/8/6PP/8/8/8/8/7K w - - 0 43") > 0);
 	}
 }
