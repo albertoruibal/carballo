@@ -6,7 +6,7 @@ allprojects {
     targetCompatibility = 1.7
 
     group = 'com.alonsoruibal'
-    version = '1.6'
+    version = '1.7'
 
     repositories {
         jcenter()
