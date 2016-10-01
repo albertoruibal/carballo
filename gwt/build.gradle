@@ -1,8 +1,8 @@
 archivesBaseName = 'carballo-gwt'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.8.0-rc2'
-    compile 'com.google.gwt:gwt-dev:2.8.0-rc2'
+    compile 'com.google.gwt:gwt-user:2.8.0-rc3'
+    compile 'com.google.gwt:gwt-dev:2.8.0-rc3'
     compile project(':core')
 }
 
