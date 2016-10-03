@@ -124,7 +124,7 @@ public class SearchEngine implements Runnable {
 
 	private Random random;
 
-	private int[][][] reductionMatrix;
+	private float[][] logMatrix;
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -137,16 +137,11 @@ public class SearchEngine implements Runnable {
 			nodes[i] = new Node(this, i);
 		}
 
-		// Init our reduction lookup tables
-		reductionMatrix = new int[2][64][64];
-		final double[] REDUCTION_COEFS1 = {0.5, 0.5}; // NO PV, PV
-		final double[] REDUCTION_COEFS2 = {3.0, 6.0};
-		for (int pv = 0; pv < 2; pv++) {
-			for (int depthRemaining = 1; depthRemaining < 64; depthRemaining++) {
-				for (int moveNumber = 1; moveNumber < 64; moveNumber++) {
-					double reduction = REDUCTION_COEFS1[pv] + Math.log(depthRemaining) * Math.log(moveNumber) / REDUCTION_COEFS2[pv];
-					reductionMatrix[pv][depthRemaining][moveNumber] = reduction >= 1.0 ? (int) (reduction * PLY) : 0;
-				}
+		// The logMatrix is normalized [0..1]
+		logMatrix = new float[64][64];
+		for (int i = 1; i < 64; i++) {
+			for (int j = 1; j < 64; j++) {
+				logMatrix[i][j] = (float) (Math.log(i) * Math.log(j) / (Math.log(63) * Math.log(63)));
 			}
 		}
 
@@ -604,9 +599,8 @@ public class SearchEngine implements Runnable {
 			// Calculates the extension of a move in the actual position
 			//
 			int extension = mateThreat ? PLY :
-					Move.isPawnPush678(node.move) ? PLY :
-							Move.isCheck(node.move) && node.moveIterator.getLastMoveSee() >= 0 ? PLY :
-									0;
+					Move.isCheck(node.move) && node.moveIterator.getLastMoveSee() >= 0 ? PLY :
+							0;
 
 			// Check singular move extension
 			// It also detects singular replies
@@ -651,7 +645,15 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
-					reduction += reductionMatrix[nodeType == NODE_NULL ? 0 : 1][Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)];
+					float maxReduction = (nodeType == NODE_NULL ? 4f : 3f)
+							* (worseEvalNode ? 1.5f : 1f)
+							* (2f - 1f * (node.moveIterator.getLastMoveScore() - HISTORY_MIN) / (HISTORY_MAX - HISTORY_MIN));
+
+					reduction = (int) (0.5f + maxReduction * logMatrix[Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)]);
+
+					if (newDepth - reduction < 0) {
+						reduction = newDepth;
+					}
 				}
 
 				if (bestMove != Move.NONE) { // There is a best move
@@ -675,18 +677,11 @@ public class SearchEngine implements Runnable {
 					}
 
 					// Prune moves with negative SSEs
-					if (newDepth < 3 * PLY
+					if (newDepth - reduction < 4 * PLY
 							&& node.moveIterator.getLastMoveSee() < 0) {
 						continue;
 					}
 				}
-			}
-
-			// Apply more reduction to worse eval nodes
-			if (worseEvalNode
-					&& reduction > 0
-					&& newDepth - reduction > 0) {
-				reduction += PLY;
 			}
 
 			board.doMove(node.move, false, false);
