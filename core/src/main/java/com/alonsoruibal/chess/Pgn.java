@@ -56,10 +56,12 @@ public class Pgn {
 
 		StringBuilder sb = new StringBuilder();
 
-		if (whiteName == null || "".equals(whiteName))
+		if (whiteName == null || "".equals(whiteName)) {
 			whiteName = "?";
-		if (blackName == null || "".equals(blackName))
+		}
+		if (blackName == null || "".equals(blackName)) {
 			blackName = "?";
+		}
 
 		if (event == null) {
 			event = "Chess Game";
@@ -158,54 +160,60 @@ public class Pgn {
 
 		// logger.debug("Loading PGN " + pgn);
 
-		if (pgn == null)
+		if (pgn == null) {
 			return;
+		}
 
 		StringBuilder movesSb = new StringBuilder();
 
 		try {
 			String lines[] = pgn.split("\\r?\\n");
+			boolean parsingHeaders = true;
 
 			for (String line : lines) {
-				if (line.indexOf("[") == 0) {
-					// Is a header
-					String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
-					String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+				if (!"".equals(line.trim())) {
+					if (parsingHeaders && line.indexOf("[") == 0) {
+						// It is a header
+						String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
+						String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
-					if ("event".equals(headerName)) {
-						event = headerValue;
-					} else if ("round".equals(headerName)) {
-						round = headerValue;
-					} else if ("site".equals(headerName)) {
-						site = headerValue;
-					} else if ("eventdate".equals(headerName)) {
-						eventDate = headerValue;
-					} else if ("date".equals(headerName)) {
-						date = headerValue;
-					} else if ("white".equals(headerName)) {
-						white = headerValue;
-					} else if ("black".equals(headerName)) {
-						black = headerValue;
-					} else if ("whiteelo".equals(headerName)) {
-						whiteElo = headerValue;
-					} else if ("blackelo".equals(headerName)) {
-						blackElo = headerValue;
-					} else if ("whitefideid".equals(headerName)) {
-						whiteFideId = headerValue;
-					} else if ("blackfideid".equals(headerName)) {
-						blackFideId = headerValue;
-					} else if ("result".equals(headerName)) {
-						result = headerValue;
-					} else if ("fen".equals(headerName)) {
-						fenStartPosition = headerValue;
+						if ("event".equals(headerName)) {
+							event = headerValue;
+						} else if ("round".equals(headerName)) {
+							round = headerValue;
+						} else if ("site".equals(headerName)) {
+							site = headerValue;
+						} else if ("eventdate".equals(headerName)) {
+							eventDate = headerValue;
+						} else if ("date".equals(headerName)) {
+							date = headerValue;
+						} else if ("white".equals(headerName)) {
+							white = headerValue;
+						} else if ("black".equals(headerName)) {
+							black = headerValue;
+						} else if ("whiteelo".equals(headerName)) {
+							whiteElo = headerValue;
+						} else if ("blackelo".equals(headerName)) {
+							blackElo = headerValue;
+						} else if ("whitefideid".equals(headerName)) {
+							whiteFideId = headerValue;
+						} else if ("blackfideid".equals(headerName)) {
+							blackFideId = headerValue;
+						} else if ("result".equals(headerName)) {
+							result = headerValue;
+						} else if ("fen".equals(headerName)) {
+							fenStartPosition = headerValue;
+						}
+					} else {
+						parsingHeaders = false;
+						movesSb.append(line);
+						movesSb.append(" ");
 					}
-				} else {
-					movesSb.append(line);
-					movesSb.append(" ");
 				}
 			}
 
 		} catch (Exception e) {
+			System.out.println("ERROR parsing pgn: " + pgn);
 			e.printStackTrace();
 		}
 
@@ -265,8 +273,9 @@ public class Pgn {
 		b.setFen(fenStartPosition);
 
 		for (String moveString : moves) {
-			if ("*".equals(moveString))
+			if ("*".equals(moveString)) {
 				break;
+			}
 			int move = Move.getFromString(b, moveString, true);
 			if (move == 0 || move == -1) {
 				logger.error("Move not Parsed: " + moveString);
@@ -368,8 +377,9 @@ public class Pgn {
 							pgnSb.append(line);
 							pgnSb.append("\n");
 							line = lines[lineNumber++];
-							if (line == null || line.indexOf("[Event ") == 0)
+							if (line == null || line.indexOf("[Event ") == 0) {
 								break;
+							}
 						}
 						return pgnSb.toString();
 					}
