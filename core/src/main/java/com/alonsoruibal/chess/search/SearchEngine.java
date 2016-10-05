@@ -56,6 +56,9 @@ public class SearchEngine implements Runnable {
 	private static final int[] FUTILITY_MARGIN_CHILD = {0, 80, 160, 240}; // [0] is not used
 	private static final int[] FUTILITY_MARGIN_PARENT = {100, 180, 260, 340, 420, 500};
 
+	private static final int NODE_EVAL_DIFF_MIN = -250;
+	private static final int NODE_EVAL_DIFF_MAX = 250;
+
 	private SearchParameters searchParameters;
 
 	protected boolean initialized = false;
@@ -581,12 +584,14 @@ public class SearchEngine implements Runnable {
 		int bestScore = -Evaluator.MATE;
 		int moveCount = 0;
 
-		// Check if we have a worse eval than the previous search node with our color
-		boolean worseEvalNode = nodeType == NODE_NULL
-				&& distanceToInitialPly > 2
+		// Eval diff between our node and two nodes before
+		int nodeEvalDiff = distanceToInitialPly > 2
 				&& node.staticEval != Evaluator.NO_VALUE
-				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE
-				&& nodes[distanceToInitialPly - 2].staticEval > node.staticEval;
+				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE ?
+				node.staticEval - nodes[distanceToInitialPly - 2].staticEval : 0;
+		nodeEvalDiff = nodeEvalDiff < NODE_EVAL_DIFF_MIN ? NODE_EVAL_DIFF_MIN :
+				nodeEvalDiff > NODE_EVAL_DIFF_MAX ? NODE_EVAL_DIFF_MAX :
+						nodeEvalDiff;
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
@@ -645,13 +650,13 @@ public class SearchEngine implements Runnable {
 
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
-					float maxReduction = (nodeType == NODE_NULL ? 4f : 3f)
-							* (worseEvalNode ? 1.5f : 1f)
-							* (2f - 1f * (node.moveIterator.getLastMoveScore() - HISTORY_MIN) / (HISTORY_MAX - HISTORY_MIN));
+					reduction = (int) (0.5f + 4.4f
+							* (nodeType == NODE_NULL ? 1f : 0.85f)
+							* (1f - (0.8f * nodeEvalDiff) / (NODE_EVAL_DIFF_MAX - NODE_EVAL_DIFF_MIN)) // [-0.5..0.5]
+							* (1f - (1.1f * node.moveIterator.getLastMoveScore()) / (HISTORY_MAX - HISTORY_MIN))
+							* logMatrix[Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)]);
 
-					reduction = (int) (0.5f + maxReduction * logMatrix[Math.min(depthRemaining / PLY, 63)][Math.min(moveCount, 63)]);
-
-					if (newDepth - reduction < 0) {
+					if (reduction > newDepth) {
 						reduction = newDepth;
 					}
 				}
