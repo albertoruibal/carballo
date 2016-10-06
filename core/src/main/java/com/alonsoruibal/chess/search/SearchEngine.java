@@ -648,6 +648,14 @@ public class SearchEngine implements Runnable {
 					&& !Move.isPawnPush678(node.move) // Includes promotions
 					&& !node.moveIterator.getLastMoveIsKiller()) {
 
+				// History pruning
+				if (bestMove != Move.NONE
+						&& nodeType == NODE_NULL
+						&& newDepth < HISTORY_PRUNING_TRESHOLD.length
+						&& node.moveIterator.getLastMoveScore() < HISTORY_MIN + HISTORY_PRUNING_TRESHOLD[newDepth]) {
+					continue;
+				}
+
 				// Late move reductions (LMR)
 				if (depthRemaining >= LMR_DEPTHS_NOT_REDUCED) {
 					reduction = (int) (0.5f + 4.4f
@@ -662,13 +670,6 @@ public class SearchEngine implements Runnable {
 				}
 
 				if (bestMove != Move.NONE) { // There is a best move
-					// History based pruning
-					if (nodeType == NODE_NULL
-							&& newDepth < HISTORY_PRUNING_TRESHOLD.length
-							&& node.moveIterator.getLastMoveScore() < HISTORY_MIN + HISTORY_PRUNING_TRESHOLD[newDepth]) {
-						continue;
-					}
-
 					// Futility Pruning
 					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
 						int futilityValue = node.staticEval + FUTILITY_MARGIN_PARENT[newDepth - reduction];
