@@ -1,14 +1,4 @@
-archivesBaseName = 'carballo-jse'
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-    }
-}
+apply plugin: 'com.jfrog.bintray'
 
 dependencies {
     compile project(':core')
@@ -64,5 +54,20 @@ publishing {
             from components.java
             artifactId = 'carballo-jse'
         }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['carballoJse']
+    pkg {
+        repo = 'maven'
+        name = 'com.alonsoruibal.carballo-jse'
+        desc = 'Carballo (the galician word for Oak, it\'s all about search trees) is an Open Source Java chess engine'
+        licenses = ['GPL-3.0']
+        vcsUrl = 'https://github.com/albertoruibal/carballo.git'
+        githubRepo = 'albertoruibal/carballo'
+        publish = true
     }
 }

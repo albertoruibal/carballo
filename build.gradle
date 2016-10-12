@@ -1,4 +1,15 @@
 allprojects {
+    buildscript {
+        repositories {
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'net.sf.proguard:proguard-gradle:5.2.1'
+            classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
+        }
+    }
+
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
