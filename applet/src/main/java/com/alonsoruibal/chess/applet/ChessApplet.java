@@ -2,10 +2,10 @@ package com.alonsoruibal.chess.applet;
 
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.Pgn;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.pgn.PgnImportExport;
 import com.alonsoruibal.chess.search.SearchEngineThreaded;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
@@ -288,11 +288,10 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 			update(false);
 		} else if ("pgn".equals(oAE.getActionCommand())) {
 			if (!engine.isSearching()) {
-				Pgn pgn = new Pgn();
 				int o = comboOpponent.getSelectedIndex();
 				String whiteName = (o == 0 || o == 3 ? "Computer" : "Player");
 				String blackName = (o == 1 || o == 3 ? "Computer" : "Player");
-				pgnDialog.setText(pgn.getPgn(engine.getBoard(), whiteName, blackName));
+				pgnDialog.setText(PgnImportExport.getPgn(engine.getBoard(), whiteName, blackName));
 				pgnDialog.setVisible(true);
 			}
 		} else if ("fen".equals(oAE.getActionCommand())) {

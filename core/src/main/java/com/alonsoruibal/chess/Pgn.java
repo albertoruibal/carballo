@@ -22,6 +22,7 @@ import java.util.Date;
  * @author rui
  */
 
+@Deprecated
 public class Pgn {
 	private static final Logger logger = Logger.getLogger("Pgn");
 
