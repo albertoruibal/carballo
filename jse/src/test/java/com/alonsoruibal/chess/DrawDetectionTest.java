@@ -1,5 +1,7 @@
 package com.alonsoruibal.chess;
 
+import com.alonsoruibal.chess.pgn.PgnFile;
+import com.alonsoruibal.chess.pgn.PgnImportExport;
 import com.alonsoruibal.chess.search.SearchEngine;
 
 import org.junit.Test;
@@ -15,12 +17,11 @@ public class DrawDetectionTest {
 
 	@Test
 	public void test3FoldDraw() {
-		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
-		String pgnGame = pgn.getGameNumber(is, 0);
-		pgn.setBoard(se.getBoard(), pgnGame);
+		String pgnGame = PgnFile.getGameNumber(is, 0);
+		PgnImportExport.setBoard(se.getBoard(), pgnGame);
 
 		System.out.println(se.getBoard().toString());
 		System.out.println("draw = " + se.getBoard().isDraw());
@@ -30,12 +31,11 @@ public class DrawDetectionTest {
 
 	@Test
 	public void test3FoldDrawNo() {
-		PgnFile pgn = new PgnFile();
 		SearchEngine se = new SearchEngine(new Config());
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
-		String pgnGame = pgn.getGameNumber(is, 0);
-		pgn.setBoard(se.getBoard(), pgnGame);
+		String pgnGame = PgnFile.getGameNumber(is, 0);
+		PgnImportExport.setBoard(se.getBoard(), pgnGame);
 
 		se.getBoard().undoMove();
 

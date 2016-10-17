@@ -1,6 +1,8 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.pgn.PgnFile;
+import com.alonsoruibal.chess.pgn.PgnImportExport;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -10,13 +12,12 @@ public class ProblemsPgnTest {
 
 	public void processPgnFile(String file, int count) {
 
-		PgnFile pgn = new PgnFile();
 		Board board = new Board();
 
 		for (int gameNo = 0; gameNo < count; gameNo++) {
-			String problemPgn = pgn.getGameNumber(this.getClass().getResourceAsStream(file), gameNo);
+			String problemPgn = PgnFile.getGameNumber(this.getClass().getResourceAsStream(file), gameNo);
 			logger.debug("Problem\n" + problemPgn);
-			pgn.setBoard(board, problemPgn);
+			PgnImportExport.setBoard(board, problemPgn);
 		}
 	}
 

@@ -2,6 +2,8 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.log.Logger;
+import com.alonsoruibal.chess.pgn.PgnFile;
+import com.alonsoruibal.chess.pgn.PgnImportExport;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
@@ -77,9 +79,9 @@ public class TournamentTest implements SearchObserver {
 				pgnGameNumber++;
 			}
 
-			pgn.setBoard(b, positionPgn);
-			pgn.setBoard(engine1.getBoard(), positionPgn);
-			pgn.setBoard(engine2.getBoard(), positionPgn);
+			PgnImportExport.setBoard(b, positionPgn);
+			PgnImportExport.setBoard(engine1.getBoard(), positionPgn);
+			PgnImportExport.setBoard(engine2.getBoard(), positionPgn);
 
 			engine1.setObserver(this);
 			engine2.setObserver(this);
