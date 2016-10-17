@@ -119,7 +119,8 @@ public class Game {
 	}
 
 	public void setEventDate(String eventDate) {
-		this.eventDate = eventDate;
+		this.eventDate = eventDate.replace(".??.??", "").replace("????", "");
+		;
 	}
 
 	public Integer getWhiteFideId() {
