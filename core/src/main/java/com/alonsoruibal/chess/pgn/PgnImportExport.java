@@ -84,7 +84,7 @@ public class PgnImportExport {
 			line.append(" ");
 			if ((i & 1) == 0) {
 				line.append((i >>> 1) + 1);
-				line.append(".");
+				line.append(". ");
 			}
 			line.append(b.getSanMove(i));
 		}
