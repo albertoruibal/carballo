@@ -91,8 +91,8 @@ public class Game {
 			this.result = "1-0";
 		} else if ("0".equals(result)) {
 			this.result = "0-1";
-		} else if ("=".equals(result)) {
-			this.result = "1/2-1/2";
+		} else if ("=".equals(result) || "1/2-1/2".equals(result)) {
+			this.result = "½-½";
 		} else {
 			this.result = result;
 		}

@@ -110,6 +110,7 @@ public class PgnParser {
 											|| "0-1".equals(s)
 											|| "0-1".equals(s)
 											|| "1/2-1/2".equals(s)
+											|| "½-½".equals(s)
 											|| "*".equals(s)) {
 										currentVariation.variation.add(new GameNodeResult(s));
 
