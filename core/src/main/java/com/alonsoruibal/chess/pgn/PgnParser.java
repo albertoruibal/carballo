@@ -17,9 +17,6 @@ public class PgnParser {
 	 * Parses a 1-game pgn
 	 */
 	public static Game parsePgn(String pgn) {
-
-		// logger.debug("Loading PGN " + pgn);
-
 		if (pgn == null) {
 			return null;
 		}
@@ -116,16 +113,33 @@ public class PgnParser {
 											|| "*".equals(s)) {
 										currentVariation.variation.add(new GameNodeResult(s));
 
-									} else if (s.charAt(0) >= '1' && s.charAt(0) <= '9' && s.charAt(s.length() - 1) == '.') {
-										// Move number
-										lastMoveNumber = s;
+									} else if (s.length() > 1 && isAlphaNumeric(s.charAt(0))) {
 
-									} else if ((s.charAt(0) >= 'A' && s.charAt(0) <= 'Z')
-											|| (s.charAt(0) >= 'a' && s.charAt(0) <= 'z')
-											|| s.charAt(0) == '0') {
-										lastMove = new GameNodeMove(lastMoveNumber, s, null);
-										currentVariation.variation.add(lastMove);
-										lastMoveNumber = null;
+										// Strip the move number (with one or more dots) from the beginning of the string
+										if (s.charAt(0) >= '1' && s.charAt(0) <= '9') {
+											int lastDotIndex = s.lastIndexOf(".");
+											lastMoveNumber = s.substring(0, lastDotIndex + 1);
+											s = s.substring(lastDotIndex + 1);
+										}
+
+										// Search annotations at the end of the move
+										String annotation = null;
+										int lastIndex;
+										for (lastIndex = s.length() - 1; lastIndex >= 0; lastIndex--) {
+											if (isAlphaNumeric(s.charAt(lastIndex))) {
+												break;
+											}
+										}
+										if (lastIndex < s.length() - 1) {
+											annotation = s.substring(lastIndex + 1);
+											s = s.substring(0, lastIndex + 1);
+										}
+
+										if (s.length() > 0) {
+											lastMove = new GameNodeMove(lastMoveNumber, s, annotation);
+											currentVariation.variation.add(lastMove);
+											lastMoveNumber = null;
+										}
 
 									} else {
 										// glyph
@@ -163,5 +177,11 @@ public class PgnParser {
 
 		game.pv = principalVariation;
 		return game;
+	}
+
+	private static boolean isAlphaNumeric(char c) {
+		return (c >= 'A' && c <= 'Z')
+				|| (c >= 'a' && c <= 'z')
+				|| (c >= '1' && c <= '9');
 	}
 }
