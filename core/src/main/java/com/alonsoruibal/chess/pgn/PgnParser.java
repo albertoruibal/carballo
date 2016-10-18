@@ -13,10 +13,14 @@ import java.util.LinkedList;
 public class PgnParser {
 	private static final Logger logger = Logger.getLogger("Pgn");
 
+	public static Game parsePgn(String pgn) {
+		return parsePgn(pgn, true);
+	}
+
 	/**
 	 * Parses a 1-game pgn
 	 */
-	public static Game parsePgn(String pgn) {
+	public static Game parsePgn(String pgn, boolean parseBody) {
 		if (pgn == null) {
 			return null;
 		}
@@ -71,6 +75,9 @@ public class PgnParser {
 						}
 					} else {
 						parsingHeaders = false;
+						if (!parseBody) {
+							break;
+						}
 
 						for (int i = 0; i < line.length(); i++) {
 							char c = line.charAt(i);
