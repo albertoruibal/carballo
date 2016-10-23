@@ -1040,20 +1040,6 @@ public class Board {
 	}
 
 	/**
-	 * Returns true if move is legal
-	 */
-	public boolean isMoveLegal(int move) {
-		generateLegalMoves();
-		for (int i = 0; i < legalMoveCount; i++) {
-			// logger.debug(Move.toStringExt(legalMoves[i]));
-			if (move == legalMoves[i]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Generates legal moves for the position when not already generated
 	 */
 	void generateLegalMoves() {
@@ -1068,6 +1054,21 @@ public class Board {
 		generateLegalMoves();
 		System.arraycopy(legalMoves, 0, moves, 0, (legalMoveCount != -1 ? legalMoveCount : 0));
 		return legalMoveCount;
+	}
+
+	/**
+	 * Returns the move with the check flag set if the move is a legal move.
+	 * Ignores the check flag in the original move.
+	 * Returns Move.NONE if the move is not legal
+	 */
+	public int getLegalMove(int move) {
+		generateLegalMoves();
+		for (int i = 0; i < legalMoveCount; i++) {
+			if ((move & ~Move.CHECK_MASK) == (legalMoves[i] & ~Move.CHECK_MASK)) {
+				return legalMoves[i];
+			}
+		}
+		return Move.NONE;
 	}
 
 	public String getSanMove(int moveNumber) {

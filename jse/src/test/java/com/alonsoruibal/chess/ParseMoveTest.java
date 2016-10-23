@@ -35,6 +35,13 @@ public class ParseMoveTest {
 	}
 
 	@Test
+	public void testGetFromStringCastlingInInitialPosition() {
+		Board b = new Board();
+		b.startPosition();
+		assertEquals(Move.NONE_STRING, Move.toStringExt(Move.getFromString(b, "O-O", true)));
+	}
+
+	@Test
 	public void testGetFromStringDisambiguateOneMoveNotLegal() {
 		// Another knight can move to the same square but leaving the king in check
 		Board b = new Board();

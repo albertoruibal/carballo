@@ -89,7 +89,7 @@ public class FileBook implements Book {
 
 					int move = Move.getFromString(board, int2MoveString(moveInt), true);
 					// Add only if it is legal
-					if (board.isMoveLegal(move)) {
+					if (board.getLegalMove(move) != Move.NONE) {
 						moves.add(move);
 						weights.add(weight);
 						totalWeight += weight;

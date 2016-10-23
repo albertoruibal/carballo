@@ -196,7 +196,7 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		boardPanel.unhighlight();
 		int move = Move.getFromString(engine.getBoard(), BitboardUtils.index2Algebraic(fromIndex) + BitboardUtils.index2Algebraic(toIndex), true);
 		// Verify legality and play
-		if (engine.getBoard().isMoveLegal(move)) {
+		if (engine.getBoard().getLegalMove(move) != Move.NONE) {
 			engine.getBoard().doMove(move);
 			update(true);
 			checkUserToMove();

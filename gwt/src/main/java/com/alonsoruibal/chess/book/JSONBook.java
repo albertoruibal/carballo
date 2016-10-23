@@ -17,14 +17,14 @@
  **********************************************/
 package com.alonsoruibal.chess.book;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -94,7 +94,7 @@ public class JSONBook implements Book {
 				int weight = weightArray.get(i);
 				int move = Move.getFromString(board, int2MoveString(moveInt), true);
 				// Add only if it is legal
-				if (board.isMoveLegal(move)) {
+				if (board.getLegalMove(move) != Move.NONE) {
 					//GWT.log("JSONBook addMove(" + move + ", " + weight + ")", null);
 					moves.add(move);
 					weights.add(weight);
