@@ -61,13 +61,13 @@ public class PgnParser {
 								game.setWhite(headerValue);
 							} else if ("black".equals(headerName)) {
 								game.setBlack(headerValue);
-							} else if ("whiteelo".equals(headerName)) {
+							} else if ("whiteelo".equals(headerName) && !"?".equals(headerValue)) {
 								game.setWhiteElo(Integer.valueOf(headerValue));
-							} else if ("blackelo".equals(headerName)) {
+							} else if ("blackelo".equals(headerName) && !"?".equals(headerValue)) {
 								game.setBlackElo(Integer.valueOf(headerValue));
-							} else if ("whitefideid".equals(headerName)) {
+							} else if ("whitefideid".equals(headerName) && !"?".equals(headerValue)) {
 								game.setWhiteFideId(Integer.valueOf(headerValue));
-							} else if ("blackfideid".equals(headerName)) {
+							} else if ("blackfideid".equals(headerName) && !"?".equals(headerValue)) {
 								game.setBlackFideId(Integer.valueOf(headerValue));
 							} else if ("result".equals(headerName)) {
 								game.setResult(headerValue);
