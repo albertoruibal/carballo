@@ -46,7 +46,7 @@ public class PgnParser {
 						String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
 						String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
-						if (!"".equals(headerValue)) {
+						if (!"".equals(headerValue) && !"?".equals(headerValue) && !"-".equals(headerValue)) {
 							if ("event".equals(headerName)) {
 								game.setEvent(headerValue);
 							} else if ("round".equals(headerName)) {
@@ -61,13 +61,13 @@ public class PgnParser {
 								game.setWhite(headerValue);
 							} else if ("black".equals(headerName)) {
 								game.setBlack(headerValue);
-							} else if ("whiteelo".equals(headerName) && !"?".equals(headerValue)) {
+							} else if ("whiteelo".equals(headerName)) {
 								game.setWhiteElo(Integer.valueOf(headerValue));
-							} else if ("blackelo".equals(headerName) && !"?".equals(headerValue)) {
+							} else if ("blackelo".equals(headerName)) {
 								game.setBlackElo(Integer.valueOf(headerValue));
-							} else if ("whitefideid".equals(headerName) && !"?".equals(headerValue)) {
+							} else if ("whitefideid".equals(headerName)) {
 								game.setWhiteFideId(Integer.valueOf(headerValue));
-							} else if ("blackfideid".equals(headerName) && !"?".equals(headerValue)) {
+							} else if ("blackfideid".equals(headerName)) {
 								game.setBlackFideId(Integer.valueOf(headerValue));
 							} else if ("result".equals(headerName)) {
 								game.setResult(headerValue);
