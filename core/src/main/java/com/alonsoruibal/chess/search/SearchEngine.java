@@ -1012,9 +1012,6 @@ public class SearchEngine implements Runnable {
 				sb.append(Move.toString(tt.getBestMove()));
 				board.doMove(tt.getBestMove(), true, false);
 				i++;
-				if (board.isMate()) {
-					break;
-				}
 			} else {
 				break;
 			}
