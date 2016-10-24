@@ -156,12 +156,12 @@ public class Move {
 
 	/**
 	 * Given a board creates a move from a String in uci format or short
-	 * algebraic form. checkValidMove true is mandatory if using sort algebraic
+	 * algebraic form. verifyValidMove true is mandatory if using sort algebraic
 	 *
 	 * @param board
 	 * @param move
 	 */
-	public static int getFromString(Board board, String move, boolean checkValidMove) {
+	public static int getFromString(Board board, String move, boolean verifyValidMove) {
 		if (NULL_STRING.equals(move)) {
 			return Move.NULL;
 		} else if ("".equals(move) || NONE_STRING.equals(move)) {
@@ -311,7 +311,7 @@ public class Move {
 				capture = true;
 			}
 			int moveInt = Move.genMove(fromIndex, toIndex, pieceMoved, capture, check, moveType);
-			if (checkValidMove) {
+			if (verifyValidMove) {
 				moveInt = board.getLegalMove(moveInt);
 				if (moveInt != NONE) {
 					return moveInt;

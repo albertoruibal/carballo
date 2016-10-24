@@ -648,7 +648,7 @@ public class Board {
 	 * Moves and also updates the board's zobrist key verify legality, if not
 	 * legal undo move and return false
 	 */
-	public boolean doMove(int move, boolean verify, boolean fillSanInfo) {
+	public boolean doMove(int move, boolean verifyCheck, boolean fillSanInfo) {
 		if (move == Move.NONE) {
 			return false;
 		}
@@ -830,7 +830,7 @@ public class Board {
 		flags ^= FLAG_TURN;
 		key[0] ^= ZobristKey.whiteMove;
 
-		if (verify) {
+		if (verifyCheck) {
 			if (isValid()) {
 				setCheckFlags();
 
