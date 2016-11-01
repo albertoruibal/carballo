@@ -1,1 +1,1 @@
-java -jar carballo-1.7.jar -Xmx512M
+java -jar carballo-1.7.jar -Xmx1024M
