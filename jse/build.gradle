@@ -1,5 +1,7 @@
 apply plugin: 'com.jfrog.bintray'
 
+archivesBaseName = 'carballo-jse'
+
 dependencies {
     compile project(':core')
     testCompile 'junit:junit:4.12'

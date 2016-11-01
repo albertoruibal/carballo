@@ -1,5 +1,7 @@
 apply plugin: 'com.jfrog.bintray'
 
+archivesBaseName = 'carballo-core'
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
