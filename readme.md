@@ -3,7 +3,7 @@ Carballo Chess Engine
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
 
-* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.6.tgz
+* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.7.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
 
 It is organized into modules:
@@ -13,6 +13,8 @@ It is organized into modules:
 * Gwt: components needed for the GWT GUI
 * GwtGui: an HTML5 interface developed by Lukas Laag, it depends on Core and Gwt
 * Applet: the applet code (deprecated), it depends on Core and Jse
+
+From version 1.7, Java artifacts are uploaded to the Maven repository https://bintray.com/albertoruibal/maven
 
 The Core and the UCI interface are converted to C# in the project http://github.com/albertoruibal/carballo_cs
 
@@ -41,15 +43,24 @@ Features
 * FEN notation import/export support, also EPD support for testing
 * JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
 
-Test results in my Intel Core i7-3667U CPU limited @ 1.9GHz without turbo boost:
+Test results in my Intel Core i7-3667U CPU limited to 1.9GHz and without turbo boost for consistency:
 
-| Test suite       | Time per position | Version 1.6 | Version 1.5 |
-| ---------------- | -----------------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     293/300 |     291/300 |
-| SilentButDeadly  |          1 second |     120/134 |     120/134 |
-| ECMGCP           |          1 second |     101/183 |      86/183 |
-| ECMGCP           |         5 seconds |     145/183 |     138/183 |
-| Arasan 19a       |        60 seconds |      40/200 |      35/200 |
+| Test suite       | Time per position | Version 1.7 | Version 1.6 | Version 1.5 |
+| ---------------- | -----------------:| -----------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     293/300 |     293/300 |     291/300 |
+| SilentButDeadly  |          1 second |     123/134 |     120/134 |     120/134 |
+| ECMGCP           |          1 second |     110/183 |     101/183 |      86/183 |
+| ECMGCP           |         5 seconds |     154/183 |     145/183 |     138/183 |
+| Arasan 19a       |        60 seconds |      52/200 |      40/200 |      35/200 |
+
+And some tournament results at time control 5"+0.1":
+
+```
+Rank Name                          ELO   Games   Score   Draws
+   1 carballo-1.7                   72     480     60%     29%
+   2 carballo-1.6                   33     480     55%     28%
+   3 carballo-1.5                 -107     480     35%     24%
+```
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -99,6 +110,17 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 Changelog
 =========
+
+Version 1.7: A new Late Move Reductions (LMR) formula
+
+* New LMR formula with a progressive reduction based on the node eval diff and the move history
+* Reduce the LMR tables size saving memory
+* Do history pruning before LMR
+* Prune moves with negative SSEs taking reductions into account
+* Penalty for pawns in [D,E] in the initial square blocked by our own pieces
+* Remove the pawn push extension
+* Uploaded Maven artifacts to https://bintray.com/albertoruibal/maven
+* A new PGN parser supporting variations, comments, NAGs, etc.
 
 Version 1.6: Refactoring, bug fixes, endgames, etc.
 
