@@ -45,7 +45,9 @@ public class TournamentTest implements SearchObserver {
 		// Change here the parameters in one of the chess engines to test the differences
 		// Example: config1.setElo(2000);
 		// ...
+		config1.setLimitStrength(true);
 		config1.setElo(2100);
+		config2.setLimitStrength(true);
 		config2.setElo(2000);
 
 		engine1 = new SearchEngine(config1);

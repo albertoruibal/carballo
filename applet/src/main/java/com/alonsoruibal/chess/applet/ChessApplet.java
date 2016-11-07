@@ -309,6 +309,7 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		} else if ("elo".equals(oAE.getActionCommand())) {
 			int engineElo = eloValues[comboElo.getSelectedIndex()];
 			logger.debug("Setting elo " + engineElo);
+			engine.getConfig().setLimitStrength(true);
 			engine.getConfig().setElo(engineElo);
 		} else if ("flip".equals(oAE.getActionCommand())) {
 			flip = !flip;

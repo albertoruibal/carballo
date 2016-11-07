@@ -18,21 +18,25 @@ public class Config {
 
 	// >0 refuses draw <0 looks for draw
 	public static final int DEFAULT_CONTEMPT_FACTOR = 90;
+	public static final boolean DEFAULT_UCI_CHESS960 = false;
 
 	public static final int DEFAULT_RAND = 0;
+	public static final boolean DEFAULT_LIMIT_STRENGTH = false;
 	public static final int DEFAULT_ELO = 2100;
-	public static final boolean DEFAULT_UCI_CHESS960 = false;
 
 	public int transpositionTableSize = DEFAULT_TRANSPOSITION_TABLE_SIZE;
 	public boolean ponder = DEFAULT_PONDER;
 	public boolean useBook = DEFAULT_USE_BOOK;
 	public Book book;
-	public int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
 	public String evaluator = DEFAULT_EVALUATOR;
 	public int contemptFactor = DEFAULT_CONTEMPT_FACTOR;
 
-	private int rand = DEFAULT_RAND;
 	private boolean uciChess960 = DEFAULT_UCI_CHESS960;
+
+	private int rand = DEFAULT_RAND;
+	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
+	private boolean limitStrength = DEFAULT_LIMIT_STRENGTH;
+	private int elo = DEFAULT_ELO;
 
 	public boolean getPonder() {
 		return ponder;
@@ -60,10 +64,6 @@ public class Config {
 
 	public int getBookKnowledge() {
 		return bookKnowledge;
-	}
-
-	public void setBookKnowledge(int bookKnowledge) {
-		this.bookKnowledge = bookKnowledge;
 	}
 
 	public String getEvaluator() {
@@ -94,10 +94,6 @@ public class Config {
 		return rand;
 	}
 
-	public void setRand(int rand) {
-		this.rand = rand;
-	}
-
 	public boolean isUciChess960() {
 		return uciChess960;
 	}
@@ -106,16 +102,35 @@ public class Config {
 		this.uciChess960 = uciChess960;
 	}
 
-	/**
-	 * 2100 is the max, 500 the min
-	 *
-	 * @param engineElo
-	 */
-	public void setElo(int engineElo) {
-		int errorsPerMil = 900 - ((engineElo - 500) * 900) / 1600;
-		setRand(errorsPerMil);
+	public boolean isLimitStrength() {
+		return limitStrength;
+	}
 
-		int kPercentage = ((engineElo - 500) * 100) / 1600; // knowledge percentage
-		setBookKnowledge(kPercentage);
+	public void setLimitStrength(boolean limitStrength) {
+		this.limitStrength = limitStrength;
+		calculateErrorsFromElo();
+	}
+
+	public int getElo() {
+		return elo;
+	}
+
+	public void setElo(int elo) {
+		this.elo = elo;
+		calculateErrorsFromElo();
+	}
+
+	/**
+	 * Calculates the errors and the book knowledge using the limitStrength and elo params
+	 * 2100 is the max elo, 500 the min
+	 */
+	private void calculateErrorsFromElo() {
+		if (limitStrength) {
+			rand = 900 - ((elo - 500) * 900) / 1600; // Errors per 1000
+			bookKnowledge = ((elo - 500) * 100) / 1600; // In percentage
+		} else {
+			rand = 0;
+			bookKnowledge = 100;
+		}
 	}
 }

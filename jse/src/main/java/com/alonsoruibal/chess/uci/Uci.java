@@ -48,10 +48,11 @@ public class Uci implements SearchObserver {
 					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 1024");
 					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
 					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
-					System.out.println("option name UCI_Chess960 type check default false");
+					System.out.println("option name UCI_Chess960 type check default " + Config.DEFAULT_UCI_CHESS960);
+					System.out.println("option name UCI_LimitStrength type check default " + Config.DEFAULT_LIMIT_STRENGTH);
+					System.out.println("option name UCI_Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
 					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
 					System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
-					System.out.println("option name Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
 					System.out.println("uciok");
 
 				} else if ("setoption".equals(command)) {
@@ -73,12 +74,14 @@ public class Uci implements SearchObserver {
 						config.setUseBook(Boolean.parseBoolean(value));
 					} else if ("UCI_Chess960".equals(name)) {
 						config.setUciChess960(Boolean.parseBoolean(value));
+					} else if ("UCI_LimitStrength" .equals(name)) {
+						config.setLimitStrength(Boolean.parseBoolean(value));
+					} else if ("UCI_Elo" .equals(name)) {
+						config.setElo(Integer.parseInt(value));
 					} else if ("Evaluator".equals(name)) {
 						config.setEvaluator(value);
 					} else if ("ContemptFactor".equals(name)) {
 						config.setContemptFactor(Integer.parseInt(value));
-					} else if ("Elo".equals(name)) {
-						config.setElo(Integer.parseInt(value));
 					}
 					needsReload = true;
 
