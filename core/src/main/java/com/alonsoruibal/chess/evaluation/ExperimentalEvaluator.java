@@ -63,6 +63,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(5, 0), oe(10, 0), oe(20, 0), 0, 0};
 
+	private static final int PAWN_BLOCKADE = oe(5, 0); // Penalty for pawns in [D,E] in the initial square blocked by our own pieces
+
 	// Knights
 	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
 	private static final int[] KNIGHT_OUTPOST_ATTACKING = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
@@ -357,6 +359,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					long pawnFile = BitboardUtils.FILE[file];
 					long routeToPromotion = pawnFile & ranksForward;
 					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
+					long pushSquare = isWhite ? square << 8 : square >>> 8;
 
 					boolean supported = (square & ai.pawnAttacks[us]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
@@ -412,6 +415,13 @@ public class ExperimentalEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
+
+						if ((square & (BitboardUtils.D | BitboardUtils.E)) != 0
+								&& relativeRank == 1
+								&& (pushSquare & mines & ~board.pawns) != 0) {
+							pawnStructure[us] -= PAWN_BLOCKADE;
+						}
+
 						// Pawn Storm: It can open a file near the other king
 						if (gamePhase > 0 && relativeRank > 2) {
 							// Only if in kingside or queenside
@@ -436,7 +446,6 @@ public class ExperimentalEvaluator extends Evaluator {
 						long attackedAndNotDefendedRoute =
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
 										~((routeToPromotion & ai.attackedSquares[us]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
-						long pushSquare = isWhite ? square << 8 : square >>> 8;
 						boolean connected = (bbAttacks.king[index] & adjacentFiles & myPawns) != 0;
 						boolean outside = otherPawns != 0
 								&& (((square & BitboardUtils.FILES_LEFT[3]) != 0 && (board.pawns & BitboardUtils.FILES_LEFT[file]) == 0)
