@@ -106,6 +106,11 @@ public class Uci implements SearchObserver {
 					System.exit(0);
 
 				} else if ("go".equals(command)) {
+					if (engine == null) {
+						System.out.println("info string The engine is not initialized: the isready command must be sent before any search");
+						continue;
+					}
+
 					searchParameters = new SearchParameters();
 					while (index < tokens.length) {
 						String arg1 = tokens[index++];
