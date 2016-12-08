@@ -73,7 +73,8 @@ Authors
 Building
 ========
 
-Carballo uses the Gradle build system, you can get Gradle from http://www.gradle.org
+Carballo uses the Gradle build system, you can get Gradle from http://www.gradle.org.
+Gradle version 3 or greater is required.
 
 Build all the jars and install them to your local Maven repository:
 ```
@@ -110,6 +111,11 @@ gradle -Dtest.single=SilentButDeadlyTest cleanTest test
 
 Changelog
 =========
+
+Version 1.8: (upcoming)
+
+* Implement the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead the non standard "Elo" option
+* Add pawn blockade to the ExperimentalEvaluator
 
 Version 1.7: A new Late Move Reductions (LMR) formula
 
