@@ -89,10 +89,8 @@ public class PgnImportExport {
 			line.append(b.getSanMove(i));
 		}
 
-		if (!"*".equals(result)) {
-			line.append(" ");
-			line.append(result);
-		}
+		line.append(" ");
+		line.append(result);
 		// Cut line in a limit of 80 characters
 		String[] tokens = line.toString().split("[ \\t\\n\\x0B\\f\\r]+");
 
