@@ -2,7 +2,9 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
+import com.alonsoruibal.chess.search.SearchStatusInfo;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
 import org.junit.Test;
@@ -112,5 +114,37 @@ public class SearchEngineTest extends BaseTest {
 		search.go(searchParams);
 		long nodes2 = search.getNodeCount();
 		assertEquals(nodes1, nodes2);
+	}
+
+	public class DetectBestMoveSearchObserver implements SearchObserver {
+		boolean notifiedBestMove = false;
+
+		@Override
+		public void info(SearchStatusInfo info) {
+		}
+
+		@Override
+		public void bestMove(int bestMove, int ponder) {
+			notifiedBestMove = true;
+		}
+	}
+
+	@Test
+	public void testDoNotSendBestBoveWithPonder() {
+		// A mate in 2 puzzle should end ponder
+		String fen = "2bqkbn1/2pppp2/np2N3/r3P1p1/p2N2B1/5Q2/PPPPKPP1/RNB2r2 w KQkq - 0 1";
+
+		SearchEngine search = new SearchEngine(new Config());
+		search.debug = true;
+		search.getBoard().setFen(fen);
+
+		DetectBestMoveSearchObserver searchObserver = new DetectBestMoveSearchObserver();
+		search.setObserver(searchObserver);
+
+		SearchParameters searchParams = new SearchParameters();
+		searchParams.setPonder(true);
+		search.go(searchParams);
+
+		assertEquals(false, searchObserver.notifiedBestMove);
 	}
 }
