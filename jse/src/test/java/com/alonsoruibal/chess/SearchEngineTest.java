@@ -100,9 +100,9 @@ public class SearchEngineTest extends BaseTest {
 
 		SearchEngine search = new SearchEngine(new Config());
 		search.debug = true;
-		SearchParameters searchParams;
 		search.getBoard().setFen(fen);
-		searchParams = new SearchParameters();
+
+		SearchParameters searchParams = new SearchParameters();
 		searchParams.setDepth(10);
 		search.go(searchParams);
 		long nodes1 = search.getNodeCount();
