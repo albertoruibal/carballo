@@ -955,7 +955,7 @@ public class SearchEngine implements Runnable {
 			searching = false;
 		}
 
-		if (observer != null) {
+		if (observer != null && !searchParameters.isPonder()) {
 			observer.bestMove(bestMove, ponderMove);
 		}
 		if (debug) {
