@@ -2,6 +2,7 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
+import com.alonsoruibal.chess.search.SearchEngineThreaded;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
@@ -134,7 +135,7 @@ public class SearchEngineTest extends BaseTest {
 		// A mate in 2 puzzle should end ponder
 		String fen = "2bqkbn1/2pppp2/np2N3/r3P1p1/p2N2B1/5Q2/PPPPKPP1/RNB2r2 w KQkq - 0 1";
 
-		SearchEngine search = new SearchEngine(new Config());
+		SearchEngineThreaded search = new SearchEngineThreaded(new Config());
 		search.debug = true;
 		search.getBoard().setFen(fen);
 
@@ -143,8 +144,19 @@ public class SearchEngineTest extends BaseTest {
 
 		SearchParameters searchParams = new SearchParameters();
 		searchParams.setPonder(true);
-		search.go(searchParams);
 
+		search.go(searchParams);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
 		assertEquals(false, searchObserver.notifiedBestMove);
+
+		search.stop();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		assertEquals(true, searchObserver.notifiedBestMove);
 	}
 }

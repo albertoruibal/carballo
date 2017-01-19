@@ -67,6 +67,7 @@ public class SearchEngine implements Runnable {
 	private Config config;
 
 	// Think limits
+	private boolean stop = false;
 	private long thinkToTime = 0;
 	private int thinkToNodes = 0;
 	private int thinkToDepth = 0;
@@ -952,10 +953,17 @@ public class SearchEngine implements Runnable {
 			bestMove = globalBestMove;
 			ponderMove = globalPonderMove;
 
+			while (searchParameters.isPonder() && !stop) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
+			}
+
 			searching = false;
 		}
 
-		if (observer != null && !searchParameters.isPonder()) {
+		if (observer != null) {
 			observer.bestMove(bestMove, ponderMove);
 		}
 		if (debug) {
@@ -970,6 +978,7 @@ public class SearchEngine implements Runnable {
 		engineIsWhite = board.getTurn();
 		startTime = System.currentTimeMillis();
 		nodeCount = 0;
+		stop = false;
 		updateSearchParameters(searchParameters);
 	}
 
@@ -1023,6 +1032,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void stop() {
+		stop = true;
 		thinkToTime = 0;
 		thinkToNodes = 0;
 		thinkToDepth = 0;
