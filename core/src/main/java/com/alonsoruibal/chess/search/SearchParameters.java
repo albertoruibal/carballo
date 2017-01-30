@@ -2,6 +2,8 @@ package com.alonsoruibal.chess.search;
 
 import com.alonsoruibal.chess.log.Logger;
 
+import java.util.ArrayList;
+
 public class SearchParameters {
 	/**
 	 * Logger for this class
@@ -9,6 +11,9 @@ public class SearchParameters {
 	private static final Logger logger = Logger.getLogger("SearchParameters");
 
 	// UCI parameters
+	// List of moves to search, if null search all moves
+	ArrayList<Integer> searchMoves;
+
 	// Remaining time
 	int wtime, btime;
 	// Time increment per move
@@ -28,6 +33,13 @@ public class SearchParameters {
 	boolean ponder;
 
 	boolean manageTime;
+
+	public void addSearchMove(int move) {
+		if (searchMoves == null) {
+			searchMoves = new ArrayList<>();
+		}
+		searchMoves.add(move);
+	}
 
 	public boolean isPonder() {
 		return ponder;

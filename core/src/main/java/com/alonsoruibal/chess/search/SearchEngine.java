@@ -598,6 +598,11 @@ public class SearchEngine implements Runnable {
 			if (node.move == excludedMove) {
 				continue;
 			}
+			if (nodeType == NODE_ROOT
+					&& searchParameters.searchMoves != null
+					&& !searchParameters.searchMoves.contains(node.move)) {
+				continue;
+			}
 			nodeCount++;
 			moveCount++;
 

@@ -115,7 +115,16 @@ public class Uci implements SearchObserver {
 					while (index < tokens.length) {
 						String arg1 = tokens[index++];
 						if ("searchmoves".equals(arg1)) {
-							// TODO
+							// While valid moves are found, add to the searchMoves
+							while (index < tokens.length) {
+								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
+								if (move != Move.NONE) {
+									searchParameters.addSearchMove(move);
+								} else {
+									index--;
+									break;
+								}
+							}
 						} else if ("ponder".equals(arg1)) {
 							searchParameters.setPonder(true);
 						} else if ("wtime".equals(arg1)) {
