@@ -31,7 +31,7 @@ public class Game {
 	}
 
 	public void setEvent(String event) {
-		this.event = event.replace("?", "");
+		this.event = event == null ? null : event.replace("?", "");
 	}
 
 	public String getSite() {
@@ -39,7 +39,7 @@ public class Game {
 	}
 
 	public void setSite(String site) {
-		this.site = site.replace("?", "");
+		this.site = site == null ? null : site.replace("?", "");
 	}
 
 	public String getRound() {
@@ -47,7 +47,7 @@ public class Game {
 	}
 
 	public void setRound(String round) {
-		this.round = round.replace("?", "");
+		this.round = round == null ? null : round.replace("?", "");
 	}
 
 	public String getWhite() {
@@ -111,7 +111,7 @@ public class Game {
 	}
 
 	public void setDate(String date) {
-		this.date = date.replace(".??.??", "").replace("????", "");
+		this.date = date == null ? null : date.replace(".??.??", "").replace("????", "");
 	}
 
 	public String getEventDate() {
@@ -119,8 +119,7 @@ public class Game {
 	}
 
 	public void setEventDate(String eventDate) {
-		this.eventDate = eventDate.replace(".??.??", "").replace("????", "");
-		;
+		this.eventDate = eventDate == null ? null : eventDate.replace(".??.??", "").replace("????", "");
 	}
 
 	public Integer getWhiteFideId() {
