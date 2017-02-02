@@ -959,10 +959,7 @@ public class SearchEngine implements Runnable {
 			ponderMove = globalPonderMove;
 
 			while (searchParameters.isPonder() && !stop) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-				}
+				sleep(10);
 			}
 
 			searching = false;
@@ -974,6 +971,12 @@ public class SearchEngine implements Runnable {
 		if (debug) {
 			searchStats();
 		}
+	}
+
+	/**
+	 * VOID because GWT does not support Thread.sleep(); overriden in SearchEngineThreaded
+	 */
+	public void sleep(int time) {
 	}
 
 	/**
