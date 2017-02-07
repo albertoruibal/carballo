@@ -4,7 +4,7 @@ import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Color;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.Piece;
-import com.alonsoruibal.chess.bitboard.BitboardAttacks;
+import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
@@ -22,11 +22,11 @@ public class MagicMoveGenerator implements MoveGenerator {
 	private long mines;
 	private long others;
 
-	BitboardAttacks bbAttacks;
+	AttacksInfo ai = new AttacksInfo();
 
 	public int generateMoves(Board board, int[] moves, int startIndex) {
 		this.moves = moves;
-		bbAttacks = BitboardAttacks.getInstance();
+		ai.build(board);
 
 		moveIndex = startIndex;
 		all = board.getAll();
@@ -37,17 +37,16 @@ public class MagicMoveGenerator implements MoveGenerator {
 		long square = 0x1L;
 		while (square != 0) {
 			if (board.getTurn() == ((square & board.whites) != 0)) {
-
 				if ((square & board.rooks) != 0) { // Rook
-					generateMovesFromAttacks(Piece.ROOK, index, bbAttacks.getRookAttacks(index, all) & ~mines);
+					generateMovesFromAttacks(Piece.ROOK, index, ai.attacksFromSquare[index] & ~mines);
 				} else if ((square & board.bishops) != 0) { // Bishop
-					generateMovesFromAttacks(Piece.BISHOP, index, bbAttacks.getBishopAttacks(index, all) & ~mines);
+					generateMovesFromAttacks(Piece.BISHOP, index, ai.attacksFromSquare[index] & ~mines);
 				} else if ((square & board.queens) != 0) { // Queen
-					generateMovesFromAttacks(Piece.QUEEN, index, (bbAttacks.getRookAttacks(index, all) | bbAttacks.getBishopAttacks(index, all)) & ~mines);
+					generateMovesFromAttacks(Piece.QUEEN, index, ai.attacksFromSquare[index] & ~mines);
 				} else if ((square & board.kings) != 0) { // King
-					generateMovesFromAttacks(Piece.KING, index, bbAttacks.king[index] & ~mines);
+					generateMovesFromAttacks(Piece.KING, index, ai.attacksFromSquare[index] & ~mines);
 				} else if ((square & board.knights) != 0) { // Knight
-					generateMovesFromAttacks(Piece.KNIGHT, index, bbAttacks.knight[index] & ~mines);
+					generateMovesFromAttacks(Piece.KNIGHT, index, ai.attacksFromSquare[index] & ~mines);
 				} else if ((square & board.pawns) != 0) { // Pawns
 					if ((square & board.whites) != 0) {
 						if (((square << 8) & all) == 0) {
@@ -57,7 +56,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 								addMoves(Piece.PAWN, index, index + 16, false, 0);
 							}
 						}
-						generatePawnCapturesFromAttacks(index, bbAttacks.pawn[Color.W][index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, ai.attacksFromSquare[index], board.getPassantSquare());
 					} else {
 						if (((square >>> 8) & all) == 0) {
 							addMoves(Piece.PAWN, index, index - 8, false, 0);
@@ -66,7 +65,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 								addMoves(Piece.PAWN, index, index - 16, false, 0);
 							}
 						}
-						generatePawnCapturesFromAttacks(index, bbAttacks.pawn[Color.B][index], board.getPassantSquare());
+						generatePawnCapturesFromAttacks(index, ai.attacksFromSquare[index], board.getPassantSquare());
 					}
 				}
 			}
@@ -76,29 +75,15 @@ public class MagicMoveGenerator implements MoveGenerator {
 
 		// Castling: disabled when in check or king route attacked
 		if (!board.getCheck()) {
-			if (board.getTurn() ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
-				long rookOrigin = board.castlingRooks[board.getTurn() ? 0 : 2];
-				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
-				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
-				long kingOrigin = board.kings & mines;
-				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 0 : 2];
-				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
-				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
-					addMoves(Piece.KING, BitboardUtils.square2Index(kingOrigin), BitboardUtils.square2Index(board.chess960 ? rookOrigin : kingDestiny), false, Move.TYPE_KINGSIDE_CASTLING);
-				}
+			int us = board.getTurn() ? Color.W : Color.B;
+
+			long kingCastlingDestination = board.canCastleKingSide(us, ai);
+			if (kingCastlingDestination != 0) {
+				addMoves(Piece.KING, ai.kingIndex[us], BitboardUtils.square2Index(kingCastlingDestination), false, Move.TYPE_KINGSIDE_CASTLING);
 			}
-			if (board.getTurn() ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
-				long rookOrigin = board.castlingRooks[board.getTurn() ? 1 : 3];
-				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
-				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
-				long kingOrigin = board.kings & mines;
-				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[board.getTurn() ? 1 : 3];
-				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
-				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& !bbAttacks.areSquaresAttacked(board, kingRoute, board.getTurn())) {
-					addMoves(Piece.KING, BitboardUtils.square2Index(kingOrigin), BitboardUtils.square2Index(board.chess960 ? rookOrigin : kingDestiny), false, Move.TYPE_QUEENSIDE_CASTLING);
-				}
+			long queenCastlingDestination = board.canCastleQueenSide(us, ai);
+			if (queenCastlingDestination != 0) {
+				addMoves(Piece.KING, ai.kingIndex[us], BitboardUtils.square2Index(queenCastlingDestination), false, Move.TYPE_QUEENSIDE_CASTLING);
 			}
 		}
 
@@ -129,7 +114,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 	}
 
 	/**
-	 * Adds a move
+	 * Adds a move (it can add a non legal move)
 	 */
 	private void addMoves(int pieceMoved, int fromIndex, int toIndex, boolean capture, int moveType) {
 		if (pieceMoved == Piece.PAWN && (toIndex < 8 || toIndex >= 56)) {

@@ -5,7 +5,8 @@ import com.alonsoruibal.chess.Square;
 
 /**
  * Holds all the possible attacks for a board.
- * It is used by the evaluators and the move iterator, and also to speed the SEE calculations detecting not attacked squares.
+ * It is used by the evaluators, the move generators and the move iterator,
+ * and also speeds the SEE calculations detecting not attacked squares.
  * Calculates the checking pieces and the interpose squares to avoid checks.
  */
 public class AttacksInfo {

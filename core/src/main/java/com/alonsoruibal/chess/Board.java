@@ -171,6 +171,48 @@ public class Board {
 				FLAG_BLACK_KINGSIDE_CASTLING | FLAG_BLACK_QUEENSIDE_CASTLING)) != 0;
 	}
 
+	/**
+	 * Returns the castling destiny square, 0 it it cannot castle
+	 * Supports Chess960 (the rook origin square is the castling destiny sq for chess 960)
+	 */
+	public long canCastleKingSide(int color, AttacksInfo ai) {
+		if ((color == Color.W ? getWhiteKingsideCastling() : getBlackKingsideCastling())) {
+			long rookOrigin = castlingRooks[color == Color.W ? 0 : 2];
+			long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[color == Color.W ? 0 : 2];
+			long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
+			long kingOrigin = kings & (color == Color.W ? whites : blacks);
+			long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[color == Color.W ? 0 : 2];
+			long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+
+			if (((whites | blacks) & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0
+					&& (ai.attackedSquaresAlsoPinned[1 - color] & kingRoute) == 0) {
+				return chess960 ? rookOrigin : kingDestiny;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Returns the castling destiny square, 0 it it cannot castle
+	 * Supports Chess960 (the rook origin square is the castling destiny sq for chess 960)
+	 */
+	public long canCastleQueenSide(int color, AttacksInfo ai) {
+		if ((color == Color.W ? getWhiteQueensideCastling() : getBlackQueensideCastling())) {
+			long rookOrigin = castlingRooks[color == Color.W ? 1 : 3];
+			long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[color == Color.W ? 1 : 3];
+			long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+			long kingOrigin = kings & (color == Color.W ? whites : blacks);
+			long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[color == Color.W ? 1 : 3];
+			long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
+
+			if (((whites | blacks) & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0
+					&& (ai.attackedSquaresAlsoPinned[1 - color] & kingRoute) == 0) {
+				return chess960 ? rookOrigin : kingDestiny;
+			}
+		}
+		return 0;
+	}
+
 	public boolean getWhiteKingsideCastling() {
 		return (flags & FLAG_WHITE_KINGSIDE_CASTLING) != 0;
 	}
@@ -958,11 +1000,11 @@ public class Board {
 		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.isCapture(move) ? Move.getPieceCaptured(this, move) : 0);
 	}
 
-	public int see(int move, AttacksInfo attacksInfo) {
+	public int see(int move, AttacksInfo ai) {
 		int them = getTurn() ? 1 : 0;
-		if (attacksInfo.boardKey == getKey()
-				&& (attacksInfo.attackedSquares[them] & Move.getToSquare(move)) == 0
-				&& (attacksInfo.mayPin[them] & Move.getFromSquare(move)) == 0) {
+		if (ai.boardKey == getKey()
+				&& (ai.attackedSquares[them] & Move.getToSquare(move)) == 0
+				&& (ai.mayPin[them] & Move.getFromSquare(move)) == 0) {
 			return Move.isCapture(move) ? Board.SEE_PIECE_VALUES[Move.getPieceCaptured(this, move)] : 0;
 		} else {
 			return see(move);

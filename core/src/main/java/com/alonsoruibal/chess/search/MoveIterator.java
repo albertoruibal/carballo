@@ -336,31 +336,13 @@ public class MoveIterator {
 	public void generateNonCaptures() {
 		// Castling: disabled when in check or king route attacked
 		if (!board.getCheck()) {
-			if (turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) {
-				long rookOrigin = board.castlingRooks[turn ? 0 : 2];
-				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 0 : 2];
-				long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
-				long kingOrigin = board.kings & mines;
-				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2];
-				long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
-
-				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& (ai.attackedSquaresAlsoPinned[them] & kingRoute) == 0) {
-					addMove(Piece.KING, ai.kingIndex[us], kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_KINGSIDE_CASTLING);
-				}
+			long kingCastlingDestination = board.canCastleKingSide(us, ai);
+			if (kingCastlingDestination != 0) {
+				addMove(Piece.KING, ai.kingIndex[us], board.kings & mines, kingCastlingDestination, false, Move.TYPE_KINGSIDE_CASTLING);
 			}
-			if (turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) {
-				long rookOrigin = board.castlingRooks[turn ? 1 : 3];
-				long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[turn ? 1 : 3];
-				long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
-				long kingOrigin = board.kings & mines;
-				long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3];
-				long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
-
-				if ((all & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0 //
-						&& (ai.attackedSquaresAlsoPinned[them] & kingRoute) == 0) {
-					addMove(Piece.KING, ai.kingIndex[us], kingOrigin, board.chess960 ? rookOrigin : kingDestiny, false, Move.TYPE_QUEENSIDE_CASTLING);
-				}
+			long queenCastlingDestination = board.canCastleQueenSide(us, ai);
+			if (queenCastlingDestination != 0) {
+				addMove(Piece.KING, ai.kingIndex[us], board.kings & mines, queenCastlingDestination, false, Move.TYPE_QUEENSIDE_CASTLING);
 			}
 		}
 
