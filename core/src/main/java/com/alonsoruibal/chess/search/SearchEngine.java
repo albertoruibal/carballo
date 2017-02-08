@@ -225,7 +225,7 @@ public class SearchEngine implements Runnable {
 		return globalBestMove;
 	}
 
-	public long getBestMoveScore() {
+	public int getBestMoveScore() {
 		return bestMoveScore;
 	}
 
