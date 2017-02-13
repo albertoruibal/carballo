@@ -34,6 +34,13 @@ public class SearchParameters {
 
 	boolean manageTime;
 
+	public void clearSearchMoves() {
+		if (searchMoves == null) {
+			searchMoves = new ArrayList<>();
+		}
+		searchMoves.clear();
+	}
+
 	public void addSearchMove(int move) {
 		if (searchMoves == null) {
 			searchMoves = new ArrayList<>();
