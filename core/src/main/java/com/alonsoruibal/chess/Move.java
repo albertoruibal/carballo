@@ -37,7 +37,7 @@ public class Move {
 	public static final int TYPE_PROMOTION_KNIGHT = 5;
 	public static final int TYPE_PROMOTION_BISHOP = 6;
 	public static final int TYPE_PROMOTION_ROOK = 7;
-	public static final int TYPE_PROMOTION_KING = 8; // For giveaway/suicide and losers variants
+	public static final int TYPE_PROMOTION_KING = 8; // For giveaway/suicide variants
 
 	public static final int CHECK_MASK = 0x1 << 16;
 	public static final int CAPTURE_MASK = 0x1 << 15;
