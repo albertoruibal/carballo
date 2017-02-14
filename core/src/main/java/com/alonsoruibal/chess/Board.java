@@ -794,6 +794,10 @@ public class Board {
 							rooks |= to;
 							key[color] ^= ZobristKey.rook[color][toIndex];
 							break;
+						case Move.TYPE_PROMOTION_KING:
+							kings |= to;
+							key[color] ^= ZobristKey.king[color][toIndex];
+							break;
 					}
 				} else {
 					pawns ^= moveMask;

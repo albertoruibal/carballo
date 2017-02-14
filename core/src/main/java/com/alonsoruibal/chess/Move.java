@@ -4,16 +4,16 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
- * For efficiency Moves are int, this is a static class to threat with this
+ * For efficiency moves are int, this is a static class to threat with this
  * <p>
  * Move format (18 bits):
- * MTXCPPPFFFFFFTTTTTT
- * -------------^ To index (6 bits)
- * -------^ From index (6 bits)
- * ----^ Piece moved (3 bits)
- * ---^ Is capture (1 bit)
- * --^ Is check (1 bit)
- * ^ Move type (2 bits)
+ * MTMTCXPPPFFFFFFTTTTTT
+ * ---------------^ To index (6 bits)
+ * ---------^ From index (6 bits)
+ * ------^ Piece moved (3 bits)
+ * -----^ Is capture (1 bit)
+ * ----^ Is check (1 bit)
+ * ^ Move type (4 bits)
  *
  * @author Alberto Alonso Ruibal
  */
@@ -37,6 +37,7 @@ public class Move {
 	public static final int TYPE_PROMOTION_KNIGHT = 5;
 	public static final int TYPE_PROMOTION_BISHOP = 6;
 	public static final int TYPE_PROMOTION_ROOK = 7;
+	public static final int TYPE_PROMOTION_KING = 8; // For giveaway/suicide and losers variants
 
 	public static final int CHECK_MASK = 0x1 << 16;
 	public static final int CAPTURE_MASK = 0x1 << 15;
@@ -101,7 +102,7 @@ public class Move {
 	}
 
 	public static int getMoveType(int move) {
-		return ((move >>> 17) & 0x7);
+		return ((move >>> 17) & 0xf);
 	}
 
 	// Pawn push to 7 or 8th rank
@@ -136,6 +137,8 @@ public class Move {
 				return Piece.KNIGHT;
 			case TYPE_PROMOTION_BISHOP:
 				return Piece.BISHOP;
+			case TYPE_PROMOTION_KING:
+				return Piece.KING;
 		}
 		return 0;
 	}
@@ -199,6 +202,9 @@ public class Move {
 					break;
 				case 'r':
 					moveType = TYPE_PROMOTION_ROOK;
+					break;
+				case 'k':
+					moveType = TYPE_PROMOTION_KING;
 					break;
 			}
 			// If promotion, remove the last char
