@@ -600,6 +600,7 @@ public class SearchEngine implements Runnable {
 			}
 			if (nodeType == NODE_ROOT
 					&& searchParameters.searchMoves != null
+					&& searchParameters.searchMoves.size() > 0
 					&& !searchParameters.searchMoves.contains(node.move)) {
 				continue;
 			}
