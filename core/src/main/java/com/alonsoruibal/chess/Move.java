@@ -400,7 +400,9 @@ public class Move {
 			int move2 = board.legalMoves[i];
 			if (move == move2) {
 				isLegal = true;
-			} else if (getToIndex(move) == getToIndex(move2) && (getPieceMoved(move) == getPieceMoved(move2))) {
+			} else if (getToIndex(move) == getToIndex(move2)
+					&& getPieceMoved(move) == getPieceMoved(move2)
+					&& getMoveType(move) == getMoveType(move2)) {
 				disambiguate = true;
 				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8)) {
 					fileEqual = true;
@@ -443,6 +445,7 @@ public class Move {
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		if (isPromotion(move)) {
+			sb.append("=");
 			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPiecePromoted(move)));
 		}
 		if (isCheck(move)) {
