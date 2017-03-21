@@ -255,7 +255,7 @@ public class Board {
 						((bishops & square) != 0 ? Piece.BISHOP : //
 								((rooks & square) != 0 ? Piece.ROOK : //
 										((queens & square) != 0 ? Piece.QUEEN : //
-												((kings & square) != 0 ? Piece.KING : '.'))))));
+												((kings & square) != 0 ? Piece.KING : 0))))));
 	}
 
 	public char getPieceAt(long square) {
