@@ -312,7 +312,7 @@ public class Endgame {
 		}
 		// If the other king is in front of the pawns, it is drawish
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
-		if ((p1Front & otherKing) != 0 && (p1Front & otherKing) != 1) {
+		if ((p1Front & otherKing) != 0 && (p2Front & otherKing) != 0) {
 			return SCALE_FACTOR_DRAWISH;
 		}
 
