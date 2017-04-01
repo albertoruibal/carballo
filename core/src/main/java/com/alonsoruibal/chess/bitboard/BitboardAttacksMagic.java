@@ -5,26 +5,26 @@ import com.alonsoruibal.chess.log.Logger;
 public class BitboardAttacksMagic extends BitboardAttacks {
 	private static final Logger logger = Logger.getLogger("BitboardAttacksMagic");
 
-	public static final byte[] rookShiftBits = { //
-			12, 11, 11, 11, 11, 11, 11, 12, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			11, 10, 10, 10, 10, 10, 10, 11, //
-			12, 11, 11, 11, 11, 11, 11, 12 //
+	public static final byte[] rookShiftBits = {
+			12, 11, 11, 11, 11, 11, 11, 12,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			11, 10, 10, 10, 10, 10, 10, 11,
+			12, 11, 11, 11, 11, 11, 11, 12
 	};
 
-	public static final byte[] bishopShiftBits = { //
-			6, 5, 5, 5, 5, 5, 5, 6, //
-			5, 5, 5, 5, 5, 5, 5, 5, //
-			5, 5, 7, 7, 7, 7, 5, 5, //
-			5, 5, 7, 9, 9, 7, 5, 5, //
-			5, 5, 7, 9, 9, 7, 5, 5, //
-			5, 5, 7, 7, 7, 7, 5, 5, //
-			5, 5, 5, 5, 5, 5, 5, 5, //
-			6, 5, 5, 5, 5, 5, 5, 6 //
+	public static final byte[] bishopShiftBits = {
+			6, 5, 5, 5, 5, 5, 5, 6,
+			5, 5, 5, 5, 5, 5, 5, 5,
+			5, 5, 7, 7, 7, 7, 5, 5,
+			5, 5, 7, 9, 9, 7, 5, 5,
+			5, 5, 7, 9, 9, 7, 5, 5,
+			5, 5, 7, 7, 7, 7, 5, 5,
+			5, 5, 5, 5, 5, 5, 5, 5,
+			6, 5, 5, 5, 5, 5, 5, 6
 	};
 
 	// Magic numbers generated with MagicNumbersGen

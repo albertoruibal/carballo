@@ -27,37 +27,37 @@ public class BitboardUtils {
 
 	// 0 is a, 7 is g
 	public static final long[] FILE = {A, B, C, D, E, F, G, H};
-	public static final long[] FILES_ADJACENT = { //
-			FILE[1], //
-			FILE[0] | FILE[2], //
-			FILE[1] | FILE[3], //
-			FILE[2] | FILE[4], //
-			FILE[3] | FILE[5], //
-			FILE[4] | FILE[6], //
-			FILE[5] | FILE[7], //
-			FILE[6] //
+	public static final long[] FILES_ADJACENT = {
+			FILE[1],
+			FILE[0] | FILE[2],
+			FILE[1] | FILE[3],
+			FILE[2] | FILE[4],
+			FILE[3] | FILE[5],
+			FILE[4] | FILE[6],
+			FILE[5] | FILE[7],
+			FILE[6]
 	};
 
-	public static final long[] FILES_LEFT = { //
-			0, //
-			FILE[0], //
-			FILE[0] | FILE[1], //
-			FILE[0] | FILE[1] | FILE[2], //
-			FILE[0] | FILE[1] | FILE[2] | FILE[3], //
-			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4], //
-			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5], //
-			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] //
+	public static final long[] FILES_LEFT = {
+			0,
+			FILE[0],
+			FILE[0] | FILE[1],
+			FILE[0] | FILE[1] | FILE[2],
+			FILE[0] | FILE[1] | FILE[2] | FILE[3],
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4],
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5],
+			FILE[0] | FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6]
 	};
 
-	public static final long[] FILES_RIGHT = { //
-			FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
-			FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
-			FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7], //
-			FILE[4] | FILE[5] | FILE[6] | FILE[7], //
-			FILE[5] | FILE[6] | FILE[7], //
-			FILE[6] | FILE[7], //
-			FILE[7], //
-			0 //
+	public static final long[] FILES_RIGHT = {
+			FILE[1] | FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7],
+			FILE[2] | FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7],
+			FILE[3] | FILE[4] | FILE[5] | FILE[6] | FILE[7],
+			FILE[4] | FILE[5] | FILE[6] | FILE[7],
+			FILE[5] | FILE[6] | FILE[7],
+			FILE[6] | FILE[7],
+			FILE[7],
+			0
 	};
 
 	public static final long R1 = b_d;
@@ -70,45 +70,45 @@ public class BitboardUtils {
 	public static final long R8 = b_d << 56;
 
 	public static final long[] RANK = {R1, R2, R3, R4, R5, R6, R7, R8}; // 0 is 1, 7 is 8
-	public static final long[] RANKS_UPWARDS = { //
-			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[5] | RANK[6] | RANK[7], //
-			RANK[6] | RANK[7], //
-			RANK[7], //
-			0 //
+	public static final long[] RANKS_UPWARDS = {
+			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[5] | RANK[6] | RANK[7],
+			RANK[6] | RANK[7],
+			RANK[7],
+			0
 	};
-	public static final long[] RANK_AND_UPWARDS = { //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[4] | RANK[5] | RANK[6] | RANK[7], //
-			RANK[5] | RANK[6] | RANK[7], //
-			RANK[6] | RANK[7], //
-			RANK[7], //
+	public static final long[] RANK_AND_UPWARDS = {
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[4] | RANK[5] | RANK[6] | RANK[7],
+			RANK[5] | RANK[6] | RANK[7],
+			RANK[6] | RANK[7],
+			RANK[7]
 	};
-	public static final long[] RANKS_DOWNWARDS = { //
-			0, //
-			RANK[0], //
-			RANK[0] | RANK[1], //
-			RANK[0] | RANK[1] | RANK[2], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] //
+	public static final long[] RANKS_DOWNWARDS = {
+			0,
+			RANK[0],
+			RANK[0] | RANK[1],
+			RANK[0] | RANK[1] | RANK[2],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6]
 	};
-	public static final long[] RANK_AND_DOWNWARDS = { //
-			RANK[0], //
-			RANK[0] | RANK[1], //
-			RANK[0] | RANK[1] | RANK[2], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6], //
-			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7] //
+	public static final long[] RANK_AND_DOWNWARDS = {
+			RANK[0],
+			RANK[0] | RANK[1],
+			RANK[0] | RANK[1] | RANK[2],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6],
+			RANK[0] | RANK[1] | RANK[2] | RANK[3] | RANK[4] | RANK[5] | RANK[6] | RANK[7]
 	};
 
 	// Ranks forward in pawn direction W, B
@@ -117,14 +117,14 @@ public class BitboardUtils {
 	public static final long[][] RANK_AND_FORWARD = {RANK_AND_UPWARDS, RANK_AND_DOWNWARDS};
 	public static final long[][] RANK_AND_BACKWARD = {RANK_AND_DOWNWARDS, RANK_AND_UPWARDS};
 
-	public static final String[] SQUARE_NAMES = changeEndianArray64(new String[] //
-			{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", //
-					"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", //
-					"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", //
-					"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", //
-					"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", //
-					"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", //
-					"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", //
+	public static final String[] SQUARE_NAMES = changeEndianArray64(new String[]
+			{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+					"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+					"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+					"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+					"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+					"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+					"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
 					"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"});
 
 	// To use with square2Index
