@@ -20,7 +20,6 @@ public class MagicNumbersGenerator {
 		return random.nextLong() & random.nextLong() & random.nextLong() & random.nextLong() & random.nextLong();
 	}
 
-
 	/**
 	 * Fills pieces from a mask. Neccesary for magic generation variable bits is
 	 * the mask bytes number index goes from 0 to 2^bits
@@ -91,8 +90,9 @@ public class MagicNumbersGenerator {
 				}
 			}
 
-			if (!fail)
+			if (!fail) {
 				return magic;
+			}
 		}
 		System.out.println("Error!\n");
 		return 0L;
