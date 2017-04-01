@@ -3,7 +3,6 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 
 import org.junit.Test;
 
@@ -19,12 +18,12 @@ public class EvaluatorTest extends BaseTest {
 
 	@Test
 	public void testEvaluatorSimmetry1() {
-		assertEquals(Evaluator.o(ExperimentalEvaluator.TEMPO), getEval("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0"));
+		assertEquals(Evaluator.o(CompleteEvaluator.TEMPO), getEval("r2q1rk1/ppp2ppp/2n2n2/1B1pp1B1/1b1PP1b1/2N2N2/PPP2PPP/R2Q1RK1 w QKqk - 0 0"));
 	}
 
 	@Test
 	public void testEvaluatorSimmetry2() {
-		assertEquals(Evaluator.e(ExperimentalEvaluator.TEMPO), getEval("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0"));
+		assertEquals(Evaluator.e(CompleteEvaluator.TEMPO), getEval("7k/7p/6p1/3Np3/3Pn3/1P6/P7/K7 w - - 0 0"));
 	}
 
 	@Test
