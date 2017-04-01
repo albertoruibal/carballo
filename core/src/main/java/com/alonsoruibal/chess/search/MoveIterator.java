@@ -51,7 +51,7 @@ public class MoveIterator {
 	private int movesToGenerate;
 
 	private int move;
-	private int lastMoveSee;
+	private int lastMoveSee = SEE_NOT_CALCULATED;
 	private int lastMoveScore;
 	private boolean lastMoveIsKiller;
 	private int killer1;
