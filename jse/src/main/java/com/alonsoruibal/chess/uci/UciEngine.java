@@ -102,6 +102,13 @@ public class UciEngine implements Runnable {
 		return waitBestMove();
 	}
 
+	public String goDepth(String fen, String moves, int depth) {
+		bestMove = null;
+		sendCommand("position fen " + fen + " moves " + moves);
+		sendCommand("go depth " + depth);
+		return waitBestMove();
+	}
+
 	public String go(String fen, int wtime, int btime) {
 		bestMove = null;
 		sendCommand("position fen " + fen);
