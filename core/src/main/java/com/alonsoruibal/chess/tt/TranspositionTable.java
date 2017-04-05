@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author rui
  */
 public class TranspositionTable {
-	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
+    private static final Logger logger = Logger.getLogger("TranspositionTable");
 
 	public static final int DEPTH_QS_CHECKS = 0;
 	public static final int DEPTH_QS_NO_CHECKS = -1;
