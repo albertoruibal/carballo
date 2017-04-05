@@ -165,12 +165,6 @@ public class Board {
 		return (flags & FLAG_TURN) == 0;
 	}
 
-	public boolean canCastle(int color) {
-		return (flags & ((flags & FLAG_TURN) == 0 ?
-				FLAG_WHITE_KINGSIDE_CASTLING | FLAG_WHITE_QUEENSIDE_CASTLING :
-				FLAG_BLACK_KINGSIDE_CASTLING | FLAG_BLACK_QUEENSIDE_CASTLING)) != 0;
-	}
-
 	/**
 	 * Returns the castling destiny square, 0 it it cannot castle
 	 * Supports Chess960 (the rook origin square is the castling destiny sq for chess 960)
