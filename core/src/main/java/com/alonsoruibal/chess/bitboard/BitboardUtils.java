@@ -170,11 +170,11 @@ public class BitboardUtils {
 	/**
 	 * Prints a BitBoard to standard output
 	 */
-	public static String toString(long b) {
+	public static String toString(long board) {
 		StringBuilder sb = new StringBuilder();
 		long i = Square.A8;
 		while (i != 0) {
-			sb.append(((b & i) != 0 ? "1 " : "0 "));
+			sb.append(((board & i) != 0 ? "1 " : "0 "));
 			if ((i & b_r) != 0) {
 				sb.append("\n");
 			}
@@ -187,16 +187,16 @@ public class BitboardUtils {
 	 * Flips board vertically
 	 * https://chessprogramming.wikispaces.com/Flipping+Mirroring+and+Rotating
 	 *
-	 * @param in
+	 * @param board
 	 * @return
 	 */
-	public static long flipVertical(long in) {
+	public static long flipVertical(long board) {
 		final long k1 = 0x00FF00FF00FF00FFL;
 		final long k2 = 0x0000FFFF0000FFFFL;
-		in = ((in >>> 8) & k1) | ((in & k1) << 8);
-		in = ((in >>> 16) & k2) | ((in & k2) << 16);
-		in = (in >>> 32) | (in << 32);
-		return in;
+		board = ((board >>> 8) & k1) | ((board & k1) << 8);
+		board = ((board >>> 16) & k2) | ((board & k2) << 16);
+		board = (board >>> 32) | (board << 32);
+		return board;
 	}
 
 	public static int flipHorizontalIndex(int index) {
@@ -204,35 +204,28 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * Counts the number of bits of one long
+	 * Counts the number of bits of one bitboard
 	 * http://chessprogramming.wikispaces.com/Population+Count
-	 *
-	 * @param x
-	 * @return
 	 */
-	public static int popCount(long x) {
-		if (x == 0) {
+	public static int popCount(long board) {
+		if (board == 0) {
 			return 0;
 		}
 		final long k1 = 0x5555555555555555L;
 		final long k2 = 0x3333333333333333L;
 		final long k4 = 0x0f0f0f0f0f0f0f0fL;
 		final long kf = 0x0101010101010101L;
-		x = x - ((x >> 1) & k1); // put count of each 2 bits into those 2 bits
-		x = (x & k2) + ((x >> 2) & k2); // put count of each 4 bits into those 4
+		board = board - ((board >> 1) & k1); // put count of each 2 bits into those 2 bits
+		board = (board & k2) + ((board >> 2) & k2); // put count of each 4 bits into those 4
 		// bits
-		x = (x + (x >> 4)) & k4; // put count of each 8 bits into those 8 bits
-		x = (x * kf) >> 56; // returns 8 most significant bits of x + (x<<8) +
+		board = (board + (board >> 4)) & k4; // put count of each 8 bits into those 8 bits
+		board = (board * kf) >> 56; // returns 8 most significant bits of x + (x<<8) +
 		// (x<<16) + (x<<24) + ...
-		return (int) x;
+		return (int) board;
 	}
 
 	/**
-	 * Convert a bitboard square to algebraic notation Number depends of rotated
-	 * board.
-	 *
-	 * @param square
-	 * @return
+	 * Convert a bitboard square to algebraic notation Number depends of rotated board
 	 */
 	public static String square2Algebraic(long square) {
 		return SQUARE_NAMES[square2Index(square)];
@@ -264,9 +257,6 @@ public class BitboardUtils {
 
 	/**
 	 * Gets the file (0..7) for (a..h) of the square
-	 *
-	 * @param square
-	 * @return
 	 */
 	public static int getFile(long square) {
 		for (int file = 0; file < 8; file++) {
