@@ -2,48 +2,44 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.pgn.PgnFile;
 import com.alonsoruibal.chess.pgn.PgnImportExport;
-import com.alonsoruibal.chess.search.SearchEngine;
-
 import org.junit.Test;
 
 import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class DrawDetectionTest {
 
 	@Test
 	public void test3FoldDraw() {
-		SearchEngine se = new SearchEngine(new Config());
+        Board b = new Board();
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
 		String pgnGame = PgnFile.getGameNumber(is, 0);
-		PgnImportExport.setBoard(se.getBoard(), pgnGame);
+        PgnImportExport.setBoard(b, pgnGame);
 
-		System.out.println(se.getBoard().toString());
-		System.out.println("draw = " + se.getBoard().isDraw());
+        System.out.println(b.toString());
+        System.out.println("draw = " + b.isDraw());
 
-		assertTrue(se.getBoard().isDraw());
-	}
+        assertTrue(b.isDraw());
+    }
 
 	@Test
 	public void test3FoldDrawNo() {
-		SearchEngine se = new SearchEngine(new Config());
+        Board b = new Board();
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
 		String pgnGame = PgnFile.getGameNumber(is, 0);
-		PgnImportExport.setBoard(se.getBoard(), pgnGame);
+        PgnImportExport.setBoard(b, pgnGame);
 
-		se.getBoard().undoMove();
+        b.undoMove();
 
-		System.out.println(se.getBoard().toString());
-		System.out.println("draw = " + se.getBoard().isDraw());
+        System.out.println(b.toString());
+        System.out.println("draw = " + b.isDraw());
 
-		assertFalse(se.getBoard().isDraw());
-	}
+        assertFalse(b.isDraw());
+    }
 
 	@Test
 	public void testDrawDetection() {
