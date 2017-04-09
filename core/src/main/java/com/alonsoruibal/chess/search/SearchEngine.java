@@ -751,7 +751,7 @@ public class SearchEngine implements Runnable {
 			if (score >= beta) {
 				break;
 			} else if (score <= alpha) {
-				historyBad(node, node.move, depthRemaining);
+				historyBad(node.move, depthRemaining);
 			}
 		}
 
@@ -1096,7 +1096,7 @@ public class SearchEngine implements Runnable {
 		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MAX - v) * depth) >> 8));
 	}
 
-	public void historyBad(Node node, int move, int depth) {
+	public void historyBad(int move, int depth) {
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
 		}
