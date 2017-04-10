@@ -35,11 +35,7 @@ public class SearchEngineThreaded extends SearchEngine {
 		synchronized (startStopSearchLock) {
 			while (searching) {
 				super.stop();
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				sleep(10);
 			}
 		}
 	}
@@ -47,7 +43,7 @@ public class SearchEngineThreaded extends SearchEngine {
 	@Override
 	public void sleep(int time) {
 		try {
-			Thread.sleep(10);
+			Thread.sleep(time);
 		} catch (InterruptedException e) {
 		}
 	}
