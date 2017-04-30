@@ -1048,11 +1048,11 @@ public class SearchEngine implements Runnable {
 	}
 
 	public int evaluateDraw(int distanceToInitialPly) {
-		int nonPawnMat = BitboardUtils.popCount(board.knights) * Evaluator.KNIGHT +
-				BitboardUtils.popCount(board.bishops) * Evaluator.BISHOP +
-				BitboardUtils.popCount(board.rooks) * Evaluator.ROOK +
-				BitboardUtils.popCount(board.queens) * Evaluator.QUEEN;
-		int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
+        int nonPawnMat = Long.bitCount(board.knights) * Evaluator.KNIGHT +
+                Long.bitCount(board.bishops) * Evaluator.BISHOP +
+                Long.bitCount(board.rooks) * Evaluator.ROOK +
+                Long.bitCount(board.queens) * Evaluator.QUEEN;
+        int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
 				nonPawnMat <= Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN ? Evaluator.GAME_PHASE_ENDGAME :
 						((nonPawnMat - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN) * Evaluator.GAME_PHASE_MIDGAME) / (Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN);
 

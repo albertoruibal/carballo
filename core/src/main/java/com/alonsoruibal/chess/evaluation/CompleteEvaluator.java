@@ -212,16 +212,16 @@ public class CompleteEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
-		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
-		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
-		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
-		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
-		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
-		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
-		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
-		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
-		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
-		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
+		int whitePawns = Long.bitCount(board.pawns & board.whites);
+		int blackPawns = Long.bitCount(board.pawns & board.blacks);
+		int whiteKnights = Long.bitCount(board.knights & board.whites);
+		int blackKnights = Long.bitCount(board.knights & board.blacks);
+		int whiteBishops = Long.bitCount(board.bishops & board.whites);
+		int blackBishops = Long.bitCount(board.bishops & board.blacks);
+		int whiteRooks = Long.bitCount(board.rooks & board.whites);
+		int blackRooks = Long.bitCount(board.rooks & board.blacks);
+		int whiteQueens = Long.bitCount(board.queens & board.whites);
+		int blackQueens = Long.bitCount(board.queens & board.blacks);
 
 		int endgameValue = Endgame.evaluateEndgame(board, scaleFactor, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
 		if (endgameValue != NO_VALUE) {
@@ -279,9 +279,9 @@ public class CompleteEvaluator extends Evaluator {
 			long whiteBehindPawn = ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
 			long blackBehindPawn = ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
 
-			space[W] = SPACE * (((BitboardUtils.popCount(whiteSafe) + BitboardUtils.popCount(whiteSafe & whiteBehindPawn)) *
+			space[W] = SPACE * (((Long.bitCount(whiteSafe) + Long.bitCount(whiteSafe & whiteBehindPawn)) *
 					(whiteKnights + whiteBishops)) / 4);
-			space[B] = SPACE * (((BitboardUtils.popCount(blackSafe) + BitboardUtils.popCount(blackSafe & blackBehindPawn)) *
+			space[B] = SPACE * (((Long.bitCount(blackSafe) + Long.bitCount(blackSafe & blackBehindPawn)) *
 					(blackKnights + blackBishops)) / 4);
 		} else {
 			space[W] = 0;
@@ -358,7 +358,7 @@ public class CompleteEvaluator extends Evaluator {
 						boolean candidate = !doubled
 								&& !opposed
 								&& (((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
-								(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
+								(Long.bitCount(myPawnsBesideAndBehindAdjacent) >= Long.bitCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
 						boolean backward = !isolated
 								&& !candidate
 								&& myPawnsBesideAndBehindAdjacent == 0
@@ -485,11 +485,11 @@ public class CompleteEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.KNIGHT][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -503,11 +503,11 @@ public class CompleteEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.BISHOP][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -516,7 +516,7 @@ public class CompleteEvaluator extends Evaluator {
 						positional[us] += BISHOP_OUTPOST[(square & ai.pawnAttacks[us]) != 0 ? 1 : 0];
 					}
 
-					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * BitboardUtils.popCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
+					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * Long.bitCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[us] -= BISHOP_TRAPPED_PENALTY[(BISHOP_TRAPPING_GUARD[index] & board.pawns & others) != 0 ? 1 : 0];
@@ -527,12 +527,12 @@ public class CompleteEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them];
 
-					int mobilityCount = BitboardUtils.popCount(safeAttacks & mobilitySquares[us]);
+					int mobilityCount = Long.bitCount(safeAttacks & mobilitySquares[us]);
 					mobility[us] += MOBILITY[Piece.ROOK][mobilityCount];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -548,7 +548,7 @@ public class CompleteEvaluator extends Evaluator {
 					if (relativeRank >= 4) {
 						long pawnsAligned = BitboardUtils.RANK[rank] & board.pawns & others;
 						if (pawnsAligned != 0) {
-							positional[us] += ROOK_7 * BitboardUtils.popCount(pawnsAligned);
+							positional[us] += ROOK_7 * Long.bitCount(pawnsAligned);
 						}
 					}
 
@@ -563,11 +563,11 @@ public class CompleteEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.QUEEN][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -621,7 +621,7 @@ public class CompleteEvaluator extends Evaluator {
 
 		long attackedByPawn = ai.pawnAttacks[us] & others & ~board.pawns;
 		while (attackedByPawn != 0) {
-			long lsb = BitboardUtils.lsb(attackedByPawn);
+			long lsb = Long.lowestOneBit(attackedByPawn);
 			attacks += PAWN_ATTACKS[board.getPieceIntAt(lsb)];
 			attackedByPawn &= ~lsb;
 		}
@@ -630,13 +630,13 @@ public class CompleteEvaluator extends Evaluator {
 		if (otherWeak != 0) {
 			long attackedByMinor = (ai.knightAttacks[us] | ai.bishopAttacks[us]) & otherWeak;
 			while (attackedByMinor != 0) {
-				long lsb = BitboardUtils.lsb(attackedByMinor);
+				long lsb = Long.lowestOneBit(attackedByMinor);
 				attacks += MINOR_ATTACKS[board.getPieceIntAt(lsb)];
 				attackedByMinor &= ~lsb;
 			}
 			long attackedByMajor = (ai.rookAttacks[us] | ai.queenAttacks[us]) & otherWeak;
 			while (attackedByMajor != 0) {
-				long lsb = BitboardUtils.lsb(attackedByMajor);
+				long lsb = Long.lowestOneBit(attackedByMajor);
 				attacks += MAJOR_ATTACKS[board.getPieceIntAt(lsb)];
 				attackedByMajor &= ~lsb;
 			}
@@ -645,14 +645,14 @@ public class CompleteEvaluator extends Evaluator {
 		long superiorAttacks = ai.pawnAttacks[us] & others & ~board.pawns
 				| (ai.knightAttacks[us] | ai.bishopAttacks[us]) & others & (board.rooks | board.queens)
 				| ai.rookAttacks[us] & others & board.queens;
-		int superiorAttacksCount = BitboardUtils.popCount(superiorAttacks);
+		int superiorAttacksCount = Long.bitCount(superiorAttacks);
 		if (superiorAttacksCount >= 2) {
 			attacks += superiorAttacksCount * HUNG_PIECES;
 		}
 
 		long pinnedNotPawn = ai.pinnedPieces & ~board.pawns & others;
 		if (pinnedNotPawn != 0) {
-			attacks += PINNED_PIECE * BitboardUtils.popCount(pinnedNotPawn);
+			attacks += PINNED_PIECE * Long.bitCount(pinnedNotPawn);
 		}
 		return attacks;
 	}

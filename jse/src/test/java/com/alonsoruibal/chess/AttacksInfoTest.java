@@ -2,7 +2,6 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -28,8 +27,8 @@ public class AttacksInfoTest {
 		AttacksInfo ai = new AttacksInfo();
 		ai.build(b);
 		System.out.println(BitboardUtils.toString(ai.rookAttacks[0]));
-		assertEquals(5, BitboardUtils.popCount(ai.rookAttacks[0]));
-	}
+        assertEquals(5, Long.bitCount(ai.rookAttacks[0]));
+    }
 
 	@Test
 	public void testPinnedPawn() {
@@ -39,6 +38,6 @@ public class AttacksInfoTest {
 		AttacksInfo ai = new AttacksInfo();
 		ai.build(b);
 		System.out.println(BitboardUtils.toString(ai.pawnAttacks[0]));
-		assertEquals(1, BitboardUtils.popCount(ai.pawnAttacks[0]));
-	}
+        assertEquals(1, Long.bitCount(ai.pawnAttacks[0]));
+    }
 }

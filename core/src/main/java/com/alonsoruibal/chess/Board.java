@@ -491,10 +491,10 @@ public class Board {
 			}
 
 			// Now store the squares of the castling rooks
-			tmpCastlingRooks[0] = BitboardUtils.lsb(tmpRooks & tmpWhites & possibleCastlingRookSquares[0]);
-			tmpCastlingRooks[1] = BitboardUtils.msb(tmpRooks & tmpWhites & possibleCastlingRookSquares[1]);
-			tmpCastlingRooks[2] = BitboardUtils.lsb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[2]);
-			tmpCastlingRooks[3] = BitboardUtils.msb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[3]);
+			tmpCastlingRooks[0] = Long.lowestOneBit(tmpRooks & tmpWhites & possibleCastlingRookSquares[0]);
+			tmpCastlingRooks[1] = Long.highestOneBit(tmpRooks & tmpWhites & possibleCastlingRookSquares[1]);
+			tmpCastlingRooks[2] = Long.lowestOneBit(tmpRooks & tmpBlacks & possibleCastlingRookSquares[2]);
+			tmpCastlingRooks[3] = Long.highestOneBit(tmpRooks & tmpBlacks & possibleCastlingRookSquares[3]);
 
 			// Set the castling flags and detect Chess960
 			if (tmpCastlingRooks[0] != 0) {
@@ -980,15 +980,15 @@ public class Board {
 		// Kk, KNk, KNNk (KNnk IS NOT a draw), KBk, KBbk (with bishops in the same color)
 		return (pawns == 0 && rooks == 0 && queens == 0) &&
 				((bishops == 0 && knights == 0)
-						|| (knights == 0 && BitboardUtils.popCount(bishops) == 1)
+						|| (knights == 0 && Long.bitCount(bishops) == 1)
 						|| (bishops == 0 &&
-						(BitboardUtils.popCount(knights) == 1
-								|| (BitboardUtils.popCount(knights) == 2 // KNNk, check same color
-								&& (BitboardUtils.popCount(knights & whites) == 2
-								|| BitboardUtils.popCount(knights & ~whites) == 2))))
+						(Long.bitCount(knights) == 1
+								|| (Long.bitCount(knights) == 2 // KNNk, check same color
+								&& (Long.bitCount(knights & whites) == 2
+								|| Long.bitCount(knights & ~whites) == 2))))
 						|| (knights == 0
-						&& BitboardUtils.popCount(bishops & whites) == 1
-						&& BitboardUtils.popCount(bishops & ~whites) == 1
+						&& Long.bitCount(bishops & whites) == 1
+						&& Long.bitCount(bishops & ~whites) == 1
 						&& (BitboardUtils.getSameColorSquares(bishops & whites) & bishops & ~whites) != 0
 				)
 				);
@@ -1045,7 +1045,7 @@ public class Board {
 			} else if ((fromCandidates = attacks & kings & side) != 0) {
 				pieceMoved = Piece.KING;
 			}
-			fromSquare = BitboardUtils.lsb(fromCandidates);
+			fromSquare = Long.lowestOneBit(fromCandidates);
 
 		} while (fromSquare != 0);
 

@@ -95,7 +95,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 	 */
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
+			long to = Long.lowestOneBit(attacks);
 			addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), ((to & others) != 0), 0);
 			attacks ^= to;
 		}
@@ -103,7 +103,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 
 	private void generatePawnCapturesFromAttacks(int fromIndex, long attacks, long passant) {
 		while (attacks != 0) {
-			long to = BitboardUtils.lsb(attacks);
+			long to = Long.lowestOneBit(attacks);
 			if ((to & others) != 0) {
 				addMoves(Piece.PAWN, fromIndex, BitboardUtils.square2Index(to), true, 0);
 			} else if ((to & passant) != 0) {

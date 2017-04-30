@@ -204,27 +204,6 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * Counts the number of bits of one bitboard
-	 * http://chessprogramming.wikispaces.com/Population+Count
-	 */
-	public static int popCount(long board) {
-		if (board == 0) {
-			return 0;
-		}
-		final long k1 = 0x5555555555555555L;
-		final long k2 = 0x3333333333333333L;
-		final long k4 = 0x0f0f0f0f0f0f0f0fL;
-		final long kf = 0x0101010101010101L;
-		board = board - ((board >> 1) & k1); // put count of each 2 bits into those 2 bits
-		board = (board & k2) + ((board >> 2) & k2); // put count of each 4 bits into those 4
-		// bits
-		board = (board + (board >> 4)) & k4; // put count of each 8 bits into those 8 bits
-		board = (board * kf) >> 56; // returns 8 most significant bits of x + (x<<8) +
-		// (x<<16) + (x<<24) + ...
-		return (int) board;
-	}
-
-	/**
 	 * Convert a bitboard square to algebraic notation Number depends of rotated board
 	 */
 	public static String square2Algebraic(long square) {
@@ -291,23 +270,6 @@ public class BitboardUtils {
 
 	public static int getRankOfIndex(int index) {
 		return index >> 3;
-	}
-
-	/**
-	 * Gets a long with the less significant bit of the board
-	 */
-	public static long lsb(long board) {
-		return board & (-board);
-	}
-
-	public static long msb(long board) {
-		board |= board >>> 32;
-		board |= board >>> 16;
-		board |= board >>> 8;
-		board |= board >>> 4;
-		board |= board >>> 2;
-		board |= board >>> 1;
-		return board == 0 ? 0 : (board >>> 1) + 1;
 	}
 
 	/**

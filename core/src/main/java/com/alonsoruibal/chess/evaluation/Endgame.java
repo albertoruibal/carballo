@@ -302,8 +302,8 @@ public class Endgame {
 	private static int scaleKRPPKRP(Board board, boolean whiteDominant) {
 		int dominantColor = whiteDominant ? Color.W : Color.B;
 		long dominantPawns = board.pawns & (whiteDominant ? board.whites : board.blacks);
-		long p1Front = BitboardUtils.frontPawnSpan(BitboardUtils.lsb(dominantPawns), dominantColor);
-		long p2Front = BitboardUtils.frontPawnSpan(BitboardUtils.msb(dominantPawns), dominantColor);
+		long p1Front = BitboardUtils.frontPawnSpan(Long.lowestOneBit(dominantPawns), dominantColor);
+		long p2Front = BitboardUtils.frontPawnSpan(Long.highestOneBit(dominantPawns), dominantColor);
 		long otherPawn = board.pawns & (whiteDominant ? board.blacks : board.whites);
 
 		// Check for a Passed Pawn

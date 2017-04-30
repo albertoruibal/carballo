@@ -58,8 +58,8 @@ public class MagicNumbersGenerator {
 		mask = (bishop ? attacks.bishopMask[index] : attacks.rookMask[index]);
 
 		// Fill Attack tables, those are very big!
-		n = BitboardUtils.popCount(mask);
-		for (i = 0; i < (1 << n); i++) {
+        n = Long.bitCount(mask);
+        for (i = 0; i < (1 << n); i++) {
 			block[i] = generatePieces(i, n, mask);
 			// System.out.println("b:\n" + BitboardUtils.toString(block[i]));
 			attack[i] = bishop ? attacks.getBishopShiftAttacks(BitboardUtils.index2Square(index), block[i]) : attacks.getRookShiftAttacks(
@@ -69,8 +69,8 @@ public class MagicNumbersGenerator {
 		for (k = 0; k < 1000000000; k++) {
 			// test new magic
 			magic = randomFewbits();
-			if (BitboardUtils.popCount((mask * magic) & 0xFF00000000000000L) < 6)
-				continue;
+            if (Long.bitCount((mask * magic) & 0xFF00000000000000L) < 6)
+                continue;
 
 			// First, empty magic attack table
 			for (i = 0; i < 4096; i++)

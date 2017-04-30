@@ -121,8 +121,8 @@ public class BitboardAttacks {
 
 	public boolean areSquaresAttacked(Board board, long squares, boolean white) {
 		while (squares != 0) {
-			long square = BitboardUtils.lsb(squares);
-			boolean attacked = isIndexAttacked(board, BitboardUtils.square2Index(square), white);
+            long square = Long.lowestOneBit(squares);
+            boolean attacked = isIndexAttacked(board, BitboardUtils.square2Index(square), white);
 			if (attacked) {
 				return true;
 			}

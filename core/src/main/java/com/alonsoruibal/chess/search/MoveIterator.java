@@ -378,7 +378,7 @@ public class MoveIterator {
 		// King can capture one of the checking pieces if two pieces giving check
 		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, others & ai.attacksFromSquare[ai.kingIndex[us]] & ~ai.attackedSquaresAlsoPinned[them], true);
 
-		if (BitboardUtils.popCount(ai.piecesGivingCheck) == 1) {
+		if (Long.bitCount(ai.piecesGivingCheck) == 1) {
 			long square = 1;
 			for (int index = 0; index < 64; index++) {
 				if ((square & mines) != 0 && (square & board.kings) == 0) {
@@ -424,7 +424,7 @@ public class MoveIterator {
 		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, ai.attacksFromSquare[ai.kingIndex[us]] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
 
 		// Interpose: Cannot interpose with more than one piece giving check
-		if (BitboardUtils.popCount(ai.piecesGivingCheck) == 1) {
+		if (Long.bitCount(ai.piecesGivingCheck) == 1) {
 			long square = 1;
 			for (int index = 0; index < 64; index++) {
 				if ((square & mines) != 0 && (square & board.kings) == 0) {
@@ -467,7 +467,7 @@ public class MoveIterator {
 	 */
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long from, long attacks, boolean capture) {
 		while (attacks != 0) {
-			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
+			long to = turn ? Long.highestOneBit(attacks) : Long.lowestOneBit(attacks);
 			addMove(pieceMoved, fromIndex, from, to, capture, 0);
 			attacks ^= to;
 		}
@@ -479,7 +479,7 @@ public class MoveIterator {
 		}
 
 		while (attacks != 0) {
-			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
+			long to = turn ? Long.highestOneBit(attacks) : Long.lowestOneBit(attacks);
 			if ((to & passant) != 0) {
 				addMove(Piece.PAWN, fromIndex, from, to, true, Move.TYPE_PASSANT);
 			} else {
@@ -506,7 +506,7 @@ public class MoveIterator {
 		}
 
 		while (attacks != 0) {
-			long to = turn ? BitboardUtils.msb(attacks) : BitboardUtils.lsb(attacks);
+			long to = turn ? Long.highestOneBit(attacks) : Long.lowestOneBit(attacks);
 			if ((to & (BitboardUtils.b_u | BitboardUtils.b_d)) != 0) {
 				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_KNIGHT);
 				addMove(Piece.PAWN, fromIndex, from, to, false, Move.TYPE_PROMOTION_ROOK);

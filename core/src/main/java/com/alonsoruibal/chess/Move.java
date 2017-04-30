@@ -272,7 +272,7 @@ public class Move {
 
 		// Treats multiple froms, choosing the first Legal Move
 		while (from != 0) {
-			long myFrom = BitboardUtils.lsb(from);
+			long myFrom = Long.lowestOneBit(from);
 			from ^= myFrom;
 			fromIndex = BitboardUtils.square2Index(myFrom);
 
