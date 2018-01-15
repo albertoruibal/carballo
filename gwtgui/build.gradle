@@ -1,10 +1,22 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+
 apply plugin: 'java'
+apply plugin: 'org.akhikhl.gretty'
 
 archivesBaseName = 'webtvchess'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.8.1'
-    compile 'com.google.gwt:gwt-dev:2.8.1'
+    compile 'com.google.gwt:gwt-user:2.8.2'
+    compile 'com.google.gwt:gwt-dev:2.8.2'
     compile 'org.vectomatic:lib-gwt-svg:0.5.10'
     compile project(':core')
     compile project(path: ':core', configuration: 'archives')
@@ -16,7 +28,7 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
     ext.buildDir = "${project.projectDir}/src/main/webapp/"
     ext.extraDir = "${project.buildDir}/extra"
 
-    inputs.source sourceSets.main.java.srcDirs
+    inputs.dir sourceSets.main.java.srcDirs
     inputs.dir sourceSets.main.output.resourcesDir
     outputs.dir buildDir
 
@@ -76,4 +88,9 @@ task gwtSuperDev(dependsOn: classes, type: JavaExec) {
             ]
 
     maxHeapSize = '512M'
+}
+
+gretty {
+    servletContainer = 'jetty9'
+    contextPath = '/chess'
 }

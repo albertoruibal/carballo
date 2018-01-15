@@ -45,13 +45,13 @@ Features
 
 Test results in my Intel Core i7-3667U CPU limited to 1.9GHz and without turbo boost for consistency:
 
-| Test suite       | Time per position | Version 1.7 | Version 1.6 | Version 1.5 |
-| ---------------- | -----------------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     293/300 |     293/300 |     291/300 |
-| SilentButDeadly  |          1 second |     123/134 |     120/134 |     120/134 |
-| ECMGCP           |          1 second |     110/183 |     101/183 |      86/183 |
-| ECMGCP           |         5 seconds |     154/183 |     145/183 |     138/183 |
-| Arasan 19a       |        60 seconds |      52/200 |      40/200 |      35/200 |
+| Test suite       | Time per position | Version 1.8 | Version 1.7 | Version 1.6 | Version 1.5 |
+| ---------------- | -----------------:| -----------:| -----------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     293/300 |     293/300 |     293/300 |     291/300 |
+| SilentButDeadly  |          1 second |     124/134 |     123/134 |     120/134 |     120/134 |
+| ECMGCP           |          1 second |     114/183 |     110/183 |     101/183 |      86/183 |
+| ECMGCP           |         5 seconds |     156/183 |     154/183 |     145/183 |     138/183 |
+| Arasan 19a       |        60 seconds |      52/200 |      52/200 |      40/200 |      35/200 |
 
 And some tournament results at time control 5"+0.1":
 
@@ -90,6 +90,12 @@ Build the GWT interface:
 cd gwtgui
 gradle compileGwt
 ```
+Running the GWT interface:
+```
+cd gwtgui
+gradle appRun
+```
+and access with your web browser to http://localhost:8080/chess/
 
 Testing
 =======
@@ -114,8 +120,9 @@ Changelog
 
 Version 1.8: (upcoming)
 
-* Implement the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead the non standard "Elo" option
-* Add pawn blockade to the ExperimentalEvaluator
+* Implement the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead of the old "Elo" option
+* Implement "searchmoves" in the UCI interface
+* Add pawn blockade also to the CompleteEvaluator
 
 Version 1.7: A new Late Move Reductions (LMR) formula
 

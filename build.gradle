@@ -5,7 +5,7 @@ allprojects {
         }
 
         dependencies {
-            classpath 'net.sf.proguard:proguard-gradle:5.3.2'
+            classpath 'net.sf.proguard:proguard-gradle:5.3.3'
             classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         }
     }
