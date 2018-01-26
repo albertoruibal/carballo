@@ -122,6 +122,7 @@ Version 1.8: (upcoming)
 
 * Implement the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead of the old "Elo" option
 * Implement "searchmoves" in the UCI interface
+* UCI Interface: Now "isready" may be called after "position"
 * Add pawn blockade also to the CompleteEvaluator
 
 Version 1.7: A new Late Move Reductions (LMR) formula
