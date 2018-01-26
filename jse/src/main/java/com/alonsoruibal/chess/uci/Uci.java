@@ -1,5 +1,6 @@
 package com.alonsoruibal.chess.uci;
 
+import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.book.FileBook;
@@ -21,6 +22,7 @@ public class Uci implements SearchObserver {
 	static final String AUTHOR = "Alberto Alonso Ruibal";
 
 	Config config;
+	Board board;
 	SearchEngineThreaded engine;
 	SearchParameters searchParameters;
 
@@ -30,6 +32,7 @@ public class Uci implements SearchObserver {
 		Logger.noLog = true; // Disable logging
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
+		board = new Board();
 	}
 
 	void loop() {
@@ -117,7 +120,7 @@ public class Uci implements SearchObserver {
 						if ("searchmoves".equals(arg1)) {
 							// While valid moves are found, add to the searchMoves
 							while (index < tokens.length) {
-								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
+								int move = Move.getFromString(board, tokens[index++], true);
 								if (move != Move.NONE) {
 									searchParameters.addSearchMove(move);
 								} else {
@@ -149,20 +152,22 @@ public class Uci implements SearchObserver {
 							searchParameters.setInfinite(true);
 						}
 					}
+					engine.getBoard().setFen(board.getInitialFen());
+					engine.getBoard().doMoves(board.getMoves());
 					engine.go(searchParameters);
 
 				} else if ("stop".equals(command)) {
 					engine.stop();
 
 				} else if ("ucinewgame".equals(command)) {
-					engine.getBoard().startPosition();
+					board.startPosition();
 					engine.clear();
 
 				} else if ("position".equals(command)) {
 					if (index < tokens.length) {
 						String arg1 = tokens[index++];
 						if ("startpos".equals(arg1)) {
-							engine.getBoard().startPosition();
+							board.startPosition();
 						} else if ("fen".equals(arg1)) {
 							// FEN string may have spaces
 							StringBuilder fenSb = new StringBuilder();
@@ -175,15 +180,15 @@ public class Uci implements SearchObserver {
 									fenSb.append(" ");
 								}
 							}
-							engine.getBoard().setFen(fenSb.toString());
+							board.setFen(fenSb.toString());
 						}
 					}
 					if (index < tokens.length) {
 						String arg1 = tokens[index++];
 						if ("moves".equals(arg1)) {
 							while (index < tokens.length) {
-								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
-								engine.getBoard().doMove(move);
+								int move = Move.getFromString(board, tokens[index++], true);
+								board.doMove(move);
 							}
 						}
 					}
