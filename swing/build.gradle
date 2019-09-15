@@ -1,18 +1,12 @@
-archivesBaseName = 'carballo-applet'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-    }
-}
+archivesBaseName = 'carballo-swing'
 
 dependencies {
     compile project(':core')
     compile project(':jse')
+}
+
+jar {
+    manifest.attributes("Main-Class": "com.alonsoruibal.chess.swing.ChessApp")
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
@@ -20,7 +14,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
         configurations.compile.each { println it.name }
     }
     ext {
-        obfuscatedJar = "./carballo-applet-${version}.jar"
+        obfuscatedJar = "./carballo-swing-${version}.jar"
     }
     injars jar.archivePath
     injars configurations.compile
@@ -28,9 +22,8 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
     optimizationpasses 5
     allowaccessmodification
-    //dontskipnonpubliclibraryclassmembers
     target '1.7'
-    keep 'public class com.alonsoruibal.chess.applet.ChessApplet { *; }'
+    keep 'public class com.alonsoruibal.chess.swing.ChessApp { *; }'
     doLast {
         logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
     }

@@ -1,4 +1,4 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
@@ -11,69 +11,59 @@ import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 /**
  * 
  * @author Alberto Alonso Ruibal
  */
-public class ChessApplet extends JApplet implements SearchObserver, ActionListener {
+public class ChessApp extends Panel implements SearchObserver, ActionListener {
 	private static final Logger logger = Logger.getLogger("ChessApplet");
 
 	private static final long serialVersionUID = 5653881094129134036L;
 	
-	boolean userToMove;
+	private boolean userToMove;
 	
-	SearchEngineThreaded engine;
-	BoardJPanel boardPanel;
-	SearchParameters searchParameters;
-	JPanel global, control;
-	JComboBox comboOpponent, comboTime, comboElo, comboPieces, comboBoards;
-	JTextField fenField;
-	String opponentString[] = {"Computer Whites", "Computer Blacks", "Human vs Human", "Computer vs Computer"}; 
-	int opponentDefaultIndex = 1;
-	String timeString[] = {"1 second", "2 seconds", "5 seconds", "15 seconds", "30 seconds", "60 seconds"}; 
-	int timeValues[] = {1000, 2000, 5000, 15000, 30000, 60000};
-	int timeDefaultIndex = 0;
-	String eloString[] = {"ELO 1000", "ELO 1100", "ELO 1200", "ELO 1300", "ELO 1400", "ELO 1500", "ELO 1600", "ELO 1700", "ELO 1800", "ELO 1900", "ELO 2000", "ELO 2100"}; 
-	int eloValues[] = {1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100};
-	int eloDefaultIndex = 11;
-	String piecesString[] = {"Berlin", "Jumbo", "Leipzip", "Merida", "Staunton"}; 
-	String piecesValues[] = {"/berlin.png", "/jumbo.png", "/leipzig.png", "/merida.png", "/staunton.png"};
-	int piecesDefaultIndex = 3;
-	String boardsString[] = {"Blue", "Brown", "Gray", "Marble", "Wood"}; 
-	String boardsValues[] = {"/blue.png", "/brown.png", "/gray.png", "/marble.png", "/wood.png"};
-	int boardsDefaultIndex = 0;
-	JLabel message;
-	PgnDialog pgnDialog;
+	private SearchEngineThreaded engine;
+	private BoardJPanel boardPanel;
+	private SearchParameters searchParameters;
+	private JComboBox comboOpponent;
+	private JComboBox comboTime;
+	private JComboBox comboElo;
+	private JComboBox comboPieces;
+	private JComboBox comboBoards;
+	private JTextField fenField;
+	private final String[] opponentString = {"Computer Whites", "Computer Blacks", "Human vs Human", "Computer vs Computer"};
+	private final String[] timeString = {"1 second", "2 seconds", "5 seconds", "15 seconds", "30 seconds", "60 seconds"};
+	private final int[] timeValues = {1000, 2000, 5000, 15000, 30000, 60000};
+	private final String[] eloString = {"ELO 1000", "ELO 1100", "ELO 1200", "ELO 1300", "ELO 1400", "ELO 1500", "ELO 1600", "ELO 1700", "ELO 1800", "ELO 1900", "ELO 2000", "ELO 2100"};
+	private final int[] eloValues = {1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100};
+	private final String[] piecesString = {"Berlin", "Jumbo", "Leipzip", "Merida", "Staunton"};
+	private final String[] piecesValues = {"/berlin.png", "/jumbo.png", "/leipzig.png", "/merida.png", "/staunton.png"};
+	private final String[] boardsString = {"Blue", "Brown", "Gray", "Marble", "Wood"};
+	private final String[] boardsValues = {"/blue.png", "/brown.png", "/gray.png", "/marble.png", "/wood.png"};
+	private JLabel message;
+	private PgnDialog pgnDialog;
 
-	boolean flip = false;
+	private boolean flip = false;
 
-	public void init() {
+	private void init() {
 		Config config = new Config();
 		config.setTranspositionTableSize(8); // Due to memory limits, TT is set to 8 MB
 		engine = new SearchEngineThreaded(config);
 		engine.getConfig().setBook(new FileBook("/book_small.bin"));
 		searchParameters = new SearchParameters();
+		int timeDefaultIndex = 0;
 		searchParameters.setMoveTime(timeValues[timeDefaultIndex]);
 		engine.setObserver(this);
 		
 		pgnDialog = new PgnDialog(null);
 		
 		JButton button;
-		control = new JPanel();
+		JPanel control = new JPanel();
 		control.setLayout(new GridLayout(17,1));
 		
 		JLabel labelGame = new JLabel("Game");
@@ -97,17 +87,17 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		JLabel labelEngine = new JLabel("Engine");
 		control.add(labelEngine);
 
-		comboOpponent = new JComboBox(opponentString);
+		comboOpponent = new JComboBox<>(opponentString);
 		comboOpponent.setActionCommand("opponent");
 		comboOpponent.addActionListener(this);
 		control.add(comboOpponent);
 		
-		comboTime = new JComboBox(timeString);
+		comboTime = new JComboBox<>(timeString);
 		comboTime.setActionCommand("time");
 		comboTime.addActionListener(this);
 		control.add(comboTime);
 
-		comboElo = new JComboBox(eloString);
+		comboElo = new JComboBox<>(eloString);
 		comboElo.setActionCommand("elo");
 		comboElo.addActionListener(this);
 		control.add(comboElo);
@@ -115,12 +105,12 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		JLabel labelAppearance = new JLabel("Appearance");
 		control.add(labelAppearance);
 
-		comboPieces = new JComboBox(piecesString);
+		comboPieces = new JComboBox<>(piecesString);
 		comboPieces.setActionCommand("pieces");
 		comboPieces.addActionListener(this);
 		control.add(comboPieces);
 
-		comboBoards = new JComboBox(boardsString);
+		comboBoards = new JComboBox<>(boardsString);
 		comboBoards.setActionCommand("boards");
 		comboBoards.addActionListener(this);
 		control.add(comboBoards);
@@ -150,7 +140,7 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		control.add(message);
 				
 		boardPanel = new BoardJPanel(this);
-		global = new JPanel();
+		JPanel global = new JPanel();
 		global.setBackground(Color.LIGHT_GRAY);
 		global.setLayout(new BorderLayout());
 		
@@ -161,27 +151,28 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 		global.add("Center", boardPanel);
 
 		add(global);
-		
+
+		int opponentDefaultIndex = 1;
 		comboOpponent.setSelectedIndex(opponentDefaultIndex);
 		comboTime.setSelectedIndex(timeDefaultIndex);
+		int eloDefaultIndex = 11;
 		comboElo.setSelectedIndex(eloDefaultIndex);
+		int piecesDefaultIndex = 3;
 		comboPieces.setSelectedIndex(piecesDefaultIndex);
+		int boardsDefaultIndex = 0;
 		comboBoards.setSelectedIndex(boardsDefaultIndex);
 	}
 	
-	@Override
 	public void start() {
 		userToMove=true;
 	}
 
-	@Override
 	public void stop() {
 		logger.debug("Stop!");
 		engine.stop();
 		userToMove=false;
 	}
 	
-	@Override
 	public void destroy() {
 		logger.debug("Destroy!");
 		if (engine!= null) {
@@ -240,7 +231,6 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 	}
 	
 	private void update(boolean thinking) {
-		//System.out.println(engine.getBoard());
 		boardPanel.setFen(engine.getBoard().getFen(), flip, false);
 		fenField.setText(engine.getBoard().getFen());
 //		List<Move> moves = legalMoveGenerator.generateMoves(engine.getBoard());
@@ -327,5 +317,21 @@ public class ChessApplet extends JApplet implements SearchObserver, ActionListen
 			}
 		}
 	}
-	
+
+	public static void main(String[] args) {
+		Frame frame = new Frame("Carballo Chess Engine");
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				System.exit(0);
+			}
+		});
+
+		ChessApp chessApp = new ChessApp();
+		chessApp.setSize(800,610);
+		frame.add(chessApp);
+		frame.pack();
+		chessApp.init();
+		frame.setSize(800,610 + 50);
+		frame.setVisible(true);
+	}
 }

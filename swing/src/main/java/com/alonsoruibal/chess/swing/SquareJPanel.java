@@ -1,20 +1,15 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 public class SquareJPanel extends JPanel {
 	private static final long serialVersionUID = -4865276927847037885L;
 
-	private static BufferedImage imgWhite;
-	private static BufferedImage imgBlack;
+	private static final BufferedImage imgWhite;
+	private static final BufferedImage imgBlack;
 	
 	static {
 		imgWhite = new BufferedImage(75, 75, BufferedImage.TYPE_4BYTE_ABGR);

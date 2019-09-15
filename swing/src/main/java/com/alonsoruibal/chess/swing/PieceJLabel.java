@@ -1,15 +1,13 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 public class PieceJLabel extends JLabel {
 	private static final long serialVersionUID = -4865276927847037885L;
 
-	char piece;
+	private final char piece;
 	
 	public static String style = "/merida.png";
 	

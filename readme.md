@@ -85,6 +85,11 @@ Build the UCI interface (creates a carballo-${version}.jar in jse/):
 cd jse
 ../gradlew proguard
 ```
+Running the UCI interface:
+```
+cd jse
+java -jar carballo-1.8.jar
+```
 Build the GWT interface:
 ```
 cd gwtgui
@@ -96,6 +101,17 @@ cd gwtgui
 ../gradlew appRun
 ```
 and access with your web browser to http://localhost:8080/chess/
+
+Building the Swing interface:
+```
+cd swing
+../gradlew proguard
+```
+Running the Swing interface:
+```
+cd swing
+java -jar carballo-swing-1.8.jar
+```
 
 Testing
 =======
@@ -109,7 +125,7 @@ Run the "Win at Chess" test suite:
 cd jse
 ../gradlew -Dtest.single=WinAtChessTest cleanTest test
 ```
-Run Silent but Deadly tests:
+Run the "Silent but Deadly" tests:
 ```
 cd jse
 ../gradlew -Dtest.single=SilentButDeadlyTest cleanTest test
@@ -124,6 +140,7 @@ Version 1.8: (upcoming)
 * Implement "searchmoves" in the UCI interface
 * UCI Interface: Now "isready" may be called after "position"
 * Add pawn blockade also to the CompleteEvaluator
+* Converted the old Applet to a Swing application
 
 Version 1.7: A new Late Move Reductions (LMR) formula
 

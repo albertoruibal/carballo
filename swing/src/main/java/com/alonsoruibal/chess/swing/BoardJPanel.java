@@ -1,32 +1,27 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 
  
 public class BoardJPanel extends JPanel implements MouseListener, MouseMotionListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	JLayeredPane layeredPane;
-    JPanel chessBoard;
-    PieceJLabel chessPiece;
-    int xAdjustment;
-    int yAdjustment;
-    final int height = 75*8;
-    final int width = 75*8;    
-    SquareJPanel originComponent;
-    ChessApplet chess;
-    String lastFen;
-    boolean flip;
+	private final JLayeredPane layeredPane;
+    private final JPanel chessBoard;
+    private PieceJLabel chessPiece;
+    private int xAdjustment;
+    private int yAdjustment;
+    private final int height = 75*8;
+    private final int width = 75*8;
+    private SquareJPanel originComponent;
+    private final ChessApp chess;
+    private String lastFen;
+    private boolean flip;
     
     private boolean acceptInput;
     
@@ -34,7 +29,7 @@ public class BoardJPanel extends JPanel implements MouseListener, MouseMotionLis
 		this.acceptInput = acceptInput;
 	}
 
-	public BoardJPanel(ChessApplet chess)
+	public BoardJPanel(ChessApp chess)
     {
     	Dimension d = new Dimension(width, height);
     	

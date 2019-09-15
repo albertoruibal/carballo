@@ -1,14 +1,8 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 public class PgnDialog extends JDialog {
 	/**
@@ -16,7 +10,7 @@ public class PgnDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JTextArea textArea;
+	private final JTextArea textArea;
 	
 	public PgnDialog(JFrame parent) {
 		super(parent, "PGN", true);
