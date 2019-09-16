@@ -22,7 +22,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     optimizationpasses 5
     allowaccessmodification
     dontskipnonpubliclibraryclassmembers
-    target '1.7'
+    target '1.8'
     keep 'public class com.alonsoruibal.chess.uci.Uci { *; }'
     keep 'public class EpdTest { *; }'
     doLast {

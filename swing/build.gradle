@@ -22,7 +22,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
     optimizationpasses 5
     allowaccessmodification
-    target '1.7'
+    target '1.8'
     keep 'public class com.alonsoruibal.chess.swing.ChessApp { *; }'
     doLast {
         logger.lifecycle "[Proguard] Generated obfuscated JAR in ${obfuscatedJar}"
