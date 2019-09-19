@@ -137,7 +137,7 @@ public class Endgame {
 				bishops * Evaluator.BISHOP +
 				rooks * Evaluator.ROOK +
 				queens * Evaluator.QUEEN +
-				closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] +//
+				closerSquares[BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex]] +//
 				(whiteDominant ? toCorners[blackKingIndex] : toCorners[whiteKingIndex]);
 
 		return (whiteDominant ? value : -value);
@@ -153,7 +153,7 @@ public class Endgame {
 			blackKingIndex = BitboardUtils.flipHorizontalIndex(blackKingIndex);
 		}
 
-		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] + //
+		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex]] + //
 				(whiteDominant ? toColorCorners[blackKingIndex] : toColorCorners[whiteKingIndex]);
 
 		return (whiteDominant ? value : -value);
@@ -200,14 +200,14 @@ public class Endgame {
 		if ((BitboardUtils.RANK[rank6] & pawn) != 0 // Pawn in rank 6
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFileAndAdjacents & otherKing) != 0 // King defending promotion squares
 				&& ((BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0
-				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 3)))) { // Rook ready to check from behind
+				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.DISTANCE[pawnIndex][dominantKingIndex] >= 3)))) { // Rook ready to check from behind
 			return SCALE_FACTOR_DRAW;
 		}
 		// If the pawn is in advanced to 7th...
 		if ((BitboardUtils.RANK[rank7] & pawn) != 0
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFile & otherKing) != 0 // King in the promotion squares
 				&& (BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0 // Rook must be already behind
-				&& ((board.getTurn() != whiteDominant) || (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 2))) {
+				&& ((board.getTurn() != whiteDominant) || (BitboardUtils.DISTANCE[pawnIndex][dominantKingIndex] >= 2))) {
 			return SCALE_FACTOR_DRAW;
 		}
 		// Back rank defense
@@ -246,7 +246,7 @@ public class Endgame {
 		int dominantKingIndex = Long.numberOfTrailingZeros(dominantKing);
 		int pawnIndex = Long.numberOfTrailingZeros(pawn);
 
-		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 1) {
+		if ((pawnZone & otherKing) != 0 && BitboardUtils.DISTANCE[dominantKingIndex][pawnIndex] >= 1) {
 			return Evaluator.DRAW;
 		}
 

@@ -138,7 +138,7 @@ class EvaluatorTest extends BaseTest {
 
 	@Test
 	void testKnightTrapped() {
-		assertTrue(getEval("NPP5/PPP5/PPP5/8/8/8/8/k6K w - - 0 0") > 0);
+		assertTrue(getEval("NBB5/BBB5/BBB5/8/8/8/8/k6K w - - 0 0") > 0);
 	}
 
 	@Test

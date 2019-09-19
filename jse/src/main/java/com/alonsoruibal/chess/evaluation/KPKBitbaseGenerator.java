@@ -64,7 +64,7 @@ public class KPKBitbaseGenerator {
 			long blackKingAttacks = BitboardAttacks.getInstance().king[blackKingIndex];
 
 			// Check if two pieces are on the same square or if a king can be captured
-			if (BitboardUtils.distance(whiteKingIndex, blackKingIndex) <= 1
+			if (BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex] <= 1
 					|| whiteKingIndex == pawnIndex
 					|| blackKingIndex == pawnIndex
 					|| (whiteToMove && (pawnAttacks & blackKingSquare) != 0)) {
@@ -73,7 +73,7 @@ public class KPKBitbaseGenerator {
 				// Immediate win if a pawn can be promoted without getting captured
 				if (BitboardUtils.getRankOfIndex(pawnIndex) == RANK_7
 						&& whiteKingIndex != pawnIndex + DELTA_N
-						&& ((BitboardUtils.distance(blackKingIndex, pawnIndex + DELTA_N) > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0))) {
+						&& ((BitboardUtils.DISTANCE[blackKingIndex][pawnIndex + DELTA_N] > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0))) {
 					result = RESULT_WIN;
 				}
 			}

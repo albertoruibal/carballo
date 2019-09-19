@@ -128,6 +128,19 @@ public class BitboardUtils {
 					"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"});
 
 	/**
+	 * Distance between two indexes
+	 */
+	public static final int[][] DISTANCE = new int[64][64];
+
+	static {
+		for (int i = 0; i < 64; i++) {
+			for (int j = 0; j < 64; j++) {
+				DISTANCE[i][j] = Math.max(Math.abs((i & 7) - (j & 7)), Math.abs((i >> 3) - (j >> 3)));
+			}
+		}
+	}
+
+	/**
 	 * Converts a index to its square H1=0, A8=63, for the opposite operation use Long.numberOfTrailingZeros
 	 */
 	public static long index2Square(int index) {
@@ -241,13 +254,6 @@ public class BitboardUtils {
 
 	public static int getRankOfIndex(int index) {
 		return index >> 3;
-	}
-
-	/**
-	 * Distance between two indexes
-	 */
-	public static int distance(int index1, int index2) {
-		return Math.max(Math.abs((index1 & 7) - (index2 & 7)), Math.abs((index1 >> 3) - (index2 >> 3)));
 	}
 
 	/**

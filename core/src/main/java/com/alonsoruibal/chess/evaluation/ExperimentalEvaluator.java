@@ -472,8 +472,8 @@ public class ExperimentalEvaluator extends Evaluator {
 
 						if (relativeRank >= 2) {
 							int pushIndex = isWhite ? index + 8 : index - 8;
-							passedPawns[us] += BitboardUtils.distance(pushIndex, ai.kingIndex[them]) * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
-									- BitboardUtils.distance(pushIndex, ai.kingIndex[us]) * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
+							passedPawns[us] += BitboardUtils.DISTANCE[pushIndex][ai.kingIndex[them]] * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
+									- BitboardUtils.DISTANCE[pushIndex][ai.kingIndex[us]] * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
 						}
 						if (outside) {
 							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
