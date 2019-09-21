@@ -78,22 +78,22 @@ Gradle version 3 or greater is required.
 
 Build all the jars and install them to your local Maven repository:
 ```
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 ```
 Build the UCI interface (creates a carballo-${version}.jar in jse/):
 ```
 cd jse
-gradle proguard
+../gradlew proguard
 ```
 Build the GWT interface:
 ```
 cd gwtgui
-gradle compileGwt
+../gradlew compileGwt
 ```
 Running the GWT interface:
 ```
 cd gwtgui
-gradle appRun
+../gradlew appRun
 ```
 and access with your web browser to http://localhost:8080/chess/
 
@@ -102,17 +102,17 @@ Testing
 
 Run fast tests:
 ```
-gradle fastTest
+./gradlew fastTest
 ```
 Run the "Win at Chess" test suite:
 ```
 cd jse
-gradle -Dtest.single=WinAtChessTest cleanTest test
+../gradlew -Dtest.single=WinAtChessTest cleanTest test
 ```
 Run Silent but Deadly tests:
 ```
 cd jse
-gradle -Dtest.single=SilentButDeadlyTest cleanTest test
+../gradlew -Dtest.single=SilentButDeadlyTest cleanTest test
 ```
 
 Changelog

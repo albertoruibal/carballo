@@ -28,13 +28,14 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
     ext.buildDir = "${project.projectDir}/src/main/webapp/"
     ext.extraDir = "${project.buildDir}/extra"
 
-    inputs.dir sourceSets.main.java.srcDirs
+    sourceSets.main.java.srcDirs.each{ dir ->
+        inputs.dir dir
+    }
     inputs.dir sourceSets.main.output.resourcesDir
     outputs.dir buildDir
 
     doFirst {
         file(buildDir).mkdirs()
-        //classpath.each { println it.name}
     }
 
     main = 'com.google.gwt.dev.Compiler'
@@ -43,7 +44,7 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
         [
                 sourceSets.main.java.srcDirs,           // Java source
                 sourceSets.main.output.resourcesDir,    // Generated resources
-                sourceSets.main.output.classesDir,      // Generated classes
+                sourceSets.main.java.outputDir,         // Generated classes
                 sourceSets.main.compileClasspath,       // Deps
         ]
     }
