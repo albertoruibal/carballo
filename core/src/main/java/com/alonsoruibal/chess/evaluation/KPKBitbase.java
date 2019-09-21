@@ -2,14 +2,12 @@ package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.log.Logger;
 
 
 /**
  * Derived from Stockfish bitbase.cpp
  */
 public class KPKBitbase {
-	private static final Logger logger = Logger.getLogger("KPKBitbase");
 
 	// Each int stores results of 32 positions, one per bit, 24Kbytes
 	private final static int[] BITBASE = {
@@ -162,9 +160,9 @@ public class KPKBitbase {
 	}
 
 	public boolean probe(Board board) {
-		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
-		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
-		int pawnIndex = BitboardUtils.square2Index(board.pawns);
+		int whiteKingIndex = Long.numberOfTrailingZeros(board.kings & board.whites);
+		int blackKingIndex = Long.numberOfTrailingZeros(board.kings & board.blacks);
+		int pawnIndex = Long.numberOfTrailingZeros(board.pawns);
 		boolean whiteToMove = board.getTurn();
 
 		// Pawn is black

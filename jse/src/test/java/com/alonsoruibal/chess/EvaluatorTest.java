@@ -33,7 +33,7 @@ class EvaluatorTest extends BaseTest {
 		evaluator.debug = true;
 		evaluator.debugPawns = true;
 
-		board.setFen("8/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
+		board.setFen("7k/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
 		evaluator.evaluate(board, attacksInfo);
 		assertEquals(4, countSubstring("passed ", evaluator.debugSB.toString()), "Four passers");
 		assertEquals(1, countSubstring("outside ", evaluator.debugSB.toString()), "One outside passed");

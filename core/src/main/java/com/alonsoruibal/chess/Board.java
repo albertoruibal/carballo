@@ -819,7 +819,7 @@ public class Board {
 					int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
 
 					toIndex = CASTLING_KING_DESTINY_INDEX[j];
-					int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
+					int originRookIndex = Long.numberOfTrailingZeros(castlingRooks[j]);
 					int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
 					// Recalculate move mask for chess960 castlings
 					moveMask = from ^ (1L << toIndex);

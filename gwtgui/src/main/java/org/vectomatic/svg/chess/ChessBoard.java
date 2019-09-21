@@ -22,22 +22,8 @@ import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-
-import org.vectomatic.dom.svg.OMSVGAnimatedString;
-import org.vectomatic.dom.svg.OMSVGDocument;
-import org.vectomatic.dom.svg.OMSVGGElement;
-import org.vectomatic.dom.svg.OMSVGMatrix;
-import org.vectomatic.dom.svg.OMSVGPoint;
-import org.vectomatic.dom.svg.OMSVGRectElement;
-import org.vectomatic.dom.svg.OMSVGSVGElement;
-import org.vectomatic.dom.svg.OMSVGUseElement;
+import com.google.gwt.event.dom.client.*;
+import org.vectomatic.dom.svg.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

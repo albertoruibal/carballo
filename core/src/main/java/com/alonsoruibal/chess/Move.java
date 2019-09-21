@@ -177,11 +177,11 @@ public class Move {
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replace("?", "").replace("!", "").replace(" ", "").replace("0", "o").replace("O", "o");
 
 		if ("oo".equals(move)) {
-			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
+			move = BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
 		} else if ("ooo".equals(move)) {
-			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 1 : 3] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3])];
+			move = BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.chess960 ? board.castlingRooks[turn ? 1 : 3] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3])];
 		} else {
 			char promo = move.charAt(move.length() - 1);
 			switch (Character.toLowerCase(promo)) {
@@ -268,7 +268,7 @@ public class Move {
 		while (from != 0) {
 			long myFrom = Long.lowestOneBit(from);
 			from ^= myFrom;
-			fromIndex = BitboardUtils.square2Index(myFrom);
+			fromIndex = Long.numberOfTrailingZeros(myFrom);
 
 			boolean capture = false;
 			if ((myFrom & board.pawns) != 0) {

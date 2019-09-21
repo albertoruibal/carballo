@@ -127,21 +127,8 @@ public class BitboardUtils {
 					"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
 					"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"});
 
-	// To use with square2Index
-	public static final byte[] BIT_TABLE = {63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2, 51, 21, 43, 45, 10, 18, 47, 1, 54, 9, 57,
-			0, 35, 62, 31, 40, 4, 49, 5, 52, 26, 60, 6, 23, 44, 46, 27, 56, 16, 7, 39, 48, 24, 59, 14, 12, 55, 38, 28, 58, 20, 37, 17, 36, 8};
-
 	/**
-	 * Converts a square to its index 0=H1, 63=A8
-	 */
-	public static byte square2Index(long square) {
-		long b = square ^ (square - 1);
-		int fold = (int) (b ^ (b >>> 32));
-		return BIT_TABLE[(fold * 0x783a9b23) >>> 26];
-	}
-
-	/**
-	 * And viceversa
+	 * Converts a index to its square H1=0, A8=63, for the opposite operation use Long.numberOfTrailingZeros
 	 */
 	public static long index2Square(int index) {
 		return Square.H1 << index;
@@ -183,19 +170,6 @@ public class BitboardUtils {
 		return sb.toString();
 	}
 
-	/**
-	 * Flips board vertically
-	 * https://chessprogramming.wikispaces.com/Flipping+Mirroring+and+Rotating
-	 */
-	public static long flipVertical(long board) {
-		final long k1 = 0x00FF00FF00FF00FFL;
-		final long k2 = 0x0000FFFF0000FFFFL;
-		board = ((board >>> 8) & k1) | ((board & k1) << 8);
-		board = ((board >>> 16) & k2) | ((board & k2) << 16);
-		board = (board >>> 32) | (board << 32);
-		return board;
-	}
-
 	public static int flipHorizontalIndex(int index) {
 		return (index & 0xF8) | (7 - (index & 7));
 	}
@@ -204,7 +178,7 @@ public class BitboardUtils {
 	 * Convert a bitboard square to algebraic notation Number depends of rotated board
 	 */
 	public static String square2Algebraic(long square) {
-		return SQUARE_NAMES[square2Index(square)];
+		return SQUARE_NAMES[Long.numberOfTrailingZeros(square)];
 	}
 
 	public static String index2Algebraic(int index) {
@@ -297,7 +271,7 @@ public class BitboardUtils {
 	}
 
 	public static long frontPawnSpan(long pawn, int color) {
-		int index = square2Index(pawn);
+		int index = Long.numberOfTrailingZeros(pawn);
 		int rank = index >> 3;
 		int file = 7 - index & 7;
 
@@ -306,7 +280,7 @@ public class BitboardUtils {
 	}
 
 	public static long frontFile(long square, int color) {
-		int index = square2Index(square);
+		int index = Long.numberOfTrailingZeros(square);
 		int rank = index >> 3;
 		int file = 7 - index & 7;
 

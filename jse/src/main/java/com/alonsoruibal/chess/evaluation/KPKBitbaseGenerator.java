@@ -110,8 +110,8 @@ public class KPKBitbaseGenerator {
 			while (b != 0) {
 				long b1 = Long.lowestOneBit(b);
 				b = b & ~b1;
-				r |= whiteToMove ? db.get(index(false, blackKingIndex, BitboardUtils.square2Index(b1), pawnIndex)).getResult() : //
-						db.get(index(true, BitboardUtils.square2Index(b1), whiteKingIndex, pawnIndex)).getResult();
+				r |= whiteToMove ? db.get(index(false, blackKingIndex, Long.numberOfTrailingZeros(b1), pawnIndex)).getResult() : //
+						db.get(index(true, Long.numberOfTrailingZeros(b1), whiteKingIndex, pawnIndex)).getResult();
 			}
 
 			if (whiteToMove && BitboardUtils.getRankOfIndex(pawnIndex) < RANK_7) {

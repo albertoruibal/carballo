@@ -2,7 +2,6 @@ package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
@@ -43,7 +42,7 @@ public class TranspositionTable {
 	private final int sizeBits;
 
 	public TranspositionTable(int sizeMb) {
-		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
+		sizeBits = Long.numberOfTrailingZeros(sizeMb) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];

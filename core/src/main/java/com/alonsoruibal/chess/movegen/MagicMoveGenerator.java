@@ -79,11 +79,11 @@ public class MagicMoveGenerator implements MoveGenerator {
 
 			long kingCastlingDestination = board.canCastleKingSide(us, ai);
 			if (kingCastlingDestination != 0) {
-				addMoves(Piece.KING, ai.kingIndex[us], BitboardUtils.square2Index(kingCastlingDestination), false, Move.TYPE_KINGSIDE_CASTLING);
+				addMoves(Piece.KING, ai.kingIndex[us], Long.numberOfTrailingZeros(kingCastlingDestination), false, Move.TYPE_KINGSIDE_CASTLING);
 			}
 			long queenCastlingDestination = board.canCastleQueenSide(us, ai);
 			if (queenCastlingDestination != 0) {
-				addMoves(Piece.KING, ai.kingIndex[us], BitboardUtils.square2Index(queenCastlingDestination), false, Move.TYPE_QUEENSIDE_CASTLING);
+				addMoves(Piece.KING, ai.kingIndex[us], Long.numberOfTrailingZeros(queenCastlingDestination), false, Move.TYPE_QUEENSIDE_CASTLING);
 			}
 		}
 
@@ -96,7 +96,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 	private void generateMovesFromAttacks(int pieceMoved, int fromIndex, long attacks) {
 		while (attacks != 0) {
 			long to = Long.lowestOneBit(attacks);
-			addMoves(pieceMoved, fromIndex, BitboardUtils.square2Index(to), ((to & others) != 0), 0);
+			addMoves(pieceMoved, fromIndex, Long.numberOfTrailingZeros(to), ((to & others) != 0), 0);
 			attacks ^= to;
 		}
 	}
@@ -105,9 +105,9 @@ public class MagicMoveGenerator implements MoveGenerator {
 		while (attacks != 0) {
 			long to = Long.lowestOneBit(attacks);
 			if ((to & others) != 0) {
-				addMoves(Piece.PAWN, fromIndex, BitboardUtils.square2Index(to), true, 0);
+				addMoves(Piece.PAWN, fromIndex, Long.numberOfTrailingZeros(to), true, 0);
 			} else if ((to & passant) != 0) {
-				addMoves(Piece.PAWN, fromIndex, BitboardUtils.square2Index(to), true, Move.TYPE_PASSANT);
+				addMoves(Piece.PAWN, fromIndex, Long.numberOfTrailingZeros(to), true, Move.TYPE_PASSANT);
 			}
 			attacks ^= to;
 		}

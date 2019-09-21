@@ -519,7 +519,7 @@ public class MoveIterator {
 	}
 
 	private void addMove(int pieceMoved, int fromIndex, long from, long to, boolean capture, int moveType) {
-		int toIndex = BitboardUtils.square2Index(to);
+		int toIndex = Long.numberOfTrailingZeros(to);
 
 		//
 		// Verify check and legality

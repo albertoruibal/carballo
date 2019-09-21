@@ -48,12 +48,15 @@ public class AttacksInfo {
 	 * Checks for a pinned piece in each ray
 	 */
 	private void checkPinnerRay(long ray, long mines, long attackerSlider) {
-		long pinner = ray & attackerSlider;
-		if (pinner != 0) {
-			long pinned = ray & mines;
-			pinnedPieces |= pinned;
-			pinnedMobility[BitboardUtils.square2Index(pinned)] = ray;
+		if ((ray & attackerSlider) == 0) {
+			return;
 		}
+		long pinned = ray & mines;
+		if (pinned == 0) {
+			return;
+		}
+		pinnedPieces |= pinned;
+		pinnedMobility[Long.numberOfTrailingZeros(pinned)] = ray;
 	}
 
 	private void checkPinnerBishop(int kingIndex, long bishopSliderAttacks, long all, long mines, long otherBishopsOrQueens) {
@@ -121,8 +124,8 @@ public class AttacksInfo {
 		piecesGivingCheck = 0;
 		interposeCheckSquares = 0;
 
-		kingIndex[W] = BitboardUtils.square2Index(board.kings & board.whites);
-		kingIndex[B] = BitboardUtils.square2Index(board.kings & board.blacks);
+		kingIndex[W] = Long.numberOfTrailingZeros(board.kings & board.whites);
+		kingIndex[B] = Long.numberOfTrailingZeros(board.kings & board.blacks);
 
 		bishopAttacksKing[W] = bbAttacks.getBishopAttacks(kingIndex[W], all);
 		checkPinnerBishop(kingIndex[W], bishopAttacksKing[W], all, board.whites, (board.bishops | board.queens) & board.blacks);

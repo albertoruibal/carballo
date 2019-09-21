@@ -4,11 +4,7 @@ import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.uci.UciEngine;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * Test a EPD file against engines executables with UCI interface

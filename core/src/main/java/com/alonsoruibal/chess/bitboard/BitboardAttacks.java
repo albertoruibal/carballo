@@ -116,13 +116,13 @@ public class BitboardAttacks {
 	 * Discover attacks to squares using magics: expensive version
 	 */
 	public boolean isSquareAttacked(Board board, long square, boolean white) {
-		return isIndexAttacked(board, BitboardUtils.square2Index(square), white);
+		return isIndexAttacked(board, Long.numberOfTrailingZeros(square), white);
 	}
 
 	public boolean areSquaresAttacked(Board board, long squares, boolean white) {
 		while (squares != 0) {
             long square = Long.lowestOneBit(squares);
-            boolean attacked = isIndexAttacked(board, BitboardUtils.square2Index(square), white);
+            boolean attacked = isIndexAttacked(board, Long.numberOfTrailingZeros(square), white);
 			if (attacked) {
 				return true;
 			}
@@ -134,7 +134,7 @@ public class BitboardAttacks {
 	/**
 	 * Discover attacks to squares using magics: cheap version
 	 */
-	public boolean isIndexAttacked(Board board, byte index, boolean white) {
+	public boolean isIndexAttacked(Board board, int index, boolean white) {
 		if (index < 0 || index > 63) {
 			return false;
 		}
