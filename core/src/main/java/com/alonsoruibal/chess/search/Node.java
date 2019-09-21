@@ -10,7 +10,7 @@ import com.alonsoruibal.chess.evaluation.Evaluator;
  * Other nodes may access this elements
  */
 public class Node {
-	public int distanceToInitialPly;
+	public final int distanceToInitialPly;
 
 	// Current move
 	public int move;

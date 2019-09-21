@@ -1,21 +1,21 @@
 package com.alonsoruibal.chess.pgn;
 
 public class Game {
-	long id;
-	String event;
-	String eventDate;
-	String site;
-	String date;
-	String round;
-	String white;
-	String black;
-	Integer whiteElo;
-	Integer whiteFideId;
-	Integer blackElo;
-	Integer blackFideId;
-	String fenStartPosition;
-	String result;
-	String eco;
+	private long id;
+	private String event;
+	private String eventDate;
+	private String site;
+	private String date;
+	private String round;
+	private String white;
+	private String black;
+	private Integer whiteElo;
+	private Integer whiteFideId;
+	private Integer blackElo;
+	private Integer blackFideId;
+	private String fenStartPosition;
+	private String result;
+	private String eco;
 	GameNodeVariation pv;
 
 	public long getId() {

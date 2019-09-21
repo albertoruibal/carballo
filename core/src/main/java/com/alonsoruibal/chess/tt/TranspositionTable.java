@@ -29,18 +29,18 @@ public class TranspositionTable {
 
 	private static final int MAX_PROBES = 4;
 
-	public long[] keys;
-	public long[] infos;
-	public short[] evals;
+	private final long[] keys;
+	private final long[] infos;
+	private final short[] evals;
 
-	private int size;
+	private final int size;
 	private long info;
 	private short eval;
 	private int generation;
 	private int entriesOccupied;
 
 	private int score;
-	private int sizeBits;
+	private final int sizeBits;
 
 	public TranspositionTable(int sizeMb) {
 		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;

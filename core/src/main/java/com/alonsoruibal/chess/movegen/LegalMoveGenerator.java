@@ -10,7 +10,7 @@ public class LegalMoveGenerator extends MagicMoveGenerator {
 	 * The moves are returned with the check flag set
 	 */
 	@Override
-	public int generateMoves(Board board, int moves[], int index) {
+	public int generateMoves(Board board, int[] moves, int index) {
 		int lastIndex = super.generateMoves(board, moves, index);
 		int j = index;
 		for (int i = 0; i < lastIndex; i++) {

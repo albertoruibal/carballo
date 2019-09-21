@@ -4,6 +4,6 @@ import com.alonsoruibal.chess.Board;
 
 public interface MoveGenerator {
 
-	int generateMoves(Board board, int moves[], int index);
+	int generateMoves(Board board, int[] moves, int index);
 
 }

@@ -162,7 +162,7 @@ public class KPKBitbaseGenerator {
 		logger.debug("Generated KPK tables in " + (time2 - time1) + "ms, initialization = " + (time1b - time1) + "ms");
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		// Prints bitbase in java array format
 		KPKBitbaseGenerator kpkBitbase = new KPKBitbaseGenerator();
 		kpkBitbase.init();

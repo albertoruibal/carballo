@@ -15,24 +15,26 @@ public class SearchParameters {
 	ArrayList<Integer> searchMoves;
 
 	// Remaining time
-	int wtime, btime;
+	private int wtime;
+	private int btime;
 	// Time increment per move
-	int winc, binc;
+	private int winc;
+	private int binc;
 	// Moves to the next time control
-	int movesToGo;
+	private int movesToGo;
 	// Analize x plyes only
-	int depth = Integer.MAX_VALUE;
+	private int depth = Integer.MAX_VALUE;
 	// Search only this number of nodes
-	int nodes = Integer.MAX_VALUE;
+	private int nodes = Integer.MAX_VALUE;
 	// Search for mate in mate moves
-	int mate;
+	private int mate;
 	// Search movetime milliseconds
-	int moveTime = Integer.MAX_VALUE;
+	private int moveTime = Integer.MAX_VALUE;
 	// Think infinite
-	boolean infinite;
-	boolean ponder;
+	private boolean infinite;
+	private boolean ponder;
 
-	boolean manageTime;
+	private boolean manageTime;
 
 	public void clearSearchMoves() {
 		if (searchMoves == null) {

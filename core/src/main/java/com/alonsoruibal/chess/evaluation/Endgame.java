@@ -35,7 +35,7 @@ public class Endgame {
 			130, 140, 150, 160, 170, 180, 190, 200
 	};
 
-	static KPKBitbase kpkBitbase;
+	private static final KPKBitbase kpkBitbase;
 
 	static {
 		kpkBitbase = new KPKBitbase();

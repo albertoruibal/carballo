@@ -10,18 +10,18 @@ import com.alonsoruibal.chess.log.Logger;
 public class BitboardAttacks {
 	private static final Logger logger = Logger.getLogger("BitboardAttacks");
 
-	public long[] rook;
-	public long[] bishop;
-	public long[] knight;
-	public long[] king;
-	public long[][] pawn;
+	public final long[] rook;
+	public final long[] bishop;
+	public final long[] knight;
+	public final long[] king;
+	public final long[][] pawn;
 
 	/**
 	 * If disabled, does not use Magic Bitboards, improves loading speed in GWT
 	 * and avoids memory crashes in mobile browsers
 	 */
 	public static boolean USE_MAGIC = true;
-	static BitboardAttacks instance;
+	private static BitboardAttacks instance;
 
 	public static BitboardAttacks getInstance() {
 		if (instance == null) {
@@ -34,7 +34,7 @@ public class BitboardAttacks {
 		return instance;
 	}
 
-	long squareAttackedAux(long square, int shift, long border) {
+	private long squareAttackedAux(long square, int shift, long border) {
 		if ((square & border) == 0) {
 			if (shift > 0) {
 				square <<= shift;
@@ -46,7 +46,7 @@ public class BitboardAttacks {
 		return 0;
 	}
 
-	long squareAttackedAuxSlider(long square, int shift, long border) {
+	private long squareAttackedAuxSlider(long square, int shift, long border) {
 		long ret = 0;
 		while ((square & border) == 0) {
 			if (shift > 0) {
@@ -149,10 +149,7 @@ public class BitboardAttacks {
 			return true;
 		} else if ((getRookAttacks(index, all) & (board.rooks | board.queens) & others) != 0) {
 			return true;
-		} else if ((getBishopAttacks(index, all) & (board.bishops | board.queens) & others) != 0) {
-			return true;
-		}
-		return false;
+		} else return (getBishopAttacks(index, all) & (board.bishops | board.queens) & others) != 0;
 	}
 
 	/**

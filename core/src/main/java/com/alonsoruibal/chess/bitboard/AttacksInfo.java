@@ -13,29 +13,29 @@ public class AttacksInfo {
 	public static final int W = 0;
 	public static final int B = 1;
 
-	BitboardAttacks bbAttacks;
+	private final BitboardAttacks bbAttacks;
 
 	public long boardKey = 0;
 	// Includes attacks by pinned pieces that cannot move to the square, but limit king mobility
-	public long attackedSquaresAlsoPinned[] = {0, 0};
+	public final long[] attackedSquaresAlsoPinned = {0, 0};
 	// The other attacks do not include those from pinned pieces
-	public long attackedSquares[] = {0, 0};
-	public long attacksFromSquare[] = new long[64];
-	public long pawnAttacks[] = {0, 0};
-	public long knightAttacks[] = {0, 0};
-	public long bishopAttacks[] = {0, 0};
-	public long rookAttacks[] = {0, 0};
-	public long queenAttacks[] = {0, 0};
-	public long kingAttacks[] = {0, 0};
-	public int kingIndex[] = {0, 0};
-	public long pinnedMobility[] = new long[64];
+	public final long[] attackedSquares = {0, 0};
+	public final long[] attacksFromSquare = new long[64];
+	public final long[] pawnAttacks = {0, 0};
+	public final long[] knightAttacks = {0, 0};
+	public final long[] bishopAttacks = {0, 0};
+	public final long[] rookAttacks = {0, 0};
+	public final long[] queenAttacks = {0, 0};
+	public final long[] kingAttacks = {0, 0};
+	public final int[] kingIndex = {0, 0};
+	public final long[] pinnedMobility = new long[64];
 	//
 	// Squares with possible ray attacks to the kings: used to detect check and move legality
 	//
-	public long bishopAttacksKing[] = {0, 0};
-	public long rookAttacksKing[] = {0, 0};
+	public final long[] bishopAttacksKing = {0, 0};
+	public final long[] rookAttacksKing = {0, 0};
 
-	public long mayPin[] = {0, 0}; // both my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
+	public final long[] mayPin = {0, 0}; // both my pieces than can discover an attack and the opponent pieces pinned, that is any piece attacked by a slider
 	public long piecesGivingCheck;
 	public long interposeCheckSquares;
 	public long pinnedPieces;

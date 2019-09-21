@@ -28,14 +28,11 @@ public class PgnFile {
 					if (counter == gameNumber) {
 						StringBuilder pgnSb = new StringBuilder();
 						try {
-							while (true) {
+							do {
 								pgnSb.append(line);
 								pgnSb.append("\n");
 								line = br.readLine();
-								if (line == null || line.startsWith("[Event ")) {
-									break;
-								}
-							}
+							} while (line != null && !line.startsWith("[Event "));
 						} catch (IOException ignored) {
 						}
 						return pgnSb.toString();

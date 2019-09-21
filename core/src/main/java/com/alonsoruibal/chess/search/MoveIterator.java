@@ -22,18 +22,18 @@ public class MoveIterator {
 	//
 	// Move generation phases
 	//
-	public static final int PHASE_TT = 0;
-	public static final int PHASE_GEN_CAPTURES = 1;
-	public static final int PHASE_GOOD_CAPTURES_AND_PROMOS = 2;
-	public static final int PHASE_EQUAL_CAPTURES = 3;
-	public static final int PHASE_GEN_NON_CAPTURES = 4;
-	public static final int PHASE_KILLER1 = 5;
-	public static final int PHASE_KILLER2 = 6;
-	public static final int PHASE_KILLER3 = 7;
-	public static final int PHASE_KILLER4 = 8;
-	public static final int PHASE_NON_CAPTURES = 9;
-	public static final int PHASE_BAD_CAPTURES = 10;
-	public static final int PHASE_END = 11;
+	private static final int PHASE_TT = 0;
+	private static final int PHASE_GEN_CAPTURES = 1;
+	private static final int PHASE_GOOD_CAPTURES_AND_PROMOS = 2;
+	private static final int PHASE_EQUAL_CAPTURES = 3;
+	private static final int PHASE_GEN_NON_CAPTURES = 4;
+	private static final int PHASE_KILLER1 = 5;
+	private static final int PHASE_KILLER2 = 6;
+	private static final int PHASE_KILLER3 = 7;
+	private static final int PHASE_KILLER4 = 8;
+	private static final int PHASE_NON_CAPTURES = 9;
+	private static final int PHASE_BAD_CAPTURES = 10;
+	private static final int PHASE_END = 11;
 
 	private static final int[] VICTIM_PIECE_VALUES = {0, 100, 325, 330, 500, 975, 10000};
 	private static final int[] AGGRESSOR_PIECE_VALUES = {0, 10, 32, 33, 50, 97, 99};
@@ -41,11 +41,11 @@ public class MoveIterator {
 	private static final int SCORE_UNDERPROMOTION = Integer.MIN_VALUE + 1;
 	private static final int SCORE_LOWEST = Integer.MIN_VALUE;
 
-	public static final int SEE_NOT_CALCULATED = Short.MAX_VALUE;
+	private static final int SEE_NOT_CALCULATED = Short.MAX_VALUE;
 
 	private Board board;
 	private SearchEngine searchEngine;
-	private AttacksInfo ai;
+	private final AttacksInfo ai;
 
 	private int ttMove;
 	private int movesToGenerate;
@@ -77,19 +77,19 @@ public class MoveIterator {
 	private int badCaptureIndex;
 	private int nonCaptureIndex;
 
-	private int[] goodCaptures = new int[256]; // Stores captures and queen promotions
-	private int[] goodCapturesSee = new int[256];
-	private int[] goodCapturesScores = new int[256];
-	private int[] badCaptures = new int[256]; // Stores captures and queen promotions
-	private int[] badCapturesScores = new int[256];
-	private int[] equalCaptures = new int[256]; // Stores captures and queen promotions
-	private int[] equalCapturesSee = new int[256];
-	private int[] equalCapturesScores = new int[256];
-	private int[] nonCaptures = new int[256]; // Stores non captures and underpromotions
-	private int[] nonCapturesSee = new int[256];
-	private int[] nonCapturesScores = new int[256];
+	private final int[] goodCaptures = new int[256]; // Stores captures and queen promotions
+	private final int[] goodCapturesSee = new int[256];
+	private final int[] goodCapturesScores = new int[256];
+	private final int[] badCaptures = new int[256]; // Stores captures and queen promotions
+	private final int[] badCapturesScores = new int[256];
+	private final int[] equalCaptures = new int[256]; // Stores captures and queen promotions
+	private final int[] equalCapturesSee = new int[256];
+	private final int[] equalCapturesScores = new int[256];
+	private final int[] nonCaptures = new int[256]; // Stores non captures and underpromotions
+	private final int[] nonCapturesSee = new int[256];
+	private final int[] nonCapturesScores = new int[256];
 
-	private int depth;
+	private final int depth;
 	private int phase;
 
 	private BitboardAttacks bbAttacks;
@@ -268,7 +268,7 @@ public class MoveIterator {
 		return Move.NONE;
 	}
 
-	private int pickMoveFromArray(int arrayLength, int arrayMoves[], int arrayScores[], int arraySee[]) {
+	private int pickMoveFromArray(int arrayLength, int[] arrayMoves, int[] arrayScores, int[] arraySee) {
 		if (arrayLength == 0) {
 			return Move.NONE;
 		}
@@ -298,7 +298,7 @@ public class MoveIterator {
 	/**
 	 * Generates captures and good promos
 	 */
-	public void generateCaptures() {
+	private void generateCaptures() {
 		long square = 0x1L;
 		for (int index = 0; index < 64; index++) {
 			if ((square & mines) != 0) {
@@ -333,7 +333,7 @@ public class MoveIterator {
 	/**
 	 * Generates non tactical moves
 	 */
-	public void generateNonCaptures() {
+	private void generateNonCaptures() {
 		// Castling: disabled when in check or king route attacked
 		if (!board.getCheck()) {
 			long kingCastlingDestination = board.canCastleKingSide(us, ai);
@@ -374,7 +374,7 @@ public class MoveIterator {
 		}
 	}
 
-	public void generateCheckEvasionCaptures() {
+	private void generateCheckEvasionCaptures() {
 		// King can capture one of the checking pieces if two pieces giving check
 		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, others & ai.attacksFromSquare[ai.kingIndex[us]] & ~ai.attackedSquaresAlsoPinned[them], true);
 
@@ -419,7 +419,7 @@ public class MoveIterator {
 		}
 	}
 
-	public void generateCheckEvasionsNonCaptures() {
+	private void generateCheckEvasionsNonCaptures() {
 		// Moving king (without captures)
 		generateMovesFromAttacks(Piece.KING, ai.kingIndex[us], board.kings & mines, ai.attacksFromSquare[ai.kingIndex[us]] & ~all & ~ai.attackedSquaresAlsoPinned[them], false);
 
@@ -545,7 +545,7 @@ public class MoveIterator {
 			minesAfterMove = ((mines ^ rookMoveMask) | kingTo) & ~from;
 
 			// Direct check by rook
-			check |= (rookTo & ai.rookAttacksKing[them]) != 0;
+			check = (rookTo & ai.rookAttacksKing[them]) != 0;
 		} else {
 			if (pieceMoved == Piece.KING) {
 				newMyKingIndex = toIndex;
@@ -581,11 +581,9 @@ public class MoveIterator {
 			}
 		}
 
-		/**
-		 *  As AttacksInfo already excludes pinned pieces, we only must take care from en passant captures
-		 *  (they can remove two pieces from 4th rank discovering a check) and king moves when the king is
-		 *  in check by a slider
-		 */
+		//  As AttacksInfo already excludes pinned pieces, we only must take care from en passant captures
+		// (they can remove two pieces from 4th rank discovering a check) and king moves when the king is
+		//  in check by a slider
 		if ((squaresForDiscovery & ai.mayPin[them]) != 0 && (moveType == Move.TYPE_PASSANT || ((ai.piecesGivingCheck & (board.rooks | board.bishops | board.queens)) != 0 && pieceMoved == Piece.KING))) {
 			// Candidates to leave the king in check after moving
 			if (((squaresForDiscovery & ai.bishopAttacksKing[us]) != 0) ||

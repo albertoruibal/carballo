@@ -113,7 +113,7 @@ public class CompleteEvaluator extends Evaluator {
 
 	// King
 	// Sums for each piece attacking an square near the king
-	private static final int PIECE_ATTACKS_KING[] = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
+	private static final int[] PIECE_ATTACKS_KING = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
 	// Ponder kings attacks by the number of attackers (not pawns)
 	private static final int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
 
@@ -122,7 +122,7 @@ public class CompleteEvaluator extends Evaluator {
 
 	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
-	private static final int pawnPcsq[] = {
+	private static final int[] pawnPcsq = {
 			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4),
 			oe(-21, 1), oe(-9, -1), oe(-3, -3), oe(3, -5), oe(3, -5), oe(-3, -3), oe(-9, -1), oe(-21, 1),
 			oe(-20, 1), oe(-8, -1), oe(-2, -3), oe(4, -5), oe(4, -5), oe(-2, -3), oe(-8, -1), oe(-20, 1),
@@ -132,7 +132,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-15, 6), oe(-3, 4), oe(3, 2), oe(9, 0), oe(9, 0), oe(3, 2), oe(-3, 4), oe(-15, 6),
 			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4)
 	};
-	private static final int knightPcsq[] = {
+	private static final int[] knightPcsq = {
 			oe(-27, -22), oe(-17, -17), oe(-9, -12), oe(-4, -9), oe(-4, -9), oe(-9, -12), oe(-17, -17), oe(-27, -22),
 			oe(-21, -15), oe(-11, -8), oe(-3, -4), oe(2, -2), oe(2, -2), oe(-3, -4), oe(-11, -8), oe(-21, -15),
 			oe(-15, -10), oe(-5, -4), oe(3, 1), oe(8, 3), oe(8, 3), oe(3, 1), oe(-5, -4), oe(-15, -10),
@@ -142,7 +142,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-10, -8), oe(0, -1), oe(8, 3), oe(13, 5), oe(13, 5), oe(8, 3), oe(0, -1), oe(-10, -8),
 			oe(-20, -15), oe(-10, -10), oe(-2, -5), oe(3, -2), oe(3, -2), oe(-2, -5), oe(-10, -10), oe(-20, -15)
 	};
-	private static final int bishopPcsq[] = {
+	private static final int[] bishopPcsq = {
 			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
@@ -152,7 +152,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-2, 0), oe(-3, -1), oe(-6, -2), oe(-8, -2), oe(-8, -2), oe(-6, -2), oe(-3, -1), oe(-2, 0)
 	};
-	private static final int rookPcsq[] = {
+	private static final int[] rookPcsq = {
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
@@ -162,7 +162,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-4, 5), oe(0, 5), oe(4, 5), oe(8, 5), oe(8, 5), oe(4, 5), oe(0, 5), oe(-4, 5),
 			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
-	private static final int queenPcsq[] = {
+	private static final int[] queenPcsq = {
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
 			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
 			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
@@ -172,7 +172,7 @@ public class CompleteEvaluator extends Evaluator {
 			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15)
 	};
-	private static final int kingPcsq[] = {
+	private static final int[] kingPcsq = {
 			oe(34, -58), oe(39, -35), oe(14, -19), oe(-6, -13), oe(-6, -13), oe(14, -19), oe(39, -35), oe(34, -58),
 			oe(31, -35), oe(36, -10), oe(11, 2), oe(-9, 8), oe(-9, 8), oe(11, 2), oe(36, -10), oe(31, -35),
 			oe(28, -19), oe(33, 2), oe(8, 17), oe(-12, 23), oe(-12, 23), oe(8, 17), oe(33, 2), oe(28, -19),
@@ -187,22 +187,22 @@ public class CompleteEvaluator extends Evaluator {
 	public boolean debugPawns = false;
 	public StringBuffer debugSB;
 
-	private int[] scaleFactor = {0};
+	private final int[] scaleFactor = {0};
 
-	private int[] pawnMaterial = {0, 0};
-	private int[] nonPawnMaterial = {0, 0};
-	private int[] pcsq = {0, 0};
-	private int[] space = {0, 0};
-	private int[] positional = {0, 0};
-	private int[] mobility = {0, 0};
-	private int[] attacks = {0, 0};
-	private int[] kingAttackersCount = {0, 0};
-	private int[] kingSafety = {0, 0};
-	private int[] pawnStructure = {0, 0};
-	private int[] passedPawns = {0, 0};
-	private long[] pawnCanAttack = {0, 0};
-	private long[] mobilitySquares = {0, 0};
-	private long[] kingZone = {0, 0}; // Squares surrounding King
+	private final int[] pawnMaterial = {0, 0};
+	private final int[] nonPawnMaterial = {0, 0};
+	private final int[] pcsq = {0, 0};
+	private final int[] space = {0, 0};
+	private final int[] positional = {0, 0};
+	private final int[] mobility = {0, 0};
+	private final int[] attacks = {0, 0};
+	private final int[] kingAttackersCount = {0, 0};
+	private final int[] kingSafety = {0, 0};
+	private final int[] pawnStructure = {0, 0};
+	private final int[] passedPawns = {0, 0};
+	private final long[] pawnCanAttack = {0, 0};
+	private final long[] mobilitySquares = {0, 0};
+	private final long[] kingZone = {0, 0}; // Squares surrounding King
 
 	public int evaluate(Board board, AttacksInfo ai) {
 		if (debug) {
@@ -368,17 +368,7 @@ public class CompleteEvaluator extends Evaluator {
 
 						if (debugPawns) {
 							boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
-							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
-									(isWhite ? " WHITE " : " BLACK ") +
-									(isolated ? "isolated " : "") +
-									(supported ? "supported " : "") +
-									(connected ? "connected " : "") +
-									(doubled ? "doubled " : "") +
-									(opposed ? "opposed " : "") +
-									(candidate ? "candidate " : "") +
-									(backward ? "backward " : "") +
-									"\n"
-							);
+							debugSB.append("PAWN ").append(BitboardUtils.SQUARE_NAMES[index]).append(isWhite ? " WHITE " : " BLACK ").append(isolated ? "isolated " : "").append(supported ? "supported " : "").append(connected ? "connected " : "").append(doubled ? "doubled " : "").append(opposed ? "opposed " : "").append(candidate ? "candidate " : "").append(backward ? "backward " : "").append("\n");
 						}
 
 						if (backward) {
@@ -439,16 +429,7 @@ public class CompleteEvaluator extends Evaluator {
 								&& attackedAndNotDefendedRoute == 0;
 
 						if (debug) {
-							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
-									(isWhite ? " WHITE " : " BLACK ") +
-									"passed " +
-									(outside ? "outside " : "") +
-									(connected ? "connected " : "") +
-									(supported ? "supported " : "") +
-									(mobile ? "mobile " : "") +
-									(runner ? "runner " : "") +
-									"\n"
-							);
+							debugSB.append("PAWN ").append(BitboardUtils.SQUARE_NAMES[index]).append(isWhite ? " WHITE " : " BLACK ").append("passed ").append(outside ? "outside " : "").append(connected ? "connected " : "").append(supported ? "supported " : "").append(mobile ? "mobile " : "").append(runner ? "runner " : "").append("\n");
 						}
 
 						passedPawns[us] += PAWN_PASSER[relativeRank];

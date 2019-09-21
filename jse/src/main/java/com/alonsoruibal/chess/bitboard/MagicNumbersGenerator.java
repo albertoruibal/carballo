@@ -47,9 +47,9 @@ public class MagicNumbersGenerator {
 	 */
 	long findMagics(byte index, byte m, boolean bishop) {
 		long mask, magic;
-		long attack[] = new long[4096];
-		long block[] = new long[4096];
-		long magicAttack[] = new long[4096];
+		long[] attack = new long[4096];
+		long[] block = new long[4096];
+		long[] magicAttack = new long[4096];
 		int i, j, k, n;
 		boolean fail;
 
@@ -98,7 +98,7 @@ public class MagicNumbersGenerator {
 		return 0L;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		byte index;
 		MagicNumbersGenerator magic = new MagicNumbersGenerator();
 

@@ -48,10 +48,10 @@ public class BitboardAttacksMagic extends BitboardAttacks {
 			0x80000200282020cL, 0x8a001240100L, 0x2040104040080L};
 
 	// Mask = Attacks without border for magic bitboards
-	public long[] rookMask;
-	public long[][] rookMagic;
-	public long[] bishopMask;
-	public long[][] bishopMagic;
+	public final long[] rookMask;
+	public final long[][] rookMagic;
+	public final long[] bishopMask;
+	public final long[][] bishopMagic;
 
 	public BitboardAttacksMagic() {
 		super();

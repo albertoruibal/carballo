@@ -26,33 +26,33 @@ import java.util.Date;
 public class Pgn {
 	private static final Logger logger = Logger.getLogger("Pgn");
 
-	String pgnCurrentGame;
+	private String pgnCurrentGame;
 
-	String fenStartPosition;
+	private String fenStartPosition;
 
-	String event;
-	String site;
-	String date;
-	String round;
-	String white;
-	String black;
-	String whiteElo;
-	String blackElo;
-	String whiteFideId;
-	String blackFideId;
-	String result;
-	String eventType;
-	String eventDate;
-	String annotator;
+	private String event;
+	private String site;
+	private String date;
+	private String round;
+	private String white;
+	private String black;
+	private String whiteElo;
+	private String blackElo;
+	private String whiteFideId;
+	private String blackFideId;
+	private String result;
+	private String eventType;
+	private String eventDate;
+	private String annotator;
 
-	ArrayList<String> moves = new ArrayList<>();
+	private final ArrayList<String> moves = new ArrayList<>();
 
 	public String getPgn(Board b, String whiteName, String blackName) {
 		return getPgn(b, whiteName, blackName, null, null, null);
 	}
 
 	@SuppressWarnings("deprecation")
-	public String getPgn(Board b, String whiteName, String blackName, String event, String site, String result) {
+	private String getPgn(Board b, String whiteName, String blackName, String event, String site, String result) {
 		// logger.debug("PGN start");
 
 		StringBuilder sb = new StringBuilder();
@@ -168,7 +168,7 @@ public class Pgn {
 		StringBuilder movesSb = new StringBuilder();
 
 		try {
-			String lines[] = pgn.split("\\r?\\n");
+			String[] lines = pgn.split("\\r?\\n");
 			boolean parsingHeaders = true;
 
 			for (String line : lines) {
@@ -178,32 +178,46 @@ public class Pgn {
 						String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
 						String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
-						if ("event".equals(headerName)) {
-							event = headerValue;
-						} else if ("round".equals(headerName)) {
-							round = headerValue;
-						} else if ("site".equals(headerName)) {
-							site = headerValue;
-						} else if ("eventdate".equals(headerName)) {
-							eventDate = headerValue;
-						} else if ("date".equals(headerName)) {
-							date = headerValue;
-						} else if ("white".equals(headerName)) {
-							white = headerValue;
-						} else if ("black".equals(headerName)) {
-							black = headerValue;
-						} else if ("whiteelo".equals(headerName)) {
-							whiteElo = headerValue;
-						} else if ("blackelo".equals(headerName)) {
-							blackElo = headerValue;
-						} else if ("whitefideid".equals(headerName)) {
-							whiteFideId = headerValue;
-						} else if ("blackfideid".equals(headerName)) {
-							blackFideId = headerValue;
-						} else if ("result".equals(headerName)) {
-							result = headerValue;
-						} else if ("fen".equals(headerName)) {
-							fenStartPosition = headerValue;
+						switch (headerName) {
+							case "event":
+								event = headerValue;
+								break;
+							case "round":
+								round = headerValue;
+								break;
+							case "site":
+								site = headerValue;
+								break;
+							case "eventdate":
+								eventDate = headerValue;
+								break;
+							case "date":
+								date = headerValue;
+								break;
+							case "white":
+								white = headerValue;
+								break;
+							case "black":
+								black = headerValue;
+								break;
+							case "whiteelo":
+								whiteElo = headerValue;
+								break;
+							case "blackelo":
+								blackElo = headerValue;
+								break;
+							case "whitefideid":
+								whiteFideId = headerValue;
+								break;
+							case "blackfideid":
+								blackFideId = headerValue;
+								break;
+							case "result":
+								result = headerValue;
+								break;
+							case "fen":
+								fenStartPosition = headerValue;
+								break;
 						}
 					} else {
 						parsingHeaders = false;
@@ -360,7 +374,7 @@ public class Pgn {
 
 	public String getGameNumber(String pgnFileContent, int gameNumber) {
 		int lineNumber = 0;
-		String lines[] = pgnFileContent.split("\\r?\\n");
+		String[] lines = pgnFileContent.split("\\r?\\n");
 		String line;
 		int counter = 0;
 
@@ -374,14 +388,11 @@ public class Pgn {
 				if (line.indexOf("[Event ") == 0) {
 					if (counter == gameNumber) {
 						StringBuilder pgnSb = new StringBuilder();
-						while (true) {
+						do {
 							pgnSb.append(line);
 							pgnSb.append("\n");
 							line = lines[lineNumber++];
-							if (line == null || line.indexOf("[Event ") == 0) {
-								break;
-							}
-						}
+						} while (line != null && line.indexOf("[Event ") != 0);
 						return pgnSb.toString();
 					}
 					counter++;

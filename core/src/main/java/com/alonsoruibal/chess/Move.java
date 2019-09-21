@@ -117,7 +117,7 @@ public class Move {
 
 	// Pawn push to 5, 6, 7 or 8th rank
 	public static boolean isPawnPush5678(int move) {
-		return Move.getPieceMoved(move) == Piece.PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 32 : Move.getToIndex(move) < 32);
+		return Move.getPieceMoved(move) == Piece.PAWN && ((Move.getFromIndex(move) < Move.getToIndex(move)) == (Move.getToIndex(move) >= 32));
 	}
 
 	/**
@@ -145,9 +145,6 @@ public class Move {
 
 	/**
 	 * Is capture or promotion
-	 *
-	 * @param move
-	 * @return
 	 */
 	public static boolean isTactical(int move) {
 		return (Move.isCapture(move) || Move.isPromotion(move));
@@ -160,9 +157,6 @@ public class Move {
 	/**
 	 * Given a board creates a move from a String in uci format or short
 	 * algebraic form. verifyValidMove true is mandatory if using sort algebraic
-	 *
-	 * @param board
-	 * @param move
 	 */
 	public static int getFromString(Board board, String move, boolean verifyValidMove) {
 		if (NULL_STRING.equals(move)) {
@@ -214,7 +208,7 @@ public class Move {
 		}
 
 		// To is always the last 2 characters
-		toIndex = BitboardUtils.algebraic2Index(move.substring(move.length() - 2, move.length()));
+		toIndex = BitboardUtils.algebraic2Index(move.substring(move.length() - 2));
 		long to = 0x1L << toIndex;
 		long from = 0;
 
@@ -331,9 +325,6 @@ public class Move {
 
 	/**
 	 * Gets an UCI-String representation of the move
-	 *
-	 * @param move
-	 * @return
 	 */
 	public static String toString(int move) {
 		if (move == Move.NONE) {
@@ -379,10 +370,6 @@ public class Move {
 
 	/**
 	 * It does not append + or #
-	 *
-	 * @param board
-	 * @param move
-	 * @return
 	 */
 	public static String toSan(Board board, int move) {
 		if (move == Move.NONE) {
@@ -454,7 +441,7 @@ public class Move {
 		return sb.toString();
 	}
 
-	public static void printMoves(int moves[], int from, int to) {
+	public static void printMoves(int[] moves, int from, int to) {
 		for (int i = from; i < to; i++) {
 			System.out.print(Move.toStringExt(moves[i]));
 			System.out.print(" ");

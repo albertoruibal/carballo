@@ -15,12 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class BasicEloTest {
 
-	private Config config;
 	private SearchEngine search;
 
 	@BeforeEach
 	void setUp() {
-		config = new Config();
+		Config config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
 	}

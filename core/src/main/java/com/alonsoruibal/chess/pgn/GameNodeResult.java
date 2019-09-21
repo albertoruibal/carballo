@@ -2,7 +2,7 @@ package com.alonsoruibal.chess.pgn;
 
 public class GameNodeResult extends GameNode {
 
-	public String result;
+	public final String result;
 
 	public GameNodeResult(String result) {
 		this.result = result;

@@ -22,7 +22,7 @@ public class MagicMoveGenerator implements MoveGenerator {
 	private long mines;
 	private long others;
 
-	AttacksInfo ai = new AttacksInfo();
+	private final AttacksInfo ai = new AttacksInfo();
 
 	public int generateMoves(Board board, int[] moves, int startIndex) {
 		this.moves = moves;

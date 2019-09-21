@@ -21,13 +21,14 @@ import java.util.Random;
  *
  * @author Alberto Alonso Ruibal
  */
+@SuppressWarnings("UnusedAssignment")
 public class SearchEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger("SearchEngine");
 
 	public boolean debug = false;
 
-	Object searchLock = new Object();
-	Object startStopSearchLock = new Object();
+	final Object searchLock = new Object();
+	final Object startStopSearchLock = new Object();
 
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
@@ -72,11 +73,11 @@ public class SearchEngine implements Runnable {
 	private int thinkToNodes = 0;
 	private int thinkToDepth = 0;
 
-	private Board board;
+	private final Board board;
 	private SearchObserver observer;
 	private Evaluator evaluator;
 	private TranspositionTable tt;
-	public Node[] nodes;
+	public final Node[] nodes;
 	public short[][] history; // By piece type and destiny square
 
 	private int bestMoveScore;
@@ -92,7 +93,7 @@ public class SearchEngine implements Runnable {
 
 	public long startTime;
 
-	// For performance benching
+	// For performance benchmarking
 	private long nodeCount;
 	private long pvCutNodes;
 	private long pvAllNodes;
@@ -126,9 +127,9 @@ public class SearchEngine implements Runnable {
 	private static long ttEvalHit = 0;
 	private static long ttEvalProbe = 0;
 
-	private Random random;
+	private final Random random;
 
-	private float[][] logMatrix;
+	private final float[][] logMatrix;
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -277,7 +278,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * It also changes the sign to the score depending of the turn
 	 */
-	public void evaluate(Node node, boolean foundTT) {
+	private void evaluate(Node node, boolean foundTT) {
 		ttEvalProbe++;
 
 		if (foundTT) {
@@ -303,7 +304,7 @@ public class SearchEngine implements Runnable {
 				tt.getScore() : node.staticEval;
 	}
 
-	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
+	public int quiescentSearch(int qsdepth, int alpha, int beta) {
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
@@ -422,7 +423,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Search Root, PV and null window
 	 */
-	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
+	private int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
 		assert depthRemaining > 0 : "Wrong depthRemaining";
 
 		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || nodeCount > thinkToNodes)) {
@@ -590,9 +591,7 @@ public class SearchEngine implements Runnable {
 				&& node.staticEval != Evaluator.NO_VALUE
 				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE ?
 				node.staticEval - nodes[distanceToInitialPly - 2].staticEval : 0;
-		nodeEvalDiff = nodeEvalDiff < NODE_EVAL_DIFF_MIN ? NODE_EVAL_DIFF_MIN :
-				nodeEvalDiff > NODE_EVAL_DIFF_MAX ? NODE_EVAL_DIFF_MAX :
-						nodeEvalDiff;
+		nodeEvalDiff = Math.max(NODE_EVAL_DIFF_MIN, Math.min(nodeEvalDiff, NODE_EVAL_DIFF_MAX));
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
@@ -700,7 +699,7 @@ public class SearchEngine implements Runnable {
 			board.doMove(node.move, false, false);
 			assert board.getCheck() == Move.isCheck(node.move) : "Check flag not generated properly";
 
-			int lowBound = alpha > bestScore ? alpha : bestScore;
+			int lowBound = Math.max(alpha, bestScore);
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && moveCount == 1) {
 				// PV move not null searched nor reduced
 				score = newDepth < PLY ? -quiescentSearch(0, -beta, -lowBound) :
@@ -897,8 +896,8 @@ public class SearchEngine implements Runnable {
 		int failHighCount = 0;
 		int failLowCount = 0;
 		int initialScore = rootScore;
-		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.MATE ? initialScore - aspWindows[failLowCount] : -Evaluator.MATE);
-		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.MATE ? initialScore + aspWindows[failHighCount] : Evaluator.MATE);
+		int alpha = Math.max(initialScore - aspWindows[failLowCount], -Evaluator.MATE);
+		int beta = Math.min(initialScore + aspWindows[failHighCount], Evaluator.MATE);
 		int previousRootScore = rootScore;
 		long time1 = System.currentTimeMillis();
 
@@ -1047,7 +1046,7 @@ public class SearchEngine implements Runnable {
 		thinkToDepth = 0;
 	}
 
-	public int evaluateDraw(int distanceToInitialPly) {
+	private int evaluateDraw(int distanceToInitialPly) {
         int nonPawnMat = Long.bitCount(board.knights) * Evaluator.KNIGHT +
                 Long.bitCount(board.bishops) * Evaluator.BISHOP +
                 Long.bitCount(board.rooks) * Evaluator.ROOK +
@@ -1078,7 +1077,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * We are informed of the score produced by the move at any level
 	 */
-	public void historyGood(Node node, int move, int depth) {
+	private void historyGood(Node node, int move, int depth) {
 		// removes captures and promotions from killers
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
@@ -1096,7 +1095,7 @@ public class SearchEngine implements Runnable {
 		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MAX - v) * depth) >> 8));
 	}
 
-	public void historyBad(int move, int depth) {
+	private void historyBad(int move, int depth) {
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
 		}

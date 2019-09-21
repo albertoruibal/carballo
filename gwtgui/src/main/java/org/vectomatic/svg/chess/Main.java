@@ -291,7 +291,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 		status.setText(ChessConstants.INSTANCE.thinking());
 		new Timer() {
 			public void run() {
-				engine.go(SearchParameters.get(1000 * Integer.valueOf(timeListBox.getValue(timeListBox.getSelectedIndex()))));
+				engine.go(SearchParameters.get(1000 * Integer.parseInt(timeListBox.getValue(timeListBox.getSelectedIndex()))));
 			}
 		}.schedule(100);
 	}

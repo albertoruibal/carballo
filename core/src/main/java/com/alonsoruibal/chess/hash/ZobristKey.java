@@ -7,7 +7,6 @@ import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /* 
  * Computes the Polyglot key of a board
- * 
  */
 public class ZobristKey {
 
@@ -57,7 +56,7 @@ public class ZobristKey {
 	}
 
 	public static long[] getKey(Board board) {
-		long key[] = {0, 0};
+		long[] key = {0, 0};
 
 		long square = Square.H1;
 		byte index = 0;

@@ -2,7 +2,7 @@ package com.alonsoruibal.chess.pgn;
 
 public class GameNodeComment extends GameNode {
 
-	public String comment;
+	public final String comment;
 
 	public GameNodeComment(String comment) {
 		this.comment = comment;

@@ -37,7 +37,7 @@ public class PgnParser {
 		boolean parsingComment = false;
 
 		try {
-			String lines[] = pgn.split("\\r?\\n");
+			String[] lines = pgn.split("\\r?\\n");
 
 			for (String line : lines) {
 				if (!"".equals(line.trim())) {
@@ -47,32 +47,46 @@ public class PgnParser {
 						String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
 						if (!"".equals(headerValue) && !"?".equals(headerValue) && !"-".equals(headerValue)) {
-							if ("event".equals(headerName)) {
-								game.setEvent(headerValue);
-							} else if ("round".equals(headerName)) {
-								game.setRound(headerValue);
-							} else if ("site".equals(headerName)) {
-								game.setSite(headerValue);
-							} else if ("eventdate".equals(headerName)) {
-								game.setEventDate(headerValue);
-							} else if ("date".equals(headerName)) {
-								game.setDate(headerValue);
-							} else if ("white".equals(headerName)) {
-								game.setWhite(headerValue);
-							} else if ("black".equals(headerName)) {
-								game.setBlack(headerValue);
-							} else if ("whiteelo".equals(headerName)) {
-								game.setWhiteElo(Integer.valueOf(headerValue));
-							} else if ("blackelo".equals(headerName)) {
-								game.setBlackElo(Integer.valueOf(headerValue));
-							} else if ("whitefideid".equals(headerName)) {
-								game.setWhiteFideId(Integer.valueOf(headerValue));
-							} else if ("blackfideid".equals(headerName)) {
-								game.setBlackFideId(Integer.valueOf(headerValue));
-							} else if ("result".equals(headerName)) {
-								game.setResult(headerValue);
-							} else if ("fen".equals(headerName)) {
-								game.setFenStartPosition(headerValue);
+							switch (headerName) {
+								case "event":
+									game.setEvent(headerValue);
+									break;
+								case "round":
+									game.setRound(headerValue);
+									break;
+								case "site":
+									game.setSite(headerValue);
+									break;
+								case "eventdate":
+									game.setEventDate(headerValue);
+									break;
+								case "date":
+									game.setDate(headerValue);
+									break;
+								case "white":
+									game.setWhite(headerValue);
+									break;
+								case "black":
+									game.setBlack(headerValue);
+									break;
+								case "whiteelo":
+									game.setWhiteElo(Integer.valueOf(headerValue));
+									break;
+								case "blackelo":
+									game.setBlackElo(Integer.valueOf(headerValue));
+									break;
+								case "whitefideid":
+									game.setWhiteFideId(Integer.valueOf(headerValue));
+									break;
+								case "blackfideid":
+									game.setBlackFideId(Integer.valueOf(headerValue));
+									break;
+								case "result":
+									game.setResult(headerValue);
+									break;
+								case "fen":
+									game.setFenStartPosition(headerValue);
+									break;
 							}
 						}
 					} else {
@@ -116,7 +130,6 @@ public class PgnParser {
 									sb.setLength(0);
 
 									if ("1-0".equals(s)
-											|| "0-1".equals(s)
 											|| "0-1".equals(s)
 											|| "1/2-1/2".equals(s)
 											|| "½-½".equals(s)

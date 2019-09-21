@@ -1,15 +1,10 @@
 package com.alonsoruibal.chess.swing;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class PgnDialog extends JDialog {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	private final JTextArea textArea;
 	
 	public PgnDialog(JFrame parent) {
@@ -28,11 +23,7 @@ public class PgnDialog extends JDialog {
 		p2.add(ok);
 		getContentPane().add(p2, "South");
 
-		ok.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				setVisible(false);
-			}
-		});
+		ok.addActionListener(evt -> setVisible(false));
 
 		setSize(600, 600);
 	}

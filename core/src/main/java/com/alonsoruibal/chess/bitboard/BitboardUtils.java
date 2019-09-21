@@ -151,16 +151,16 @@ public class BitboardUtils {
 	 * Changes element 0 with 63 and consecuvely: this way array constants are
 	 * more legible
 	 */
-	public static String[] changeEndianArray64(String sarray[]) {
-		String out[] = new String[64];
+	public static String[] changeEndianArray64(String[] sarray) {
+		String[] out = new String[64];
 		for (int i = 0; i < 64; i++) {
 			out[i] = sarray[63 - i];
 		}
 		return out;
 	}
 
-	public static int[] changeEndianArray64(int sarray[]) {
-		int out[] = new int[64];
+	public static int[] changeEndianArray64(int[] sarray) {
+		int[] out = new int[64];
 		for (int i = 0; i < 64; i++) {
 			out[i] = sarray[63 - i];
 		}
@@ -186,9 +186,6 @@ public class BitboardUtils {
 	/**
 	 * Flips board vertically
 	 * https://chessprogramming.wikispaces.com/Flipping+Mirroring+and+Rotating
-	 *
-	 * @param board
-	 * @return
 	 */
 	public static long flipVertical(long board) {
 		final long k1 = 0x00FF00FF00FF00FFL;
@@ -284,7 +281,7 @@ public class BitboardUtils {
 	 * square1 must be to the left of square2 (square1 must be a higher bit)
 	 */
 	public static long getHorizontalLine(long square1, long square2) {
-		return (square1 | (square1 - 1)) & ~(square2 - 1);
+		return (square1 | (square1 - 1)) & -square2;
 	}
 
 	public static boolean isWhiteSquare(long square) {

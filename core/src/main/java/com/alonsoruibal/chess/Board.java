@@ -18,8 +18,8 @@ import java.util.HashMap;
 public class Board {
 	public static final int MAX_MOVES = 1024;
 	public static final String FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-	public static final String CHESS960_START_POSITIONS[] = {"QNNRKR", "NQNRKR", "NNQRKR", "NNRQKR", "NNRKQR", "NNRKRQ", "QNRNKR", "NQRNKR", "NRQNKR", "NRNQKR", "NRNKQR", "NRNKRQ", "QNRKNR", "NQRKNR", "NRQKNR", "NRKQNR", "NRKNQR", "NRKNRQ", "QNRKRN", "NQRKRN", "NRQKRN", "NRKQRN", "NRKRQN", "NRKRNQ", "QRNNKR", "RQNNKR", "RNQNKR", "RNNQKR", "RNNKQR", "RNNKRQ", "QRNKNR", "RQNKNR", "RNQKNR", "RNKQNR", "RNKNQR", "RNKNRQ", "QRNKRN", "RQNKRN", "RNQKRN", "RNKQRN", "RNKRQN", "RNKRNQ", "QRKNNR", "RQKNNR", "RKQNNR", "RKNQNR", "RKNNQR", "RKNNRQ", "QRKNRN", "RQKNRN", "RKQNRN", "RKNQRN", "RKNRQN", "RKNRNQ", "QRKRNN", "RQKRNN", "RKQRNN", "RKRQNN", "RKRNQN", "RKRNNQ"};
-	public static final String CHESS960_START_POSITIONS_BISHOPS[] = {"BB------", "B--B----", "B----B--", "B------B", "-BB-----", "--BB----", "--B--B--", "--B----B", "-B--B---", "---BB---", "----BB--", "----B--B", "-B----B-", "---B--B-", "-----BB-", "------BB"};
+	public static final String[] CHESS960_START_POSITIONS = {"QNNRKR", "NQNRKR", "NNQRKR", "NNRQKR", "NNRKQR", "NNRKRQ", "QNRNKR", "NQRNKR", "NRQNKR", "NRNQKR", "NRNKQR", "NRNKRQ", "QNRKNR", "NQRKNR", "NRQKNR", "NRKQNR", "NRKNQR", "NRKNRQ", "QNRKRN", "NQRKRN", "NRQKRN", "NRKQRN", "NRKRQN", "NRKRNQ", "QRNNKR", "RQNNKR", "RNQNKR", "RNNQKR", "RNNKQR", "RNNKRQ", "QRNKNR", "RQNKNR", "RNQKNR", "RNKQNR", "RNKNQR", "RNKNRQ", "QRNKRN", "RQNKRN", "RNQKRN", "RNKQRN", "RNKRQN", "RNKRNQ", "QRKNNR", "RQKNNR", "RKQNNR", "RKNQNR", "RKNNQR", "RKNNRQ", "QRKNRN", "RQKNRN", "RKQNRN", "RKNQRN", "RKNRQN", "RKNRNQ", "QRKRNN", "RQKRNN", "RKQRNN", "RKRQNN", "RKRNQN", "RKRNNQ"};
+	public static final String[] CHESS960_START_POSITIONS_BISHOPS = {"BB------", "B--B----", "B----B--", "B------B", "-BB-----", "--BB----", "--B--B--", "--B----B", "-B--B---", "---BB---", "----BB--", "----B--B", "-B----B-", "---B--B-", "-----BB-", "------BB"};
 
 	// Flags: must be changed only when moving
 	private static final long FLAG_TURN = 0x0001L;
@@ -32,19 +32,19 @@ public class Board {
 	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
 	// For the castlings {White Kingside, White Queenside, Black Kingside, Black Queenside}
-	public static final int CASTLING_KING_DESTINY_INDEX[] = {1, 5, 57, 61};
-	public static final long CASTLING_KING_DESTINY_SQUARE[] = {1L << 1, 1L << 5, 1L << 57, 1L << 61};
-	public static final int CASTLING_ROOK_DESTINY_INDEX[] = {2, 4, 58, 60};
-	public static final long CASTLING_ROOK_DESTINY_SQUARE[] = {1L << 2, 1L << 4, 1L << 58, 1L << 60};
+	public static final int[] CASTLING_KING_DESTINY_INDEX = {1, 5, 57, 61};
+	public static final long[] CASTLING_KING_DESTINY_SQUARE = {1L << 1, 1L << 5, 1L << 57, 1L << 61};
+	public static final int[] CASTLING_ROOK_DESTINY_INDEX = {2, 4, 58, 60};
+	public static final long[] CASTLING_ROOK_DESTINY_SQUARE = {1L << 2, 1L << 4, 1L << 58, 1L << 60};
 
 	// For the SEE SWAP algorithm
 	public static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
 
-	LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
-	int[] legalMoves = new int[256];
+	private final LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
+	final int[] legalMoves = new int[256];
 	int legalMoveCount = -1; // if -1 then legal moves not generated
-	long[] legalMovesKey = {0, 0};
-	public HashMap<Integer, String> movesSan;
+	private final long[] legalMovesKey = {0, 0};
+	private final HashMap<Integer, String> movesSan;
 
 	// Bitboard arrays
 	public long whites = 0;
@@ -66,26 +66,26 @@ public class Board {
 	public String initialFen;
 
 	// History array indexed by moveNumber
-	public long[][] keyHistory; // to detect draw by treefold
-	public int[] moveHistory;
-	public long[] whitesHistory;
-	public long[] blacksHistory;
-	public long[] pawnsHistory;
-	public long[] rooksHistory;
-	public long[] queensHistory;
-	public long[] bishopsHistory;
-	public long[] knightsHistory;
-	public long[] kingsHistory;
-	public long[] flagsHistory;
-	public int[] fiftyMovesRuleHistory;
-	public int[] seeGain;
+	private final long[][] keyHistory; // to detect draw by treefold
+	private final int[] moveHistory;
+	private final long[] whitesHistory;
+	private final long[] blacksHistory;
+	private final long[] pawnsHistory;
+	private final long[] rooksHistory;
+	private final long[] queensHistory;
+	private final long[] bishopsHistory;
+	private final long[] knightsHistory;
+	private final long[] kingsHistory;
+	private final long[] flagsHistory;
+	private final int[] fiftyMovesRuleHistory;
+	private final int[] seeGain;
 
 	// Origin squares for the castling rook {White Kingside, White Queenside, Black Kingside, Black Queenside}
-	public long castlingRooks[] = {0, 0, 0, 0};
+	public final long[] castlingRooks = {0, 0, 0, 0};
 
 	public boolean chess960; // basically decides the destiny square of the castlings
 
-	BitboardAttacks bbAttacks;
+	private final BitboardAttacks bbAttacks;
 
 	public Board() {
 		whitesHistory = new long[MAX_MOVES];
@@ -400,7 +400,7 @@ public class Board {
 		long tmpKings = 0;
 		long tmpFlags;
 		int tmpFiftyMovesRule = 0;
-		long tmpCastlingRooks[] = {0, 0, 0, 0};
+		long[] tmpCastlingRooks = {0, 0, 0, 0};
 		int fenMoveNumber = 0;
 
 		int i = 0;
@@ -446,12 +446,12 @@ public class Board {
 
 			chess960 = false;
 			// Squares to the sides of the kings {White Kingside, White Queenside, Black Kingside, Black Queenside}
-			long whiteKingLateralSquares[] = {
+			long[] whiteKingLateralSquares = {
 					BitboardUtils.b_d & ((tmpKings & tmpWhites) - 1), BitboardUtils.b_d & ~(((tmpKings & tmpWhites) - 1) | tmpKings & tmpWhites),
 					BitboardUtils.b_u & ((tmpKings & tmpBlacks) - 1), BitboardUtils.b_u & ~(((tmpKings & tmpBlacks) - 1) | tmpKings & tmpBlacks)};
 
 			// Squares where we can find a castling rook
-			long possibleCastlingRookSquares[] = {0, 0, 0, 0};
+			long[] possibleCastlingRookSquares = {0, 0, 0, 0};
 
 			for (int k = 0; k < castlings.length(); k++) {
 				char c = castlings.charAt(k);
@@ -530,7 +530,6 @@ public class Board {
 					try {
 						tmpFiftyMovesRule = Integer.parseInt(tokens[4]);
 					} catch (Exception e) {
-						tmpFiftyMovesRule = 0;
 					}
 					if (tokens.length > 5) {
 						String moveNumberString = tokens[5];
@@ -1090,7 +1089,7 @@ public class Board {
 		}
 	}
 
-	public int getLegalMoves(int moves[]) {
+	public int getLegalMoves(int[] moves) {
 		generateLegalMoves();
 		System.arraycopy(legalMoves, 0, moves, 0, (legalMoveCount != -1 ? legalMoveCount : 0));
 		return legalMoveCount;
@@ -1151,7 +1150,7 @@ public class Board {
 		}
 
 		StringBuilder oSB = new StringBuilder();
-		String movesArray[] = moves.split(" ");
+		String[] movesArray = moves.split(" ");
 		int savedMoveNumber = moveNumber;
 
 		for (String moveString : movesArray) {
@@ -1192,7 +1191,7 @@ public class Board {
 		if (moves == null || "".equals(moves.trim())) {
 			return;
 		}
-		String movesArray[] = moves.split(" ");
+		String[] movesArray = moves.split(" ");
 		for (String moveString : movesArray) {
 			int move = Move.getFromString(this, moveString, true);
 			doMove(move);
