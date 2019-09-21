@@ -1,16 +1,14 @@
 package com.alonsoruibal.chess.epdtest;
 
-import com.alonsoruibal.chess.SlowTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertTrue;
-
-public class WinAtChessTest extends EpdTest {
+class WinAtChessTest extends EpdTest {
 	@Test
-	@Category(SlowTest.class)
-	public void testWinAtChess() {
+	@Tag("slow")
+	void testWinAtChess() {
 		processEpdFile(this.getClass().getResourceAsStream("/wacnew.epd"), 1000);
 		assertTrue(fails <= 16);
 	}

@@ -8,35 +8,35 @@ import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchObserver;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.search.SearchStatusInfo;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test tournament using the Noomen Test Suite
  */
-public class TournamentTest implements SearchObserver {
-	static final int GAME_TIME_PER_PLAYER = 5000; // in milliseconds
-	static final int MOVE_TIME_INC = 0; // in milliseconds
-	static final int THINK_TO_DEPTH = Integer.MAX_VALUE; // if > 0, it establishes a depth limit, used with 3 or 6 to make fast tournaments it is useful to fast test evaluator changes
-	static final int THINK_TO_NODES = Integer.MAX_VALUE; // When making changes in the search engine, is better to make tests limiting the search nodes
-	static final int SLEEP = 100;
-	static final int TEST_SIZE = 60;
-	static final int GAMES = 20 * TEST_SIZE; // Test suite is based on 30 games and they are played with whites and blacks, so we make x60 times
+class TournamentTest implements SearchObserver {
+	private static final int GAME_TIME_PER_PLAYER = 5000; // in milliseconds
+	private static final int MOVE_TIME_INC = 0; // in milliseconds
+	private static final int THINK_TO_DEPTH = Integer.MAX_VALUE; // if > 0, it establishes a depth limit, used with 3 or 6 to make fast tournaments it is useful to fast test evaluator changes
+	private static final int THINK_TO_NODES = Integer.MAX_VALUE; // When making changes in the search engine, is better to make tests limiting the search nodes
+	private static final int SLEEP = 100;
+	private static final int TEST_SIZE = 60;
+	private static final int GAMES = 20 * TEST_SIZE; // Test suite is based on 30 games and they are played with whites and blacks, so we make x60 times
 
-	SearchEngine engine1;
-	SearchEngine engine2;
-	Board b;
-	boolean engine1Whites;
-	int endGame;
-	double[] wins;
-	int wtime, btime;
-	SearchParameters params;
-	long lastTime;
+	private SearchEngine engine1;
+	private SearchEngine engine2;
+	private Board b;
+	private boolean engine1Whites;
+	private int endGame;
+	private double[] wins;
+	private int wtime;
+	private int btime;
+	private SearchParameters params;
+	private long lastTime;
 
 	@Test
-	@Category(SlowTest.class)
-	public void testTournament() {
+	@Tag("slow")
+	void testTournament() {
 		Config config1 = new Config();
 		config1.setBook(new FileBook("/book_small.bin"));
 		Config config2 = new Config();
@@ -73,10 +73,10 @@ public class TournamentTest implements SearchObserver {
 			b = new Board();
 
 			// Each position is played two times alternating color
-			String positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
+			String positionPgn = PgnFile.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
 			if (positionPgn == null) {
 				pgnGameNumber = 0;
-				positionPgn = pgn.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
+				positionPgn = PgnFile.getGameNumber(this.getClass().getResourceAsStream("/NoomenTestsuite2012.pgn"), pgnGameNumber >>> 1);
 			} else {
 				pgnGameNumber++;
 			}

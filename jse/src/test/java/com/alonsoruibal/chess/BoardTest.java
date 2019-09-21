@@ -1,21 +1,20 @@
 package com.alonsoruibal.chess;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class BoardTest {
+class BoardTest {
 
 	@Test
-	public void testNoChess960StartPosition() {
+	void testNoChess960StartPosition() {
 		Board b = new Board();
 		b.startPosition();
-		assertEquals(false, b.chess960);
+		assertFalse(b.chess960);
 	}
 
 	@Test
-	public void testChess960StartPosition() {
+	void testChess960StartPosition() {
 		Board b = new Board();
 		b.startPosition(545);
 		System.out.println(b);
@@ -23,7 +22,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testChess960Castling() {
+	void testChess960Castling() {
 		Board b = new Board();
 		b.setFen("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQRKBBNR w KQkq - 0 1");
 		System.out.println(b);
@@ -34,7 +33,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testChess960CastlingKingSameSquare() {
+	void testChess960CastlingKingSameSquare() {
 		Board b = new Board();
 		b.setFen("r1krbnqb/1pp1pppp/1p1p4/8/3P4/8/PPP1PPPP/NRK1RNQB w Qk - 0 1");
 		System.out.println(b);
@@ -45,7 +44,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testChess960CastlingRookSameSquare() {
+	void testChess960CastlingRookSameSquare() {
 		Board b = new Board();
 		b.setFen("7k/pppppppp/8/8/8/8/PPPPPPPP/3RK3 w Q - 0 1");
 		System.out.println(b);
@@ -56,7 +55,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testXFen() {
+	void testXFen() {
 		// http://en.wikipedia.org/wiki/X-FEN
 		Board b = new Board();
 		b.setFen("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BNK1RR w Gkq - 4 11");
@@ -68,21 +67,21 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testMoveNumber1() {
+	void testMoveNumber1() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
 		assertEquals(b.moveNumber, 0);
 	}
 
 	@Test
-	public void testMoveNumber2() {
+	void testMoveNumber2() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b QKqk - 0 1");
 		assertEquals(b.moveNumber, 1);
 	}
 
 	@Test
-	public void testMoveNumber3() {
+	void testMoveNumber3() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 1");
 		b.setFenMove("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b QKqk - 0 1", "e2e4");
@@ -91,7 +90,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testUndo() {
+	void testUndo() {
 		Board b = new Board();
 		b.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		b.doMove(Move.getFromString(b, "e2e4", true));
@@ -102,7 +101,7 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testCastling() {
+	void testCastling() {
 		// Must keep history after castling
 		Board b = new Board();
 		b.setFen("rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/3QP3/PP1B1PPP/RN2KBNR b QKqk - 2 5");
@@ -111,35 +110,35 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testPassedPawn() {
+	void testPassedPawn() {
 		Board b = new Board();
 		// Position from http://en.wikipedia.org/wiki/Passed_pawn
 		b.setFen("7k/8/7p/1P2Pp1P/2Pp1PP1/8/8/7K w - - 0 0");
 		System.out.print(b);
-		assertEquals(b.isPassedPawn(25), false);
-		assertEquals(b.isPassedPawn(26), false);
-		assertEquals(b.isPassedPawn(28), true);
-		assertEquals(b.isPassedPawn(29), true);
-		assertEquals(b.isPassedPawn(32), false);
-		assertEquals(b.isPassedPawn(34), false);
-		assertEquals(b.isPassedPawn(35), true);
-		assertEquals(b.isPassedPawn(38), true);
-		assertEquals(b.isPassedPawn(40), false);
+		assertFalse(b.isPassedPawn(25));
+		assertFalse(b.isPassedPawn(26));
+		assertTrue(b.isPassedPawn(28));
+		assertTrue(b.isPassedPawn(29));
+		assertFalse(b.isPassedPawn(32));
+		assertFalse(b.isPassedPawn(34));
+		assertTrue(b.isPassedPawn(35));
+		assertTrue(b.isPassedPawn(38));
+		assertFalse(b.isPassedPawn(40));
 	}
 
 	@Test
-	public void testAdjacentColumnBug() {
+	void testAdjacentColumnBug() {
 		Board b = new Board();
 		b.setFen("7k/8/2p5/1P6/8/8/8/7K w - - 0 0");
 		System.out.print(b);
-		assertEquals(b.isPassedPawn(38), false);
+		assertFalse(b.isPassedPawn(38));
 	}
 
 	@Test
-	public void testCheckDetection() {
+	void testCheckDetection() {
 		Board b = new Board();
 		b.setFen("4k3/8/8/8/8/2q5/1P6/4K3 w - - 0 1");
 		System.out.println(b.toString());
-		assertTrue("Position must be check", b.getCheck());
+		assertTrue(b.getCheck(), "Position must be check");
 	}
 }

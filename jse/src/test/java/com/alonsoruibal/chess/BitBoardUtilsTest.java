@@ -1,20 +1,20 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BitBoardUtilsTest {
+class BitBoardUtilsTest {
 
 	@Test
-	public void testHorizontalLine() {
+	void testHorizontalLine() {
 		assertEquals((1L << 7) | (1L << 6) | (1L << 5), BitboardUtils.getHorizontalLine((1L << 7), (1L << 5)));
 		assertEquals((1L << 63) | (1L << 62) | (1L << 61) | (1L << 60), BitboardUtils.getHorizontalLine((1L << 63), (1L << 60)));
 	}
 
 	@Test
-	public void testLsb() {
+	void testLsb() {
 		assertEquals((1L), Long.lowestOneBit(1L));
 		assertEquals((1L << 63), Long.lowestOneBit(1L << 63));
 		assertEquals((1L << 32), Long.lowestOneBit((1L << 63) | 1L << 32));
@@ -23,7 +23,7 @@ public class BitBoardUtilsTest {
 	}
 
 	@Test
-	public void testMsb() {
+	void testMsb() {
 		assertEquals((1L), Long.highestOneBit(1L));
 		assertEquals((1L << 63), Long.highestOneBit(1L << 63));
 		assertEquals((1L << 63), Long.highestOneBit((1L << 63) | 1L << 32));

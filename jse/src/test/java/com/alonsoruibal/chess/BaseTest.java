@@ -6,11 +6,11 @@ import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class BaseTest {
+abstract class BaseTest {
 
-	public int getEval(String fen) {
+	int getEval(String fen) {
 		AttacksInfo attacksInfo = new AttacksInfo();
 		CompleteEvaluator evaluator = new CompleteEvaluator();
 		evaluator.debug = true;
@@ -22,7 +22,7 @@ public abstract class BaseTest {
 	/**
 	 * Compares the eval of two fens
 	 */
-	public void compareEval(String fenBetter, String fenWorse, int requiredDifference) {
+	void compareEval(String fenBetter, String fenWorse, int requiredDifference) {
 		System.out.println("*\n* Comparing two board evaluations (first must be better for white):\n*");
 		int valueBetter = getEval(fenBetter);
 		int valueWorse = getEval(fenWorse);
@@ -33,7 +33,6 @@ public abstract class BaseTest {
 
 	public int getSearchQS(String fen) {
 		SearchEngine search = new SearchEngine(new Config());
-		SearchParameters searchParams;
 		search.getBoard().setFen(fen);
 		try {
 			return search.quiescentSearch(0, -Evaluator.MATE, Evaluator.MATE);
@@ -43,7 +42,7 @@ public abstract class BaseTest {
 		return 0;
 	}
 
-	public long getSearchScore(String fen, int depth) {
+	long getSearchScore(String fen, int depth) {
 		SearchEngine search = new SearchEngine(new Config());
 		search.debug = true;
 		SearchParameters searchParams;
@@ -54,7 +53,7 @@ public abstract class BaseTest {
 		return search.getBestMoveScore();
 	}
 
-	public String getSearchBestMoveSan(String fen, int depth) {
+	String getSearchBestMoveSan(String fen, int depth) {
 		SearchEngine search = new SearchEngine(new Config());
 		search.debug = true;
 		SearchParameters searchParams;

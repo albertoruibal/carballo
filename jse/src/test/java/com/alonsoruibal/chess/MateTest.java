@@ -2,38 +2,37 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Mate tests from http://membres.lycos.fr/albillo/
  */
-public class MateTest {
+class MateTest {
 
-	SearchEngine searchEngine;
+	private SearchEngine searchEngine;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		searchEngine = new SearchEngine(new Config());
 	}
 
 	@Test
-	public void testBasic1() {
+	void testBasic1() {
 		testPosition("6k1/8/6K1/8/8/8/8/R7 w", "a1a8");
 	}
 
 	@Test
-	public void testBasic2() {
+	void testBasic2() {
 		testPosition("5rk1/5ppp/8/8/8/4PQ2/r1q2PPP/RR4K1 b", "c2b2");
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate1() {
+	@Tag("slow")
+	void testMate1() {
 		// 1.- Study by Dr. Lasker and Reichhel
 		// posic101
 		// White to play and win:
@@ -42,8 +41,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate2() {
+	@Tag("slow")
+	void testMate2() {
 		// 2.- Marco vs. Maroczy. Paris, 1900
 		// posic102
 		// Black to play and win:
@@ -52,8 +51,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate3() {
+	@Tag("slow")
+	void testMate3() {
 		// 3.- Ortueta vs. Sanz. Madrid, 1933
 		// posic103
 		// Black to play and win:
@@ -62,8 +61,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate4() {
+	@Tag("slow")
+	void testMate4() {
 		// 4.- Unknown players
 		// posic104 
 		// White to play and win:
@@ -72,8 +71,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate5() {
+	@Tag("slow")
+	void testMate5() {
 		// 5.- Sam Loyd, American Chess Nuts, 1868
 		// posic105
 		// White to play and mate in 5:
@@ -82,8 +81,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate6() {
+	@Tag("slow")
+	void testMate6() {
 		// 6.- Sam Loyd, Paris Tournament, 1878
 		// posic106
 		// White to play and mate in 5:
@@ -92,8 +91,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate7() {
+	@Tag("slow")
+	void testMate7() {
 		// 7.- Position taken from "Chess skills in man and machine", Fig. 3.4.
 		// posic107
 		// White to play and win:
@@ -102,8 +101,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate8() {
+	@Tag("slow")
+	void testMate8() {
 		// 8.- Position taken from "How computers play chess"
 		// posic108
 		// White to play and win: 1. b3-b4 
@@ -111,8 +110,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate9() {
+	@Tag("slow")
+	void testMate9() {
 		// 9.- Karpov vs Kasparov, Moscu 1984/85
 		// posic109
 		// White to play and win:
@@ -121,8 +120,8 @@ public class MateTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMate10() {
+	@Tag("slow")
+	void testMate10() {
 		// 10.- Position taken from "How computers play chess"
 		// posic110
 		// White to play and mate in 9: 1. Qg7-b2 

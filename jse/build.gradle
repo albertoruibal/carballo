@@ -4,7 +4,8 @@ archivesBaseName = 'carballo-jse'
 
 dependencies {
     compile project(':core')
-    testCompile 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
@@ -35,18 +36,19 @@ jar {
 
 test {
     ignoreFailures = true
-    enableAssertions = false
+    enableAssertions = true
 
-    testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
+    useJUnitPlatform {
+        includeTags 'slow'
     }
 }
 
 task fastTest(type: Test) {
     ignoreFailures = true
+    enableAssertions = true
 
-    useJUnit {
-        excludeCategories 'com.alonsoruibal.chess.SlowTest'
+    useJUnitPlatform {
+        excludeTags 'slow'
     }
 }
 

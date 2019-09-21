@@ -2,15 +2,14 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.tt.TranspositionTable;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.assertEquals;
-
-public class TranspositionTableTest {
+class TranspositionTableTest {
 
 	@Test
-	public void testTraspositionTable() {
+	void testTraspositionTable() {
 		Board b = new Board();
 		b.startPosition();
 		TranspositionTable tt = new TranspositionTable(20);
@@ -32,7 +31,7 @@ public class TranspositionTableTest {
 	}
 
 	@Test
-	public void testDistanceToInitialPly() {
+	void testDistanceToInitialPly() {
 		TranspositionTable tt = new TranspositionTable(20);
 		Board b = new Board();
 		b.setFen("8/7K/8/8/8/8/R7/7k w - - 0 1");
@@ -45,6 +44,6 @@ public class TranspositionTableTest {
 				4, depthAnalyzed,
 				bestMove, score, 0, false);
 		tt.search(b, 1, false);
-		assertEquals("It does not fix the mate score in the transposition table", tt.getScore(), Evaluator.MATE - 5);
+		assertEquals(tt.getScore(), Evaluator.MATE - 5, "It does not fix the mate score in the transposition table");
 	}
 }

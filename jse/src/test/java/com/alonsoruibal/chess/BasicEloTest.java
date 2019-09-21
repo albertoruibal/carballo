@@ -3,32 +3,31 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.book.FileBook;
 import com.alonsoruibal.chess.search.SearchEngine;
 import com.alonsoruibal.chess.search.SearchParameters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Estimate program ELO, from:
  * http://www.chessmaniac.com/ELORating/ELO_Chess_Rating.shtml
  */
-public class BasicEloTest {
+class BasicEloTest {
 
-	Config config;
-	SearchEngine search;
+	private Config config;
+	private SearchEngine search;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
 		search = new SearchEngine(config);
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testElo() {
+	@Tag("slow")
+	void testElo() {
 		int elo1 = 1000;
 		String move1 = processPosition("r1b3k1/6p1/P1n1pr1p/q1p5/1b1P4/2N2N2/PP1QBPPP/R3K2R b");
 		if ("f6f3".equals(move1)) {

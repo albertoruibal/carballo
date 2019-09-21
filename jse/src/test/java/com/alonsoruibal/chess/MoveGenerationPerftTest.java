@@ -2,28 +2,27 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Do some move generation tests from http://chessprogramming.wikispaces.com/Perft+Results
  * Takes a looooong time
  */
-public class MoveGenerationPerftTest {
+class MoveGenerationPerftTest {
 	private static final int DEPTH = 7;
 
-	MoveGenerator legalMovegen = new LegalMoveGenerator();
-	Board board = new Board();
-	int moveCount[];
-	int captures[];
-	int passantCaptures[];
-	int castles[];
-	int promotions[];
-	int checks[];
-	int checkMates[];
+	private final MoveGenerator legalMovegen = new LegalMoveGenerator();
+	private final Board board = new Board();
+	private int[] moveCount;
+	private int[] captures;
+	private int[] passantCaptures;
+	private int[] castles;
+	private int[] promotions;
+	private int[] checks;
+	private int[] checkMates;
 
 	private void reset() {
 		moveCount = new int[DEPTH];
@@ -45,8 +44,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testInitialPosition() {
+	@Tag("slow")
+	void testInitialPosition() {
 		reset();
 		System.out.println("TEST INITIAL POSITION");
 		board.startPosition();
@@ -62,8 +61,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testPosition2() {
+	@Tag("slow")
+	void testPosition2() {
 		reset();
 		System.out.println("TEST POSITION 2");
 		board.setFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
@@ -79,8 +78,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testPosition3() {
+	@Tag("slow")
+	void testPosition3() {
 		reset();
 		System.out.println("TEST POSITION 3");
 		board.setFen("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
@@ -97,8 +96,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testPosition4() {
+	@Tag("slow")
+	void testPosition4() {
 		reset();
 		System.out.println("TEST POSITION 4");
 		board.setFen("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
@@ -115,8 +114,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testPosition5() {
+	@Tag("slow")
+	void testPosition5() {
 		reset();
 		System.out.println("TEST POSITION 5");
 		board.setFen("rnbqkb1r/pp1p1ppp/2p5/4P3/2B5/8/PPP1NnPP/RNBQK2R w KQkq - 0 6");
@@ -129,7 +128,7 @@ public class MoveGenerationPerftTest {
 	}
 
 	private void recursive(int depth, int depthRemaining) {
-		int moves[] = new int[256];
+		int[] moves = new int[256];
 		int index = legalMovegen.generateMoves(board, moves, 0);
 		for (int i = 0; i < index; i++) {
 			int move = moves[i];
@@ -166,8 +165,8 @@ public class MoveGenerationPerftTest {
 	}
 
 	@Test
-	public void testWeirdError() {
-		int legalMoves[] = new int[256];
+	void testWeirdError() {
+		int[] legalMoves = new int[256];
 		Board board = new Board();
 		int legalMoveCount;
 

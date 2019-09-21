@@ -2,11 +2,11 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AttacksInfoTest {
+class AttacksInfoTest {
 
 	@Test
 	public void testPinnedBishop() {
