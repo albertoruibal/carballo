@@ -212,7 +212,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Decides when we are going to allow null move. Don't do null move in king and pawn endings
+	 * Decides when we are going to allow null move. Don't do null move/reductions in king and pawn endings
 	 */
 	private boolean boardAllowsNullMove() {
 		return (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
@@ -648,7 +648,8 @@ public class SearchEngine implements Runnable {
 					&& !checkEvasion
 					&& !Move.isCaptureOrCheck(node.move) // Include ALL captures
 					&& !Move.isPawnPush678(node.move) // Includes promotions
-					&& !node.moveIterator.getLastMoveIsKiller()) {
+					&& !node.moveIterator.getLastMoveIsKiller()
+					&& boardAllowsNullMove()) {
 
 				// History pruning
 				if (bestMove != Move.NONE
@@ -1024,11 +1025,11 @@ public class SearchEngine implements Runnable {
 	}
 
 	private int evaluateDraw(int distanceToInitialPly) {
-        int nonPawnMat = Long.bitCount(board.knights) * Evaluator.KNIGHT +
-                Long.bitCount(board.bishops) * Evaluator.BISHOP +
-                Long.bitCount(board.rooks) * Evaluator.ROOK +
-                Long.bitCount(board.queens) * Evaluator.QUEEN;
-        int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
+		int nonPawnMat = Long.bitCount(board.knights) * Evaluator.KNIGHT +
+				Long.bitCount(board.bishops) * Evaluator.BISHOP +
+				Long.bitCount(board.rooks) * Evaluator.ROOK +
+				Long.bitCount(board.queens) * Evaluator.QUEEN;
+		int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
 				nonPawnMat <= Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN ? Evaluator.GAME_PHASE_ENDGAME :
 						((nonPawnMat - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN) * Evaluator.GAME_PHASE_MIDGAME) / (Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN);
 
