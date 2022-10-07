@@ -1,15 +1,13 @@
-apply plugin: 'com.jfrog.bintray'
-
 archivesBaseName = 'carballo-gwt'
 
 dependencies {
-    compile 'com.google.gwt:gwt-user:2.8.2'
-    compile 'com.google.gwt:gwt-dev:2.8.2'
-    compile project(':core')
+    implementation 'org.gwtproject:gwt-user:2.10.0'
+    implementation 'org.gwtproject:gwt-dev:2.10.0'
+    implementation project(':core')
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -24,20 +22,5 @@ publishing {
             artifactId = 'carballo-gwt'
             artifact sourcesJar
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['carballoGwt']
-    pkg {
-        repo = 'maven'
-        name = 'com.alonsoruibal.carballo-gwt'
-        desc = 'Carballo (the galician word for Oak, it\'s all about search trees) is an Open Source Java chess engine'
-        licenses = ['GPL-3.0']
-        vcsUrl = 'https://github.com/albertoruibal/carballo.git'
-        githubRepo = 'albertoruibal/carballo'
-        publish = true
     }
 }
