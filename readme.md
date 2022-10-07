@@ -1,5 +1,6 @@
 Carballo Chess Engine
 =====================
+[![Release](https://jitpack.io/v/albertoruibal/carballo.svg)](https://jitpack.io/#albertoruibal/carballo)
 
 Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with three interfaces:
 
