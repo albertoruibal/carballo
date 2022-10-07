@@ -56,7 +56,6 @@ public class MagicMoveGenerator implements MoveGenerator {
 								addMoves(Piece.PAWN, index, index + 16, false, 0);
 							}
 						}
-						generatePawnCapturesFromAttacks(index, ai.attacksFromSquare[index], board.getPassantSquare());
 					} else {
 						if (((square >>> 8) & all) == 0) {
 							addMoves(Piece.PAWN, index, index - 8, false, 0);
@@ -65,8 +64,8 @@ public class MagicMoveGenerator implements MoveGenerator {
 								addMoves(Piece.PAWN, index, index - 16, false, 0);
 							}
 						}
-						generatePawnCapturesFromAttacks(index, ai.attacksFromSquare[index], board.getPassantSquare());
 					}
+					generatePawnCapturesFromAttacks(index, ai.attacksFromSquare[index], board.getPassantSquare());
 				}
 			}
 			square <<= 1;

@@ -109,7 +109,7 @@ public class JSONBook implements Book {
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
-		long randomWeight = (new Double(random.nextDouble() * totalWeight)).longValue();
+		long randomWeight = Double.valueOf(random.nextDouble() * totalWeight).longValue();
 		for (int i = 0; i < moves.size(); i++) {
 			randomWeight -= weights.get(i);
 			if (randomWeight<=0) return moves.get(i);

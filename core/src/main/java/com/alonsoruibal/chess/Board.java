@@ -626,7 +626,7 @@ public class Board {
 		}
 		sb.append("a b c d e f g h   ");
 		sb.append((getTurn() ? "white moves " : "black moves "));
-		sb.append((getWhiteKingsideCastling() ? " W:0-0" : "") + (getWhiteQueensideCastling() ? " W:0-0-0" : "") + (getBlackKingsideCastling() ? " B:0-0" : "") + (getBlackQueensideCastling() ? " B:0-0-0" : ""));
+		sb.append(getWhiteKingsideCastling() ? " W:0-0" : "").append(getWhiteQueensideCastling() ? " W:0-0-0" : "").append(getBlackKingsideCastling() ? " B:0-0" : "").append(getBlackQueensideCastling() ? " B:0-0-0" : "");
 
 		return sb.toString();
 	}

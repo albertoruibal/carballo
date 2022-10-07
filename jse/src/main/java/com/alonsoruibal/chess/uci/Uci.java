@@ -72,22 +72,31 @@ public class Uci implements SearchObserver {
 						String name = nameSB.toString();
 						String value = tokens[index];
 
-						if ("Hash".equals(name)) {
-							config.setTranspositionTableSize(Integer.parseInt(value));
-						} else if ("Ponder".equals(name)) {
-							config.setPonder(Boolean.parseBoolean(value));
-						} else if ("OwnBook".equals(name)) {
-							config.setUseBook(Boolean.parseBoolean(value));
-						} else if ("UCI_Chess960".equals(name)) {
-							config.setUciChess960(Boolean.parseBoolean(value));
-						} else if ("UCI_LimitStrength".equals(name)) {
-							config.setLimitStrength(Boolean.parseBoolean(value));
-						} else if ("UCI_Elo".equals(name)) {
-							config.setElo(Integer.parseInt(value));
-						} else if ("Evaluator".equals(name)) {
-							config.setEvaluator(value);
-						} else if ("ContemptFactor".equals(name)) {
-							config.setContemptFactor(Integer.parseInt(value));
+						switch (name) {
+							case "Hash":
+								config.setTranspositionTableSize(Integer.parseInt(value));
+								break;
+							case "Ponder":
+								config.setPonder(Boolean.parseBoolean(value));
+								break;
+							case "OwnBook":
+								config.setUseBook(Boolean.parseBoolean(value));
+								break;
+							case "UCI_Chess960":
+								config.setUciChess960(Boolean.parseBoolean(value));
+								break;
+							case "UCI_LimitStrength":
+								config.setLimitStrength(Boolean.parseBoolean(value));
+								break;
+							case "UCI_Elo":
+								config.setElo(Integer.parseInt(value));
+								break;
+							case "Evaluator":
+								config.setEvaluator(value);
+								break;
+							case "ContemptFactor":
+								config.setContemptFactor(Integer.parseInt(value));
+								break;
 						}
 						needsReload = true;
 

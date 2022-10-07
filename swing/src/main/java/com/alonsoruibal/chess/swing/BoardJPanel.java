@@ -104,12 +104,11 @@ public class BoardJPanel extends JPanel implements MouseListener, MouseMotionLis
         if (c instanceof PieceJLabel) {
             parent = (SquareJPanel) c.getParent();
             parent.remove(0);
-            parent.add( chessPiece );
-        } else {
+		} else {
             parent = (SquareJPanel) c;
-            parent.add( chessPiece );
-        }
-        chessPiece.setVisible(true);
+		}
+		parent.add( chessPiece );
+		chessPiece.setVisible(true);
         
         // notifies move
         chess.userMove(flip ? originComponent.getIndex() : 63-originComponent.getIndex(), flip ? parent.getIndex() : 63-parent.getIndex());

@@ -31,7 +31,7 @@ class ZobristKeyTest {
 			int[] moves = new int[256];
 			int moveCount = movegen.generateMoves(board, moves, 0);
 			if ((moveCount > 0) && ((i % 100) != 0)) {
-				int move = moves[(new Float(random.nextFloat() * moveCount)).intValue()];
+				int move = moves[Float.valueOf(random.nextFloat() * moveCount).intValue()];
 				board.doMove(move);
 
 				long key1 = ZobristKeyFen.getKey(board.getFen());
