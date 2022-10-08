@@ -53,15 +53,6 @@ Test results in a Intel Xeon CPU limited to 2.0GHz for consistency:
 | ECMGCP           |         5 seconds |     156/183 |     154/183 |
 | Arasan 19a       |        60 seconds |      52/200 |      52/200 |
 
-And some tournament results at time control 5" + 0.1":
-
-```
-Rank Name                          ELO   Games   Score   Draws
-   1 carballo-1.7                   72     480     60%     29%
-   2 carballo-1.6                   33     480     55%     28%
-   3 carballo-1.5                 -107     480     35%     24%
-```
-
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
 Authors
@@ -144,15 +135,20 @@ cd jse
 Changelog
 =========
 
-Version 1.8: Java 8, new desktop application and small source code improvements
+Version 1.8: Java 11, new desktop application and source code improvements
 
-* Change the source code level to Java 1.8
-* Use the gradle wrapper
+* Change the source code level to Java 11
+* Use JitPack for publishing the artifacts
+* Changed artifact group to com.github.albertoruibal.carballo
+* Use the gradle wrapper 7.5.1
+* Update the tests to JUnit 5.9.1
+* HTML5 app updated to GWT 2.10
 * Converted the old Applet to a Swing application
-* Implement the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead of the old "Elo" option
-* Implement "searchmoves" in the UCI interface
+* Implemented the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead of the old "Elo" option
+* Implemented "searchmoves" and "go depth" in the UCI interface
 * UCI Interface: Now "isready" may be called after "position"
 * Add pawn blockade also to the CompleteEvaluator
+* More small bug fixes
 
 Version 1.7: A new Late Move Reductions (LMR) formula
 
