@@ -1,15 +1,13 @@
 package com.alonsoruibal.chess.epdtest;
 
-import com.alonsoruibal.chess.SlowTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-public class WCSACTest extends EpdTest {
+class WCSACTest extends EpdTest {
 
 	@Test
-	@Category(SlowTest.class)
-	public void testWinningChessSacrificesAndCombinations() {
+	@Tag("slow")
+	void testWinningChessSacrificesAndCombinations() {
 		processEpdFile(this.getClass().getResourceAsStream("/wcsac.epd"), 5000);
 	}
 }

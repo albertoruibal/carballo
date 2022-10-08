@@ -4,16 +4,16 @@ import com.alonsoruibal.chess.bitboard.BitboardAttacks;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 
 /**
- * For efficiency Moves are int, this is a static class to threat with this
+ * For efficiency moves are int, this is a static class to threat with this
  * <p>
  * Move format (18 bits):
- * MTXCPPPFFFFFFTTTTTT
- * -------------^ To index (6 bits)
- * -------^ From index (6 bits)
- * ----^ Piece moved (3 bits)
- * ---^ Is capture (1 bit)
- * --^ Is check (1 bit)
- * ^ Move type (2 bits)
+ * MTMTCXPPPFFFFFFTTTTTT
+ * ---------------^ To index (6 bits)
+ * ---------^ From index (6 bits)
+ * ------^ Piece moved (3 bits)
+ * -----^ Is capture (1 bit)
+ * ----^ Is check (1 bit)
+ * ^ Move type (4 bits)
  *
  * @author Alberto Alonso Ruibal
  */
@@ -37,6 +37,7 @@ public class Move {
 	public static final int TYPE_PROMOTION_KNIGHT = 5;
 	public static final int TYPE_PROMOTION_BISHOP = 6;
 	public static final int TYPE_PROMOTION_ROOK = 7;
+	public static final int TYPE_PROMOTION_KING = 8; // For giveaway/suicide variants
 
 	public static final int CHECK_MASK = 0x1 << 16;
 	public static final int CAPTURE_MASK = 0x1 << 15;
@@ -101,7 +102,7 @@ public class Move {
 	}
 
 	public static int getMoveType(int move) {
-		return ((move >>> 17) & 0x7);
+		return ((move >>> 17) & 0xf);
 	}
 
 	// Pawn push to 7 or 8th rank
@@ -116,7 +117,7 @@ public class Move {
 
 	// Pawn push to 5, 6, 7 or 8th rank
 	public static boolean isPawnPush5678(int move) {
-		return Move.getPieceMoved(move) == Piece.PAWN && (Move.getFromIndex(move) < Move.getToIndex(move) ? Move.getToIndex(move) >= 32 : Move.getToIndex(move) < 32);
+		return Move.getPieceMoved(move) == Piece.PAWN && ((Move.getFromIndex(move) < Move.getToIndex(move)) == (Move.getToIndex(move) >= 32));
 	}
 
 	/**
@@ -136,15 +137,14 @@ public class Move {
 				return Piece.KNIGHT;
 			case TYPE_PROMOTION_BISHOP:
 				return Piece.BISHOP;
+			case TYPE_PROMOTION_KING:
+				return Piece.KING;
 		}
 		return 0;
 	}
 
 	/**
 	 * Is capture or promotion
-	 *
-	 * @param move
-	 * @return
 	 */
 	public static boolean isTactical(int move) {
 		return (Move.isCapture(move) || Move.isPromotion(move));
@@ -157,9 +157,6 @@ public class Move {
 	/**
 	 * Given a board creates a move from a String in uci format or short
 	 * algebraic form. verifyValidMove true is mandatory if using sort algebraic
-	 *
-	 * @param board
-	 * @param move
 	 */
 	public static int getFromString(Board board, String move, boolean verifyValidMove) {
 		if (NULL_STRING.equals(move)) {
@@ -180,11 +177,11 @@ public class Move {
 		move = move.replace("+", "").replace("x", "").replace("-", "").replace("=", "").replace("#", "").replace("?", "").replace("!", "").replace(" ", "").replace("0", "o").replace("O", "o");
 
 		if ("oo".equals(move)) {
-			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
+			move = BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.chess960 ? board.castlingRooks[turn ? 0 : 2] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 0 : 2])];
 		} else if ("ooo".equals(move)) {
-			move = BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.kings & mines)] + //
-					BitboardUtils.SQUARE_NAMES[BitboardUtils.square2Index(board.chess960 ? board.castlingRooks[turn ? 1 : 3] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3])];
+			move = BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.kings & mines)] + //
+					BitboardUtils.SQUARE_NAMES[Long.numberOfTrailingZeros(board.chess960 ? board.castlingRooks[turn ? 1 : 3] : Board.CASTLING_KING_DESTINY_SQUARE[turn ? 1 : 3])];
 		} else {
 			char promo = move.charAt(move.length() - 1);
 			switch (Character.toLowerCase(promo)) {
@@ -200,6 +197,9 @@ public class Move {
 				case 'r':
 					moveType = TYPE_PROMOTION_ROOK;
 					break;
+				case 'k':
+					moveType = TYPE_PROMOTION_KING;
+					break;
 			}
 			// If promotion, remove the last char
 			if (moveType != 0) {
@@ -208,7 +208,7 @@ public class Move {
 		}
 
 		// To is always the last 2 characters
-		toIndex = BitboardUtils.algebraic2Index(move.substring(move.length() - 2, move.length()));
+		toIndex = BitboardUtils.algebraic2Index(move.substring(move.length() - 2));
 		long to = 0x1L << toIndex;
 		long from = 0;
 
@@ -266,9 +266,9 @@ public class Move {
 
 		// Treats multiple froms, choosing the first Legal Move
 		while (from != 0) {
-			long myFrom = BitboardUtils.lsb(from);
+			long myFrom = Long.lowestOneBit(from);
 			from ^= myFrom;
-			fromIndex = BitboardUtils.square2Index(myFrom);
+			fromIndex = Long.numberOfTrailingZeros(myFrom);
 
 			boolean capture = false;
 			if ((myFrom & board.pawns) != 0) {
@@ -325,9 +325,6 @@ public class Move {
 
 	/**
 	 * Gets an UCI-String representation of the move
-	 *
-	 * @param move
-	 * @return
 	 */
 	public static String toString(int move) {
 		if (move == Move.NONE) {
@@ -373,10 +370,6 @@ public class Move {
 
 	/**
 	 * It does not append + or #
-	 *
-	 * @param board
-	 * @param move
-	 * @return
 	 */
 	public static String toSan(Board board, int move) {
 		if (move == Move.NONE) {
@@ -394,7 +387,9 @@ public class Move {
 			int move2 = board.legalMoves[i];
 			if (move == move2) {
 				isLegal = true;
-			} else if (getToIndex(move) == getToIndex(move2) && (getPieceMoved(move) == getPieceMoved(move2))) {
+			} else if (getToIndex(move) == getToIndex(move2)
+					&& getPieceMoved(move) == getPieceMoved(move2)
+					&& getMoveType(move) == getMoveType(move2)) {
 				disambiguate = true;
 				if ((getFromIndex(move) % 8) == (getFromIndex(move2) % 8)) {
 					fileEqual = true;
@@ -437,6 +432,7 @@ public class Move {
 		}
 		sb.append(BitboardUtils.index2Algebraic(Move.getToIndex(move)));
 		if (isPromotion(move)) {
+			sb.append("=");
 			sb.append(PIECE_LETTERS_UPPERCASE.charAt(getPiecePromoted(move)));
 		}
 		if (isCheck(move)) {
@@ -445,7 +441,7 @@ public class Move {
 		return sb.toString();
 	}
 
-	public static void printMoves(int moves[], int from, int to) {
+	public static void printMoves(int[] moves, int from, int to) {
 		for (int i = from; i < to; i++) {
 			System.out.print(Move.toStringExt(moves[i]));
 			System.out.print(" ");

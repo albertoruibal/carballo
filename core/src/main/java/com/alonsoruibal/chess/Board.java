@@ -18,8 +18,8 @@ import java.util.HashMap;
 public class Board {
 	public static final int MAX_MOVES = 1024;
 	public static final String FEN_START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-	public static final String CHESS960_START_POSITIONS[] = {"QNNRKR", "NQNRKR", "NNQRKR", "NNRQKR", "NNRKQR", "NNRKRQ", "QNRNKR", "NQRNKR", "NRQNKR", "NRNQKR", "NRNKQR", "NRNKRQ", "QNRKNR", "NQRKNR", "NRQKNR", "NRKQNR", "NRKNQR", "NRKNRQ", "QNRKRN", "NQRKRN", "NRQKRN", "NRKQRN", "NRKRQN", "NRKRNQ", "QRNNKR", "RQNNKR", "RNQNKR", "RNNQKR", "RNNKQR", "RNNKRQ", "QRNKNR", "RQNKNR", "RNQKNR", "RNKQNR", "RNKNQR", "RNKNRQ", "QRNKRN", "RQNKRN", "RNQKRN", "RNKQRN", "RNKRQN", "RNKRNQ", "QRKNNR", "RQKNNR", "RKQNNR", "RKNQNR", "RKNNQR", "RKNNRQ", "QRKNRN", "RQKNRN", "RKQNRN", "RKNQRN", "RKNRQN", "RKNRNQ", "QRKRNN", "RQKRNN", "RKQRNN", "RKRQNN", "RKRNQN", "RKRNNQ"};
-	public static final String CHESS960_START_POSITIONS_BISHOPS[] = {"BB------", "B--B----", "B----B--", "B------B", "-BB-----", "--BB----", "--B--B--", "--B----B", "-B--B---", "---BB---", "----BB--", "----B--B", "-B----B-", "---B--B-", "-----BB-", "------BB"};
+	public static final String[] CHESS960_START_POSITIONS = {"QNNRKR", "NQNRKR", "NNQRKR", "NNRQKR", "NNRKQR", "NNRKRQ", "QNRNKR", "NQRNKR", "NRQNKR", "NRNQKR", "NRNKQR", "NRNKRQ", "QNRKNR", "NQRKNR", "NRQKNR", "NRKQNR", "NRKNQR", "NRKNRQ", "QNRKRN", "NQRKRN", "NRQKRN", "NRKQRN", "NRKRQN", "NRKRNQ", "QRNNKR", "RQNNKR", "RNQNKR", "RNNQKR", "RNNKQR", "RNNKRQ", "QRNKNR", "RQNKNR", "RNQKNR", "RNKQNR", "RNKNQR", "RNKNRQ", "QRNKRN", "RQNKRN", "RNQKRN", "RNKQRN", "RNKRQN", "RNKRNQ", "QRKNNR", "RQKNNR", "RKQNNR", "RKNQNR", "RKNNQR", "RKNNRQ", "QRKNRN", "RQKNRN", "RKQNRN", "RKNQRN", "RKNRQN", "RKNRNQ", "QRKRNN", "RQKRNN", "RKQRNN", "RKRQNN", "RKRNQN", "RKRNNQ"};
+	public static final String[] CHESS960_START_POSITIONS_BISHOPS = {"BB------", "B--B----", "B----B--", "B------B", "-BB-----", "--BB----", "--B--B--", "--B----B", "-B--B---", "---BB---", "----BB--", "----B--B", "-B----B-", "---B--B-", "-----BB-", "------BB"};
 
 	// Flags: must be changed only when moving
 	private static final long FLAG_TURN = 0x0001L;
@@ -32,19 +32,19 @@ public class Board {
 	private static final long FLAGS_PASSANT = 0x0000ff0000ff0000L;
 
 	// For the castlings {White Kingside, White Queenside, Black Kingside, Black Queenside}
-	public static final int CASTLING_KING_DESTINY_INDEX[] = {1, 5, 57, 61};
-	public static final long CASTLING_KING_DESTINY_SQUARE[] = {1L << 1, 1L << 5, 1L << 57, 1L << 61};
-	public static final int CASTLING_ROOK_DESTINY_INDEX[] = {2, 4, 58, 60};
-	public static final long CASTLING_ROOK_DESTINY_SQUARE[] = {1L << 2, 1L << 4, 1L << 58, 1L << 60};
+	public static final int[] CASTLING_KING_DESTINY_INDEX = {1, 5, 57, 61};
+	public static final long[] CASTLING_KING_DESTINY_SQUARE = {1L << 1, 1L << 5, 1L << 57, 1L << 61};
+	public static final int[] CASTLING_ROOK_DESTINY_INDEX = {2, 4, 58, 60};
+	public static final long[] CASTLING_ROOK_DESTINY_SQUARE = {1L << 2, 1L << 4, 1L << 58, 1L << 60};
 
 	// For the SEE SWAP algorithm
 	public static final int[] SEE_PIECE_VALUES = {0, 100, 325, 330, 500, 900, 9999};
 
-	LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
-	int[] legalMoves = new int[256];
+	private final LegalMoveGenerator legalMoveGenerator = new LegalMoveGenerator();
+	final int[] legalMoves = new int[256];
 	int legalMoveCount = -1; // if -1 then legal moves not generated
-	long[] legalMovesKey = {0, 0};
-	public HashMap<Integer, String> movesSan;
+	private final long[] legalMovesKey = {0, 0};
+	private final HashMap<Integer, String> movesSan;
 
 	// Bitboard arrays
 	public long whites = 0;
@@ -66,26 +66,26 @@ public class Board {
 	public String initialFen;
 
 	// History array indexed by moveNumber
-	public long[][] keyHistory; // to detect draw by treefold
-	public int[] moveHistory;
-	public long[] whitesHistory;
-	public long[] blacksHistory;
-	public long[] pawnsHistory;
-	public long[] rooksHistory;
-	public long[] queensHistory;
-	public long[] bishopsHistory;
-	public long[] knightsHistory;
-	public long[] kingsHistory;
-	public long[] flagsHistory;
-	public int[] fiftyMovesRuleHistory;
-	public int[] seeGain;
+	private final long[][] keyHistory; // to detect draw by treefold
+	private final int[] moveHistory;
+	private final long[] whitesHistory;
+	private final long[] blacksHistory;
+	private final long[] pawnsHistory;
+	private final long[] rooksHistory;
+	private final long[] queensHistory;
+	private final long[] bishopsHistory;
+	private final long[] knightsHistory;
+	private final long[] kingsHistory;
+	private final long[] flagsHistory;
+	private final int[] fiftyMovesRuleHistory;
+	private final int[] seeGain;
 
 	// Origin squares for the castling rook {White Kingside, White Queenside, Black Kingside, Black Queenside}
-	public long castlingRooks[] = {0, 0, 0, 0};
+	public final long[] castlingRooks = {0, 0, 0, 0};
 
 	public boolean chess960; // basically decides the destiny square of the castlings
 
-	BitboardAttacks bbAttacks;
+	private final BitboardAttacks bbAttacks;
 
 	public Board() {
 		whitesHistory = new long[MAX_MOVES];
@@ -165,10 +165,46 @@ public class Board {
 		return (flags & FLAG_TURN) == 0;
 	}
 
-	public boolean canCastle(int color) {
-		return (flags & ((flags & FLAG_TURN) == 0 ?
-				FLAG_WHITE_KINGSIDE_CASTLING | FLAG_WHITE_QUEENSIDE_CASTLING :
-				FLAG_BLACK_KINGSIDE_CASTLING | FLAG_BLACK_QUEENSIDE_CASTLING)) != 0;
+	/**
+	 * Returns the castling destiny square, 0 it it cannot castle
+	 * Supports Chess960 (the rook origin square is the castling destiny sq for chess 960)
+	 */
+	public long canCastleKingSide(int color, AttacksInfo ai) {
+		if ((color == Color.W ? getWhiteKingsideCastling() : getBlackKingsideCastling())) {
+			long rookOrigin = castlingRooks[color == Color.W ? 0 : 2];
+			long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[color == Color.W ? 0 : 2];
+			long rookRoute = BitboardUtils.getHorizontalLine(rookDestiny, rookOrigin) & ~rookOrigin;
+			long kingOrigin = kings & (color == Color.W ? whites : blacks);
+			long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[color == Color.W ? 0 : 2];
+			long kingRoute = BitboardUtils.getHorizontalLine(kingOrigin, kingDestiny) & ~kingOrigin;
+
+			if (((whites | blacks) & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0
+					&& (ai.attackedSquaresAlsoPinned[1 - color] & kingRoute) == 0) {
+				return chess960 ? rookOrigin : kingDestiny;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Returns the castling destiny square, 0 it it cannot castle
+	 * Supports Chess960 (the rook origin square is the castling destiny sq for chess 960)
+	 */
+	public long canCastleQueenSide(int color, AttacksInfo ai) {
+		if ((color == Color.W ? getWhiteQueensideCastling() : getBlackQueensideCastling())) {
+			long rookOrigin = castlingRooks[color == Color.W ? 1 : 3];
+			long rookDestiny = Board.CASTLING_ROOK_DESTINY_SQUARE[color == Color.W ? 1 : 3];
+			long rookRoute = BitboardUtils.getHorizontalLine(rookOrigin, rookDestiny) & ~rookOrigin;
+			long kingOrigin = kings & (color == Color.W ? whites : blacks);
+			long kingDestiny = Board.CASTLING_KING_DESTINY_SQUARE[color == Color.W ? 1 : 3];
+			long kingRoute = BitboardUtils.getHorizontalLine(kingDestiny, kingOrigin) & ~kingOrigin;
+
+			if (((whites | blacks) & (kingRoute | rookRoute) & ~rookOrigin & ~kingOrigin) == 0
+					&& (ai.attackedSquaresAlsoPinned[1 - color] & kingRoute) == 0) {
+				return chess960 ? rookOrigin : kingDestiny;
+			}
+		}
+		return 0;
 	}
 
 	public boolean getWhiteKingsideCastling() {
@@ -213,7 +249,7 @@ public class Board {
 						((bishops & square) != 0 ? Piece.BISHOP : //
 								((rooks & square) != 0 ? Piece.ROOK : //
 										((queens & square) != 0 ? Piece.QUEEN : //
-												((kings & square) != 0 ? Piece.KING : '.'))))));
+												((kings & square) != 0 ? Piece.KING : 0))))));
 	}
 
 	public char getPieceAt(long square) {
@@ -364,7 +400,7 @@ public class Board {
 		long tmpKings = 0;
 		long tmpFlags;
 		int tmpFiftyMovesRule = 0;
-		long tmpCastlingRooks[] = {0, 0, 0, 0};
+		long[] tmpCastlingRooks = {0, 0, 0, 0};
 		int fenMoveNumber = 0;
 
 		int i = 0;
@@ -410,12 +446,12 @@ public class Board {
 
 			chess960 = false;
 			// Squares to the sides of the kings {White Kingside, White Queenside, Black Kingside, Black Queenside}
-			long whiteKingLateralSquares[] = {
+			long[] whiteKingLateralSquares = {
 					BitboardUtils.b_d & ((tmpKings & tmpWhites) - 1), BitboardUtils.b_d & ~(((tmpKings & tmpWhites) - 1) | tmpKings & tmpWhites),
 					BitboardUtils.b_u & ((tmpKings & tmpBlacks) - 1), BitboardUtils.b_u & ~(((tmpKings & tmpBlacks) - 1) | tmpKings & tmpBlacks)};
 
 			// Squares where we can find a castling rook
-			long possibleCastlingRookSquares[] = {0, 0, 0, 0};
+			long[] possibleCastlingRookSquares = {0, 0, 0, 0};
 
 			for (int k = 0; k < castlings.length(); k++) {
 				char c = castlings.charAt(k);
@@ -455,10 +491,10 @@ public class Board {
 			}
 
 			// Now store the squares of the castling rooks
-			tmpCastlingRooks[0] = BitboardUtils.lsb(tmpRooks & tmpWhites & possibleCastlingRookSquares[0]);
-			tmpCastlingRooks[1] = BitboardUtils.msb(tmpRooks & tmpWhites & possibleCastlingRookSquares[1]);
-			tmpCastlingRooks[2] = BitboardUtils.lsb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[2]);
-			tmpCastlingRooks[3] = BitboardUtils.msb(tmpRooks & tmpBlacks & possibleCastlingRookSquares[3]);
+			tmpCastlingRooks[0] = Long.lowestOneBit(tmpRooks & tmpWhites & possibleCastlingRookSquares[0]);
+			tmpCastlingRooks[1] = Long.highestOneBit(tmpRooks & tmpWhites & possibleCastlingRookSquares[1]);
+			tmpCastlingRooks[2] = Long.lowestOneBit(tmpRooks & tmpBlacks & possibleCastlingRookSquares[2]);
+			tmpCastlingRooks[3] = Long.highestOneBit(tmpRooks & tmpBlacks & possibleCastlingRookSquares[3]);
 
 			// Set the castling flags and detect Chess960
 			if (tmpCastlingRooks[0] != 0) {
@@ -494,7 +530,6 @@ public class Board {
 					try {
 						tmpFiftyMovesRule = Integer.parseInt(tokens[4]);
 					} catch (Exception e) {
-						tmpFiftyMovesRule = 0;
 					}
 					if (tokens.length > 5) {
 						String moveNumberString = tokens[5];
@@ -591,7 +626,7 @@ public class Board {
 		}
 		sb.append("a b c d e f g h   ");
 		sb.append((getTurn() ? "white moves " : "black moves "));
-		sb.append((getWhiteKingsideCastling() ? " W:0-0" : "") + (getWhiteQueensideCastling() ? " W:0-0-0" : "") + (getBlackKingsideCastling() ? " B:0-0" : "") + (getBlackQueensideCastling() ? " B:0-0-0" : ""));
+		sb.append(getWhiteKingsideCastling() ? " W:0-0" : "").append(getWhiteQueensideCastling() ? " W:0-0-0" : "").append(getBlackKingsideCastling() ? " B:0-0" : "").append(getBlackQueensideCastling() ? " B:0-0-0" : "");
 
 		return sb.toString();
 	}
@@ -752,6 +787,10 @@ public class Board {
 							rooks |= to;
 							key[color] ^= ZobristKey.rook[color][toIndex];
 							break;
+						case Move.TYPE_PROMOTION_KING:
+							kings |= to;
+							key[color] ^= ZobristKey.king[color][toIndex];
+							break;
 					}
 				} else {
 					pawns ^= moveMask;
@@ -780,7 +819,7 @@ public class Board {
 					int j = (color << 1) + (moveType == Move.TYPE_QUEENSIDE_CASTLING ? 1 : 0);
 
 					toIndex = CASTLING_KING_DESTINY_INDEX[j];
-					int originRookIndex = BitboardUtils.square2Index(castlingRooks[j]);
+					int originRookIndex = Long.numberOfTrailingZeros(castlingRooks[j]);
 					int destinyRookIndex = CASTLING_ROOK_DESTINY_INDEX[j];
 					// Recalculate move mask for chess960 castlings
 					moveMask = from ^ (1L << toIndex);
@@ -940,15 +979,15 @@ public class Board {
 		// Kk, KNk, KNNk (KNnk IS NOT a draw), KBk, KBbk (with bishops in the same color)
 		return (pawns == 0 && rooks == 0 && queens == 0) &&
 				((bishops == 0 && knights == 0)
-						|| (knights == 0 && BitboardUtils.popCount(bishops) == 1)
+						|| (knights == 0 && Long.bitCount(bishops) == 1)
 						|| (bishops == 0 &&
-						(BitboardUtils.popCount(knights) == 1
-								|| (BitboardUtils.popCount(knights) == 2 // KNNk, check same color
-								&& (BitboardUtils.popCount(knights & whites) == 2
-								|| BitboardUtils.popCount(knights & ~whites) == 2))))
+						(Long.bitCount(knights) == 1
+								|| (Long.bitCount(knights) == 2 // KNNk, check same color
+								&& (Long.bitCount(knights & whites) == 2
+								|| Long.bitCount(knights & ~whites) == 2))))
 						|| (knights == 0
-						&& BitboardUtils.popCount(bishops & whites) == 1
-						&& BitboardUtils.popCount(bishops & ~whites) == 1
+						&& Long.bitCount(bishops & whites) == 1
+						&& Long.bitCount(bishops & ~whites) == 1
 						&& (BitboardUtils.getSameColorSquares(bishops & whites) & bishops & ~whites) != 0
 				)
 				);
@@ -958,11 +997,11 @@ public class Board {
 		return see(Move.getFromIndex(move), Move.getToIndex(move), Move.getPieceMoved(move), Move.isCapture(move) ? Move.getPieceCaptured(this, move) : 0);
 	}
 
-	public int see(int move, AttacksInfo attacksInfo) {
+	public int see(int move, AttacksInfo ai) {
 		int them = getTurn() ? 1 : 0;
-		if (attacksInfo.boardKey == getKey()
-				&& (attacksInfo.attackedSquares[them] & Move.getToSquare(move)) == 0
-				&& (attacksInfo.mayPin[them] & Move.getFromSquare(move)) == 0) {
+		if (ai.boardKey == getKey()
+				&& (ai.attackedSquares[them] & Move.getToSquare(move)) == 0
+				&& (ai.mayPin[them] & Move.getFromSquare(move)) == 0) {
 			return Move.isCapture(move) ? Board.SEE_PIECE_VALUES[Move.getPieceCaptured(this, move)] : 0;
 		} else {
 			return see(move);
@@ -1005,7 +1044,7 @@ public class Board {
 			} else if ((fromCandidates = attacks & kings & side) != 0) {
 				pieceMoved = Piece.KING;
 			}
-			fromSquare = BitboardUtils.lsb(fromCandidates);
+			fromSquare = Long.lowestOneBit(fromCandidates);
 
 		} while (fromSquare != 0);
 
@@ -1050,7 +1089,7 @@ public class Board {
 		}
 	}
 
-	public int getLegalMoves(int moves[]) {
+	public int getLegalMoves(int[] moves) {
 		generateLegalMoves();
 		System.arraycopy(legalMoves, 0, moves, 0, (legalMoveCount != -1 ? legalMoveCount : 0));
 		return legalMoveCount;
@@ -1111,7 +1150,7 @@ public class Board {
 		}
 
 		StringBuilder oSB = new StringBuilder();
-		String movesArray[] = moves.split(" ");
+		String[] movesArray = moves.split(" ");
 		int savedMoveNumber = moveNumber;
 
 		for (String moveString : movesArray) {
@@ -1152,7 +1191,7 @@ public class Board {
 		if (moves == null || "".equals(moves.trim())) {
 			return;
 		}
-		String movesArray[] = moves.split(" ");
+		String[] movesArray = moves.split(" ");
 		for (String moveString : movesArray) {
 			int move = Move.getFromString(this, moveString, true);
 			doMove(move);

@@ -1,9 +1,7 @@
-apply plugin: 'com.jfrog.bintray'
-
 archivesBaseName = 'carballo-core'
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -18,20 +16,5 @@ publishing {
             artifactId = 'carballo-core'
             artifact sourcesJar
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['carballoCore']
-    pkg {
-        repo = 'maven'
-        name = 'com.alonsoruibal.carballo-core'
-        desc = 'Carballo (the galician word for Oak, it\'s all about search trees) is an Open Source Java chess engine'
-        licenses = ['GPL-3.0']
-        vcsUrl = 'https://github.com/albertoruibal/carballo.git'
-        githubRepo = 'albertoruibal/carballo'
-        publish = true
     }
 }

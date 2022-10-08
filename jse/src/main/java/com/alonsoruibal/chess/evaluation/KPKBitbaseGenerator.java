@@ -64,7 +64,7 @@ public class KPKBitbaseGenerator {
 			long blackKingAttacks = BitboardAttacks.getInstance().king[blackKingIndex];
 
 			// Check if two pieces are on the same square or if a king can be captured
-			if (BitboardUtils.distance(whiteKingIndex, blackKingIndex) <= 1
+			if (BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex] <= 1
 					|| whiteKingIndex == pawnIndex
 					|| blackKingIndex == pawnIndex
 					|| (whiteToMove && (pawnAttacks & blackKingSquare) != 0)) {
@@ -73,7 +73,7 @@ public class KPKBitbaseGenerator {
 				// Immediate win if a pawn can be promoted without getting captured
 				if (BitboardUtils.getRankOfIndex(pawnIndex) == RANK_7
 						&& whiteKingIndex != pawnIndex + DELTA_N
-						&& ((BitboardUtils.distance(blackKingIndex, pawnIndex + DELTA_N) > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0))) {
+						&& ((BitboardUtils.DISTANCE[blackKingIndex][pawnIndex + DELTA_N] > 1 || (whiteKingAttacks & pawnSquareNextRank) != 0))) {
 					result = RESULT_WIN;
 				}
 			}
@@ -108,10 +108,10 @@ public class KPKBitbaseGenerator {
 
 			// test king moves
 			while (b != 0) {
-				long b1 = BitboardUtils.lsb(b);
+				long b1 = Long.lowestOneBit(b);
 				b = b & ~b1;
-				r |= whiteToMove ? db.get(index(false, blackKingIndex, BitboardUtils.square2Index(b1), pawnIndex)).getResult() : //
-						db.get(index(true, BitboardUtils.square2Index(b1), whiteKingIndex, pawnIndex)).getResult();
+				r |= whiteToMove ? db.get(index(false, blackKingIndex, Long.numberOfTrailingZeros(b1), pawnIndex)).getResult() : //
+						db.get(index(true, Long.numberOfTrailingZeros(b1), whiteKingIndex, pawnIndex)).getResult();
 			}
 
 			if (whiteToMove && BitboardUtils.getRankOfIndex(pawnIndex) < RANK_7) {
@@ -162,7 +162,7 @@ public class KPKBitbaseGenerator {
 		logger.debug("Generated KPK tables in " + (time2 - time1) + "ms, initialization = " + (time1b - time1) + "ms");
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		// Prints bitbase in java array format
 		KPKBitbaseGenerator kpkBitbase = new KPKBitbaseGenerator();
 		kpkBitbase.init();

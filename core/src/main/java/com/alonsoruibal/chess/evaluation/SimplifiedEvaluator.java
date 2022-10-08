@@ -11,14 +11,14 @@ import com.alonsoruibal.chess.bitboard.AttacksInfo;
  */
 public class SimplifiedEvaluator extends Evaluator {
 
-	static final int PAWN = 100;
-	static final int KNIGHT = 320;
-	static final int BISHOP = 330;
-	static final int ROOK = 500;
-	static final int QUEEN = 900;
+	private static final int PAWN = 100;
+	private static final int KNIGHT = 320;
+	private static final int BISHOP = 330;
+	private static final int ROOK = 500;
+	private static final int QUEEN = 900;
 
 	// Values are rotated for whites, so when white is playing is like shown in the code TODO at the moment must be symmetric
-	public static final int[] pawnSquare = { //
+	private static final int[] pawnSquare = { //
 			0, 0, 0, 0, 0, 0, 0, 0, //
 			50, 50, 50, 50, 50, 50, 50, 50, //
 			10, 10, 20, 30, 30, 20, 10, 10, //
@@ -29,7 +29,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			0, 0, 0, 0, 0, 0, 0, 0 //
 	};
 
-	public static final int[] knightSquare = { //
+	private static final int[] knightSquare = { //
 			-50, -40, -30, -30, -30, -30, -40, -50, //
 			-40, -20, 0, 0, 0, 0, -20, -40, //
 			-30, 0, 10, 15, 15, 10, 0, -30, //
@@ -40,7 +40,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			-50, -40, -30, -30, -30, -30, -40, -50, //
 	};
 
-	public static final int[] bishopSquare = { //
+	private static final int[] bishopSquare = { //
 			-20, -10, -10, -10, -10, -10, -10, -20, //
 			-10, 0, 0, 0, 0, 0, 0, -10, //
 			-10, 0, 5, 10, 10, 5, 0, -10, //
@@ -51,7 +51,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			-20, -10, -10, -10, -10, -10, -10, -20, //
 	};
 
-	public static final int[] rookSquare = { //
+	private static final int[] rookSquare = { //
 			0, 0, 0, 0, 0, 0, 0, 0, //
 			5, 10, 10, 10, 10, 10, 10, 5, //
 			-5, 0, 0, 0, 0, 0, 0, -5, //
@@ -62,7 +62,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			0, 0, 0, 5, 5, 0, 0, 0 //
 	};
 
-	public static final int[] queenSquare = { //
+	private static final int[] queenSquare = { //
 			-20, -10, -10, -5, -5, -10, -10, -20, //
 			-10, 0, 0, 0, 0, 0, 0, -10, //
 			-10, 0, 5, 5, 5, 5, 0, -10, //
@@ -73,7 +73,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			-20, -10, -10, -5, -5, -10, -10, -20 //
 	};
 
-	public static final int[] kingSquareOpening = { //
+	private static final int[] kingSquareOpening = { //
 			-30, -40, -40, -50, -50, -40, -40, -30, //
 			-30, -40, -40, -50, -50, -40, -40, -30, //
 			-30, -40, -40, -50, -50, -40, -40, -30, //
@@ -84,7 +84,7 @@ public class SimplifiedEvaluator extends Evaluator {
 			20, 30, 10, 0, 0, 10, 30, 20 //
 	};
 
-	public static final int[] kingSquareEndGame = { //
+	private static final int[] kingSquareEndGame = { //
 			-50, -40, -30, -20, -20, -30, -40, -50, //
 			-30, -20, -10, 0, 0, -10, -20, -30, //
 			-30, -10, 20, 30, 30, 20, -10, -30, //
@@ -99,13 +99,13 @@ public class SimplifiedEvaluator extends Evaluator {
 	public int evaluate(Board board, AttacksInfo attacksInfo) {
 		long all = board.getAll();
 
-		int materialValue[] = {0, 0};
-		int pawnMaterialValue[] = {0, 0};
-		int pcsqValue[] = {0, 0};
-		int pcsqOpeningValue[] = {0, 0};
-		int pcsqEndgameValue[] = {0, 0};
+		int[] materialValue = {0, 0};
+		int[] pawnMaterialValue = {0, 0};
+		int[] pcsqValue = {0, 0};
+		int[] pcsqOpeningValue = {0, 0};
+		int[] pcsqEndgameValue = {0, 0};
 
-		boolean noQueen[] = {true, true};
+		boolean[] noQueen = {true, true};
 
 		long square = 1;
 		byte index = 0;

@@ -1,21 +1,21 @@
 package com.alonsoruibal.chess.pgn;
 
 public class Game {
-	long id;
-	String event;
-	String eventDate;
-	String site;
-	String date;
-	String round;
-	String white;
-	String black;
-	Integer whiteElo;
-	Integer whiteFideId;
-	Integer blackElo;
-	Integer blackFideId;
-	String fenStartPosition;
-	String result;
-	String eco;
+	private long id;
+	private String event;
+	private String eventDate;
+	private String site;
+	private String date;
+	private String round;
+	private String white;
+	private String black;
+	private Integer whiteElo;
+	private Integer whiteFideId;
+	private Integer blackElo;
+	private Integer blackFideId;
+	private String fenStartPosition;
+	private String result;
+	private String eco;
 	GameNodeVariation pv;
 
 	public long getId() {
@@ -31,7 +31,7 @@ public class Game {
 	}
 
 	public void setEvent(String event) {
-		this.event = event.replace("?", "");
+		this.event = event == null ? null : event.replace("?", "");
 	}
 
 	public String getSite() {
@@ -39,7 +39,7 @@ public class Game {
 	}
 
 	public void setSite(String site) {
-		this.site = site.replace("?", "");
+		this.site = site == null ? null : site.replace("?", "");
 	}
 
 	public String getRound() {
@@ -47,7 +47,7 @@ public class Game {
 	}
 
 	public void setRound(String round) {
-		this.round = round.replace("?", "");
+		this.round = round == null ? null : round.replace("?", "");
 	}
 
 	public String getWhite() {
@@ -111,7 +111,7 @@ public class Game {
 	}
 
 	public void setDate(String date) {
-		this.date = date.replace(".??.??", "").replace("????", "");
+		this.date = date == null ? null : date.replace(".??.??", "").replace("????", "");
 	}
 
 	public String getEventDate() {
@@ -119,8 +119,7 @@ public class Game {
 	}
 
 	public void setEventDate(String eventDate) {
-		this.eventDate = eventDate.replace(".??.??", "").replace("????", "");
-		;
+		this.eventDate = eventDate == null ? null : eventDate.replace(".??.??", "").replace("????", "");
 	}
 
 	public Integer getWhiteFideId() {

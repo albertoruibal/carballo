@@ -37,34 +37,34 @@ import java.util.ArrayList;
  *
  * @author rui
  */
-public class EpdTest implements SearchObserver {
+class EpdTest implements SearchObserver {
 	private static final Logger logger = Logger.getLogger("EpdTest");
 
-	SearchEngine search;
+	private SearchEngine search;
 
-	int solved;
+	private int solved;
 	int fails;
-	int total;
-	int totalTime;
-	long totalNodes;
-	int lctPoints;
+	private int total;
+	private int totalTime;
+	private long totalNodes;
+	private int lctPoints;
 
-	int avoidMoves[];
-	int bestMoves[];
-	boolean solutionFound;
+	private int[] avoidMoves;
+	private int[] bestMoves;
+	private boolean solutionFound;
 
-	int bestMove;
-	int solutionTime;
-	long solutionNodes;
+	private int bestMove;
+	private int solutionTime;
+	private long solutionNodes;
 
-	ArrayList<Integer> allSolutionTimes;
-	ArrayList<Long> allSolutionNodes;
+	private ArrayList<Integer> allSolutionTimes;
+	private ArrayList<Long> allSolutionNodes;
 
 	public int getSolved() {
 		return solved;
 	}
 
-	public int getLctPoints() {
+	int getLctPoints() {
 		return lctPoints;
 	}
 
@@ -73,7 +73,7 @@ public class EpdTest implements SearchObserver {
 		return processEpdFile(config, is, timeLimit);
 	}
 
-	long processEpdFile(Config config, InputStream is, int timeLimit) {
+	private long processEpdFile(Config config, InputStream is, int timeLimit) {
 		logger.debug(config);
 		search = new SearchEngine(config);
 		search.debug = true;
@@ -167,8 +167,8 @@ public class EpdTest implements SearchObserver {
 		if (movesString == null) {
 			return new int[0];
 		}
-		String movesStringArray[] = movesString.split(" ");
-		int moves[] = new int[movesStringArray.length];
+		String[] movesStringArray = movesString.split(" ");
+		int[] moves = new int[movesStringArray.length];
 		for (int i = 0; i < moves.length; i++) {
 			moves[i] = Move.getFromString(search.getBoard(), movesStringArray[i], true);
 		}

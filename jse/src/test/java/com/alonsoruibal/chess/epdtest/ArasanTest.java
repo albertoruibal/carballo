@@ -1,14 +1,12 @@
 package com.alonsoruibal.chess.epdtest;
 
-import com.alonsoruibal.chess.SlowTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-public class ArasanTest extends EpdTest {
+class ArasanTest extends EpdTest {
 
 	@Test
-	@Category(SlowTest.class)
+	@Tag("slow")
 	public void testArasan() {
 		processEpdFile(this.getClass().getResourceAsStream("/arasan.epd"), 60000);
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class GameNodeVariation extends GameNode {
 
-	public ArrayList<GameNode> variation = new ArrayList<>();
+	public final ArrayList<GameNode> variation = new ArrayList<>();
 
 	public void add(GameNode gameNode) {
 		variation.add(gameNode);

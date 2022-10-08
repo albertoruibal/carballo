@@ -2,17 +2,15 @@ package com.alonsoruibal.chess.evaluation;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.log.Logger;
 
 
 /**
  * Derived from Stockfish bitbase.cpp
  */
 public class KPKBitbase {
-	private static final Logger logger = Logger.getLogger("KPKBitbase");
 
 	// Each int stores results of 32 positions, one per bit, 24Kbytes
-	public int[] bitbase = {
+	private final static int[] BITBASE = {
 			0xfffffcfc, 0xff7fffff, 0xfffff8f8, 0xff7fffff, 0xfffff1f1, 0xff7fffff, 0xffffe3e3, 0xff7fffff, 0xffffc7c7, 0xff7fffff, 0xffff8f8f, 0xff7fffff, 0xffff1f1f, 0xff7fffff, 0xffff3f3f, 0xff7fffff, 0xfffcfcfc, 0xff7fffff, 0xfff8f8f8, 0xff7fffff, 0xfff1f1f1, 0xff7fffff, 0xffe3e3e3, 0xff7fffff, 0xffc7c7c7, 0xff7fffff, 0xff8f8f8f, 0xff7fffff, 0xff1f1f1f, 0xff7fffff, 0xff3f3f3f, 0xff7fffff, 0xfcfcfcff, 0xff7fffff, 0xf8f8f8ff, 0xff7fffff, 0xf1f1f1ff, 0xff7fffff, 0xe3e3e3ff, 0xff7fffff, 0xc7c7c7ff, 0xff7fffff, 0x8f8f8fff, 0xff7fffff, 0x1f1f1fff, 0xff7fffff, 0x3f3f3fff, 0xff7fffff, 0xfcfcffff, 0xff7ffffc,
 			0xf8f8ffff, 0xff7ffff8, 0xf1f1ffff, 0xff7ffff1, 0xe3e3ffff, 0xff7fffe3, 0xc7c7ffff, 0xff7fffc7, 0x8f8fffff, 0xff7fff8f, 0x1f1fffff, 0xff7fff1f, 0x3f3fffff, 0xff7fff3f, 0xfcffffff, 0xff7ffcfc, 0xf8ffffff, 0xff7ff8f8, 0xf1ffffff, 0xff7ff1f1, 0xe3ffffff, 0xff7fe3e3, 0xc7ffffff, 0xff7fc7c7, 0x8fffffff, 0xff7f8f8f, 0x1fffffff, 0xff7f1f1f, 0x3fffffff, 0xff7f3f3f, 0xffffffff, 0xff7cfcfc, 0xffffffff, 0xff78f8f8, 0xffffffff, 0xff71f1f1, 0xffffffff, 0xff63e3e3, 0xffffffff, 0x7f47c7c7, 0x0, 0x60008000, 0x0, 0x40000000, 0x0, 0xc0000000, 0xffffffff, 0xfc7cfcff, 0xffffffff, 0xf878f8ff,
 			0xffffffff, 0xf171f1ff, 0xffffffff, 0xe363e3ff, 0xffffffff, 0x4747c7ff, 0x0, 0x8000, 0x0, 0x0, 0x0, 0x0, 0xffffffff, 0xfc7cffff, 0xffffffff, 0xf878ffff, 0xffffffff, 0xf171ffff, 0xffffffff, 0xe363ffff, 0xffffffff, 0x4747ffff, 0x0, 0xe000, 0x0, 0x0, 0x0, 0x0, 0xfffffcfc, 0xff7fffff, 0xfffff8f8, 0xff7fffff, 0xfffff1f1, 0xff7fffff, 0xffffe3e3, 0xff7fffff, 0xffffc7c7, 0xff7fffff, 0xffff8f8f, 0xff7fffff, 0xffff1f1f, 0xff7fffff, 0xffff3f3f, 0xff7fffff, 0xfffcfcfc, 0xff7fffff, 0xfff8f8f8, 0xff7fffff, 0xfff1f1f1, 0xff7fffff,
@@ -139,7 +137,7 @@ public class KPKBitbase {
 	};
 
 
-	static final int RANK_7 = 6;
+	private static final int RANK_7 = 6;
 
 	// A KPK bitbase index is an integer in [0, IndexMax] range
 	//
@@ -150,7 +148,7 @@ public class KPKBitbase {
 	// bit    12: side to move 1 WHITE
 	// bit 13-14: white pawn file (from FILE_H to FILE_E)
 	// bit 15-17: white pawn RANK_7 - rank (from RANK_7 - RANK_7 to RANK_7 - RANK_2)
-	int index(boolean whitetoMove, int blackKingIndex, int whiteKingIndex, int pawnIndex) {
+	private int index(boolean whitetoMove, int blackKingIndex, int whiteKingIndex, int pawnIndex) {
 		return whiteKingIndex + (blackKingIndex << 6) + //
 				((whitetoMove ? 1 : 0) << 12) + //
 				(BitboardUtils.getFileOfIndex(pawnIndex) << 13) + ((RANK_7 - BitboardUtils.getRankOfIndex(pawnIndex)) << 15);
@@ -158,13 +156,13 @@ public class KPKBitbase {
 
 	public boolean probe(int whiteKingIndex, int whitePawnIndex, int blackKingIndex, boolean whiteToMove) {
 		int idx = index(whiteToMove, blackKingIndex, whiteKingIndex, whitePawnIndex);
-		return (bitbase[idx / 32] & (1 << (idx & 0x1F))) != 0;
+		return (BITBASE[idx / 32] & (1 << (idx & 0x1F))) != 0;
 	}
 
 	public boolean probe(Board board) {
-		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
-		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
-		int pawnIndex = BitboardUtils.square2Index(board.pawns);
+		int whiteKingIndex = Long.numberOfTrailingZeros(board.kings & board.whites);
+		int blackKingIndex = Long.numberOfTrailingZeros(board.kings & board.blacks);
+		int pawnIndex = Long.numberOfTrailingZeros(board.pawns);
 		boolean whiteToMove = board.getTurn();
 
 		// Pawn is black

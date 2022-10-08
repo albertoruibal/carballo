@@ -5,16 +5,16 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class UciEngine implements Runnable {
-	String command;
-	Process process;
-	PrintWriter pWriter;
-	Scanner scanner;
+	private String command;
+	private Process process;
+	private PrintWriter pWriter;
+	private Scanner scanner;
 
-	Thread thread;
+	private Thread thread;
 
-	boolean uciOk = false;
-	boolean readyOk = false;
-	String bestMove = null;
+	private boolean uciOk = false;
+	private boolean readyOk = false;
+	private String bestMove = null;
 
 	public UciEngine(String command) {
 		this.command = command;
@@ -60,7 +60,7 @@ public class UciEngine implements Runnable {
 				} else if (line.startsWith("readyok")) {
 					readyOk = true;
 				} else if (line.startsWith("bestmove")) {
-					String tokens[] = line.split(" ");
+					String[] tokens = line.split(" ");
 					bestMove = tokens[1];
 				}
 			}
@@ -99,6 +99,13 @@ public class UciEngine implements Runnable {
 		bestMove = null;
 		sendCommand("position fen " + fen);
 		sendCommand("go nodes " + nodes);
+		return waitBestMove();
+	}
+
+	public String goDepth(String fen, String moves, int depth) {
+		bestMove = null;
+		sendCommand("position fen " + fen + " moves " + moves);
+		sendCommand("go depth " + depth);
 		return waitBestMove();
 	}
 

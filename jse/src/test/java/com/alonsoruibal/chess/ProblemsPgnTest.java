@@ -3,14 +3,13 @@ package com.alonsoruibal.chess;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.pgn.PgnFile;
 import com.alonsoruibal.chess.pgn.PgnImportExport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-public class ProblemsPgnTest {
+class ProblemsPgnTest {
 	private static final Logger logger = Logger.getLogger("ProblemsPgnTest");
 
-	public void processPgnFile(String file, int count) {
+	void processPgnFile(String file, int count) {
 
 		Board board = new Board();
 
@@ -22,8 +21,8 @@ public class ProblemsPgnTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testProblems() {
+	@Tag("slow")
+	void testProblems() {
 		try {
 			processPgnFile("/problems_easy.pgn", 311);
 			processPgnFile("/problems_medium.pgn", 928);

@@ -1,15 +1,14 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.evaluation.Evaluator;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.assertTrue;
-
-public class ContemptFactorTest extends BaseTest {
+class ContemptFactorTest extends BaseTest {
 
 	@Test
-	public void testContemp1() {
-		assertTrue(getSearchScore("7k/7p/5P1K/8/8/8/8/8 w", 18) == Evaluator.DRAW);
+	void testContemp1() {
+		assertEquals(getSearchScore("7k/7p/5P1K/8/8/8/8/8 w", 18), Evaluator.DRAW);
 	}
 }

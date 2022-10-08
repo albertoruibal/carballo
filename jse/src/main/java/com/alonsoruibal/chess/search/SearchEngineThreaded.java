@@ -13,6 +13,7 @@ public class SearchEngineThreaded extends SearchEngine {
 	/**
 	 * Threaded version
 	 */
+	@Override
 	public void go(SearchParameters searchParameters) {
 		synchronized (startStopSearchLock) {
 			if (!initialized || searching) {
@@ -29,16 +30,21 @@ public class SearchEngineThreaded extends SearchEngine {
 	/**
 	 * Stops thinking
 	 */
+	@Override
 	public void stop() {
 		synchronized (startStopSearchLock) {
 			while (searching) {
 				super.stop();
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				sleep(10);
 			}
+		}
+	}
+
+	@Override
+	public void sleep(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
 		}
 	}
 }

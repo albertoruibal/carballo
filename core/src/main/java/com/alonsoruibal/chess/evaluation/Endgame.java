@@ -35,7 +35,7 @@ public class Endgame {
 			130, 140, 150, 160, 170, 180, 190, 200
 	};
 
-	static KPKBitbase kpkBitbase;
+	private static final KPKBitbase kpkBitbase;
 
 	static {
 		kpkBitbase = new KPKBitbase();
@@ -130,14 +130,14 @@ public class Endgame {
 
 	// One side does not have pieces, drives the king to the corners and try to approximate the kings
 	private static int endgameKXK(Board board, boolean whiteDominant, int knights, int bishops, int rooks, int queens) {
-		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
-		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
+		int whiteKingIndex = Long.numberOfTrailingZeros(board.kings & board.whites);
+		int blackKingIndex = Long.numberOfTrailingZeros(board.kings & board.blacks);
 		int value = Evaluator.KNOWN_WIN +
 				knights * Evaluator.KNIGHT +
 				bishops * Evaluator.BISHOP +
 				rooks * Evaluator.ROOK +
 				queens * Evaluator.QUEEN +
-				closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] +//
+				closerSquares[BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex]] +//
 				(whiteDominant ? toCorners[blackKingIndex] : toCorners[whiteKingIndex]);
 
 		return (whiteDominant ? value : -value);
@@ -145,15 +145,15 @@ public class Endgame {
 
 	// NB vs K must drive the king to the corner of the color of the bishop
 	private static int endgameKBNK(Board board, boolean whiteDominant) {
-		int whiteKingIndex = BitboardUtils.square2Index(board.kings & board.whites);
-		int blackKingIndex = BitboardUtils.square2Index(board.kings & board.blacks);
+		int whiteKingIndex = Long.numberOfTrailingZeros(board.kings & board.whites);
+		int blackKingIndex = Long.numberOfTrailingZeros(board.kings & board.blacks);
 
 		if (BitboardUtils.isBlackSquare(board.bishops)) {
 			whiteKingIndex = BitboardUtils.flipHorizontalIndex(whiteKingIndex);
 			blackKingIndex = BitboardUtils.flipHorizontalIndex(blackKingIndex);
 		}
 
-		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.distance(whiteKingIndex, blackKingIndex)] + //
+		int value = Evaluator.KNOWN_WIN + closerSquares[BitboardUtils.DISTANCE[whiteKingIndex][blackKingIndex]] + //
 				(whiteDominant ? toColorCorners[blackKingIndex] : toColorCorners[whiteKingIndex]);
 
 		return (whiteDominant ? value : -value);
@@ -165,8 +165,8 @@ public class Endgame {
 		}
 
 		return whiteDominant ?
-				Evaluator.KNOWN_WIN + Evaluator.PAWN + BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)) : //
-				-Evaluator.KNOWN_WIN - Evaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(BitboardUtils.square2Index(board.pawns)));
+				Evaluator.KNOWN_WIN + Evaluator.PAWN + BitboardUtils.getRankOfIndex(Long.numberOfTrailingZeros(board.pawns)) : //
+				-Evaluator.KNOWN_WIN - Evaluator.PAWN - (7 - BitboardUtils.getRankOfIndex(Long.numberOfTrailingZeros(board.pawns)));
 	}
 
 	private static int scaleKRPKR(Board board, boolean whiteDominant) {
@@ -176,7 +176,7 @@ public class Endgame {
 
 		long dominantKing = board.kings & (whiteDominant ? board.whites : board.blacks);
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
-		int dominantKingIndex = BitboardUtils.square2Index(dominantKing);
+		int dominantKingIndex = Long.numberOfTrailingZeros(dominantKing);
 
 		int rank8 = whiteDominant ? 7 : 0;
 		int rank7 = whiteDominant ? 6 : 1;
@@ -184,7 +184,7 @@ public class Endgame {
 		int rank2 = whiteDominant ? 1 : 6;
 
 		long pawn = board.pawns;
-		int pawnIndex = BitboardUtils.square2Index(pawn);
+		int pawnIndex = Long.numberOfTrailingZeros(pawn);
 		int pawnFileIndex = 7 - (pawnIndex & 7);
 		long pawnFile = BitboardUtils.FILE[pawnFileIndex];
 		long pawnFileAndAdjacents = BitboardUtils.FILE[pawnFileIndex] | BitboardUtils.FILES_ADJACENT[pawnFileIndex];
@@ -200,14 +200,14 @@ public class Endgame {
 		if ((BitboardUtils.RANK[rank6] & pawn) != 0 // Pawn in rank 6
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFileAndAdjacents & otherKing) != 0 // King defending promotion squares
 				&& ((BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0
-				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 3)))) { // Rook ready to check from behind
+				|| ((board.getTurn() != whiteDominant) && (BitboardUtils.DISTANCE[pawnIndex][dominantKingIndex] >= 3)))) { // Rook ready to check from behind
 			return SCALE_FACTOR_DRAW;
 		}
 		// If the pawn is in advanced to 7th...
 		if ((BitboardUtils.RANK[rank7] & pawn) != 0
 				&& (BitboardUtils.RANKS_FORWARD[dominantColor][rank6] & pawnFile & otherKing) != 0 // King in the promotion squares
 				&& (BitboardUtils.RANK_AND_BACKWARD[dominantColor][rank2] & otherRook) != 0 // Rook must be already behind
-				&& ((board.getTurn() != whiteDominant) || (BitboardUtils.distance(pawnIndex, dominantKingIndex) >= 2))) {
+				&& ((board.getTurn() != whiteDominant) || (BitboardUtils.DISTANCE[pawnIndex][dominantKingIndex] >= 2))) {
 			return SCALE_FACTOR_DRAW;
 		}
 		// Back rank defense
@@ -243,10 +243,10 @@ public class Endgame {
 		long dominantKing = board.kings & (whiteDominant ? board.whites : board.blacks);
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
 
-		int dominantKingIndex = BitboardUtils.square2Index(dominantKing);
-		int pawnIndex = BitboardUtils.square2Index(pawn);
+		int dominantKingIndex = Long.numberOfTrailingZeros(dominantKing);
+		int pawnIndex = Long.numberOfTrailingZeros(pawn);
 
-		if ((pawnZone & otherKing) != 0 && BitboardUtils.distance(dominantKingIndex, pawnIndex) >= 1) {
+		if ((pawnZone & otherKing) != 0 && BitboardUtils.DISTANCE[dominantKingIndex][pawnIndex] >= 1) {
 			return Evaluator.DRAW;
 		}
 
@@ -289,7 +289,7 @@ public class Endgame {
 		// Different bishop colors
 		long otherBishopSquares = BitboardUtils.getSameColorSquares(otherBishop);
 		if (dominantBishopSquares != otherBishopSquares) {
-			int otherBishopIndex = BitboardUtils.square2Index(otherBishop);
+			int otherBishopIndex = Long.numberOfTrailingZeros(otherBishop);
 			if ((otherBishop & pawnRoute) != 0
 					|| (BitboardAttacks.getInstance().bishop[otherBishopIndex] & pawnRoute) != 0) {
 				return Evaluator.DRAW;
@@ -302,8 +302,8 @@ public class Endgame {
 	private static int scaleKRPPKRP(Board board, boolean whiteDominant) {
 		int dominantColor = whiteDominant ? Color.W : Color.B;
 		long dominantPawns = board.pawns & (whiteDominant ? board.whites : board.blacks);
-		long p1Front = BitboardUtils.frontPawnSpan(BitboardUtils.lsb(dominantPawns), dominantColor);
-		long p2Front = BitboardUtils.frontPawnSpan(BitboardUtils.msb(dominantPawns), dominantColor);
+		long p1Front = BitboardUtils.frontPawnSpan(Long.lowestOneBit(dominantPawns), dominantColor);
+		long p2Front = BitboardUtils.frontPawnSpan(Long.highestOneBit(dominantPawns), dominantColor);
 		long otherPawn = board.pawns & (whiteDominant ? board.blacks : board.whites);
 
 		// Check for a Passed Pawn
@@ -312,7 +312,7 @@ public class Endgame {
 		}
 		// If the other king is in front of the pawns, it is drawish
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
-		if ((p1Front & otherKing) != 0 && (p1Front & otherKing) != 1) {
+		if ((p1Front & otherKing) != 0 && (p2Front & otherKing) != 0) {
 			return SCALE_FACTOR_DRAWISH;
 		}
 

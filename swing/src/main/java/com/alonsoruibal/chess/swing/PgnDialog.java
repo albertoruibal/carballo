@@ -1,22 +1,11 @@
-package com.alonsoruibal.chess.applet;
+package com.alonsoruibal.chess.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class PgnDialog extends JDialog {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-	JTextArea textArea;
+	private static final long serialVersionUID = 1L;
+	private final JTextArea textArea;
 	
 	public PgnDialog(JFrame parent) {
 		super(parent, "PGN", true);
@@ -34,11 +23,7 @@ public class PgnDialog extends JDialog {
 		p2.add(ok);
 		getContentPane().add(p2, "South");
 
-		ok.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				setVisible(false);
-			}
-		});
+		ok.addActionListener(evt -> setVisible(false));
 
 		setSize(600, 600);
 	}

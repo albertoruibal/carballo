@@ -1,10 +1,12 @@
 Carballo Chess Engine
 =====================
+[![Release](https://jitpack.io/v/albertoruibal/carballo.svg)](https://jitpack.io/#albertoruibal/carballo)
 
-Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with two interfaces:
+Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with three interfaces:
 
-* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.7.tgz
+* UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.8.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
+* Desktop: a swing application
 
 It is organized into modules:
 
@@ -12,11 +14,9 @@ It is organized into modules:
 * Jse: the Java Standard Edition version with the UCI interface and JUnit tests
 * Gwt: components needed for the GWT GUI
 * GwtGui: an HTML5 interface developed by Lukas Laag, it depends on Core and Gwt
-* Applet: the applet code (deprecated), it depends on Core and Jse
+* Swing: the swing application code, it depends on Core and Jse
 
 From version 1.7, Java artifacts are uploaded to the Maven repository https://bintray.com/albertoruibal/maven
-
-The Core and the UCI interface are converted to C# in the project http://github.com/albertoruibal/carballo_cs
 
 It is licensed under GPLv3 and the source code is hosted at https://github.com/albertoruibal/carballo.
 You are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
@@ -25,7 +25,7 @@ Features
 ========
 
 * UCI interface for chess GUIs like Arena or SCID
-* It includes a great GWT interface by Lukas Laag and a deprecated Java Applet GUI
+* It includes a great GWT interface by Lukas Laag and a Java Swing GUI
 * Based on bitboards with a magic bitboard move generator, it also includes code for magic number generation
 * Move iterator sorting moves with four killer move slots, Static Exchange Evaluation (SEE), Most Valuable Victim/Least Valuable Aggressor (MVV/LVA) and history heuristic
 * PVS searcher
@@ -43,24 +43,15 @@ Features
 * FEN notation import/export support, also EPD support for testing
 * JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
 
-Test results in my Intel Core i7-3667U CPU limited to 1.9GHz and without turbo boost for consistency:
+Test results in a Intel Xeon CPU limited to 2.0GHz for consistency:
 
-| Test suite       | Time per position | Version 1.7 | Version 1.6 | Version 1.5 |
-| ---------------- | -----------------:| -----------:| -----------:| -----------:|
-| WinAtChess (New) |          1 second |     293/300 |     293/300 |     291/300 |
-| SilentButDeadly  |          1 second |     123/134 |     120/134 |     120/134 |
-| ECMGCP           |          1 second |     110/183 |     101/183 |      86/183 |
-| ECMGCP           |         5 seconds |     154/183 |     145/183 |     138/183 |
-| Arasan 19a       |        60 seconds |      52/200 |      40/200 |      35/200 |
-
-And some tournament results at time control 5"+0.1":
-
-```
-Rank Name                          ELO   Games   Score   Draws
-   1 carballo-1.7                   72     480     60%     29%
-   2 carballo-1.6                   33     480     55%     28%
-   3 carballo-1.5                 -107     480     35%     24%
-```
+| Test suite       | Time per position | Version 1.8 | Version 1.7 |
+| ---------------- | -----------------:| -----------:| -----------:|
+| WinAtChess (New) |          1 second |     293/300 |     293/300 |
+| SilentButDeadly  |          1 second |     125/134 |     125/134 |
+| ECMGCP           |          1 second |     113/183 |     112/183 |
+| ECMGCP           |         5 seconds |     156/183 |     154/183 |
+| Arasan 19a       |        60 seconds |      52/200 |      52/200 |
 
 His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
 
@@ -73,21 +64,54 @@ Authors
 Building
 ========
 
-Carballo uses the Gradle build system, you can get Gradle from http://www.gradle.org
+Carballo uses the Gradle build system and the gradle wrapper.
 
 Build all the jars and install them to your local Maven repository:
 ```
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 ```
+
+UCI Interface
+-------------
+
 Build the UCI interface (creates a carballo-${version}.jar in jse/):
 ```
 cd jse
-gradle proguard
+../gradlew proguard
 ```
+Running the UCI interface:
+```
+cd jse
+java -jar carballo-1.8.jar
+```
+
+HTML5 Interface
+-------------
+
 Build the GWT interface:
 ```
 cd gwtgui
-gradle compileGwt
+../gradlew compileGwt
+```
+Running the GWT interface:
+```
+cd gwtgui
+../gradlew appRun
+```
+and access with your web browser to http://localhost:8080/chess/
+
+Desktop Interface
+-----------------
+
+Building the Swing interface (creates a carballo-swing-${version}.jar in swing/):
+```
+cd swing
+../gradlew proguard
+```
+Running the Swing interface:
+```
+cd swing
+java -jar carballo-swing-1.8.jar
 ```
 
 Testing
@@ -95,21 +119,36 @@ Testing
 
 Run fast tests:
 ```
-gradle fastTest
+./gradlew fastTest
 ```
 Run the "Win at Chess" test suite:
 ```
 cd jse
-gradle -Dtest.single=WinAtChessTest cleanTest test
+../gradlew -Dtest.single=WinAtChessTest cleanTest test
 ```
-Run Silent but Deadly tests:
+Run the "Silent but Deadly" suite:
 ```
 cd jse
-gradle -Dtest.single=SilentButDeadlyTest cleanTest test
+../gradlew -Dtest.single=SilentButDeadlyTest cleanTest test
 ```
 
 Changelog
 =========
+
+Version 1.8: Java 11, new desktop application and source code improvements
+
+* Change the source code level to Java 11
+* Use JitPack for publishing the artifacts
+* Changed artifact group to com.github.albertoruibal.carballo
+* Use the gradle wrapper 7.5.1
+* Update the tests to JUnit 5.9.1
+* HTML5 app updated to GWT 2.10
+* Converted the old Applet to a Swing application
+* Implemented the standard "UCI_LimitStrength" and "UCI_Elo" UCI options instead of the old "Elo" option
+* Implemented "searchmoves" and "go depth" in the UCI interface
+* UCI Interface: Now "isready" may be called after "position"
+* Add pawn blockade also to the CompleteEvaluator
+* More small bug fixes
 
 Version 1.7: A new Late Move Reductions (LMR) formula
 
@@ -230,7 +269,7 @@ Version 1.0: Lots of fixes, small advances in test results: 294 in WAC (5") and 
 * New pawn classification in the ExperimentalEvaluator
 * Now the PV line is shown every time that a move is found in the root node
 * Implemented UCI seldepth, lowerbound, upperbound and hashfull
-* Implemented the depth and nodae limit for the search
+* Implemented the depth and node limit for the search
 * Enabled the endgame knowledge
 * In the search, assume that pawn pushes are to the 6th, 7th or 8th rank
 * Extend only checks with positive SSE
@@ -286,5 +325,5 @@ Version 0.5: Improves about 150 ELO points over Carballo 0.4
 
 Version 0.4: First version integrated with Mobialia Chess
 
-* Parametrizable evaluator
+* Parameterizable evaluator
 * Evaluator changes

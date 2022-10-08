@@ -104,7 +104,7 @@ public class ArrayBufferBook implements Book {
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
-        long randomWeight = (new Float(random.nextFloat() * totalWeight)).longValue();
+        long randomWeight = Float.valueOf(random.nextFloat() * totalWeight).longValue();
 		for (int i = 0; i < moves.size(); i++) {
 			randomWeight -= weights.get(i);
 			if (randomWeight<=0) {

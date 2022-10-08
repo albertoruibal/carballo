@@ -2,6 +2,8 @@ package com.alonsoruibal.chess.search;
 
 import com.alonsoruibal.chess.log.Logger;
 
+import java.util.ArrayList;
+
 public class SearchParameters {
 	/**
 	 * Logger for this class
@@ -9,25 +11,44 @@ public class SearchParameters {
 	private static final Logger logger = Logger.getLogger("SearchParameters");
 
 	// UCI parameters
-	// Remaining time
-	int wtime, btime;
-	// Time increment per move
-	int winc, binc;
-	// Moves to the next time control
-	int movesToGo;
-	// Analize x plyes only
-	int depth = Integer.MAX_VALUE;
-	// Search only this number of nodes
-	int nodes = Integer.MAX_VALUE;
-	// Search for mate in mate moves
-	int mate;
-	// Search movetime milliseconds
-	int moveTime = Integer.MAX_VALUE;
-	// Think infinite
-	boolean infinite;
-	boolean ponder;
+	// List of moves to search, if null search all moves
+	ArrayList<Integer> searchMoves;
 
-	boolean manageTime;
+	// Remaining time
+	private int wtime;
+	private int btime;
+	// Time increment per move
+	private int winc;
+	private int binc;
+	// Moves to the next time control
+	private int movesToGo;
+	// Analize x plyes only
+	private int depth = Integer.MAX_VALUE;
+	// Search only this number of nodes
+	private int nodes = Integer.MAX_VALUE;
+	// Search for mate in mate moves
+	private int mate;
+	// Search movetime milliseconds
+	private int moveTime = Integer.MAX_VALUE;
+	// Think infinite
+	private boolean infinite;
+	private boolean ponder;
+
+	private boolean manageTime;
+
+	public void clearSearchMoves() {
+		if (searchMoves == null) {
+			searchMoves = new ArrayList<>();
+		}
+		searchMoves.clear();
+	}
+
+	public void addSearchMove(int move) {
+		if (searchMoves == null) {
+			searchMoves = new ArrayList<>();
+		}
+		searchMoves.add(move);
+	}
 
 	public boolean isPonder() {
 		return ponder;
@@ -146,7 +167,7 @@ public class SearchParameters {
 		int timeAvailable = engineIsWhite ? wtime : btime;
 		int timeInc = engineIsWhite ? winc : binc;
 		if (timeAvailable > 0) {
-			calcTime = timeAvailable / 25;
+			calcTime = timeAvailable / (movesToGo != 0 ? movesToGo : 25);
 		}
 		if (panicTime) { // x 4
 			calcTime = calcTime << 2;

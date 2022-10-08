@@ -1,25 +1,29 @@
 allprojects {
     buildscript {
         repositories {
-            jcenter()
+            mavenCentral()
         }
-
         dependencies {
-            classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-            classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
+            classpath 'com.guardsquare:proguard-gradle:7.2.2'
         }
     }
 
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 
-    group = 'com.alonsoruibal'
-    version = '1.7'
+    group = 'com.github.albertoruibal.carballo'
+    version = '1.8'
 
     repositories {
-        jcenter()
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
     }
 }

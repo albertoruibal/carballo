@@ -12,22 +12,21 @@ import com.alonsoruibal.chess.movegen.MagicMoveGenerator;
 import com.alonsoruibal.chess.movegen.MoveGenerator;
 import com.alonsoruibal.chess.search.MoveIterator;
 import com.alonsoruibal.chess.search.SearchEngine;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Helps searching for bottlenecks
  */
-public class PerformanceTest {
-	MoveGenerator movegen;
-	MoveGenerator legalMovegen;
-	Board testBoards[];
+class PerformanceTest {
+	private MoveGenerator movegen;
+	private MoveGenerator legalMovegen;
+	private Board[] testBoards;
 
-	String tests[] = {
+	private final String[] tests = {
 			"4r1k1/p1pb1ppp/Qbp1r3/8/1P6/2Pq1B2/R2P1PPP/2B2RK1 b - - ",
 			"7r/2qpkp2/p3p3/6P1/1p2b2r/7P/PPP2QP1/R2N1RK1 b - - ",
 			"r1bq1rk1/pp4bp/2np4/2p1p1p1/P1N1P3/1P1P1NP1/1BP1QPKP/1R3R2 b - - ",
@@ -57,8 +56,8 @@ public class PerformanceTest {
 			"2rq1rk1/pb3ppp/1p2pn2/4N3/1b1PPB2/4R1P1/P4PBP/R2Q2K1 w - - "
 	};
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		movegen = new MagicMoveGenerator();
 		legalMovegen = new LegalMoveGenerator();
 		// To initialize static things 
@@ -71,8 +70,8 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testCompleteEvaluatorPerf() {
+	@Tag("slow")
+	void testCompleteEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
 		Evaluator completeEvaluator = new CompleteEvaluator();
 
@@ -91,8 +90,8 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testExperimentalEvaluatorPerf() {
+	@Tag("slow")
+	void testExperimentalEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
 		Evaluator experimentalEvaluator = new ExperimentalEvaluator();
 
@@ -111,8 +110,8 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testSimplifiedEvaluatorPerf() {
+	@Tag("slow")
+	void testSimplifiedEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
 
 		SimplifiedEvaluator simplifiedEvaluator = new SimplifiedEvaluator();
@@ -131,11 +130,11 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testPseudoLegalMoveGenPerf() {
+	@Tag("slow")
+	void testPseudoLegalMoveGenPerf() {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
-		int moves[] = new int[256];
+		int[] moves = new int[256];
 
 		for (int i = 0; i < 10000; i++) {
 			for (int j = 0; j < tests.length; j++) {
@@ -149,8 +148,8 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testMoveIteratorNewNewPerf() {
+	@Tag("slow")
+	void testMoveIteratorNewNewPerf() {
 		SearchEngine searchEngine = new SearchEngine(new Config());
 		MoveIterator moveIterator = searchEngine.nodes[0].moveIterator;
 
@@ -172,11 +171,11 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testDoMovePerf() {
+	@Tag("slow")
+	void testDoMovePerf() {
 		long t1 = System.currentTimeMillis();
 		long moveCount = 0;
-		int moves[] = new int[256];
+		int[] moves = new int[256];
 
 		for (int j = 0; j < tests.length; j++) {
 			int moveIndex = movegen.generateMoves(testBoards[j], moves, 0);
@@ -194,11 +193,11 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testLegalMoveGenPerf() {
+	@Tag("slow")
+	void testLegalMoveGenPerf() {
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
-		int moves[] = new int[256];
+		int[] moves = new int[256];
 
 		for (int i = 0; i < 10000; i++) {
 			for (int j = 0; j < tests.length; j++) {
@@ -212,8 +211,8 @@ public class PerformanceTest {
 	}
 
 	@Test
-	@Category(SlowTest.class)
-	public void testZobrishKeyPerf() {
+	@Tag("slow")
+	void testZobrishKeyPerf() {
 		long t1 = System.currentTimeMillis();
 		long keys = 0;
 		for (int i = 0; i < 10000; i++) {

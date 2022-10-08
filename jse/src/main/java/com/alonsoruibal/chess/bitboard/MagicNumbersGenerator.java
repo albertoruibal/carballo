@@ -20,7 +20,6 @@ public class MagicNumbersGenerator {
 		return random.nextLong() & random.nextLong() & random.nextLong() & random.nextLong() & random.nextLong();
 	}
 
-
 	/**
 	 * Fills pieces from a mask. Neccesary for magic generation variable bits is
 	 * the mask bytes number index goes from 0 to 2^bits
@@ -48,9 +47,9 @@ public class MagicNumbersGenerator {
 	 */
 	long findMagics(byte index, byte m, boolean bishop) {
 		long mask, magic;
-		long attack[] = new long[4096];
-		long block[] = new long[4096];
-		long magicAttack[] = new long[4096];
+		long[] attack = new long[4096];
+		long[] block = new long[4096];
+		long[] magicAttack = new long[4096];
 		int i, j, k, n;
 		boolean fail;
 
@@ -59,8 +58,8 @@ public class MagicNumbersGenerator {
 		mask = (bishop ? attacks.bishopMask[index] : attacks.rookMask[index]);
 
 		// Fill Attack tables, those are very big!
-		n = BitboardUtils.popCount(mask);
-		for (i = 0; i < (1 << n); i++) {
+        n = Long.bitCount(mask);
+        for (i = 0; i < (1 << n); i++) {
 			block[i] = generatePieces(i, n, mask);
 			// System.out.println("b:\n" + BitboardUtils.toString(block[i]));
 			attack[i] = bishop ? attacks.getBishopShiftAttacks(BitboardUtils.index2Square(index), block[i]) : attacks.getRookShiftAttacks(
@@ -70,8 +69,8 @@ public class MagicNumbersGenerator {
 		for (k = 0; k < 1000000000; k++) {
 			// test new magic
 			magic = randomFewbits();
-			if (BitboardUtils.popCount((mask * magic) & 0xFF00000000000000L) < 6)
-				continue;
+            if (Long.bitCount((mask * magic) & 0xFF00000000000000L) < 6)
+                continue;
 
 			// First, empty magic attack table
 			for (i = 0; i < 4096; i++)
@@ -91,14 +90,15 @@ public class MagicNumbersGenerator {
 				}
 			}
 
-			if (!fail)
+			if (!fail) {
 				return magic;
+			}
 		}
 		System.out.println("Error!\n");
 		return 0L;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		byte index;
 		MagicNumbersGenerator magic = new MagicNumbersGenerator();
 

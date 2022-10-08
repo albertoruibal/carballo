@@ -71,24 +71,24 @@ import com.alonsoruibal.chess.evaluation.Evaluator;
 
 public class SearchStatusInfo {
 
-	int depth;
-	int selDepth;
-	long time = Long.MIN_VALUE;
-	long nodes;
-	String pv;
-	int multiPv;
-	int score;
-	boolean lowerBound;
-	boolean upperBound;
-	String currMove;
-	int currMoveNumber;
-	int hashFull;
-	long nps;
-	int tbHits;
-	int cpuLoad;
-	String string;
-	String refutation;
-	String currLine;
+	private int depth;
+	private int selDepth;
+	private long time = Long.MIN_VALUE;
+	private long nodes;
+	private String pv;
+	private int multiPv;
+	private int score;
+	private boolean lowerBound;
+	private boolean upperBound;
+	private String currMove;
+	private int currMoveNumber;
+	private int hashFull;
+	private long nps;
+	private int tbHits;
+	private int cpuLoad;
+	private String string;
+	private String refutation;
+	private String currLine;
 
 	public int getDepth() {
 		return depth;

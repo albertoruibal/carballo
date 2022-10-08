@@ -2,7 +2,6 @@ package com.alonsoruibal.chess.tt;
 
 import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Move;
-import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.evaluation.Evaluator;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchEngine;
@@ -17,7 +16,7 @@ import java.util.Arrays;
  * @author rui
  */
 public class TranspositionTable {
-	private static final Logger logger = Logger.getLogger("MultiprobeTranspositionTable");
+    private static final Logger logger = Logger.getLogger("TranspositionTable");
 
 	public static final int DEPTH_QS_CHECKS = 0;
 	public static final int DEPTH_QS_NO_CHECKS = -1;
@@ -29,21 +28,21 @@ public class TranspositionTable {
 
 	private static final int MAX_PROBES = 4;
 
-	public long[] keys;
-	public long[] infos;
-	public short[] evals;
+	private final long[] keys;
+	private final long[] infos;
+	private final short[] evals;
 
-	private int size;
+	private final int size;
 	private long info;
 	private short eval;
 	private int generation;
 	private int entriesOccupied;
 
 	private int score;
-	private int sizeBits;
+	private final int sizeBits;
 
 	public TranspositionTable(int sizeMb) {
-		sizeBits = BitboardUtils.square2Index(sizeMb) + 16;
+		sizeBits = Long.numberOfTrailingZeros(sizeMb) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];

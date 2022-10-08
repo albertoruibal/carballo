@@ -21,13 +21,14 @@ import java.util.Random;
  *
  * @author Alberto Alonso Ruibal
  */
+@SuppressWarnings("UnusedAssignment")
 public class SearchEngine implements Runnable {
-	private static final Logger logger = Logger.getLogger("SearchEngine");
+	private static final Logger logger = Logger.getLogger(SearchEngine.class.getName());
 
 	public boolean debug = false;
 
-	Object searchLock = new Object();
-	Object startStopSearchLock = new Object();
+	final Object searchLock = new Object();
+	final Object startStopSearchLock = new Object();
 
 	public static final int MAX_DEPTH = 64;
 	public static final int VALUE_IS_MATE = Evaluator.MATE - MAX_DEPTH;
@@ -67,15 +68,16 @@ public class SearchEngine implements Runnable {
 	private Config config;
 
 	// Think limits
+	private boolean stop = false;
 	private long thinkToTime = 0;
 	private int thinkToNodes = 0;
 	private int thinkToDepth = 0;
 
-	private Board board;
+	private final Board board;
 	private SearchObserver observer;
 	private Evaluator evaluator;
 	private TranspositionTable tt;
-	public Node[] nodes;
+	public final Node[] nodes;
 	public short[][] history; // By piece type and destiny square
 
 	private int bestMoveScore;
@@ -91,43 +93,12 @@ public class SearchEngine implements Runnable {
 
 	public long startTime;
 
-	// For performance benching
+	// For performance benchmarking
 	private long nodeCount;
-	private long pvCutNodes;
-	private long pvAllNodes;
-	private long nullCutNodes;
-	private long nullAllNodes;
 
-	// Aspiration window
-	private static long aspirationWindowProbe = 0;
-	private static long aspirationWindowHit = 0;
+	private final Random random;
 
-	// Futility pruning
-	private static long futilityHit = 0;
-
-	// Razoring
-	private static long razoringProbe = 0;
-	private static long razoringHit = 0;
-
-	// Singular Extension
-	private static long singularExtensionProbe = 0;
-	private static long singularExtensionHit = 0;
-
-	// Null Move
-	private static long nullMoveProbe = 0;
-	private static long nullMoveHit = 0;
-
-	// Transposition Table
-	private static long ttProbe = 0;
-	private static long ttPvHit = 0;
-	private static long ttLBHit = 0;
-	private static long ttUBHit = 0;
-	private static long ttEvalHit = 0;
-	private static long ttEvalProbe = 0;
-
-	private Random random;
-
-	private float[][] logMatrix;
+	private final float[][] logMatrix;
 
 	public SearchEngine(Config config) {
 		this.config = config;
@@ -224,7 +195,7 @@ public class SearchEngine implements Runnable {
 		return globalBestMove;
 	}
 
-	public long getBestMoveScore() {
+	public int getBestMoveScore() {
 		return bestMoveScore;
 	}
 
@@ -241,7 +212,7 @@ public class SearchEngine implements Runnable {
 	}
 
 	/**
-	 * Decides when we are going to allow null move. Don't do null move in king and pawn endings
+	 * Decides when we are going to allow null move. Don't do null move/reductions in king and pawn endings
 	 */
 	private boolean boardAllowsNullMove() {
 		return (board.getMines() & (board.knights | board.bishops | board.rooks | board.queens)) != 0;
@@ -254,16 +225,22 @@ public class SearchEngine implements Runnable {
 		if (tt.getDepthAnalyzed() >= depthRemaining) {
 			switch (tt.getNodeType()) {
 				case TranspositionTable.TYPE_EXACT_SCORE:
-					ttPvHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.ttPvHit++;
+					}
 					return true;
 				case TranspositionTable.TYPE_FAIL_LOW:
-					ttLBHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.ttLBHit++;
+					}
 					if (tt.getScore() <= alpha) {
 						return true;
 					}
 					break;
 				case TranspositionTable.TYPE_FAIL_HIGH:
-					ttUBHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.ttUBHit++;
+					}
 					if (tt.getScore() >= beta) {
 						return true;
 					}
@@ -276,11 +253,15 @@ public class SearchEngine implements Runnable {
 	/**
 	 * It also changes the sign to the score depending of the turn
 	 */
-	public void evaluate(Node node, boolean foundTT) {
-		ttEvalProbe++;
+	private void evaluate(Node node, boolean foundTT) {
+		if (SearchStats.DEBUG) {
+			SearchStats.ttEvalProbe++;
+		}
 
 		if (foundTT) {
-			ttEvalHit++;
+			if (SearchStats.DEBUG) {
+				SearchStats.ttEvalHit++;
+			}
 			node.staticEval = tt.getEval();
 			return;
 		}
@@ -302,7 +283,7 @@ public class SearchEngine implements Runnable {
 				tt.getScore() : node.staticEval;
 	}
 
-	public int quiescentSearch(int qsdepth, int alpha, int beta) throws SearchFinishedException {
+	public int quiescentSearch(int qsdepth, int alpha, int beta) {
 		int distanceToInitialPly = board.getMoveNumber() - initialPly;
 
 		// It checks draw by three fold repetition, fifty moves rule and no material to mate
@@ -326,7 +307,9 @@ public class SearchEngine implements Runnable {
 		// If we generate check, the entry in the TT has depthAnalyzed=1, because is better than without checks (depthAnalyzed=0)
 		int ttDepth = generateChecks || checkEvasion ? TranspositionTable.DEPTH_QS_CHECKS : TranspositionTable.DEPTH_QS_NO_CHECKS;
 
-		ttProbe++;
+		if (SearchStats.DEBUG) {
+			SearchStats.ttProbe++;
+		}
 		boolean foundTT = tt.search(board, distanceToInitialPly, false);
 		if (foundTT) {
 			if (!isPv && canUseTT(ttDepth, alpha, beta)) {
@@ -421,7 +404,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * Search Root, PV and null window
 	 */
-	public int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
+	private int search(int nodeType, int depthRemaining, int alpha, int beta, boolean allowPrePruning, int excludedMove) throws SearchFinishedException {
 		assert depthRemaining > 0 : "Wrong depthRemaining";
 
 		if (nodeType != NODE_ROOT && globalBestMove != Move.NONE && (System.currentTimeMillis() > thinkToTime || nodeCount > thinkToNodes)) {
@@ -455,7 +438,9 @@ public class SearchEngine implements Runnable {
 		int ttDepthAnalyzed = 0;
 		int score = 0;
 
-		ttProbe++;
+		if (SearchStats.DEBUG) {
+			SearchStats.ttProbe++;
+		}
 		boolean foundTT = tt.search(board, distanceToInitialPly, excludedMove != Move.NONE);
 		if (foundTT) {
 			if (nodeType != NODE_ROOT && canUseTT(depthRemaining, alpha, beta)) {
@@ -501,18 +486,24 @@ public class SearchEngine implements Runnable {
 					&& Math.abs(eval) < Evaluator.KNOWN_WIN
 					&& eval + RAZORING_MARGIN[depthRemaining] < beta
 					&& (board.pawns & ((board.whites & BitboardUtils.R7) | (board.blacks & BitboardUtils.R2))) == 0) { // No pawns on 7TH
-				razoringProbe++;
+				if (SearchStats.DEBUG) {
+					SearchStats.razoringProbe++;
+				}
 
 				if (depthRemaining <= PLY
 						&& eval + RAZORING_MARGIN[RAZORING_MARGIN.length - 1] < beta) {
-					razoringHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.razoringHit++;
+					}
 					return quiescentSearch(0, alpha, beta);
 				}
 
 				int rbeta = beta - RAZORING_MARGIN[depthRemaining];
 				int v = quiescentSearch(0, rbeta - 1, rbeta);
 				if (v < rbeta) {
-					razoringHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.razoringHit++;
+					}
 					return v;
 				}
 			}
@@ -533,8 +524,9 @@ public class SearchEngine implements Runnable {
 					&& Math.abs(beta) < VALUE_IS_MATE
 					&& eval >= beta
 					&& boardAllowsNullMove()) {
-
-				nullMoveProbe++;
+				if (SearchStats.DEBUG) {
+					SearchStats.nullMoveProbe++;
+				}
 
 				int R = 3 * PLY + (depthRemaining >> 2);
 
@@ -552,7 +544,9 @@ public class SearchEngine implements Runnable {
 					if (depthRemaining < 12 * PLY || (depthRemaining - R < PLY ?
 							quiescentSearch(0, beta - 1, beta) :
 							search(NODE_NULL, depthRemaining - R, beta - 1, beta, false, Move.NONE)) >= beta) {
-						nullMoveHit++;
+						if (SearchStats.DEBUG) {
+							SearchStats.nullMoveHit++;
+						}
 						return score;
 					}
 				} else {
@@ -589,12 +583,16 @@ public class SearchEngine implements Runnable {
 				&& node.staticEval != Evaluator.NO_VALUE
 				&& nodes[distanceToInitialPly - 2].staticEval != Evaluator.NO_VALUE ?
 				node.staticEval - nodes[distanceToInitialPly - 2].staticEval : 0;
-		nodeEvalDiff = nodeEvalDiff < NODE_EVAL_DIFF_MIN ? NODE_EVAL_DIFF_MIN :
-				nodeEvalDiff > NODE_EVAL_DIFF_MAX ? NODE_EVAL_DIFF_MAX :
-						nodeEvalDiff;
+		nodeEvalDiff = Math.max(NODE_EVAL_DIFF_MIN, Math.min(nodeEvalDiff, NODE_EVAL_DIFF_MAX));
 
 		while ((node.move = node.moveIterator.next()) != Move.NONE) {
 			if (node.move == excludedMove) {
+				continue;
+			}
+			if (nodeType == NODE_ROOT
+					&& searchParameters.searchMoves != null
+					&& searchParameters.searchMoves.size() > 0
+					&& !searchParameters.searchMoves.contains(node.move)) {
 				continue;
 			}
 			nodeCount++;
@@ -620,11 +618,15 @@ public class SearchEngine implements Runnable {
 
 				int savedMove = node.move;
 
-				singularExtensionProbe++;
+				if (SearchStats.DEBUG) {
+					SearchStats.singularExtensionProbe++;
+				}
 				int seBeta = ttScore - SINGULAR_EXTENSION_MARGIN_PER_PLY * depthRemaining / PLY;
 				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, node.move);
 				if (excScore < seBeta) {
-					singularExtensionHit++;
+					if (SearchStats.DEBUG) {
+						SearchStats.singularExtensionHit++;
+					}
 					extension = PLY;
 				}
 
@@ -646,7 +648,8 @@ public class SearchEngine implements Runnable {
 					&& !checkEvasion
 					&& !Move.isCaptureOrCheck(node.move) // Include ALL captures
 					&& !Move.isPawnPush678(node.move) // Includes promotions
-					&& !node.moveIterator.getLastMoveIsKiller()) {
+					&& !node.moveIterator.getLastMoveIsKiller()
+					&& boardAllowsNullMove()) {
 
 				// History pruning
 				if (bestMove != Move.NONE
@@ -674,7 +677,9 @@ public class SearchEngine implements Runnable {
 					if (newDepth - reduction < FUTILITY_MARGIN_PARENT.length) {
 						int futilityValue = node.staticEval + FUTILITY_MARGIN_PARENT[newDepth - reduction];
 						if (futilityValue <= alpha) {
-							futilityHit++;
+							if (SearchStats.DEBUG) {
+								SearchStats.futilityHit++;
+							}
 							if (futilityValue > bestScore) {
 								bestScore = futilityValue;
 							}
@@ -693,7 +698,7 @@ public class SearchEngine implements Runnable {
 			board.doMove(node.move, false, false);
 			assert board.getCheck() == Move.isCheck(node.move) : "Check flag not generated properly";
 
-			int lowBound = alpha > bestScore ? alpha : bestScore;
+			int lowBound = Math.max(alpha, bestScore);
 			if ((nodeType == NODE_PV || nodeType == NODE_ROOT) && moveCount == 1) {
 				// PV move not null searched nor reduced
 				score = newDepth < PLY ? -quiescentSearch(0, -beta, -lowBound) :
@@ -744,7 +749,7 @@ public class SearchEngine implements Runnable {
 			if (score >= beta) {
 				break;
 			} else if (score <= alpha) {
-				historyBad(node, node.move, depthRemaining);
+				historyBad(node.move, depthRemaining);
 			}
 		}
 
@@ -760,16 +765,20 @@ public class SearchEngine implements Runnable {
 			if (moveCount > 0) {
 				historyGood(node, bestMove, depthRemaining);
 			}
-			if (nodeType == NODE_NULL) {
-				nullCutNodes++;
+		}
+		if (SearchStats.DEBUG) {
+			if (bestScore >= beta) {
+				if (nodeType == NODE_NULL) {
+					SearchStats.nullCutNodes++;
+				} else {
+					SearchStats.pvCutNodes++;
+				}
 			} else {
-				pvCutNodes++;
-			}
-		} else {
-			if (nodeType == NODE_NULL) {
-				nullAllNodes++;
-			} else {
-				pvAllNodes++;
+				if (nodeType == NODE_NULL) {
+					SearchStats.nullAllNodes++;
+				} else {
+					SearchStats.pvAllNodes++;
+				}
 			}
 		}
 
@@ -821,35 +830,6 @@ public class SearchEngine implements Runnable {
 		run();
 	}
 
-	private void searchStats() {
-		logger.debug("Positions         = " + nodeCount);
-		logger.debug("PV Cut            = " + pvCutNodes + " " + (100 * pvCutNodes / (pvCutNodes + pvAllNodes + 1)) + "%");
-		logger.debug("PV All            = " + pvAllNodes);
-		logger.debug("Null Cut          = " + nullCutNodes + " " + (100 * nullCutNodes / (nullCutNodes + nullAllNodes + 1)) + "%");
-		logger.debug("Null All          = " + nullAllNodes);
-		if (aspirationWindowProbe > 0) {
-			logger.debug("Asp Win      Hits = " + (100 * aspirationWindowHit / aspirationWindowProbe) + "%");
-		}
-		if (ttEvalProbe > 0) {
-			logger.debug("TT Eval      Hits = " + ttEvalHit + " " + (100 * ttEvalHit / ttEvalProbe) + "%");
-		}
-		if (ttProbe > 0) {
-			logger.debug("TT PV        Hits = " + ttPvHit + " " + (1000000 * ttPvHit / ttProbe) + " per 10^6");
-			logger.debug("TT LB        Hits = " + ttProbe + " " + (100 * ttLBHit / ttProbe) + "%");
-			logger.debug("TT UB        Hits = " + ttUBHit + " " + (100 * ttUBHit / ttProbe) + "%");
-		}
-		logger.debug("Futility     Hits = " + futilityHit);
-		if (nullMoveProbe > 0) {
-			logger.debug("Null Move    Hits = " + nullMoveHit + " " + (100 * nullMoveHit / nullMoveProbe) + "%");
-		}
-		if (razoringProbe > 0) {
-			logger.debug("Razoring     Hits = " + razoringHit + " " + (100 * razoringHit / razoringProbe) + "%");
-		}
-		if (singularExtensionProbe > 0) {
-			logger.debug("S.Extensions Hits = " + singularExtensionHit + " " + (100 * singularExtensionHit / singularExtensionProbe) + "%");
-		}
-	}
-
 	private void prepareRun() throws SearchFinishedException {
 		logger.debug("Board\n" + board);
 
@@ -890,14 +870,16 @@ public class SearchEngine implements Runnable {
 		int failHighCount = 0;
 		int failLowCount = 0;
 		int initialScore = rootScore;
-		int alpha = (initialScore - aspWindows[failLowCount] > -Evaluator.MATE ? initialScore - aspWindows[failLowCount] : -Evaluator.MATE);
-		int beta = (initialScore + aspWindows[failHighCount] < Evaluator.MATE ? initialScore + aspWindows[failHighCount] : Evaluator.MATE);
+		int alpha = Math.max(initialScore - aspWindows[failLowCount], -Evaluator.MATE);
+		int beta = Math.min(initialScore + aspWindows[failHighCount], Evaluator.MATE);
 		int previousRootScore = rootScore;
 		long time1 = System.currentTimeMillis();
 
 		// Iterate aspiration windows
 		while (true) {
-			aspirationWindowProbe++;
+			if (SearchStats.DEBUG) {
+				SearchStats.aspirationWindowProbe++;
+			}
 			rootScore = search(NODE_ROOT, depth * PLY, alpha, beta, false, Move.NONE);
 
 			if (rootScore <= alpha) {
@@ -909,7 +891,9 @@ public class SearchEngine implements Runnable {
 				beta = (failHighCount < aspWindows.length && (initialScore + aspWindows[failHighCount] < Evaluator.MATE) ? initialScore
 						+ aspWindows[failHighCount] : Evaluator.MATE + 1);
 			} else {
-				aspirationWindowHit++;
+				if (SearchStats.DEBUG) {
+					SearchStats.aspirationWindowHit++;
+				}
 				break;
 			}
 		}
@@ -952,15 +936,25 @@ public class SearchEngine implements Runnable {
 			bestMove = globalBestMove;
 			ponderMove = globalPonderMove;
 
+			while (searchParameters.isPonder() && !stop) {
+				sleep(10);
+			}
+
 			searching = false;
 		}
 
 		if (observer != null) {
 			observer.bestMove(bestMove, ponderMove);
 		}
-		if (debug) {
-			searchStats();
+		if (SearchStats.DEBUG) {
+			SearchStats.print(nodeCount);
 		}
+	}
+
+	/**
+	 * VOID because GWT does not support Thread.sleep(); overriden in SearchEngineThreaded
+	 */
+	public void sleep(int time) {
 	}
 
 	/**
@@ -970,6 +964,7 @@ public class SearchEngine implements Runnable {
 		engineIsWhite = board.getTurn();
 		startTime = System.currentTimeMillis();
 		nodeCount = 0;
+		stop = false;
 		updateSearchParameters(searchParameters);
 	}
 
@@ -1023,16 +1018,17 @@ public class SearchEngine implements Runnable {
 	}
 
 	public void stop() {
+		stop = true;
 		thinkToTime = 0;
 		thinkToNodes = 0;
 		thinkToDepth = 0;
 	}
 
-	public int evaluateDraw(int distanceToInitialPly) {
-		int nonPawnMat = BitboardUtils.popCount(board.knights) * Evaluator.KNIGHT +
-				BitboardUtils.popCount(board.bishops) * Evaluator.BISHOP +
-				BitboardUtils.popCount(board.rooks) * Evaluator.ROOK +
-				BitboardUtils.popCount(board.queens) * Evaluator.QUEEN;
+	private int evaluateDraw(int distanceToInitialPly) {
+		int nonPawnMat = Long.bitCount(board.knights) * Evaluator.KNIGHT +
+				Long.bitCount(board.bishops) * Evaluator.BISHOP +
+				Long.bitCount(board.rooks) * Evaluator.ROOK +
+				Long.bitCount(board.queens) * Evaluator.QUEEN;
 		int gamePhase = nonPawnMat >= Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX ? Evaluator.GAME_PHASE_MIDGAME :
 				nonPawnMat <= Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN ? Evaluator.GAME_PHASE_ENDGAME :
 						((nonPawnMat - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN) * Evaluator.GAME_PHASE_MIDGAME) / (Evaluator.NON_PAWN_MATERIAL_MIDGAME_MAX - Evaluator.NON_PAWN_MATERIAL_ENDGAME_MIN);
@@ -1059,7 +1055,7 @@ public class SearchEngine implements Runnable {
 	/**
 	 * We are informed of the score produced by the move at any level
 	 */
-	public void historyGood(Node node, int move, int depth) {
+	private void historyGood(Node node, int move, int depth) {
 		// removes captures and promotions from killers
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
@@ -1077,7 +1073,7 @@ public class SearchEngine implements Runnable {
 		history[pieceMoved][toIndex] = (short) (v + (((HISTORY_MAX - v) * depth) >> 8));
 	}
 
-	public void historyBad(Node node, int move, int depth) {
+	private void historyBad(int move, int depth) {
 		if (move == Move.NONE || Move.isTactical(move)) {
 			return;
 		}

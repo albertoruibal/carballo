@@ -1,5 +1,6 @@
 package com.alonsoruibal.chess.uci;
 
+import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.book.FileBook;
@@ -17,10 +18,11 @@ import java.io.InputStreamReader;
  * UCI Interface
  */
 public class Uci implements SearchObserver {
-	static final String NAME = "Carballo Chess Engine v1.7";
+	static final String NAME = "Carballo Chess Engine v1.8";
 	static final String AUTHOR = "Alberto Alonso Ruibal";
 
 	Config config;
+	Board board;
 	SearchEngineThreaded engine;
 	SearchParameters searchParameters;
 
@@ -30,6 +32,7 @@ public class Uci implements SearchObserver {
 		Logger.noLog = true; // Disable logging
 		config = new Config();
 		config.setBook(new FileBook("/book_small.bin"));
+		board = new Board();
 	}
 
 	void loop() {
@@ -42,146 +45,187 @@ public class Uci implements SearchObserver {
 				int index = 0;
 				String command = tokens[index++].toLowerCase();
 
-				if ("uci".equals(command)) {
-					System.out.println("id name " + NAME);
-					System.out.println("id author " + AUTHOR);
-					System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 1024");
-					System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
-					System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
-					System.out.println("option name UCI_Chess960 type check default false");
-					System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
-					System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
-					System.out.println("option name Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
-					System.out.println("uciok");
+				switch (command) {
+					case "uci":
+						System.out.println("id name " + NAME);
+						System.out.println("id author " + AUTHOR);
+						System.out.println("option name Hash type spin default " + Config.DEFAULT_TRANSPOSITION_TABLE_SIZE + " min 16 max 1024");
+						System.out.println("option name Ponder type check default " + Config.DEFAULT_PONDER);
+						System.out.println("option name OwnBook type check default " + Config.DEFAULT_USE_BOOK);
+						System.out.println("option name UCI_Chess960 type check default " + Config.DEFAULT_UCI_CHESS960);
+						System.out.println("option name UCI_LimitStrength type check default " + Config.DEFAULT_LIMIT_STRENGTH);
+						System.out.println("option name UCI_Elo type spin default " + Config.DEFAULT_ELO + " min 500 max " + Config.DEFAULT_ELO);
+						System.out.println("option name Evaluator type combo default " + Config.DEFAULT_EVALUATOR + " var simplified var complete var experimental");
+						System.out.println("option name Contempt Factor type spin default " + Config.DEFAULT_CONTEMPT_FACTOR + " min -200 max 200");
+						System.out.println("uciok");
 
-				} else if ("setoption".equals(command)) {
-					index++; // Skip name
-					// get the option name without spaces
-					StringBuilder nameSB = new StringBuilder();
-					String tok;
-					while (!"value".equals(tok = tokens[index++])) {
-						nameSB.append(tok);
-					}
-					String name = nameSB.toString();
-					String value = tokens[index];
+						break;
+					case "setoption":
+						index++; // Skip name
 
-					if ("Hash".equals(name)) {
-						config.setTranspositionTableSize(Integer.parseInt(value));
-					} else if ("Ponder".equals(name)) {
-						config.setPonder(Boolean.parseBoolean(value));
-					} else if ("OwnBook".equals(name)) {
-						config.setUseBook(Boolean.parseBoolean(value));
-					} else if ("UCI_Chess960".equals(name)) {
-						config.setUciChess960(Boolean.parseBoolean(value));
-					} else if ("Evaluator".equals(name)) {
-						config.setEvaluator(value);
-					} else if ("ContemptFactor".equals(name)) {
-						config.setContemptFactor(Integer.parseInt(value));
-					} else if ("Elo".equals(name)) {
-						config.setElo(Integer.parseInt(value));
-					}
-					needsReload = true;
-
-				} else if ("isready".equals(command)) {
-					if (needsReload) {
-						engine = new SearchEngineThreaded(config);
-						engine.setObserver(this);
-						needsReload = false;
-						System.gc();
-					} else {
-						// Wait for the engine to finish searching
-						while (engine.isSearching()) {
-							try {
-								Thread.sleep(10);
-							} catch (Exception e) {
-							}
+						// get the option name without spaces
+						StringBuilder nameSB = new StringBuilder();
+						String tok;
+						while (!"value".equals(tok = tokens[index++])) {
+							nameSB.append(tok);
 						}
-					}
-					System.out.println("readyok");
+						String name = nameSB.toString();
+						String value = tokens[index];
 
-				} else if ("quit".equals(command)) {
-					System.exit(0);
-
-				} else if ("go".equals(command)) {
-					searchParameters = new SearchParameters();
-					while (index < tokens.length) {
-						String arg1 = tokens[index++];
-						if ("searchmoves".equals(arg1)) {
-							// TODO
-						} else if ("ponder".equals(arg1)) {
-							searchParameters.setPonder(true);
-						} else if ("wtime".equals(arg1)) {
-							searchParameters.setWtime(Integer.parseInt(tokens[index++]));
-						} else if ("btime".equals(arg1)) {
-							searchParameters.setBtime(Integer.parseInt(tokens[index++]));
-						} else if ("winc".equals(arg1)) {
-							searchParameters.setWinc(Integer.parseInt(tokens[index++]));
-						} else if ("binc".equals(arg1)) {
-							searchParameters.setBinc(Integer.parseInt(tokens[index++]));
-						} else if ("movestogo".equals(arg1)) {
-							searchParameters.setMovesToGo(Integer.parseInt(tokens[index++]));
-						} else if ("depth".equals(arg1)) {
-							searchParameters.setDepth(Integer.parseInt(tokens[index++]));
-						} else if ("nodes".equals(arg1)) {
-							searchParameters.setNodes(Integer.parseInt(tokens[index++]));
-						} else if ("mate".equals(arg1)) {
-							searchParameters.setMate(Integer.parseInt(tokens[index++]));
-						} else if ("movetime".equals(arg1)) {
-							searchParameters.setMoveTime(Integer.parseInt(tokens[index++]));
-						} else if ("infinite".equals(arg1)) {
-							searchParameters.setInfinite(true);
+						switch (name) {
+							case "Hash":
+								config.setTranspositionTableSize(Integer.parseInt(value));
+								break;
+							case "Ponder":
+								config.setPonder(Boolean.parseBoolean(value));
+								break;
+							case "OwnBook":
+								config.setUseBook(Boolean.parseBoolean(value));
+								break;
+							case "UCI_Chess960":
+								config.setUciChess960(Boolean.parseBoolean(value));
+								break;
+							case "UCI_LimitStrength":
+								config.setLimitStrength(Boolean.parseBoolean(value));
+								break;
+							case "UCI_Elo":
+								config.setElo(Integer.parseInt(value));
+								break;
+							case "Evaluator":
+								config.setEvaluator(value);
+								break;
+							case "ContemptFactor":
+								config.setContemptFactor(Integer.parseInt(value));
+								break;
 						}
-					}
-					engine.go(searchParameters);
+						needsReload = true;
 
-				} else if ("stop".equals(command)) {
-					engine.stop();
-
-				} else if ("ucinewgame".equals(command)) {
-					engine.getBoard().startPosition();
-					engine.clear();
-
-				} else if ("position".equals(command)) {
-					if (index < tokens.length) {
-						String arg1 = tokens[index++];
-						if ("startpos".equals(arg1)) {
-							engine.getBoard().startPosition();
-						} else if ("fen".equals(arg1)) {
-							// FEN string may have spaces
-							StringBuilder fenSb = new StringBuilder();
-							while (index < tokens.length) {
-								if ("moves".equals(tokens[index])) {
-									break;
-								}
-								fenSb.append(tokens[index++]);
-								if (index < tokens.length) {
-									fenSb.append(" ");
+						break;
+					case "isready":
+						if (needsReload) {
+							engine = new SearchEngineThreaded(config);
+							engine.setObserver(this);
+							needsReload = false;
+							System.gc();
+						} else {
+							// Wait for the engine to finish searching
+							while (engine.isSearching()) {
+								try {
+									Thread.sleep(10);
+								} catch (Exception e) {
 								}
 							}
-							engine.getBoard().setFen(fenSb.toString());
 						}
-					}
-					if (index < tokens.length) {
-						String arg1 = tokens[index++];
-						if ("moves".equals(arg1)) {
-							while (index < tokens.length) {
-								int move = Move.getFromString(engine.getBoard(), tokens[index++], true);
-								engine.getBoard().doMove(move);
+						System.out.println("readyok");
+
+						break;
+					case "quit":
+						System.exit(0);
+
+					case "go":
+						if (engine == null) {
+							System.out.println("info string The engine is not initialized: the isready command must be sent before any search");
+							continue;
+						}
+
+						searchParameters = new SearchParameters();
+						while (index < tokens.length) {
+							String arg1 = tokens[index++];
+							if ("searchmoves".equals(arg1)) {
+								// While valid moves are found, add to the searchMoves
+								while (index < tokens.length) {
+									int move = Move.getFromString(board, tokens[index++], true);
+									if (move != Move.NONE) {
+										searchParameters.addSearchMove(move);
+									} else {
+										index--;
+										break;
+									}
+								}
+							} else if ("ponder".equals(arg1)) {
+								searchParameters.setPonder(true);
+							} else if ("wtime".equals(arg1)) {
+								searchParameters.setWtime(Integer.parseInt(tokens[index++]));
+							} else if ("btime".equals(arg1)) {
+								searchParameters.setBtime(Integer.parseInt(tokens[index++]));
+							} else if ("winc".equals(arg1)) {
+								searchParameters.setWinc(Integer.parseInt(tokens[index++]));
+							} else if ("binc".equals(arg1)) {
+								searchParameters.setBinc(Integer.parseInt(tokens[index++]));
+							} else if ("movestogo".equals(arg1)) {
+								searchParameters.setMovesToGo(Integer.parseInt(tokens[index++]));
+							} else if ("depth".equals(arg1)) {
+								searchParameters.setDepth(Integer.parseInt(tokens[index++]));
+							} else if ("nodes".equals(arg1)) {
+								searchParameters.setNodes(Integer.parseInt(tokens[index++]));
+							} else if ("mate".equals(arg1)) {
+								searchParameters.setMate(Integer.parseInt(tokens[index++]));
+							} else if ("movetime".equals(arg1)) {
+								searchParameters.setMoveTime(Integer.parseInt(tokens[index++]));
+							} else if ("infinite".equals(arg1)) {
+								searchParameters.setInfinite(true);
 							}
 						}
-					}
+						engine.getBoard().setFen(board.getInitialFen());
+						engine.getBoard().doMoves(board.getMoves());
+						engine.go(searchParameters);
 
-				} else if ("debug".equals(command)) {
-				} else if ("ponderhit".equals(command)) {
-					if (searchParameters != null) {
-						searchParameters.setPonder(false);
-						engine.updateSearchParameters(searchParameters);
-					}
+						break;
+					case "stop":
+						engine.stop();
 
-				} else if ("register".equals(command)) {
-					// not used
-				} else {
-					System.out.println("info string Wrong UCI command");
+						break;
+					case "ucinewgame":
+						board.startPosition();
+						engine.clear();
+
+						break;
+					case "position":
+						if (index < tokens.length) {
+							String arg1 = tokens[index++];
+							if ("startpos".equals(arg1)) {
+								board.startPosition();
+							} else if ("fen".equals(arg1)) {
+								// FEN string may have spaces
+								StringBuilder fenSb = new StringBuilder();
+								while (index < tokens.length) {
+									if ("moves".equals(tokens[index])) {
+										break;
+									}
+									fenSb.append(tokens[index++]);
+									if (index < tokens.length) {
+										fenSb.append(" ");
+									}
+								}
+								board.setFen(fenSb.toString());
+							}
+						}
+						if (index < tokens.length) {
+							String arg1 = tokens[index++];
+							if ("moves".equals(arg1)) {
+								while (index < tokens.length) {
+									int move = Move.getFromString(board, tokens[index++], true);
+									board.doMove(move);
+								}
+							}
+						}
+
+						break;
+					case "debug":
+						break;
+					case "ponderhit":
+						if (searchParameters != null) {
+							searchParameters.setPonder(false);
+							engine.updateSearchParameters(searchParameters);
+						}
+
+						break;
+					case "register":
+						// not used
+						break;
+					default:
+						System.out.println("info string Wrong UCI command");
+						break;
 				}
 			}
 
@@ -208,7 +252,7 @@ public class Uci implements SearchObserver {
 		System.out.flush();
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		Uci uci = new Uci();
 		uci.loop();
 	}

@@ -37,7 +37,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-
 import org.vectomatic.dom.svg.OMSVGSVGElement;
 import org.vectomatic.dom.svg.utils.OMSVGParser;
 
@@ -291,7 +290,7 @@ public class Main implements EntryPoint, SearchObserver, KeyDownHandler, MoveLis
 		status.setText(ChessConstants.INSTANCE.thinking());
 		new Timer() {
 			public void run() {
-				engine.go(SearchParameters.get(1000 * Integer.valueOf(timeListBox.getValue(timeListBox.getSelectedIndex()))));
+				engine.go(SearchParameters.get(1000 * Integer.parseInt(timeListBox.getValue(timeListBox.getSelectedIndex()))));
 			}
 		}.schedule(100);
 	}

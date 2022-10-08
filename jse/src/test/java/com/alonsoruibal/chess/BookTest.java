@@ -1,15 +1,14 @@
 package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.book.FileBook;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertTrue;
-
-public class BookTest {
+class BookTest {
 
 	@Test
-	public void testBook() {
+	void testBook() {
 		int count = 0;
 		Board board = new Board();
 		board.startPosition();

@@ -63,6 +63,8 @@ public class ExperimentalEvaluator extends Evaluator {
 	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
 	private static final int[] PAWN_STORM = {0, 0, 0, oe(5, 0), oe(10, 0), oe(20, 0), 0, 0};
 
+	private static final int PAWN_BLOCKADE = oe(5, 0); // Penalty for pawns in [D,E] in the initial square blocked by our own pieces
+
 	// Knights
 	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
 	private static final int[] KNIGHT_OUTPOST_ATTACKING = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
@@ -128,16 +130,16 @@ public class ExperimentalEvaluator extends Evaluator {
 
 	// King
 	// Sums for each piece attacking an square near the king
-	private static final int PIECE_ATTACKS_KING[] = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
+	private static final int[] PIECE_ATTACKS_KING = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
 	// Ponder kings attacks by the number of attackers (not pawns)
 	private static final int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
 
 	// Tempo
-	public static final int TEMPO = oe(15, 5); // Add to moving side score
+	private static final int TEMPO = oe(15, 5); // Add to moving side score
 
 	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
-	private static final int pawnPcsq[] = {
+	private static final int[] pawnPcsq = {
 			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4),
 			oe(-21, 1), oe(-9, -1), oe(-3, -3), oe(3, -5), oe(3, -5), oe(-3, -3), oe(-9, -1), oe(-21, 1),
 			oe(-20, 1), oe(-8, -1), oe(-2, -3), oe(4, -5), oe(4, -5), oe(-2, -3), oe(-8, -1), oe(-20, 1),
@@ -147,7 +149,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-15, 6), oe(-3, 4), oe(3, 2), oe(9, 0), oe(9, 0), oe(3, 2), oe(-3, 4), oe(-15, 6),
 			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4)
 	};
-	private static final int knightPcsq[] = {
+	private static final int[] knightPcsq = {
 			oe(-27, -22), oe(-17, -17), oe(-9, -12), oe(-4, -9), oe(-4, -9), oe(-9, -12), oe(-17, -17), oe(-27, -22),
 			oe(-21, -15), oe(-11, -8), oe(-3, -4), oe(2, -2), oe(2, -2), oe(-3, -4), oe(-11, -8), oe(-21, -15),
 			oe(-15, -10), oe(-5, -4), oe(3, 1), oe(8, 3), oe(8, 3), oe(3, 1), oe(-5, -4), oe(-15, -10),
@@ -157,7 +159,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-10, -8), oe(0, -1), oe(8, 3), oe(13, 5), oe(13, 5), oe(8, 3), oe(0, -1), oe(-10, -8),
 			oe(-20, -15), oe(-10, -10), oe(-2, -5), oe(3, -2), oe(3, -2), oe(-2, -5), oe(-10, -10), oe(-20, -15)
 	};
-	private static final int bishopPcsq[] = {
+	private static final int[] bishopPcsq = {
 			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
@@ -167,7 +169,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
 			oe(-2, 0), oe(-3, -1), oe(-6, -2), oe(-8, -2), oe(-8, -2), oe(-6, -2), oe(-3, -1), oe(-2, 0)
 	};
-	private static final int rookPcsq[] = {
+	private static final int[] rookPcsq = {
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
 			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
@@ -177,7 +179,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-4, 5), oe(0, 5), oe(4, 5), oe(8, 5), oe(8, 5), oe(4, 5), oe(0, 5), oe(-4, 5),
 			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
 	};
-	private static final int queenPcsq[] = {
+	private static final int[] queenPcsq = {
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
 			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
 			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
@@ -187,7 +189,7 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
 			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15)
 	};
-	private static final int kingPcsq[] = {
+	private static final int[] kingPcsq = {
 			oe(34, -58), oe(39, -35), oe(14, -19), oe(-6, -13), oe(-6, -13), oe(14, -19), oe(39, -35), oe(34, -58),
 			oe(31, -35), oe(36, -10), oe(11, 2), oe(-9, 8), oe(-9, 8), oe(11, 2), oe(36, -10), oe(31, -35),
 			oe(28, -19), oe(33, 2), oe(8, 17), oe(-12, 23), oe(-12, 23), oe(8, 17), oe(33, 2), oe(28, -19),
@@ -198,26 +200,26 @@ public class ExperimentalEvaluator extends Evaluator {
 			oe(-5, -58), oe(0, -35), oe(-25, -19), oe(-45, -13), oe(-45, -13), oe(-25, -19), oe(0, -35), oe(-5, -58)
 	};
 
-	public boolean debug = false;
-	public boolean debugPawns = false;
-	public StringBuffer debugSB;
+	private final boolean debug = false;
+	private final boolean debugPawns = false;
+	private StringBuffer debugSB;
 
-	private int[] scaleFactor = {0};
+	private final int[] scaleFactor = {0};
 
-	private int[] pawnMaterial = {0, 0};
-	private int[] nonPawnMaterial = {0, 0};
-	private int[] pcsq = {0, 0};
-	private int[] space = {0, 0};
-	private int[] positional = {0, 0};
-	private int[] mobility = {0, 0};
-	private int[] attacks = {0, 0};
-	private int[] kingAttackersCount = {0, 0};
-	private int[] kingSafety = {0, 0};
-	private int[] pawnStructure = {0, 0};
-	private int[] passedPawns = {0, 0};
-	private long[] pawnCanAttack = {0, 0};
-	private long[] mobilitySquares = {0, 0};
-	private long[] kingZone = {0, 0}; // Squares surrounding King
+	private final int[] pawnMaterial = {0, 0};
+	private final int[] nonPawnMaterial = {0, 0};
+	private final int[] pcsq = {0, 0};
+	private final int[] space = {0, 0};
+	private final int[] positional = {0, 0};
+	private final int[] mobility = {0, 0};
+	private final int[] attacks = {0, 0};
+	private final int[] kingAttackersCount = {0, 0};
+	private final int[] kingSafety = {0, 0};
+	private final int[] pawnStructure = {0, 0};
+	private final int[] passedPawns = {0, 0};
+	private final long[] pawnCanAttack = {0, 0};
+	private final long[] mobilitySquares = {0, 0};
+	private final long[] kingZone = {0, 0}; // Squares surrounding King
 
 	public int evaluate(Board board, AttacksInfo ai) {
 		if (debug) {
@@ -227,16 +229,16 @@ public class ExperimentalEvaluator extends Evaluator {
 			debugSB.append("\n");
 		}
 
-		int whitePawns = BitboardUtils.popCount(board.pawns & board.whites);
-		int blackPawns = BitboardUtils.popCount(board.pawns & board.blacks);
-		int whiteKnights = BitboardUtils.popCount(board.knights & board.whites);
-		int blackKnights = BitboardUtils.popCount(board.knights & board.blacks);
-		int whiteBishops = BitboardUtils.popCount(board.bishops & board.whites);
-		int blackBishops = BitboardUtils.popCount(board.bishops & board.blacks);
-		int whiteRooks = BitboardUtils.popCount(board.rooks & board.whites);
-		int blackRooks = BitboardUtils.popCount(board.rooks & board.blacks);
-		int whiteQueens = BitboardUtils.popCount(board.queens & board.whites);
-		int blackQueens = BitboardUtils.popCount(board.queens & board.blacks);
+		int whitePawns = Long.bitCount(board.pawns & board.whites);
+		int blackPawns = Long.bitCount(board.pawns & board.blacks);
+		int whiteKnights = Long.bitCount(board.knights & board.whites);
+		int blackKnights = Long.bitCount(board.knights & board.blacks);
+		int whiteBishops = Long.bitCount(board.bishops & board.whites);
+		int blackBishops = Long.bitCount(board.bishops & board.blacks);
+		int whiteRooks = Long.bitCount(board.rooks & board.whites);
+		int blackRooks = Long.bitCount(board.rooks & board.blacks);
+		int whiteQueens = Long.bitCount(board.queens & board.whites);
+		int blackQueens = Long.bitCount(board.queens & board.blacks);
 
 		int endgameValue = Endgame.evaluateEndgame(board, scaleFactor, whitePawns, blackPawns, whiteKnights, blackKnights, whiteBishops, blackBishops, whiteRooks, blackRooks, whiteQueens, blackQueens);
 		if (endgameValue != NO_VALUE) {
@@ -294,9 +296,9 @@ public class ExperimentalEvaluator extends Evaluator {
 			long whiteBehindPawn = ((whitePawnsAux >>> 8) | (whitePawnsAux >>> 16) | (whitePawnsAux >>> 24));
 			long blackBehindPawn = ((blackPawnsAux << 8) | (blackPawnsAux << 16) | (blackPawnsAux << 24));
 
-			space[W] = SPACE * (((BitboardUtils.popCount(whiteSafe) + BitboardUtils.popCount(whiteSafe & whiteBehindPawn)) *
+			space[W] = SPACE * (((Long.bitCount(whiteSafe) + Long.bitCount(whiteSafe & whiteBehindPawn)) *
 					(whiteKnights + whiteBishops)) / 4);
-			space[B] = SPACE * (((BitboardUtils.popCount(blackSafe) + BitboardUtils.popCount(blackSafe & blackBehindPawn)) *
+			space[B] = SPACE * (((Long.bitCount(blackSafe) + Long.bitCount(blackSafe & blackBehindPawn)) *
 					(blackKnights + blackBishops)) / 4);
 		} else {
 			space[W] = 0;
@@ -357,6 +359,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					long pawnFile = BitboardUtils.FILE[file];
 					long routeToPromotion = pawnFile & ranksForward;
 					long otherPawnsAheadAdjacent = ranksForward & adjacentFiles & otherPawns;
+					long pushSquare = isWhite ? square << 8 : square >>> 8;
 
 					boolean supported = (square & ai.pawnAttacks[us]) != 0;
 					boolean doubled = (myPawns & routeToPromotion) != 0;
@@ -372,7 +375,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						boolean candidate = !doubled
 								&& !opposed
 								&& (((otherPawnsAheadAdjacent & ~pieceAttacks) == 0) || // Can become passer advancing
-								(BitboardUtils.popCount(myPawnsBesideAndBehindAdjacent) >= BitboardUtils.popCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
+								(Long.bitCount(myPawnsBesideAndBehindAdjacent) >= Long.bitCount(otherPawnsAheadAdjacent & ~pieceAttacks))); // Has more friend pawns beside and behind than opposed pawns controlling his route to promotion
 						boolean backward = !isolated
 								&& !candidate
 								&& myPawnsBesideAndBehindAdjacent == 0
@@ -382,17 +385,17 @@ public class ExperimentalEvaluator extends Evaluator {
 
 						if (debugPawns) {
 							boolean connected = ((bbAttacks.king[index] & adjacentFiles & myPawns) != 0);
-							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
-									(isWhite ? " WHITE " : " BLACK ") +
-									(isolated ? "isolated " : "") +
-									(supported ? "supported " : "") +
-									(connected ? "connected " : "") +
-									(doubled ? "doubled " : "") +
-									(opposed ? "opposed " : "") +
-									(candidate ? "candidate " : "") +
-									(backward ? "backward " : "") +
-									"\n"
-							);
+							debugSB.append("PAWN ")
+									.append(BitboardUtils.SQUARE_NAMES[index])
+									.append(isWhite ? " WHITE " : " BLACK ")
+									.append(isolated ? "isolated " : "")
+									.append(supported ? "supported " : "")
+									.append(connected ? "connected " : "")
+									.append(doubled ? "doubled " : "")
+									.append(opposed ? "opposed " : "")
+									.append(candidate ? "candidate " : "")
+									.append(backward ? "backward " : "")
+									.append("\n");
 						}
 
 						if (backward) {
@@ -412,6 +415,13 @@ public class ExperimentalEvaluator extends Evaluator {
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
 						}
+
+						if ((square & (BitboardUtils.D | BitboardUtils.E)) != 0
+								&& relativeRank == 1
+								&& (pushSquare & mines & ~board.pawns) != 0) {
+							pawnStructure[us] -= PAWN_BLOCKADE;
+						}
+
 						// Pawn Storm: It can open a file near the other king
 						if (gamePhase > 0 && relativeRank > 2) {
 							// Only if in kingside or queenside
@@ -436,7 +446,6 @@ public class ExperimentalEvaluator extends Evaluator {
 						long attackedAndNotDefendedRoute =
 								((routeToPromotion & ai.attackedSquares[them]) | ((backFile & (board.rooks | board.queens) & others) != 0 ? routeToPromotion : 0)) &
 										~((routeToPromotion & ai.attackedSquares[us]) | ((backFile & (board.rooks | board.queens) & mines) != 0 ? routeToPromotion : 0));
-						long pushSquare = isWhite ? square << 8 : square >>> 8;
 						boolean connected = (bbAttacks.king[index] & adjacentFiles & myPawns) != 0;
 						boolean outside = otherPawns != 0
 								&& (((square & BitboardUtils.FILES_LEFT[3]) != 0 && (board.pawns & BitboardUtils.FILES_LEFT[file]) == 0)
@@ -447,24 +456,24 @@ public class ExperimentalEvaluator extends Evaluator {
 								&& attackedAndNotDefendedRoute == 0;
 
 						if (debug) {
-							debugSB.append("PAWN " + BitboardUtils.SQUARE_NAMES[index] +
-									(isWhite ? " WHITE " : " BLACK ") +
-									"passed " +
-									(outside ? "outside " : "") +
-									(connected ? "connected " : "") +
-									(supported ? "supported " : "") +
-									(mobile ? "mobile " : "") +
-									(runner ? "runner " : "") +
-									"\n"
-							);
+							debugSB.append("PAWN ")
+									.append(BitboardUtils.SQUARE_NAMES[index])
+									.append(isWhite ? " WHITE " : " BLACK ")
+									.append("passed ")
+									.append(outside ? "outside " : "")
+									.append(connected ? "connected " : "")
+									.append(supported ? "supported " : "")
+									.append(mobile ? "mobile " : "")
+									.append(runner ? "runner " : "")
+									.append("\n");
 						}
 
 						passedPawns[us] += PAWN_PASSER[relativeRank];
 
 						if (relativeRank >= 2) {
 							int pushIndex = isWhite ? index + 8 : index - 8;
-							passedPawns[us] += BitboardUtils.distance(pushIndex, ai.kingIndex[them]) * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
-									- BitboardUtils.distance(pushIndex, ai.kingIndex[us]) * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
+							passedPawns[us] += BitboardUtils.DISTANCE[pushIndex][ai.kingIndex[them]] * PAWN_PASSER_OTHER_KING_DISTANCE[relativeRank]
+									- BitboardUtils.DISTANCE[pushIndex][ai.kingIndex[us]] * PAWN_PASSER_MY_KING_DISTANCE[relativeRank];
 						}
 						if (outside) {
 							passedPawns[us] += PAWN_PASSER_OUTSIDE[relativeRank];
@@ -493,11 +502,11 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.KNIGHT][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.KNIGHT][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.KNIGHT] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -519,11 +528,11 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.BISHOP][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.BISHOP][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.BISHOP] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -531,7 +540,7 @@ public class ExperimentalEvaluator extends Evaluator {
 							& ~pieceAttacks
 							& (board.rooks | board.queens) & others;
 					if (pieceAttackedXray != 0) {
-						attacks[us] += PINNED_PIECE * BitboardUtils.popCount(pieceAttackedXray);
+						attacks[us] += PINNED_PIECE * Long.bitCount(pieceAttackedXray);
 					}
 
 					// Bishop Outpost: no opposite pawns can attack the square and defended by one of our pawns
@@ -543,7 +552,7 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 					}
 
-					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * BitboardUtils.popCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
+					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * Long.bitCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
 
 					if ((BISHOP_TRAPPING[index] & board.pawns & others) != 0) {
 						mobility[us] -= BISHOP_TRAPPED_PENALTY[(BISHOP_TRAPPING_GUARD[index] & board.pawns & others) != 0 ? 1 : 0];
@@ -554,12 +563,12 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them];
 
-					int mobilityCount = BitboardUtils.popCount(safeAttacks & mobilitySquares[us]);
+					int mobilityCount = Long.bitCount(safeAttacks & mobilitySquares[us]);
 					mobility[us] += MOBILITY[Piece.ROOK][mobilityCount];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.ROOK] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -567,7 +576,7 @@ public class ExperimentalEvaluator extends Evaluator {
 							& ~pieceAttacks
 							& board.queens & others;
 					if ((pieceAttackedXray) != 0) {
-						attacks[us] += PINNED_PIECE * BitboardUtils.popCount(pieceAttackedXray);
+						attacks[us] += PINNED_PIECE * Long.bitCount(pieceAttackedXray);
 					}
 
 					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
@@ -582,7 +591,7 @@ public class ExperimentalEvaluator extends Evaluator {
 					if (relativeRank >= 4) {
 						long pawnsAligned = BitboardUtils.RANK[rank] & board.pawns & others;
 						if (pawnsAligned != 0) {
-							positional[us] += ROOK_7 * BitboardUtils.popCount(pawnsAligned);
+							positional[us] += ROOK_7 * Long.bitCount(pawnsAligned);
 						}
 					}
 
@@ -618,11 +627,11 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					safeAttacks = pieceAttacks & ~ai.pawnAttacks[them] & ~ai.knightAttacks[them] & ~ai.bishopAttacks[them] & ~ai.rookAttacks[them];
 
-					mobility[us] += MOBILITY[Piece.QUEEN][BitboardUtils.popCount(safeAttacks & mobilitySquares[us])];
+					mobility[us] += MOBILITY[Piece.QUEEN][Long.bitCount(safeAttacks & mobilitySquares[us])];
 
 					kingAttacks = safeAttacks & kingZone[them];
 					if (kingAttacks != 0) {
-						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * BitboardUtils.popCount(kingAttacks);
+						kingSafety[us] += PIECE_ATTACKS_KING[Piece.QUEEN] * Long.bitCount(kingAttacks);
 						kingAttackersCount[us]++;
 					}
 
@@ -676,7 +685,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 		long attackedByPawn = ai.pawnAttacks[us] & others & ~board.pawns;
 		while (attackedByPawn != 0) {
-			long lsb = BitboardUtils.lsb(attackedByPawn);
+			long lsb = Long.lowestOneBit(attackedByPawn);
 			attacks += PAWN_ATTACKS[board.getPieceIntAt(lsb)];
 			attackedByPawn &= ~lsb;
 		}
@@ -685,13 +694,13 @@ public class ExperimentalEvaluator extends Evaluator {
 		if (otherWeak != 0) {
 			long attackedByMinor = (ai.knightAttacks[us] | ai.bishopAttacks[us]) & otherWeak;
 			while (attackedByMinor != 0) {
-				long lsb = BitboardUtils.lsb(attackedByMinor);
+				long lsb = Long.lowestOneBit(attackedByMinor);
 				attacks += MINOR_ATTACKS[board.getPieceIntAt(lsb)];
 				attackedByMinor &= ~lsb;
 			}
 			long attackedByMajor = (ai.rookAttacks[us] | ai.queenAttacks[us]) & otherWeak;
 			while (attackedByMajor != 0) {
-				long lsb = BitboardUtils.lsb(attackedByMajor);
+				long lsb = Long.lowestOneBit(attackedByMajor);
 				attacks += MAJOR_ATTACKS[board.getPieceIntAt(lsb)];
 				attackedByMajor &= ~lsb;
 			}
@@ -700,14 +709,14 @@ public class ExperimentalEvaluator extends Evaluator {
 		long superiorAttacks = ai.pawnAttacks[us] & others & ~board.pawns
 				| (ai.knightAttacks[us] | ai.bishopAttacks[us]) & others & (board.rooks | board.queens)
 				| ai.rookAttacks[us] & others & board.queens;
-		int superiorAttacksCount = BitboardUtils.popCount(superiorAttacks);
+		int superiorAttacksCount = Long.bitCount(superiorAttacks);
 		if (superiorAttacksCount >= 2) {
 			attacks += superiorAttacksCount * HUNG_PIECES;
 		}
 
 		long pinnedNotPawn = ai.pinnedPieces & ~board.pawns & others;
 		if (pinnedNotPawn != 0) {
-			attacks += PINNED_PIECE * BitboardUtils.popCount(pinnedNotPawn);
+			attacks += PINNED_PIECE * Long.bitCount(pinnedNotPawn);
 		}
 		return attacks;
 	}

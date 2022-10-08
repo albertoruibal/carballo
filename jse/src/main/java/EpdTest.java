@@ -4,11 +4,7 @@ import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.search.SearchParameters;
 import com.alonsoruibal.chess.uci.UciEngine;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * Test a EPD file against engines executables with UCI interface
@@ -20,8 +16,8 @@ public class EpdTest {
 	int fails;
 	int total;
 
-	int avoidMoves[];
-	int bestMoves[];
+	int[] avoidMoves;
+	int[] bestMoves;
 	boolean solutionFound;
 
 	int bestMove;
@@ -83,8 +79,8 @@ public class EpdTest {
 		if (movesString == null) {
 			return new int[0];
 		}
-		String movesStringArray[] = movesString.split(" ");
-		int moves[] = new int[movesStringArray.length];
+		String[] movesStringArray = movesString.split(" ");
+		int[] moves = new int[movesStringArray.length];
 		for (int i = 0; i < moves.length; i++) {
 			moves[i] = Move.getFromString(board, movesStringArray[i], true);
 		}
@@ -113,7 +109,7 @@ public class EpdTest {
 		engine.sendIsReady();
 		engine.waitReadyOk();
 
-		String bestMoveStr = null;
+		String bestMoveStr;
 		if (nodes != 0) {
 			bestMoveStr = engine.goNodes(board.getFen(), nodes);
 		} else {
@@ -121,9 +117,10 @@ public class EpdTest {
 		}
 
 		int bestMove = Move.getFromString(board, bestMoveStr, true);
-		for (int i = 0; i < bestMoves.length; i++) {
-			if (bestMove == bestMoves[i]) {
+		for (int move : bestMoves) {
+			if (bestMove == move) {
 				solutionFound = true;
+				break;
 			}
 		}
 
@@ -147,7 +144,7 @@ public class EpdTest {
 		engine.close();
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		int time = 0;
 		int nodes = 0;
 
@@ -159,9 +156,9 @@ public class EpdTest {
 		}
 		EpdTest epdUciTest = new EpdTest();
 		if ("-t".equals(args[2])) {
-			time = Integer.valueOf(args[3]);
+			time = Integer.parseInt(args[3]);
 		} else if ("-n".equals(args[2])) {
-			nodes = Integer.valueOf(args[3]);
+			nodes = Integer.parseInt(args[3]);
 		}
 
 		epdUciTest.epdTest(args[0], args[1], time, nodes);

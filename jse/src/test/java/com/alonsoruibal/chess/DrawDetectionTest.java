@@ -2,74 +2,71 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.pgn.PgnFile;
 import com.alonsoruibal.chess.pgn.PgnImportExport;
-import com.alonsoruibal.chess.search.SearchEngine;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DrawDetectionTest {
+class DrawDetectionTest {
 
 	@Test
-	public void test3FoldDraw() {
-		SearchEngine se = new SearchEngine(new Config());
+	void test3FoldDraw() {
+        Board b = new Board();
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
 		String pgnGame = PgnFile.getGameNumber(is, 0);
-		PgnImportExport.setBoard(se.getBoard(), pgnGame);
+        PgnImportExport.setBoard(b, pgnGame);
 
-		System.out.println(se.getBoard().toString());
-		System.out.println("draw = " + se.getBoard().isDraw());
+        System.out.println(b.toString());
+        System.out.println("draw = " + b.isDraw());
 
-		assertTrue(se.getBoard().isDraw());
-	}
+        assertTrue(b.isDraw());
+    }
 
 	@Test
-	public void test3FoldDrawNo() {
-		SearchEngine se = new SearchEngine(new Config());
+	void test3FoldDrawNo() {
+        Board b = new Board();
 
 		InputStream is = this.getClass().getResourceAsStream("/draw.pgn");
 		String pgnGame = PgnFile.getGameNumber(is, 0);
-		PgnImportExport.setBoard(se.getBoard(), pgnGame);
+        PgnImportExport.setBoard(b, pgnGame);
 
-		se.getBoard().undoMove();
+        b.undoMove();
 
-		System.out.println(se.getBoard().toString());
-		System.out.println("draw = " + se.getBoard().isDraw());
+        System.out.println(b.toString());
+        System.out.println("draw = " + b.isDraw());
 
-		assertFalse(se.getBoard().isDraw());
-	}
+        assertFalse(b.isDraw());
+    }
 
 	@Test
-	public void testDrawDetection() {
+	void testDrawDetection() {
 		Board b = new Board();
 		b.setFen("7k/8/8/8/8/8/8/7K w - - 0 0");
-		assertEquals(b.isDraw(), true);
+		assertTrue(b.isDraw());
 		b.setFen("7k/8/8/8/8/8/8/6BK b - - 0 0");
-		assertEquals(b.isDraw(), true);
+		assertTrue(b.isDraw());
 		b.setFen("7k/8/8/8/8/8/8/6NK b - - 0 0");
-		assertEquals(b.isDraw(), true);
+		assertTrue(b.isDraw());
 		b.setFen("7k/8/nn6/8/8/8/8/8K b - - 0 0");
-		assertEquals(b.isDraw(), true);
+		assertTrue(b.isDraw());
 		b.setFen("7k/8/Nn6/8/8/8/8/8K b - - 0 0");
-		assertEquals(b.isDraw(), false);
+		assertFalse(b.isDraw());
 		b.setFen("7k/7p/8/8/8/8/8/6NK b - - 0 0");
-		assertEquals(b.isDraw(), false);
+		assertFalse(b.isDraw());
 	}
 
 	@Test
-	public void testKBbkDraw() {
+	void testKBbkDraw() {
 		Board b = new Board();
 		// Different bishop color is NOT draw
 		b.setFen("6bk/8/8/8/8/8/8/6BK b - - 0 0");
-		assertEquals(b.isDraw(), false);
+		assertFalse(b.isDraw());
 		// Both bishops in the same color is draw
 		b.setFen("6bk/8/8/8/8/8/8/5B1K b - - 0 0");
-		assertEquals(b.isDraw(), true);
+		assertTrue(b.isDraw());
 	}
 }

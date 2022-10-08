@@ -1,0 +1,28 @@
+archivesBaseName = 'carballo-swing'
+
+dependencies {
+    implementation project(':core')
+    implementation project(':jse')
+}
+
+jar {
+    manifest.attributes("Main-Class": "com.alonsoruibal.chess.swing.ChessApp")
+}
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    dependsOn('jar')
+    ext {
+        obfuscatedJar = "./carballo-swing-${version}.jar"
+    }
+    injars jar.archiveFile.get()
+    injars configurations.runtimeClasspath
+    outjars ext.obfuscatedJar
+    libraryjars "${System.getProperty('java.home')}/jmods"
+    optimizationpasses 5
+    allowaccessmodification()
+    target '11'
+    keep 'public class com.alonsoruibal.chess.swing.ChessApp { *; }'
+    doLast {
+        logger.lifecycle "[Proguard] Generated obfuscated JAR in ${ext.obfuscatedJar}"
+    }
+}

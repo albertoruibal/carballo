@@ -2,7 +2,7 @@ package com.alonsoruibal.chess.log;
 
 public class Logger {
 	public static boolean noLog = false;
-	String prefix;
+	private final String prefix;
 
 	private Logger(String prefix) {
 		this.prefix = prefix;

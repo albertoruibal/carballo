@@ -1,15 +1,13 @@
 package com.alonsoruibal.chess.epdtest;
 
-import com.alonsoruibal.chess.SlowTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-public class SilentButDeadlyTest extends EpdTest {
+class SilentButDeadlyTest extends EpdTest {
 
 	@Test
-	@Category(SlowTest.class)
-	public void testSilentButDeadly() {
+	@Tag("slow")
+	void testSilentButDeadly() {
 		processEpdFile(this.getClass().getResourceAsStream("/silentbutdeadly.epd"), 1000);
 	}
 }

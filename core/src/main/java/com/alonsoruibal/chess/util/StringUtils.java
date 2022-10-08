@@ -1,7 +1,7 @@
 package com.alonsoruibal.chess.util;
 
 public class StringUtils {
-	private static String SPACES = "                     ";
+	private static final String SPACES = "                     ";
 
 	public static String padRight(String str, int totalChars) {
 		return str + SPACES.substring(0, totalChars - str.length());

@@ -1,17 +1,17 @@
 /**********************************************
  * Copyright (C) 2009 Lukas Laag
  * This file is part of lib-gwt-svg-chess.
- * 
+ *
  * libgwtsvg-chess is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * libgwtsvg-chess is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with libgwtsvg-chess.  If not, see http://www.gnu.org/licenses/
  **********************************************/
@@ -22,22 +22,8 @@ import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-
-import org.vectomatic.dom.svg.OMSVGAnimatedString;
-import org.vectomatic.dom.svg.OMSVGDocument;
-import org.vectomatic.dom.svg.OMSVGGElement;
-import org.vectomatic.dom.svg.OMSVGMatrix;
-import org.vectomatic.dom.svg.OMSVGPoint;
-import org.vectomatic.dom.svg.OMSVGRectElement;
-import org.vectomatic.dom.svg.OMSVGSVGElement;
-import org.vectomatic.dom.svg.OMSVGUseElement;
+import com.google.gwt.event.dom.client.*;
+import org.vectomatic.dom.svg.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +72,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 
 	List<Integer> possibleDestinySquares;
 
-	static int legalMoves[] = new int[256];
+	static int[] legalMoves = new int[256];
 	static int legalMoveCount;
 
 	private int keySquareIndex = 36;
@@ -96,7 +82,6 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 
 	int lastMove = -1;
 	int moveOriginIndex = -1;
-
 	int mouseIndex = -1;
 
 	public ChessBoard(OMSVGSVGElement svgElt) {
@@ -106,7 +91,6 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		this.boardDoc = (OMSVGDocument) svgElt.getOwnerDocument();
 		this.boardElt = boardDoc.getElementById("board");
 		this.css = Resources.INSTANCE.getCss();
-		moveOriginIndex = -1;
 		this.algebraicToRects = new HashMap<>();
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -147,7 +131,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 			useElt.getY().getBaseVal().setValue(squareElt.getY().getBaseVal().getValue());
 			useElt.getWidth().getBaseVal().setValue(sqWidth);
 			useElt.getHeight().getBaseVal().setValue(sqHeight);
-			useElt.getHref().setBaseVal("#" + Character.toString(piece));
+			useElt.getHref().setBaseVal("#" + piece);
 			useElt.getStyle().setCursor(Cursor.MOVE);
 			useElt.addMouseDownHandler(this);
 			useElt.addMouseUpHandler(this);
@@ -339,7 +323,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 		int x = (int) (p.getX() / sqWidth);
 		int y = (int) (p.getY() / sqHeight);
 		if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
-			char algebraic[] = new char[2];
+			char[] algebraic = new char[2];
 			algebraic[0] = (char) ('a' + x);
 			algebraic[1] = (char) ('8' - y);
 			return new String(algebraic);
