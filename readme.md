@@ -16,8 +16,6 @@ It is organized into modules:
 * GwtGui: an HTML5 interface developed by Lukas Laag, it depends on Core and Gwt
 * Swing: the swing application code, it depends on Core and Jse
 
-From version 1.7, Java artifacts are uploaded to the Maven repository https://bintray.com/albertoruibal/maven
-
 It is licensed under GPLv3 and the source code is hosted at https://github.com/albertoruibal/carballo.
 You are free to use, distribute or modify the code, we ask for a mention to the original authors and/or a link to our pages.
 
@@ -158,7 +156,6 @@ Version 1.7: A new Late Move Reductions (LMR) formula
 * Prune moves with negative SSEs taking reductions into account
 * Penalty for pawns in [D,E] in the initial square blocked by our own pieces
 * Remove the pawn push extension
-* Uploaded Maven artifacts to https://bintray.com/albertoruibal/maven
 * A new PGN parser supporting variations, comments, NAGs, etc.
 
 Version 1.6: Refactoring, bug fixes, endgames, etc.
