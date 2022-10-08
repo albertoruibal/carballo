@@ -8,14 +8,6 @@ allprojects {
         }
     }
 
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
-
-    java {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
     group = 'com.github.albertoruibal.carballo'
     version = '1.8'
 
