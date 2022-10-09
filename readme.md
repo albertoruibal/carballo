@@ -115,19 +115,19 @@ java -jar carballo-swing-1.8.jar
 Testing
 =======
 
-Run fast tests:
+Run tests:
 ```
-./gradlew fastTest
+./gradlew test
 ```
 Run the "Win at Chess" test suite:
 ```
 cd jse
-../gradlew -Dtest.single=WinAtChessTest cleanTest test
+../gradlew slowTest --tests=WinAtChessTest
 ```
 Run the "Silent but Deadly" suite:
 ```
 cd jse
-../gradlew -Dtest.single=SilentButDeadlyTest cleanTest test
+../gradlew slowTest --tests=SilentButDeadlyTest
 ```
 
 Changelog

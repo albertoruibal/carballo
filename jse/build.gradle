@@ -43,16 +43,16 @@ test {
     enableAssertions = true
 
     useJUnitPlatform {
-        includeTags 'slow'
+        excludeTags 'slow'
     }
 }
 
-task fastTest(type: Test) {
+task slowTest(type: Test) {
     ignoreFailures = true
     enableAssertions = true
 
     useJUnitPlatform {
-        excludeTags 'slow'
+        includeTags 'slow'
     }
 }
 
