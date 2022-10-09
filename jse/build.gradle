@@ -41,6 +41,7 @@ jar {
 test {
     ignoreFailures = true
     enableAssertions = true
+    testLogging.showStandardStreams = true
 
     useJUnitPlatform {
         excludeTags 'slow'
@@ -50,6 +51,7 @@ test {
 task slowTest(type: Test) {
     ignoreFailures = true
     enableAssertions = true
+    testLogging.showStandardStreams = true
 
     useJUnitPlatform {
         includeTags 'slow'
