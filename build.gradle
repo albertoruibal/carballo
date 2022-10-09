@@ -9,7 +9,7 @@ allprojects {
     }
 
     group = 'com.github.albertoruibal.carballo'
-    version = '1.8'
+    version = '1.8.1-SNAPSHOT'
 
     repositories {
         mavenCentral()
