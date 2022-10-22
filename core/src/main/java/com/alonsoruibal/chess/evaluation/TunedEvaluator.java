@@ -7,78 +7,120 @@ import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
 import com.alonsoruibal.chess.log.Logger;
 
-public class ExperimentalEvaluator extends Evaluator {
-	private static final Logger logger = Logger.getLogger(ExperimentalEvaluator.class.getName());
+public class TunedEvaluator extends Evaluator {
+	private static final Logger logger = Logger.getLogger(TunedEvaluator.class.getName());
 
-	public static final int PAWN_OPENING = 80;
-	public static final int[] PIECE_VALUES_OE = {0, oe(PAWN_OPENING, PAWN), oe(KNIGHT, KNIGHT), oe(BISHOP, BISHOP), oe(ROOK, ROOK), oe(QUEEN, QUEEN)};
+	public final int[] PAWN_BACKWARDS_PENALTY = {oe(27, 14), oe(8, 8)};
+	public final int[] PAWN_ISOLATED_PENALTY = {oe(36, 10), oe(12, 8)};
+	public final int[] PAWN_DOUBLED_PENALTY = {oe(9, 18), oe(14, 17)};
+	public int PAWN_UNSUPPORTED_PENALTY = oe(13, 0);
+	public final int[] PAWN_CANDIDATE = {0, oe(-9, -6), oe(8, 9), oe(11, 16), oe(17, 25), oe(16, 77), oe(99, 112), 0};
+	public final int[] PAWN_PASSER = {0, oe(-12, 13), oe(-23, 11), oe(-20, 23), oe(7, 30), oe(30, 68), oe(76, 77), 0};
+	public final int[] PAWN_PASSER_OUTSIDE = {0, oe(-21, -4), oe(40, 6), oe(22, 15), oe(-4, 6), oe(26, -16), oe(68, 36), 0};
+	public final int[] PAWN_PASSER_CONNECTED = {0, oe(11, -10), oe(0, 11), oe(12, 12), oe(29, 29), oe(100, 49), oe(-33, 166), 0};
+	public final int[] PAWN_PASSER_SUPPORTED = {0, 0, oe(20, 0), oe(10, 8), oe(6, 26), oe(107, 3), oe(196, -12), 0};
+	public final int[] PAWN_PASSER_MOBILE = {0, oe(5, 6), oe(3, 8), oe(16, 16), oe(19, 23), oe(24, 25), oe(69, 69), 0};
+	public final int[] PAWN_PASSER_RUNNER = {0, oe(-12, 29), oe(-22, 26), oe(-21, 41), oe(2, 57), oe(32, 93), oe(60, 157), 0};
+	public final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, oe(-5, -1), oe(0, 8), oe(-3, 16), oe(-2, 28), oe(16, 40), 0};
+	public final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, oe(-2, 4), oe(2, 13), oe(-1, 13), oe(4, 17), oe(12, 14), 0};
+	public final int[] PAWN_SHIELD_CENTER = {0, oe(58, -21), oe(50, -11), oe(14, -1), oe(34, 8), oe(-20, 35), oe(-31, 78), 0};
+	public final int[] PAWN_SHIELD = {0, oe(37, -14), oe(42, -9), oe(3, 0), oe(-2, 17), oe(-48, 31), oe(16, 44), 0};
+	public final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(-12, -5), oe(-3, -4), oe(35, -4), 0, 0};
+	public final int[] PAWN_STORM = {0, 0, 0, oe(-5, -8), oe(2, -17), oe(74, -45), 0, 0};
+	public final int[] PAWN_PCSQ = {
+			0, 0, 0, 0, 0, 0, 0, 0,
+			oe(-37, 1), oe(-8, 5), oe(4, 5), oe(-4, 11), oe(-4, -28), oe(-28, 5), oe(-18, 10), oe(-24, 7),
+			oe(-39, -6), oe(-20, -5), oe(-28, -1), oe(-3, -9), oe(-4, -7), oe(-36, 3), oe(-29, -3), oe(-31, 5),
+			oe(-4, -6), oe(-9, 2), oe(6, 0), oe(-8, -5), oe(-20, -5), oe(-19, 4), oe(-28, 4), oe(-12, 11),
+			oe(33, 1), oe(-3, 15), oe(5, 0), oe(-4, 3), oe(-16, -11), oe(-18, 6), oe(-7, 8), oe(-2, 21),
+			oe(62, 17), oe(20, 20), oe(77, 13), oe(22, 14), oe(36, -1), oe(15, -2), oe(13, 22), oe(5, 21),
+			oe(-18, -98), oe(-64, -32), oe(-41, -13), oe(51, 6), oe(55, 1), oe(-19, -8), oe(37, -20), oe(-24, -77),
+			0, 0, 0, 0, 0, 0, 0, 0
+	};
+	public final int[] KNIGHT_OUTPOST = {oe(14, 18), oe(7, 27)};
+	public final int[] KNIGHT_MOBILITY = {oe(-22, -36), oe(-10, -22), oe(-1, -9), oe(5, 4), oe(10, 12), oe(15, 16), oe(19, 18), oe(23, 19), oe(26, 19)};
+	public final int[] KNIGHT_PCSQ = {
+			oe(-70, -72), oe(-86, -69), oe(-16, -29), oe(-9, -36), oe(-37, -46), oe(-41, -60), oe(-46, -56), oe(-20, -98),
+			oe(-10, -22), oe(-12, -46), oe(-1, -45), oe(-21, -33), oe(-1, -34), oe(-22, -40), oe(-32, -70), oe(-42, -63),
+			oe(-11, -64), oe(-15, -31), oe(-9, -35), oe(9, -27), oe(0, -23), oe(-19, -39), oe(-25, -44), oe(-43, -57),
+			oe(2, -34), oe(7, -33), oe(7, -48), oe(-3, -31), oe(-3, -35), oe(3, -42), oe(-14, -59), oe(-19, -58),
+			oe(30, -30), oe(4, -40), oe(15, -30), oe(4, -38), oe(31, -41), oe(3, -43), oe(-20, -49), oe(5, -31),
+			oe(-35, -51), oe(10, -55), oe(83, -42), oe(17, -44), oe(-15, -43), oe(5, -48), oe(-34, -40), oe(-34, -83),
+			oe(-66, -56), oe(-8, -61), oe(18, -49), oe(13, -49), oe(-31, -19), oe(-34, -30), oe(-73, -22), oe(-66, -45),
+			oe(-170, -71), oe(-30, -13), oe(-141, -53), oe(-19, -59), oe(-6, -43), oe(-52, -38), oe(-126, -46), oe(-154, -77)
+	};
+	public final int[] BISHOP_OUTPOST = {oe(21, 8), oe(32, 14)};
+	public int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(8, 8);
+	public final int[] BISHOP_TRAPPED_BY_OPPOSITE_PAWN_PENALTY = {oe(160, 26), oe(223, 5)};
+	public final int[] BISHOP_MOBILITY = {oe(-16, -32), oe(-7, -10), oe(0, 0), oe(5, 6), oe(8, 11), oe(11, 16), oe(13, 19), oe(16, 20), oe(18, 20), oe(20, 21), oe(23, 21), oe(25, 21), oe(27, 21), oe(27, 21)};
+	public final int[] BISHOP_PCSQ = {
+			oe(-22, -56), oe(7, 1), oe(21, -4), oe(14, 8), oe(-2, -6), oe(-2, 10), oe(-26, -25), oe(12, -27),
+			oe(32, 2), oe(25, -2), oe(37, 0), oe(12, 1), oe(22, 11), oe(36, -14), oe(10, 6), oe(-16, 0),
+			oe(19, -18), oe(26, 21), oe(28, 2), oe(18, 19), oe(14, 3), oe(26, 18), oe(32, -9), oe(1, 5),
+			oe(19, 15), oe(8, -13), oe(10, 13), oe(20, -6), oe(29, 10), oe(14, 0), oe(-2, 13), oe(-2, 4),
+			oe(-18, -10), oe(18, 17), oe(6, -12), oe(13, 20), oe(17, 1), oe(2, 7), oe(-1, -1), oe(-19, 8),
+			oe(8, 29), oe(-23, 0), oe(16, 14), oe(-4, 0), oe(-19, 13), oe(-31, 2), oe(-1, -2), oe(16, -1),
+			oe(-42, -14), oe(-45, 17), oe(8, 6), oe(-20, 14), oe(-25, 11), oe(-31, 17), oe(-23, 3), oe(-40, 12),
+			oe(16, 14), oe(-89, -6), oe(-11, 3), oe(6, -5), oe(17, 11), oe(8, -8), oe(-18, 12), oe(-28, 8)
+	};
+	public final int[] ROOK_OUTPOST = {oe(24, 17), oe(35, 18)};
+	public final int[] ROOK_FILE = {oe(33, 5), oe(13, 0)};
+	public int ROOK_7 = oe(5, 0);
+	public final int[] ROOK_TRAPPED_BY_OWN_KING_PENALTY = {oe(102, -1), oe(14, 25), oe(29, 12), oe(-5, -25)};
+	public final int[] ROOK_MOBILITY = {oe(4, -49), oe(5, -10), oe(1, 5), oe(3, 9), oe(2, 17), oe(5, 22), oe(6, 26), oe(9, 28), oe(16, 30), oe(17, 30), oe(15, 33), oe(29, 31), oe(41, 27), oe(52, 29), oe(129, -3)};
+	public final int[] ROOK_PCSQ = {
+			oe(8, 23), oe(41, 20), oe(12, 28), oe(19, 32), oe(14, 37), oe(2, 32), oe(9, 34), oe(3, 37),
+			oe(13, 10), oe(5, 23), oe(15, 17), oe(-1, 30), oe(-10, 40), oe(-15, 30), oe(15, 22), oe(-25, 33),
+			oe(-6, 0), oe(4, 25), oe(-7, 34), oe(-4, 37), oe(-9, 43), oe(-8, 44), oe(-8, 35), oe(-30, 40),
+			oe(-21, 28), oe(-41, 26), oe(-26, 41), oe(-35, 33), oe(-22, 38), oe(2, 25), oe(-35, 39), oe(-27, 44),
+			oe(12, 42), oe(-11, 33), oe(29, 31), oe(8, 34), oe(22, 33), oe(-24, 37), oe(3, 43), oe(-16, 56),
+			oe(56, 37), oe(81, 21), oe(35, 29), oe(55, 38), oe(36, 34), oe(6, 36), oe(10, 30), oe(0, 53),
+			oe(54, 46), oe(10, 59), oe(86, 48), oe(43, 61), oe(54, 57), oe(29, 57), oe(11, 57), oe(26, 52),
+			oe(23, 49), oe(-2, 63), oe(125, 57), oe(3, 78), oe(11, 68), oe(20, 69), oe(47, 65), oe(-18, 55)
+	};
+	public final int[] QUEEN_MOBILITY = {oe(-16, -12), oe(1, -13), oe(13, -3), oe(17, 2), oe(14, 25), oe(16, 51), oe(21, 43), oe(17, 54), oe(17, 59), oe(23, 55), oe(24, 62), oe(29, 59), oe(20, 65), oe(33, 56), oe(61, 37), oe(61, 40), oe(73, 38), oe(79, 31), oe(88, 23), oe(95, 21), oe(82, 24), oe(85, 33), oe(33, 44), oe(20, 37), oe(7, 48), oe(28, 71), oe(33, 67), oe(35, 109)};
+	public final int[] QUEEN_PCSQ = {
+			oe(37, -41), oe(-19, -1), oe(8, -29), oe(14, -3), oe(11, 15), oe(4, 2), oe(23, -30), oe(31, -14),
+			oe(35, -18), oe(6, 14), oe(11, 10), oe(15, 16), oe(13, 22), oe(13, 27), oe(17, 13), oe(3, 28),
+			oe(13, 10), oe(8, 13), oe(8, 34), oe(13, 18), oe(8, 22), oe(6, 38), oe(-3, 32), oe(-2, 39),
+			oe(16, 40), oe(18, 25), oe(12, 43), oe(20, 28), oe(16, 46), oe(18, 32), oe(-17, 47), oe(4, 6),
+			oe(33, 27), oe(-9, 46), oe(24, 23), oe(24, 56), oe(5, 46), oe(1, 52), oe(-4, 45), oe(-7, 32),
+			oe(47, 49), oe(58, 14), oe(91, 52), oe(44, 53), oe(32, 45), oe(13, 43), oe(-18, 64), oe(22, 44),
+			oe(57, 25), oe(5, 46), oe(49, 59), oe(-6, 65), oe(41, 36), oe(-3, 63), oe(-19, 45), oe(19, 12),
+			oe(29, 32), oe(29, 28), oe(-8, 41), oe(-1, 20), oe(15, 35), oe(-3, 20), oe(-24, 48), oe(-68, 44)
+	};
+	public final int[] KING_PCSQ = {
+			oe(22, -18), oe(24, -17), oe(-21, -19), oe(58, -39), oe(-23, -35), oe(19, -27), oe(24, -25), oe(-8, -7),
+			oe(49, -14), oe(22, -3), oe(30, -8), oe(40, -12), oe(39, -20), oe(49, -24), oe(64, -15), oe(80, -22),
+			oe(-55, -2), oe(49, 3), oe(31, -5), oe(80, -3), oe(67, -6), oe(20, -12), oe(139, -21), oe(-9, -27),
+			oe(-11, 3), oe(12, 9), oe(30, 11), oe(63, 3), oe(81, 6), oe(8, 1), oe(72, -2), oe(68, -15),
+			oe(56, 30), oe(10, 29), oe(27, 24), oe(38, 7), oe(109, -2), oe(30, 12), oe(74, 18), oe(132, 5),
+			oe(121, 53), oe(100, 69), oe(48, 52), oe(-1, 11), oe(0, 19), oe(101, 33), oe(62, 31), oe(5, 5),
+			oe(-66, 32), oe(-34, 48), oe(31, 55), oe(-33, 25), oe(-85, 28), oe(40, 35), oe(81, 26), oe(-12, -7),
+			oe(-59, -37), oe(41, 29), oe(-141, 39), oe(-146, 9), oe(-154, 40), oe(-80, 18), oe(28, 5), oe(-166, -57)
+	};
+	public final int[] PAWN_ATTACKS = {0, 0, oe(46, 26), oe(43, 49), oe(60, 26), oe(44, 36), 0};
+	public final int[] MINOR_ATTACKS = {0, oe(2, 20), oe(31, 22), oe(27, 22), oe(53, 24), oe(40, 38), 0};
+	public final int[] MAJOR_ATTACKS = {0, oe(0, 19), oe(11, 21), oe(15, 20), oe(0, 14), oe(36, 21), 0};
+	public int HUNG_PIECES = oe(45, 84);
+	public int PINNED_PIECE = oe(26, -24);
+	public final int[] PIECE_ATTACKS_KING = {0, 0, oe(19, 0), oe(13, 0), oe(33, 0), oe(40, 0)};
+	public int SPACE = oe(6, 0);
+	public int TEMPO = oe(5, 0);
 
-	// Mobility units: this value is added for the number of destination square not occupied by one of our pieces or attacked by opposite pawns
-	private static final int[] KNIGHT_MOBILITY = {oe(-12, -16), oe(2, 2), oe(5, 7), oe(7, 9), oe(8, 11), oe(10, 13), oe(11, 14), oe(11, 15), oe(12, 16)};
-	private static final int[] BISHOP_MOBILITY = {oe(-16, -16), oe(-1, -1), oe(3, 3), oe(6, 6), oe(8, 8), oe(9, 9), oe(11, 11), oe(12, 12), oe(13, 13), oe(13, 13), oe(14, 14), oe(15, 15), oe(15, 15), oe(16, 16)};
-	private static final int[] ROOK_MOBILITY = {oe(-14, -21), oe(-1, -2), oe(3, 4), oe(5, 7), oe(7, 10), oe(8, 12), oe(9, 13), oe(10, 15), oe(11, 16), oe(11, 17), oe(12, 18), oe(13, 19), oe(13, 20), oe(14, 20), oe(14, 21)};
-	private static final int[] QUEEN_MOBILITY = {oe(-27, -27), oe(-9, -9), oe(-2, -2), oe(2, 2), oe(5, 5), oe(8, 8), oe(10, 10), oe(12, 12), oe(13, 13), oe(14, 14), oe(16, 16), oe(17, 17), oe(18, 18), oe(19, 19), oe(19, 19), oe(20, 20), oe(21, 21), oe(22, 22), oe(22, 22), oe(23, 23), oe(24, 24), oe(24, 24), oe(25, 25), oe(25, 25), oe(26, 26), oe(26, 26), oe(27, 27), oe(27, 27)};
+	// Sums for each piece attacking an square near the king
+	// Ponder kings attacks by the number of attackers (not pawns)
+	private static final int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
 
-	// Space
 	private static final long WHITE_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R2 | BitboardUtils.R3 | BitboardUtils.R4);
 	private static final long BLACK_SPACE_ZONE = (BitboardUtils.C | BitboardUtils.D | BitboardUtils.E | BitboardUtils.F) &
 			(BitboardUtils.R5 | BitboardUtils.R6 | BitboardUtils.R7);
-	private static final int SPACE = oe(2, 0);
 
-	// Attacks
-	private static final int[] PAWN_ATTACKS = {0, 0, oe(11, 15), oe(12, 16), oe(17, 23), oe(19, 25), 0};
-	private static final int[] MINOR_ATTACKS = {0, oe(3, 5), oe(7, 9), oe(7, 9), oe(10, 14), oe(11, 15), 0}; // Minor piece attacks to pawn undefended pieces
-	private static final int[] MAJOR_ATTACKS = {0, oe(2, 2), oe(3, 4), oe(3, 4), oe(5, 6), oe(5, 7), 0}; // Major piece attacks to pawn undefended pieces
+	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
 
-	private static final int HUNG_PIECES = oe(16, 25); // Two or more pieces of the other side attacked by inferior pieces
-	private static final int PINNED_PIECE = oe(25, 35);
-
-	// Pawns
-	// Those are all penalties. Array is {not opposed, opposed}: If not opposed, backwards and isolated pawns can be easily attacked
-	private static final int[] PAWN_BACKWARDS_PENALTY = {oe(20, 15), oe(10, 15)}; // Not opposed is worse in the opening
-	private static final int[] PAWN_ISOLATED_PENALTY = {oe(20, 20), oe(10, 20)}; // Not opposed is worse in the opening
-	private static final int[] PAWN_DOUBLED_PENALTY = {oe(8, 16), oe(10, 20)}; // Not opposed is better, opening is better
-	private static final int PAWN_UNSUPPORTED_PENALTY = oe(2, 4); // Not backwards or isolated
-
-	// And now the bonuses. Array by relative rank
-	private static final int[] PAWN_CANDIDATE = {0, oe(10, 13), oe(10, 13), oe(14, 18), oe(22, 28), oe(34, 43), oe(50, 63), 0};
-	private static final int[] PAWN_PASSER = {0, oe(20, 25), oe(20, 25), oe(28, 35), oe(44, 55), oe(68, 85), oe(100, 125), 0};
-	private static final int[] PAWN_PASSER_OUTSIDE = {0, 0, 0, oe(2, 3), oe(7, 9), oe(14, 18), oe(24, 30), 0};
-	private static final int[] PAWN_PASSER_CONNECTED = {0, 0, 0, oe(3, 3), oe(8, 8), oe(15, 15), oe(25, 25), 0};
-	private static final int[] PAWN_PASSER_SUPPORTED = {0, 0, 0, oe(6, 6), oe(17, 17), oe(33, 33), oe(55, 55), 0};
-	private static final int[] PAWN_PASSER_MOBILE = {0, 0, 0, oe(2, 2), oe(6, 6), oe(12, 12), oe(20, 20), 0};
-	private static final int[] PAWN_PASSER_RUNNER = {0, 0, 0, oe(6, 6), oe(18, 18), oe(36, 36), oe(60, 60), 0};
-
-	private static final int[] PAWN_PASSER_OTHER_KING_DISTANCE = {0, 0, 0, oe(0, 2), oe(0, 6), oe(0, 12), oe(0, 20), 0};
-	private static final int[] PAWN_PASSER_MY_KING_DISTANCE = {0, 0, 0, oe(0, 1), oe(0, 3), oe(0, 6), oe(0, 10), 0};
-
-	private static final int[] PAWN_SHIELD_CENTER = {0, oe(55, 0), oe(41, 0), oe(28, 0), oe(14, 0), 0, 0, 0};
-	private static final int[] PAWN_SHIELD = {0, oe(35, 0), oe(26, 0), oe(18, 0), oe(9, 0), 0, 0, 0};
-	private static final int[] PAWN_STORM_CENTER = {0, 0, 0, oe(8, 0), oe(15, 0), oe(30, 0), 0, 0};
-	private static final int[] PAWN_STORM = {0, 0, 0, oe(5, 0), oe(10, 0), oe(20, 0), 0, 0};
-
-	private static final int PAWN_BLOCKADE = oe(5, 0); // Penalty for pawns in [D,E] in the initial square blocked by our own pieces
-
-	// Knights
-	private static final int KNIGHT_OUTPOST = oe(2, 3); // Adds one time if no opposite can can attack out knight and twice if it is defended by one of our pawns
-	private static final int[] KNIGHT_OUTPOST_ATTACKING = { // Knight outpost attacks squares Near King or other opposite pieces Pawn Undefended
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, oe(7, 7), oe(7, 7), oe(10, 10), oe(10, 10), oe(7, 7), oe(7, 7), 0,
-			0, oe(5, 5), oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), oe(5, 5), 0,
-			0, 0, oe(5, 5), oe(8, 8), oe(8, 8), oe(5, 5), 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0
-	};
-
-	// Bishops
-	private static final int BISHOP_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int BISHOP_OUTPOST_ATTACKING = oe(3, 4); // And attacks other piece not defended by pawn or a square in the king zone
-	private static final int BISHOP_MY_PAWNS_IN_COLOR_PENALTY = oe(2, 4); // Penalty for each of my pawns in the bishop color (Capablanca rule)
-	private static final int[] BISHOP_TRAPPED_BY_OPPOSITE_PAWN_PENALTY = {oe(40, 40), oe(80, 80)}; // By pawn not guarded / guarded
-	private static final long[] BISHOP_TRAPPING = { // Indexed by bishop position, contains the square where a pawn can trap the bishop
+	// Indexed by bishop position, contains the square where an opponent pawn can trap the bishop
+	private static final long[] BISHOP_TRAPPING = {
 			0, Square.F2, 0, 0, 0, 0, Square.C2, 0,
 			Square.G3, 0, 0, 0, 0, 0, 0, Square.B3,
 			Square.G4, 0, 0, 0, 0, 0, 0, Square.B4,
@@ -88,7 +130,8 @@ public class ExperimentalEvaluator extends Evaluator {
 			Square.G6, 0, 0, 0, 0, 0, 0, Square.B6,
 			0, Square.F7, 0, 0, 0, 0, Square.C7, 0
 	};
-	private static final long[] BISHOP_TRAPPING_GUARD = { // Indexed by bishop position, contains the square where other pawn defends the trapping pawn
+	// Indexed by bishop position, contains the square where other opponent pawn defends the trapping pawn
+	private static final long[] BISHOP_TRAPPING_GUARD = {
 			0, 0, 0, 0, 0, 0, 0, 0,
 			Square.F2, 0, 0, 0, 0, 0, 0, Square.C2,
 			Square.F3, 0, 0, 0, 0, 0, 0, Square.C3,
@@ -98,19 +141,8 @@ public class ExperimentalEvaluator extends Evaluator {
 			Square.F7, 0, 0, 0, 0, 0, 0, Square.C7,
 			0, 0, 0, 0, 0, 0, 0, 0
 	};
-
-	// Rooks
-	private static final int ROOK_OUTPOST = oe(1, 2); // Only if defended by pawn
-	private static final int ROOK_OUTPOST_ATTACKING = oe(3, 4); // Also attacks other piece not defended by pawn or a square near king
-	private static final int ROOK_FILE_OPEN_NO_MG = oe(20, 10); // No pawns in rook file and no minor guarded
-	private static final int ROOK_FILE_OPEN_MG_P = oe(15, 5); // No pawns in rook file and minor guarded, my pawns can attack
-	private static final int ROOK_FILE_OPEN_MG_NP = oe(10, 0); // No pawns in rook file and minor guarded, my pawns cannot attack
-	private static final int ROOK_FILE_SEMIOPEN = oe(3, 6); // No pawns mines in file
-	private static final int ROOK_FILE_SEMIOPEN_WEAK_PAWN = oe(15, 5); // And attacks a backward or isolated pawn
-	private static final int ROOK_FILE_SEMIOPEN_K = oe(3, 6); // No pawns mines in file and opposite king
-	private static final int ROOK_7 = oe(7, 10); // Rook 5, 6 or 7th rank attacking a pawn in the same rank not defended by pawn
-	private static final int[] ROOK_TRAPPED_BY_OWN_KING_PENALTY = {oe(50, 0), oe(25, 0), oe(12, 0), oe(6, 0)}; // Penalty by number of mobility squares
-	private static final long[] ROOK_TRAPPING = { // Indexed by own king position, contains the squares where a rook may be traped by the king
+	// Indexed by own king position, contains the squares where a rook may be trapped by the king
+	private static final long[] ROOK_TRAPPING = {
 			0, Square.H1 | Square.H2, Square.H1 | Square.H2 | Square.G1 | Square.G2, 0,
 			0, Square.A1 | Square.A2 | Square.B1 | Square.B2, Square.A1 | Square.A2, 0,
 			0, 0, 0, 0, 0, 0, 0, 0,
@@ -123,81 +155,9 @@ public class ExperimentalEvaluator extends Evaluator {
 			0, Square.A7 | Square.A8 | Square.B7 | Square.B8, Square.A7 | Square.A8, 0,
 	};
 
-	// King
-	// Sums for each piece attacking an square near the king
-	private static final int[] PIECE_ATTACKS_KING = {0, 0, oe(30, 0), oe(20, 0), oe(40, 0), oe(80, 0)};
-	// Ponder kings attacks by the number of attackers (not pawns)
-	private static final int[] KING_SAFETY_PONDER = {0, 0, 32, 48, 56, 60, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64};
-
-	// Tempo
-	private static final int TEMPO = oe(15, 5); // Add to moving side score
-
-	private static final long[] OUTPOST_MASK = {0x00007e7e7e000000L, 0x0000007e7e7e0000L};
-
-	private static final int[] PAWN_PCSQ = {
-			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4),
-			oe(-21, 1), oe(-9, -1), oe(-3, -3), oe(3, -5), oe(3, -5), oe(-3, -3), oe(-9, -1), oe(-21, 1),
-			oe(-20, 1), oe(-8, -1), oe(-2, -3), oe(4, -5), oe(4, -5), oe(-2, -3), oe(-8, -1), oe(-20, 1),
-			oe(-19, 2), oe(-7, 0), oe(-1, -2), oe(12, -4), oe(12, -4), oe(-1, -2), oe(-7, 0), oe(-19, 2),
-			oe(-17, 3), oe(-5, 1), oe(1, -1), oe(10, -3), oe(10, -3), oe(1, -1), oe(-5, 1), oe(-17, 3),
-			oe(-16, 4), oe(-4, 2), oe(2, 0), oe(8, -2), oe(8, -2), oe(2, 0), oe(-4, 2), oe(-16, 4),
-			oe(-15, 6), oe(-3, 4), oe(3, 2), oe(9, 0), oe(9, 0), oe(3, 2), oe(-3, 4), oe(-15, 6),
-			oe(-18, 4), oe(-6, 2), oe(0, 0), oe(6, -2), oe(6, -2), oe(0, 0), oe(-6, 2), oe(-18, 4)
-	};
-	private static final int[] KNIGHT_PCSQ = {
-			oe(-27, -22), oe(-17, -17), oe(-9, -12), oe(-4, -9), oe(-4, -9), oe(-9, -12), oe(-17, -17), oe(-27, -22),
-			oe(-21, -15), oe(-11, -8), oe(-3, -4), oe(2, -2), oe(2, -2), oe(-3, -4), oe(-11, -8), oe(-21, -15),
-			oe(-15, -10), oe(-5, -4), oe(3, 1), oe(8, 3), oe(8, 3), oe(3, 1), oe(-5, -4), oe(-15, -10),
-			oe(-9, -6), oe(1, -1), oe(9, 4), oe(14, 8), oe(14, 8), oe(9, 4), oe(1, -1), oe(-9, -6),
-			oe(-5, -4), oe(5, 1), oe(13, 6), oe(18, 10), oe(18, 10), oe(13, 6), oe(5, 1), oe(-5, -4),
-			oe(-6, -4), oe(4, 2), oe(12, 7), oe(17, 9), oe(17, 9), oe(12, 7), oe(4, 2), oe(-6, -4),
-			oe(-10, -8), oe(0, -1), oe(8, 3), oe(13, 5), oe(13, 5), oe(8, 3), oe(0, -1), oe(-10, -8),
-			oe(-20, -15), oe(-10, -10), oe(-2, -5), oe(3, -2), oe(3, -2), oe(-2, -5), oe(-10, -10), oe(-20, -15)
-	};
-	private static final int[] BISHOP_PCSQ = {
-			oe(-7, 0), oe(-8, -1), oe(-11, -2), oe(-13, -2), oe(-13, -2), oe(-11, -2), oe(-8, -1), oe(-7, 0),
-			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
-			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
-			oe(-8, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-8, -2),
-			oe(-8, -2), oe(-2, 0), oe(6, 2), oe(15, 5), oe(15, 5), oe(6, 2), oe(-2, 0), oe(-8, -2),
-			oe(-6, -2), oe(0, 0), oe(7, 3), oe(6, 2), oe(6, 2), oe(7, 3), oe(0, 0), oe(-6, -2),
-			oe(-3, -1), oe(3, 1), oe(0, 0), oe(-2, 0), oe(-2, 0), oe(0, 0), oe(3, 1), oe(-3, -1),
-			oe(-2, 0), oe(-3, -1), oe(-6, -2), oe(-8, -2), oe(-8, -2), oe(-6, -2), oe(-3, -1), oe(-2, 0)
-	};
-	private static final int[] ROOK_PCSQ = {
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
-			oe(-4, 0), oe(0, 0), oe(4, 0), oe(8, 0), oe(8, 0), oe(4, 0), oe(0, 0), oe(-4, 0),
-			oe(-4, 1), oe(0, 1), oe(4, 1), oe(8, 1), oe(8, 1), oe(4, 1), oe(0, 1), oe(-4, 1),
-			oe(-4, 3), oe(0, 3), oe(4, 3), oe(8, 3), oe(8, 3), oe(4, 3), oe(0, 3), oe(-4, 3),
-			oe(-4, 5), oe(0, 5), oe(4, 5), oe(8, 5), oe(8, 5), oe(4, 5), oe(0, 5), oe(-4, 5),
-			oe(-4, -2), oe(0, -2), oe(4, -2), oe(8, -2), oe(8, -2), oe(4, -2), oe(0, -2), oe(-4, -2)
-	};
-	private static final int[] QUEEN_PCSQ = {
-			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15),
-			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
-			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
-			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
-			oe(-2, -7), oe(3, -2), oe(6, 2), oe(9, 5), oe(9, 5), oe(6, 2), oe(3, -2), oe(-2, -7),
-			oe(-4, -8), oe(1, -3), oe(5, 0), oe(6, 2), oe(6, 2), oe(5, 0), oe(1, -3), oe(-4, -8),
-			oe(-6, -10), oe(-1, -5), oe(1, -3), oe(3, -2), oe(3, -2), oe(1, -3), oe(-1, -5), oe(-6, -10),
-			oe(-9, -15), oe(-6, -10), oe(-4, -8), oe(-2, -7), oe(-2, -7), oe(-4, -8), oe(-6, -10), oe(-9, -15)
-	};
-	private static final int[] KING_PCSQ = {
-			oe(34, -58), oe(39, -35), oe(14, -19), oe(-6, -13), oe(-6, -13), oe(14, -19), oe(39, -35), oe(34, -58),
-			oe(31, -35), oe(36, -10), oe(11, 2), oe(-9, 8), oe(-9, 8), oe(11, 2), oe(36, -10), oe(31, -35),
-			oe(28, -19), oe(33, 2), oe(8, 17), oe(-12, 23), oe(-12, 23), oe(8, 17), oe(33, 2), oe(28, -19),
-			oe(25, -13), oe(30, 8), oe(5, 23), oe(-15, 32), oe(-15, 32), oe(5, 23), oe(30, 8), oe(25, -13),
-			oe(20, -13), oe(25, 8), oe(0, 23), oe(-20, 32), oe(-20, 32), oe(0, 23), oe(25, 8), oe(20, -13),
-			oe(15, -19), oe(20, 2), oe(-5, 17), oe(-25, 23), oe(-25, 23), oe(-5, 17), oe(20, 2), oe(15, -19),
-			oe(5, -35), oe(10, -10), oe(-15, 2), oe(-35, 8), oe(-35, 8), oe(-15, 2), oe(10, -10), oe(5, -35),
-			oe(-5, -58), oe(0, -35), oe(-25, -19), oe(-45, -13), oe(-45, -13), oe(-25, -19), oe(0, -35), oe(-5, -58)
-	};
-
-	private final boolean debug = false;
-	private final boolean debugPawns = false;
-	private StringBuffer debugSB;
+	public boolean debug = false;
+	public boolean debugPawns = false;
+	public StringBuffer debugSB;
 
 	private final int[] scaleFactor = {0};
 
@@ -327,7 +287,7 @@ public class ExperimentalEvaluator extends Evaluator {
 		kingZone[B] |= (kingZone[B] >>> 8);
 
 		long all = board.getAll();
-		long pieceAttacks, pieceAttackedXray, safeAttacks, kingAttacks;
+		long pieceAttacks, safeAttacks, kingAttacks;
 
 		long square = 1;
 		for (int index = 0; index < 64; index++) {
@@ -409,12 +369,6 @@ public class ExperimentalEvaluator extends Evaluator {
 						}
 						if (candidate) {
 							passedPawns[us] += PAWN_CANDIDATE[relativeRank];
-						}
-
-						if ((square & (BitboardUtils.D | BitboardUtils.E)) != 0
-								&& relativeRank == 1
-								&& (pushSquare & mines & ~board.pawns) != 0) {
-							pawnStructure[us] -= PAWN_BLOCKADE;
 						}
 
 						// Pawn Storm: It can open a file near the other king
@@ -507,15 +461,7 @@ public class ExperimentalEvaluator extends Evaluator {
 
 					// Knight outpost: no opposite pawns can attack the square
 					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them]) != 0) {
-						positional[us] += KNIGHT_OUTPOST;
-						// Defended by one of our pawns
-						if ((square & ai.pawnAttacks[us]) != 0) {
-							positional[us] += KNIGHT_OUTPOST;
-							// Attacks squares near king or other pieces pawn undefended
-							if ((safeAttacks & (kingZone[them] | others)) != 0) {
-								positional[us] += KNIGHT_OUTPOST_ATTACKING[pcsqIndex];
-							}
-						}
+						positional[us] += KNIGHT_OUTPOST[(square & ai.pawnAttacks[us]) != 0 ? 1 : 0];
 					}
 
 				} else if ((square & board.bishops) != 0) {
@@ -531,20 +477,9 @@ public class ExperimentalEvaluator extends Evaluator {
 						kingAttackersCount[us]++;
 					}
 
-					pieceAttackedXray = bbAttacks.getBishopAttacks(index, all & ~(pieceAttacks & others & ~board.pawns))
-							& ~pieceAttacks
-							& (board.rooks | board.queens) & others;
-					if (pieceAttackedXray != 0) {
-						attacks[us] += PINNED_PIECE * Long.bitCount(pieceAttackedXray);
-					}
-
-					// Bishop Outpost: no opposite pawns can attack the square and defended by one of our pawns
-					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
-						positional[us] += BISHOP_OUTPOST;
-						// Attacks squares near king or other pieces pawn undefended
-						if ((safeAttacks & (kingZone[them] | others)) != 0) {
-							positional[us] += BISHOP_OUTPOST_ATTACKING;
-						}
+					// Bishop Outpost
+					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them]) != 0) {
+						positional[us] += BISHOP_OUTPOST[(square & ai.pawnAttacks[us]) != 0 ? 1 : 0];
 					}
 
 					positional[us] -= BISHOP_MY_PAWNS_IN_COLOR_PENALTY * Long.bitCount(board.pawns & mines & BitboardUtils.getSameColorSquares(square));
@@ -567,47 +502,19 @@ public class ExperimentalEvaluator extends Evaluator {
 						kingAttackersCount[us]++;
 					}
 
-					pieceAttackedXray = bbAttacks.getRookAttacks(index, all & ~(pieceAttacks & others & ~board.pawns))
-							& ~pieceAttacks
-							& board.queens & others;
-					if ((pieceAttackedXray) != 0) {
-						attacks[us] += PINNED_PIECE * Long.bitCount(pieceAttackedXray);
+					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them]) != 0) {
+						positional[us] += ROOK_OUTPOST[(square & ai.pawnAttacks[us]) != 0 ? 1 : 0];
 					}
 
-					// Rook Outpost: no opposite pawns can attack the square and defended by one of our pawns
-					if ((square & OUTPOST_MASK[us] & ~pawnCanAttack[them] & ai.pawnAttacks[us]) != 0) {
-						positional[us] += ROOK_OUTPOST;
-						// Attacks squares near king or other pieces pawn undefended
-						if ((safeAttacks & (kingZone[them] | others)) != 0) {
-							positional[us] += ROOK_OUTPOST_ATTACKING;
-						}
+					long rookFile = BitboardUtils.FILE[file];
+					if ((rookFile & board.pawns & mines) == 0) {
+						positional[us] += ROOK_FILE[(rookFile & board.pawns) == 0 ? 0 : 1];
 					}
 
 					if (relativeRank >= 4) {
-						long pawnsAttacked = BitboardUtils.RANK[rank] & board.pawns & others;
-						if (pawnsAttacked != 0) {
-							positional[us] += ROOK_7 * Long.bitCount(pawnsAttacked);
-						}
-					}
-
-					long rookFile = BitboardUtils.FILE[file] & BitboardUtils.RANKS_FORWARD[us][rank];
-					if ((rookFile & board.pawns & mines) == 0) {
-						positional[us] += ROOK_FILE_SEMIOPEN;
-						if ((rookFile & board.pawns) == 0) {
-							long minorPiecesDefendedByPawns = others & (board.bishops | board.knights) & ai.pawnAttacks[them];
-							if ((rookFile & minorPiecesDefendedByPawns) == 0) {
-								positional[us] += ROOK_FILE_OPEN_NO_MG;
-							} else {
-								if ((rookFile & minorPiecesDefendedByPawns & pawnCanAttack[us]) == 0) {
-									positional[us] += ROOK_FILE_OPEN_MG_NP;
-								} else {
-									positional[us] += ROOK_FILE_OPEN_MG_P;
-								}
-							}
-						}
-
-						if ((rookFile & board.kings & others) != 0) {
-							positional[us] += ROOK_FILE_SEMIOPEN_K;
+						long pawnsAligned = BitboardUtils.RANK[rank] & board.pawns & others;
+						if (pawnsAligned != 0) {
+							positional[us] += ROOK_7 * Long.bitCount(pawnsAligned);
 						}
 					}
 

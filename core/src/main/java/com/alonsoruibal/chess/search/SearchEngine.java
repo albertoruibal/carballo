@@ -4,10 +4,7 @@ import com.alonsoruibal.chess.Board;
 import com.alonsoruibal.chess.Config;
 import com.alonsoruibal.chess.Move;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
-import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
-import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
+import com.alonsoruibal.chess.evaluation.*;
 import com.alonsoruibal.chess.log.Logger;
 import com.alonsoruibal.chess.tt.TranspositionTable;
 
@@ -142,6 +139,8 @@ public class SearchEngine implements Runnable {
 			evaluator = new CompleteEvaluator();
 		} else if ("experimental".equals(evaluatorName)) {
 			evaluator = new ExperimentalEvaluator();
+		} else {
+			evaluator = new TunedEvaluator();
 		}
 
 		tt = new TranspositionTable(config.getTranspositionTableSize());
@@ -830,6 +829,10 @@ public class SearchEngine implements Runnable {
 		run();
 	}
 
+	public void setInitialPly() {
+		initialPly = board.getMoveNumber();
+	}
+
 	private void prepareRun() throws SearchFinishedException {
 		logger.debug("Board\n" + board);
 
@@ -1091,5 +1094,9 @@ public class SearchEngine implements Runnable {
 			System.out.print(Move.toString(node.move) + " (" + Move.toString(node.ttMove) + " " + node.staticEval + ") ");
 		}
 		System.out.println();
+	}
+
+	public Evaluator getEvaluator() {
+		return evaluator;
 	}
 }

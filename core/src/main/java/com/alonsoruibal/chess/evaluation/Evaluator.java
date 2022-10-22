@@ -15,14 +15,13 @@ public abstract class Evaluator {
 	public static final int KNOWN_WIN = 20000;
 	public static final int DRAW = 0;
 
-	public static final int PAWN_OPENING = 80;
 	public static final int PAWN = 100;
 	public static final int KNIGHT = 325;
 	public static final int BISHOP = 325;
 	public static final int ROOK = 500;
 	public static final int QUEEN = 975;
 	public static final int[] PIECE_VALUES = {0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN};
-	public static final int[] PIECE_VALUES_OE = {0, oe(PAWN_OPENING, PAWN), oe(KNIGHT, KNIGHT), oe(BISHOP, BISHOP), oe(ROOK, ROOK), oe(QUEEN, QUEEN)};
+	public static final int[] PIECE_VALUES_OE = {0, oe(PAWN, PAWN), oe(KNIGHT, KNIGHT), oe(BISHOP, BISHOP), oe(ROOK, ROOK), oe(QUEEN, QUEEN)};
 	public static final int BISHOP_PAIR = oe(50, 50); // Bonus by having two bishops in different colors
 
 	public static final int GAME_PHASE_MIDGAME = 1000;
@@ -44,8 +43,8 @@ public abstract class Evaluator {
 	/**
 	 * Merges two short Opening - Ending values in one int
 	 */
-	public static int oe(int opening, int endgame) {
-		return (opening << 16) + endgame;
+	public static int oe(int o, int e) {
+		return (o << 16) + e;
 	}
 
 	/**
@@ -72,4 +71,5 @@ public abstract class Evaluator {
 	String formatOE(int value) {
 		return StringUtils.padLeft(String.valueOf(o(value)), 8) + " " + StringUtils.padLeft(String.valueOf(e(value)), 8);
 	}
+
 }

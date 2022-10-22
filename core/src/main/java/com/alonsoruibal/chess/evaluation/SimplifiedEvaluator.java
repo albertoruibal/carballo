@@ -6,8 +6,6 @@ import com.alonsoruibal.chess.bitboard.AttacksInfo;
 /**
  * Piece square values from Tomasz Michniewski, got from:
  * http://chessprogramming.wikispaces.com/Simplified+evaluation+function
- *
- * @author rui
  */
 public class SimplifiedEvaluator extends Evaluator {
 

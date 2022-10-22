@@ -34,7 +34,7 @@ Features
 * Extensions: Check (only with positive SEE), pawn push, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
 * Pruning: Null move pruning, static null move pruning, futility pruning and history pruning
-* Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
+* Pluggable evaluator function, distinct functions provided: Tuned, Simplified Evaluator Function, Complete and Experimental
 * Selectable ELO level with an UCI parameter
 * Supports Chess960
 * Polyglot opening book support; in the code it includes Fruit's Small Book
@@ -132,6 +132,11 @@ cd jse
 
 Changelog
 =========
+
+Version 1.8.1:
+* Apply Texel's method to tune eval parameters
+* New TunedEvaluator used for tuning, now it is the default one
+* TunedEvaluator: Non-symmetrical piece-square tables
 
 Version 1.8: Java 11, new desktop application and source code improvements
 

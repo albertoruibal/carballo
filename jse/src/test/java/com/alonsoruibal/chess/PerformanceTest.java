@@ -2,9 +2,8 @@ package com.alonsoruibal.chess;
 
 import com.alonsoruibal.chess.bitboard.AttacksInfo;
 import com.alonsoruibal.chess.bitboard.BitboardUtils;
-import com.alonsoruibal.chess.evaluation.CompleteEvaluator;
+import com.alonsoruibal.chess.evaluation.TunedEvaluator;
 import com.alonsoruibal.chess.evaluation.Evaluator;
-import com.alonsoruibal.chess.evaluation.ExperimentalEvaluator;
 import com.alonsoruibal.chess.evaluation.SimplifiedEvaluator;
 import com.alonsoruibal.chess.hash.ZobristKey;
 import com.alonsoruibal.chess.movegen.LegalMoveGenerator;
@@ -71,41 +70,41 @@ class PerformanceTest {
 
 	@Test
 	@Tag("slow")
-	void testCompleteEvaluatorPerf() {
+	void testEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
-		Evaluator completeEvaluator = new CompleteEvaluator();
+		TunedEvaluator evaluator = new TunedEvaluator();
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				completeEvaluator.evaluate(testBoard, attacksInfo);
+				evaluator.evaluate(testBoard, attacksInfo);
 				positions++;
 			}
 		}
 		long t2 = System.currentTimeMillis();
 		long pps = 1000 * positions / (t2 - t1 + 1);
-		System.out.println("Positions evaluated per second (complete) = " + pps);
+		System.out.println("Positions evaluated per second = " + pps);
 		assertTrue(pps > 100000);
 	}
 
 	@Test
 	@Tag("slow")
-	void testExperimentalEvaluatorPerf() {
+	void testDefaultEvaluatorPerf() {
 		AttacksInfo attacksInfo = new AttacksInfo();
-		Evaluator experimentalEvaluator = new ExperimentalEvaluator();
+		Evaluator defaultEvaluator = new TunedEvaluator();
 
 		long t1 = System.currentTimeMillis();
 		long positions = 0;
 		for (int i = 0; i < 10000; i++) {
 			for (Board testBoard : testBoards) {
-				experimentalEvaluator.evaluate(testBoard, attacksInfo);
+				defaultEvaluator.evaluate(testBoard, attacksInfo);
 				positions++;
 			}
 		}
 		long t2 = System.currentTimeMillis();
 		long pps = 1000 * positions / (t2 - t1 + 1);
-		System.out.println("Positions evaluated per second (experimental) = " + pps);
+		System.out.println("Positions evaluated per second (default) = " + pps);
 		assertTrue(pps > 100000);
 	}
 

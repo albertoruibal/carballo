@@ -148,7 +148,7 @@ public class BitboardUtils {
 	}
 
 	/**
-	 * Changes element 0 with 63 and consecuvely: this way array constants are
+	 * Changes element 0 with 63 and consecutively: this way array constants are
 	 * more legible
 	 */
 	public static String[] changeEndianArray64(String[] sarray) {

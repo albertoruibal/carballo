@@ -237,14 +237,14 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
-		// GWT.log("onMouseDown(" + toString(event) + "))", null);
+		log("onMouseDown(" + event + ")");
 		onMouseDown_(event);
 		event.stopPropagation();
 		event.preventDefault();
 	}
 
 	private void onMouseDown_(MouseEvent<?> event) {
-		//GWT.log("onMouseDown_(" + event + "))", null);
+		log("onMouseDown_(" + event + ")");
 		showSquareKey = false;
 		String algebraic = getAlgebraic(event);
 		mouseIndex = BitboardUtils.algebraic2Index(algebraic);
@@ -264,7 +264,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
-		// GWT.log("onMouseUp(" + toString(event) + "))", null);
+		log("onMouseUp(" + event.toString() + "))");
 
 		if (slidingPiece != null) {
 			if (possibleDestinySquares.contains(mouseIndex)) {
@@ -282,7 +282,7 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
 		String algebraic = getAlgebraic(event);
-		// GWT.log("onMouseMove(" + algebraic + "))", null);
+		log("onMouseMove(" + algebraic + "))");
 		mouseIndex = algebraic != null ? BitboardUtils.algebraic2Index(algebraic) : -1;
 		if (slidingPiece != null) {
 			// Compute the delta from the mousedown point.
@@ -462,4 +462,8 @@ public class ChessBoard implements MouseDownHandler, MouseUpHandler, MouseMoveHa
 	public void setMoveListener(MoveListener moveListener) {
 		this.moveListener = moveListener;
 	}
+
+	public native void log(String message) /*-{
+		console.log(message);
+    }-*/;
 }

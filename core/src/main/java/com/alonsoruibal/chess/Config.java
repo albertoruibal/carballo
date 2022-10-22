@@ -14,7 +14,7 @@ public class Config {
 	public static final boolean DEFAULT_PONDER = true;
 	public static final boolean DEFAULT_USE_BOOK = true;
 	public static final int DEFAULT_BOOK_KNOWGLEDGE = 100;
-	public static final String DEFAULT_EVALUATOR = "complete";
+	public static final String DEFAULT_EVALUATOR = "tuned";
 
 	// >0 refuses draw <0 looks for draw
 	public static final int DEFAULT_CONTEMPT_FACTOR = 90;
