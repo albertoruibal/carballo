@@ -52,7 +52,7 @@ public class Pgn {
 	}
 
 	@SuppressWarnings("deprecation")
-	private String getPgn(Board b, String whiteName, String blackName, String event, String site, String result) {
+	public String getPgn(Board b, String whiteName, String blackName, String event, String site, String result) {
 		// logger.debug("PGN start");
 
 		StringBuilder sb = new StringBuilder();
