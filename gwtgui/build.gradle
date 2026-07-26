@@ -1,11 +1,11 @@
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath 'org.gretty:gretty:4.0.3'
+        classpath 'org.gretty:gretty:4.1.6'
     }
 }
 
@@ -13,15 +13,17 @@ apply plugin: 'java'
 apply plugin: 'org.gretty'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-archivesBaseName = 'carballo-gwt'
+base {
+    archivesName = 'carballo-gwtgui'
+}
 
 dependencies {
-    implementation 'org.gwtproject:gwt-user:2.10.0'
-    implementation 'org.gwtproject:gwt-dev:2.10.0'
+    implementation 'org.gwtproject:gwt-user:2.13.1'
+    implementation 'org.gwtproject:gwt-dev:2.13.1'
     implementation 'org.vectomatic:lib-gwt-svg:0.5.15'
     implementation project(':core')
     implementation project(path: ':core', configuration: 'archives')

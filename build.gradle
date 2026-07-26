@@ -4,12 +4,12 @@ allprojects {
             mavenCentral()
         }
         dependencies {
-            classpath 'com.guardsquare:proguard-gradle:7.2.2'
+            classpath 'com.guardsquare:proguard-gradle:7.6.1'
         }
     }
 
-    group = 'com.github.albertoruibal.carballo'
-    version = '1.8.1-SNAPSHOT'
+    group = 'com.carballo'
+    version = (findProperty('version') ?: '1.8.1-SNAPSHOT')
 
     repositories {
         mavenCentral()
@@ -17,5 +17,27 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+}
+
+// GitHub Packages repository for publishing.
+// Authentication credentials are provided via environment variables or Gradle properties
+// (GITHUB_ACTOR / GITHUB_TOKEN or githubPackagesUsername / githubPackagesPassword).
+ext.githubPackagesUrl = 'https://maven.pkg.github.com/albertoruibal/carballo'
+
+subprojects { project ->
+    plugins.withId('maven-publish') {
+        publishing {
+            repositories {
+                maven {
+                    name = 'GitHubPackages'
+                    url = rootProject.ext.githubPackagesUrl
+                    credentials {
+                        username = project.findProperty('githubPackagesUsername') ?: System.getenv('GITHUB_ACTOR')
+                        password = project.findProperty('githubPackagesPassword') ?: System.getenv('GITHUB_TOKEN')
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,11 +1,13 @@
 apply plugin: 'java'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-archivesBaseName = 'carballo-swing'
+base {
+    archivesName = 'carballo-swing'
+}
 
 dependencies {
     implementation project(':core')
@@ -27,7 +29,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
     libraryjars "${System.getProperty('java.home')}/jmods"
     optimizationpasses 5
     allowaccessmodification()
-    target '11'
+    target '17'
     keep 'public class com.alonsoruibal.chess.swing.ChessApp { *; }'
     doLast {
         logger.lifecycle "[Proguard] Generated obfuscated JAR in ${ext.obfuscatedJar}"
