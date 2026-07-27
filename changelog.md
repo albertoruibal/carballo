@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9] - 2026-07-27
+
 ### Changed
 - Upgrade the source and target compatibility level to Java 17
 - Upgrade the Gradle wrapper to 9.6.1
