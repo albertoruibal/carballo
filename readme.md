@@ -2,18 +2,18 @@ Carballo Chess Engine
 =====================
 [![Release](https://img.shields.io/github/v/release/albertoruibal/carballo.svg)](https://github.com/albertoruibal/carballo/packages)
 
-Carballo (the galician word for Oak, it's all about search trees) is an Open Source Java chess engine with three interfaces:
+Carballo (the Galician word for Oak, it's all about search trees) is an Open Source Java chess engine with three interfaces:
 
 * UCI: a text interface for chess GUIs: https://github.com/albertoruibal/carballo/raw/master/carballo-uci-1.8.tgz
 * HTML5: developed with Google Web Toolkit (GWT) using the Vectomatic SVG library: http://www.mobialia.com/webchessgwt
-* Desktop: a swing application
+* Desktop: a Swing application
 
 It is organized into modules:
 
 * Core: the chess engine
 * Jse: the Java Standard Edition version with the UCI interface and JUnit tests
 * Gwt: components needed for the GWT GUI
-* GwtGui: an HTML5 interface developed by Lukas Laag, it depends on Core and Gwt
+* GwtGui: an HTML5 interface developed by Lukas Laag; it depends on Core and Gwt
 * Swing: the swing application code, it depends on Core and Jse
 
 It is licensed under GPLv3 and the source code is hosted at https://github.com/albertoruibal/carballo.
@@ -28,20 +28,20 @@ Features
 * Move iterator sorting moves with four killer move slots, Static Exchange Evaluation (SEE), Most Valuable Victim/Least Valuable Aggressor (MVV/LVA) and history heuristic
 * PVS searcher
 * Aspiration window, moves only one border of the window if it falls out
-* Transposition Table (TT) with zobrist keys (it uses two zobrist keys per board to avoid collisions) and multiprobe
+* Transposition Table (TT) with Zobrist keys (it uses two Zobrist keys per board to avoid collisions) and multiprobe
 * Quiescent Search (QS) with only good or equal captures (according to SEE) and limited check generation
 * Internal Iterative Deepening to improve sorting
 * Extensions: Check (only with positive SEE), pawn push, mate threat and singular move
 * Reductions: Late Move Reductions (LMR)
 * Pruning: Null move pruning, static null move pruning, futility pruning and history pruning
 * Pluggable evaluator function, distinct functions provided: the Simplified Evaluator Function, other Complete and other Experimental
-* Selectable ELO level with an UCI parameter
+* Selectable ELO level with a UCI parameter
 * Supports Chess960
-* Polyglot opening book support; in the code it includes Fruit's Small Book
+* Polyglot opening book support; the code includes Fruit's Small Book
 * FEN notation import/export support, also EPD support for testing
-* JUnit used for testing, multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
+* JUnit is used for testing, with multiple test suites provided (Perft, BS2830, BT2630, LCTII, WinAtChess, etc.)
 
-Test results in a Intel Xeon CPU limited to 2.0GHz for consistency:
+Test results on an Intel Xeon CPU limited to 2.0GHz for consistency:
 
 | Test suite       | Time per position | Version 1.8 | Version 1.7 |
 | ---------------- | -----------------:| -----------:| -----------:|
@@ -51,7 +51,7 @@ Test results in a Intel Xeon CPU limited to 2.0GHz for consistency:
 | ECMGCP           |         5 seconds |     156/183 |     154/183 |
 | Arasan 19a       |        60 seconds |      52/200 |      52/200 |
 
-His real strength is about 2400 ELO points, you can check his tournament rankings at http://www.computerchess.org.uk/ccrl/
+Its real strength is about 2400 ELO points. You can check its tournament rankings at http://www.computerchess.org.uk/ccrl/.
 
 Authors
 =======
