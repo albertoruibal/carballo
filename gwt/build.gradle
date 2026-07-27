@@ -23,6 +23,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 assemble.dependsOn sourcesJar
 
+artifacts {
+    archives sourcesJar
+}
+
 publishing {
     publications {
         carballoGwt(MavenPublication) {

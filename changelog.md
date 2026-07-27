@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade the source and target compatibility level to Java 17
 - Upgrade the Gradle wrapper to 9.6.1
 - Upgrade GWT to 2.13.1 (`gwt-user` and `gwt-dev`)
-- Upgrade the Gretty plugin to 4.1.6
+- Upgrade the Gretty plugin to 5.0.2
 - Upgrade ProGuard to 7.6.1 and target Java 17 in the obfuscation tasks
 - Upgrade JUnit Jupiter to 5.13.4 and add the JUnit Platform launcher dependency
 - Changed the artifact group to `com.carballo` and publish to GitHub Packages instead of JitPack
