@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade JUnit Jupiter to 5.13.4 and add the JUnit Platform launcher dependency
 - Changed the artifact group to `com.carballo` and publish to GitHub Packages instead of JitPack
 - Updated the Gradle build scripts to the Gradle 9 API (`base { archivesName }`, `assemble.dependsOn`)
+- Make `ChessApp` a `JPanel` inside a `JFrame` instead of an AWT `Panel`
+  inside a `Frame`, so the Swing board is double-buffered and no longer
+  flickers on computer moves
 
 ### Removed
 - Removed the `jitpack.yml` configuration file

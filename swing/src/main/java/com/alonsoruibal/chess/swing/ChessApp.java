@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
  * 
  * @author Alberto Alonso Ruibal
  */
-public class ChessApp extends Panel implements SearchObserver, ActionListener {
+public class ChessApp extends JPanel implements SearchObserver, ActionListener {
 	private static final Logger logger = Logger.getLogger("ChessApplet");
 
 	private static final long serialVersionUID = 5653881094129134036L;
@@ -319,12 +319,8 @@ public class ChessApp extends Panel implements SearchObserver, ActionListener {
 	}
 
 	public static void main(String[] args) {
-		Frame frame = new Frame("Carballo Chess Engine");
-		frame.addWindowListener(new java.awt.event.WindowAdapter() {
-			public void windowClosing(java.awt.event.WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		JFrame frame = new JFrame("Carballo Chess Engine");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		ChessApp chessApp = new ChessApp();
 		chessApp.setSize(800,610);
