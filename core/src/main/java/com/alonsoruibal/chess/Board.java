@@ -356,16 +356,16 @@ public class Board {
 		sb.append((getTurn() ? "w" : "b"));
 		sb.append(" ");
 		if (getWhiteKingsideCastling()) {
-			sb.append("K");
+			sb.append(chess960 ? Character.toUpperCase(BitboardUtils.index2Algebraic(Long.numberOfTrailingZeros(castlingRooks[0])).charAt(0)) : 'K');
 		}
 		if (getWhiteQueensideCastling()) {
-			sb.append("Q");
+			sb.append(chess960 ? Character.toUpperCase(BitboardUtils.index2Algebraic(Long.numberOfTrailingZeros(castlingRooks[1])).charAt(0)) : 'Q');
 		}
 		if (getBlackKingsideCastling()) {
-			sb.append("k");
+			sb.append(chess960 ? Character.toLowerCase(BitboardUtils.index2Algebraic(Long.numberOfTrailingZeros(castlingRooks[2])).charAt(0)) : 'k');
 		}
 		if (getBlackQueensideCastling()) {
-			sb.append("q");
+			sb.append(chess960 ? Character.toLowerCase(BitboardUtils.index2Algebraic(Long.numberOfTrailingZeros(castlingRooks[3])).charAt(0)) : 'q');
 		}
 		if (!getWhiteQueensideCastling() && !getWhiteKingsideCastling() && !getBlackQueensideCastling() && !getBlackKingsideCastling()) {
 			sb.append("-");
@@ -690,9 +690,15 @@ public class Board {
 		// Save history
 		saveHistory(move, fillSanInfo);
 
-		// Count consecutive moves without capture or without pawn move
-		fiftyMovesRule++;
+		// Count consecutive moves without capture or without pawn move. A null move is not
+		// a real chess move and must not affect the 50-move rule (otherwise a real
+		// 99-halfmove position would be turned into a false 100-halfmove draw during
+		// null-move search), but moveNumber still has to advance so that save/undo
+		// history slots stay aligned.
 		moveNumber++; // Count Ply moves
+		if (move != Move.NULL) {
+			fiftyMovesRule++;
+		}
 
 		boolean turn = getTurn();
 		int color = turn ? Color.W : Color.B;
@@ -1007,7 +1013,6 @@ public class Board {
 			return see(move);
 		}
 	}
-
 	/**
 	 * The SWAP algorithm https://chessprogramming.wikispaces.com/SEE+-+The+Swap+Algorithm
 	 */
@@ -1024,7 +1029,11 @@ public class Board {
 			long side = (d & 1) == 0 ? getOthers() : getMines();
 			d++; // next depth and side speculative store, if defended
 			seeGain[d] = SEE_PIECE_VALUES[pieceMoved] - seeGain[d - 1];
-			attacks ^= fromSquare; // reset bit in set to traverse
+			// Remove the piece that just captured from the attacker set and from the
+			// occupancy. Use &= ~ instead of ^=: for a non-capturing move the mover is not
+			// part of getIndexAttacks(toIndex), so ^= would erroneously add the bit (and the
+			// piece could be re-selected as an attacker, corrupting the score).
+			attacks &= ~fromSquare;
 			all ^= fromSquare; // reset bit in temporary occupancy (for X-Rays)
 			if ((fromSquare & mayXray) != 0) {
 				attacks |= bbAttacks.getXrayAttacks(this, toIndex, all);
@@ -1044,6 +1053,7 @@ public class Board {
 			} else if ((fromCandidates = attacks & kings & side) != 0) {
 				pieceMoved = Piece.KING;
 			}
+
 			fromSquare = Long.lowestOneBit(fromCandidates);
 
 		} while (fromSquare != 0);

@@ -18,7 +18,9 @@ class BoardTest {
 		Board b = new Board();
 		b.startPosition(545);
 		System.out.println(b);
-		assertEquals("brnbknqr/pppppppp/8/8/8/8/PPPPPPPP/BRNBKNQR w KQkq - 0 1", b.getFen());
+		// Shredder/XFEN: castling rights are encoded with the rook file letter, not KQkq.
+		// Position 545 has white rooks on b1 and h1, black rooks on b8 and h8.
+		assertEquals("brnbknqr/pppppppp/8/8/8/8/PPPPPPPP/BRNBKNQR w HBhb - 0 1", b.getFen());
 	}
 
 	@Test
@@ -29,7 +31,9 @@ class BoardTest {
 		int move = Move.getFromString(b, "O-O-O", false);
 		b.doMove(move, false, false);
 		System.out.println(b);
-		assertEquals("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQKRBBNR b kq - 1 1", b.getFen());
+		// White castles queenside (rook on a1 -> file A), so white loses both rights.
+		// Black king on d8, kingside rook on h8 (file h), queenside rook on c8 (file c) -> HC.
+		assertEquals("nqrkbbnr/pppppppp/8/8/8/8/PPPPPPPP/NQKRBBNR b hc - 1 1", b.getFen());
 	}
 
 	@Test
@@ -40,7 +44,9 @@ class BoardTest {
 		int move = Move.getFromString(b, "O-O-O", false);
 		b.doMove(move, false, false);
 		System.out.println(b);
-		assertEquals("r1krbnqb/1pp1pppp/1p1p4/8/3P4/8/PPP1PPPP/N1KRRNQB b k - 1 1", b.getFen());
+		// White queenside rook on a1 (file A); after castling white loses both rights.
+		// Black king on c8, kingside rook on d8 (file d) -> D.
+		assertEquals("r1krbnqb/1pp1pppp/1p1p4/8/3P4/8/PPP1PPPP/N1KRRNQB b d - 1 1", b.getFen());
 	}
 
 	@Test
@@ -63,7 +69,9 @@ class BoardTest {
 		assertEquals(1L << 1, b.castlingRooks[0]);
 		b.doMove(Move.getFromString(b, "O-O", true));
 		System.out.println(b);
-		assertEquals("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BN1RKR b kq - 5 11", b.getFen());
+		// White castles kingside and loses both rights; black king on e8, kingside rook on g8 (file g),
+		// queenside rook on a8 (file a) -> GA.
+		assertEquals("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BN1RKR b ga - 5 11", b.getFen());
 	}
 
 	@Test

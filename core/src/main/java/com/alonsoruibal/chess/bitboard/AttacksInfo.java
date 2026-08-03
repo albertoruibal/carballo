@@ -126,6 +126,16 @@ public class AttacksInfo {
 
 		kingIndex[W] = Long.numberOfTrailingZeros(board.kings & board.whites);
 		kingIndex[B] = Long.numberOfTrailingZeros(board.kings & board.blacks);
+		// Long.numberOfTrailingZeros(0) returns 64, which would index out of bounds in
+		// getBishopAttacks/getRookAttacks below. Normal positions always have both kings,
+		// but constructed/editor or test positions can be kingless; guard against that by
+		// falling back to a safe index (a1) when a king is missing.
+		if (kingIndex[W] == 64) {
+			kingIndex[W] = 0;
+		}
+		if (kingIndex[B] == 64) {
+			kingIndex[B] = 0;
+		}
 
 		bishopAttacksKing[W] = bbAttacks.getBishopAttacks(kingIndex[W], all);
 		checkPinnerBishop(kingIndex[W], bishopAttacksKing[W], all, board.whites, (board.bishops | board.queens) & board.blacks);

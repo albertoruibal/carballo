@@ -72,9 +72,17 @@ public class FileBook implements Book {
 
 		long key2Find = board.getKey();
 
-		try {
-			InputStream bookIs = getClass().getResourceAsStream(bookName);
-			DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(bookIs));
+		InputStream bookIs = getClass().getResourceAsStream(bookName);
+		if (bookIs == null) {
+			// Book resource not found: silently return no moves (the engine will
+			// fall back to search). Previously this threw a NullPointerException
+			// that was swallowed by the catch below, making the failure invisible.
+			return;
+		}
+		// Use try-with-resources so the stream is always closed: previously the
+		// DataInputStream was never closed, leaking a file handle on every book
+		// move lookup and relying on the EOFException to exit the loop.
+		try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(bookIs))) {
 
 			long key;
 			int moveInt;
@@ -95,10 +103,28 @@ public class FileBook implements Book {
 						totalWeight += weight;
 					}
 				} else {
-					dataInputStream.skipBytes(8);
+					// Skip the remaining 8 bytes of a non-matching entry. skipBytes may
+					// return fewer bytes than requested (per its contract); read the
+					// leftover bytes individually so a short skip cannot desynchronize
+					// the whole scan and match wrong keys.
+					int toSkip = 8;
+					while (toSkip > 0) {
+						int skipped = dataInputStream.skipBytes(toSkip);
+						if (skipped <= 0) {
+							// No progress: fall back to a single-byte read to advance.
+							if (dataInputStream.readByte() == -1) {
+								break;
+							}
+							toSkip--;
+						} else {
+							toSkip -= skipped;
+						}
+					}
 				}
 			}
 		} catch (Exception ignored) {
+			// EOFException is the normal termination of the scan; other I/O errors
+			// leave the book unusable, so returning whatever was collected so far is fine.
 		}
 	}
 
@@ -107,13 +133,22 @@ public class FileBook implements Book {
 	 */
 	public int getMove(Board board) {
 		generateMoves(board);
-		long randomWeight = Float.valueOf(random.nextFloat() * totalWeight).longValue();
+		if (moves.isEmpty() || totalWeight <= 0) {
+			// No legal book moves or all weights zero: return NONE instead of
+			// arbitrarily returning moves.get(0) (which the old <= 0 check did).
+			return Move.NONE;
+		}
+		// Use double precision for the random weight: the previous
+		// Float.valueOf(random.nextFloat() * totalWeight).longValue() lost precision
+		// for totalWeight above 2^24 (float mantissa width), systematically under-
+		// selecting small-weight moves.
+		long randomWeight = (long) (random.nextDouble() * totalWeight);
 		for (int i = 0; i < moves.size(); i++) {
 			randomWeight -= weights.get(i);
 			if (randomWeight <= 0) {
 				return moves.get(i);
 			}
 		}
-		return 0;
+		return moves.get(moves.size() - 1);
 	}
 }

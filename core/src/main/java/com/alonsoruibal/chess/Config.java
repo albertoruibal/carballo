@@ -13,7 +13,12 @@ public class Config {
 	public static final int DEFAULT_TRANSPOSITION_TABLE_SIZE = 64;
 	public static final boolean DEFAULT_PONDER = true;
 	public static final boolean DEFAULT_USE_BOOK = true;
-	public static final int DEFAULT_BOOK_KNOWGLEDGE = 100;
+	public static final int DEFAULT_BOOK_KNOWLEDGE = 100;
+	/**
+	 * @deprecated kept for binary/source compatibility; use {@link #DEFAULT_BOOK_KNOWLEDGE}.
+	 */
+	@Deprecated
+	public static final int DEFAULT_BOOK_KNOWGLEDGE = DEFAULT_BOOK_KNOWLEDGE;
 	public static final String DEFAULT_EVALUATOR = "complete";
 
 	// >0 refuses draw <0 looks for draw
@@ -34,7 +39,7 @@ public class Config {
 	private boolean uciChess960 = DEFAULT_UCI_CHESS960;
 
 	private int rand = DEFAULT_RAND;
-	private int bookKnowledge = DEFAULT_BOOK_KNOWGLEDGE;
+	private int bookKnowledge = DEFAULT_BOOK_KNOWLEDGE;
 	private boolean limitStrength = DEFAULT_LIMIT_STRENGTH;
 	private int elo = DEFAULT_ELO;
 

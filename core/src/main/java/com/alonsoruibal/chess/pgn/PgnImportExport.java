@@ -21,7 +21,13 @@ public class PgnImportExport {
 		for (GameNode gameNode : game.getPv().variation) {
 			if (gameNode instanceof GameNodeMove) {
 				int move = Move.getFromString(b, ((GameNodeMove) gameNode).move, true);
-				b.doMove(move);
+				// Validate the move before applying it: an unparseable or illegal move
+				// would otherwise leave the board unadvanced and every subsequent move
+				// would be parsed against the wrong position, cascading into more
+				// illegal moves. The deprecated Pgn.setBoard already did this check.
+				if (move == Move.NONE || !b.doMove(move)) {
+					break;
+				}
 			}
 		}
 	}

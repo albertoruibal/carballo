@@ -559,6 +559,12 @@ public class CompleteEvaluator extends Evaluator {
 			square <<= 1;
 		}
 
+		// King safety term. kingSafety[us] is OE-encoded but its endgame component is always 0,
+		// so we operate in opening units to avoid int overflow: KING_SAFETY_PONDER[count] (up to 64)
+		// times kingSafety (an OE-encoded int that can reach ~80,000,000 for a strong attack)
+		// would overflow a 32-bit int before oeShr extracts the parts.
+		int kingSafetyOpeningW = o(kingSafety[W]);
+		int kingSafetyOpeningB = o(kingSafety[B]);
 		int oe = (board.getTurn() ? TEMPO : -TEMPO)
 				+ pawnMaterial[W] - pawnMaterial[B]
 				+ nonPawnMaterial[W] - nonPawnMaterial[B]
@@ -569,11 +575,16 @@ public class CompleteEvaluator extends Evaluator {
 				+ mobility[W] - mobility[B]
 				+ pawnStructure[W] - pawnStructure[B]
 				+ passedPawns[W] - passedPawns[B]
-				+ oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W] - KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B]);
+				+ oe((KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafetyOpeningW
+						- KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafetyOpeningB) >> 6, 0);
 
-		// Ponder opening and Endgame value depending of the game phase and the scale factor
-		int value = (gamePhase * o(oe)
-				+ (GAME_PHASE_MIDGAME - gamePhase) * e(oe) * scaleFactor[0] / Endgame.SCALE_FACTOR_DEFAULT) / GAME_PHASE_MIDGAME;
+		// Ponder opening and Endgame value depending of the game phase and the scale factor.
+		// Use long arithmetic to avoid int overflow: with gamePhase near 0 (endgame) and a
+		// moderate endgame eval e(oe) ~ 2200, the intermediate
+		// (GAME_PHASE_MIDGAME - gamePhase) * e(oe) * scaleFactor[0] can exceed Integer.MAX_VALUE
+		// before the final division, corrupting the returned value.
+		int value = (int) ((gamePhase * (long) o(oe)
+				+ (GAME_PHASE_MIDGAME - gamePhase) * (long) e(oe) * scaleFactor[0] / Endgame.SCALE_FACTOR_DEFAULT) / GAME_PHASE_MIDGAME);
 
 		if (debug) {
 			logger.debug(debugSB);
@@ -587,7 +598,7 @@ public class CompleteEvaluator extends Evaluator {
 			logger.debug("pawnStructure     = " + formatOE(pawnStructure[W]) + " " + formatOE(pawnStructure[B]));
 			logger.debug("passedPawns       = " + formatOE(passedPawns[W]) + " " + formatOE(passedPawns[B]));
 			logger.debug("attacks           = " + formatOE(attacks[W]) + " " + formatOE(attacks[B]));
-			logger.debug("kingSafety        = " + formatOE(oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafety[W])) + " " + formatOE(oeShr(6, KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafety[B])));
+			logger.debug("kingSafety        = " + formatOE(oe(KING_SAFETY_PONDER[kingAttackersCount[W]] * kingSafetyOpeningW >> 6, 0)) + " " + formatOE(oe(KING_SAFETY_PONDER[kingAttackersCount[B]] * kingSafetyOpeningB >> 6, 0)));
 			logger.debug("tempo             = " + formatOE(board.getTurn() ? TEMPO : -TEMPO));
 			logger.debug("                    -----------------");
 			logger.debug("TOTAL:              " + formatOE(oe));

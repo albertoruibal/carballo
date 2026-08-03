@@ -42,7 +42,17 @@ public class TranspositionTable {
 	private final int sizeBits;
 
 	public TranspositionTable(int sizeMb) {
-		sizeBits = Long.numberOfTrailingZeros(sizeMb) + 16;
+		if (sizeMb <= 0) {
+			throw new IllegalArgumentException("Transposition table size must be positive (MB): " + sizeMb);
+		}
+		// The TT is addressed by taking the high bits of the board key, so the slot count
+		// must be a power of two. sizeMb is expected to be a power of two; round it up to
+		// the next power of two to be safe and reject zero/negative values.
+		int sizeMbPow2 = Integer.highestOneBit(sizeMb);
+		if (sizeMbPow2 != sizeMb) {
+			sizeMbPow2 = sizeMbPow2 == 0 ? 1 : sizeMbPow2 << 1;
+		}
+		sizeBits = Long.numberOfTrailingZeros(sizeMbPow2) + 16;
 		size = 1 << sizeBits;
 		keys = new long[size];
 		infos = new long[size];
@@ -56,17 +66,22 @@ public class TranspositionTable {
 	public void clear() {
 		entriesOccupied = 0;
 		Arrays.fill(keys, 0);
+		Arrays.fill(infos, 0);
+		Arrays.fill(evals, (short) 0);
 	}
 
 	public boolean search(Board board, int distanceToInitialPly, boolean exclusion) {
 		info = 0;
 		score = 0;
 		int startIndex = (int) ((exclusion ? board.getExclusionKey() : board.getKey()) >>> (64 - sizeBits));
-		// Verifies that it is really this board
-		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
-			if (keys[i] == board.getKey2()) {
-				info = infos[i];
-				eval = evals[i];
+		// Verifies that it is really this board. Use modular indexing so a key near the end
+		// of the table still gets its full MAX_PROBES slots (the previous loop was truncated
+		// when startIndex + MAX_PROBES exceeded size, biasing replacement and missing entries).
+		for (int i = 0; i < MAX_PROBES; i++) {
+			int idx = (startIndex + i) & (size - 1);
+			if (keys[idx] == board.getKey2()) {
+				info = infos[idx];
+				eval = evals[idx];
 				score = (short) ((info >>> 48) & 0xffff);
 
 				// Fix mate score with the real distance to the initial PLY
@@ -126,19 +141,28 @@ public class TranspositionTable {
 		} else if (score <= -SearchEngine.VALUE_IS_MATE) {
 			score -= distanceToInitialPly;
 		}
+		// Clamp to the representable range: distanceToInitialPly can push a MATE score past
+		// ±MATE, which would break the round-trip through the 16-bit score field and the
+		// getMateIn() reporting (a stored MATE + 63 reports as a negative "mate in").
+		if (score > Evaluator.MATE) {
+			score = Evaluator.MATE;
+		} else if (score < -Evaluator.MATE) {
+			score = -Evaluator.MATE;
+		}
 
 		assert score >= -Evaluator.MATE && score <= Evaluator.MATE : "Fixed TT score is outside limits";
 		assert Math.abs(eval) < SearchEngine.VALUE_IS_MATE || Math.abs(eval) == Evaluator.MATE || eval == Evaluator.NO_VALUE : "Storing a eval value in the TT outside limits";
 
-		for (int i = startIndex; i < startIndex + MAX_PROBES && i < size; i++) {
-			info = infos[i];
+		for (int i = 0; i < MAX_PROBES; i++) {
+			int idx = (startIndex + i) & (size - 1);
+			info = infos[idx];
 
-			if (keys[i] == 0) { // Replace an empty TT position
+			if (keys[idx] == 0) { // Replace an empty TT position
 				entriesOccupied++;
-				replaceIndex = i;
+				replaceIndex = idx;
 				break;
-			} else if (keys[i] == key2) { // Replace the same position
-				replaceIndex = i;
+			} else if (keys[idx] == key2) { // Replace the same position
+				replaceIndex = idx;
 				if (bestMove == Move.NONE) { // Keep previous best move
 					bestMove = getBestMove();
 				}
@@ -153,7 +177,7 @@ public class TranspositionTable {
 			// We will replace the less important entry
 			if (entryImportance < replaceImportance) {
 				replaceImportance = entryImportance;
-				replaceIndex = i;
+				replaceIndex = idx;
 			}
 		}
 

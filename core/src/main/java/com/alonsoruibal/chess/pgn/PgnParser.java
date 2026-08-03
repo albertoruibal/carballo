@@ -42,9 +42,21 @@ public class PgnParser {
 			for (String line : lines) {
 				if (!"".equals(line.trim())) {
 					if (parsingHeaders && line.indexOf("[") == 0) {
-						// It is a header
-						String headerName = line.substring(1, line.indexOf("\"")).trim().toLowerCase();
-						String headerValue = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+						// It is a header. Guard against malformed header lines without
+						// quotes (e.g. "[Event]" or "[Event foo]"): the previous code called
+						// line.substring(1, line.indexOf("\"")) which threw
+						// StringIndexOutOfBoundsException when indexOf returned -1, dropping
+						// the whole game.
+						int firstQuote = line.indexOf("\"");
+						if (firstQuote <= 0) {
+							continue;
+						}
+						int lastQuote = line.lastIndexOf("\"");
+						if (lastQuote <= firstQuote) {
+							continue;
+						}
+						String headerName = line.substring(1, firstQuote).trim().toLowerCase();
+						String headerValue = line.substring(firstQuote + 1, lastQuote);
 
 						if (!"".equals(headerValue) && !"?".equals(headerValue) && !"-".equals(headerValue)) {
 							switch (headerName) {
@@ -69,18 +81,18 @@ public class PgnParser {
 								case "black":
 									game.setBlack(headerValue);
 									break;
-								case "whiteelo":
-									game.setWhiteElo(Integer.valueOf(headerValue));
-									break;
-								case "blackelo":
-									game.setBlackElo(Integer.valueOf(headerValue));
-									break;
-								case "whitefideid":
-									game.setWhiteFideId(Integer.valueOf(headerValue));
-									break;
-								case "blackfideid":
-									game.setBlackFideId(Integer.valueOf(headerValue));
-									break;
+							case "whiteelo":
+								game.setWhiteElo(parseInteger(headerValue));
+								break;
+							case "blackelo":
+								game.setBlackElo(parseInteger(headerValue));
+								break;
+							case "whitefideid":
+								game.setWhiteFideId(parseInteger(headerValue));
+								break;
+							case "blackfideid":
+								game.setBlackFideId(parseInteger(headerValue));
+								break;
 								case "result":
 									game.setResult(headerValue);
 									break;
@@ -203,8 +215,26 @@ public class PgnParser {
 	}
 
 	private static boolean isAlphaNumeric(char c) {
+		// Include '0' so castling written as "0-0"/"0-0-0" (PGN spec allows both "O-O"
+		// and "0-0") is treated as a move token and not routed to the glyph branch,
+		// where it would be silently dropped.
 		return (c >= 'A' && c <= 'Z')
 				|| (c >= 'a' && c <= 'z')
-				|| (c >= '1' && c <= '9');
+				|| (c >= '0' && c <= '9');
+	}
+
+	/**
+	 * Parses a PGN integer header value, returning null on a non-numeric value
+	 * instead of throwing NumberFormatException and dropping the whole game.
+	 */
+	private static Integer parseInteger(String value) {
+		if (value == null || value.isEmpty() || "?".equals(value)) {
+			return null;
+		}
+		try {
+			return Integer.valueOf(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }

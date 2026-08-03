@@ -62,16 +62,18 @@ public class SearchEngine implements Runnable {
 
 	private SearchParameters searchParameters;
 
-	protected boolean initialized = false;
-	protected boolean searching = false;
+	protected volatile boolean initialized = false;
+	protected volatile boolean searching = false;
 
 	private Config config;
 
-	// Think limits
-	private boolean stop = false;
-	private long thinkToTime = 0;
-	private int thinkToNodes = 0;
-	private int thinkToDepth = 0;
+	// Think limits: these fields are written by the caller thread (go/stop/updateSearchParameters)
+	// and read by the search thread (run/search). They must be volatile to guarantee visibility
+	// and, for the 64-bit long thinkToTime, atomicity.
+	private volatile boolean stop = false;
+	private volatile long thinkToTime = 0;
+	private volatile int thinkToNodes = 0;
+	private volatile int thinkToDepth = 0;
 
 	private final Board board;
 	private SearchObserver observer;
@@ -468,7 +470,9 @@ public class SearchEngine implements Runnable {
 			// Do a static eval, in case of exclusion and not found in the TT, search again with the normal key
 			boolean evalTT = excludedMove == Move.NONE || foundTT ? foundTT : tt.search(board, distanceToInitialPly, false);
 			evaluate(node, evalTT);
-			eval = refineEval(node, foundTT);
+			// refineEval must use the non-exclusion TT entry; using the exclusion entry (foundTT when
+			// excludedMove != Move.NONE) would read a score computed without the excluded move.
+			eval = refineEval(node, evalTT);
 		}
 
 		// If we have more depths than possible...
@@ -540,7 +544,9 @@ public class SearchEngine implements Runnable {
 						score = beta;
 					}
 
-					// Verification search on initial depths
+					// Verification search on deep nodes: at shallow depths the original null
+					// search is already reliable, so we skip the verification; on deeper nodes
+					// we re-run a null-window search to confirm the cutoff and reduce zugzwang risk.
 					if (depthRemaining < 12 * PLY || (depthRemaining - R < PLY ?
 							quiescentSearch(0, beta - 1, beta) :
 							search(NODE_NULL, depthRemaining - R, beta - 1, beta, false, Move.NONE)) >= beta) {
@@ -622,7 +628,9 @@ public class SearchEngine implements Runnable {
 					SearchStats.singularExtensionProbe++;
 				}
 				int seBeta = ttScore - SINGULAR_EXTENSION_MARGIN_PER_PLY * depthRemaining / PLY;
-				int excScore = search(nodeType, depthRemaining >> 1, seBeta - 1, seBeta, false, node.move);
+				// The excluded search is a null-window verification, not a PV search: using the
+				// parent nodeType (e.g. NODE_PV) would trigger IID and singular recursion.
+				int excScore = search(NODE_NULL, depthRemaining >> 1, seBeta - 1, seBeta, false, node.move);
 				if (excScore < seBeta) {
 					if (SearchStats.DEBUG) {
 						SearchStats.singularExtensionHit++;

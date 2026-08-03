@@ -13,7 +13,10 @@ public class LegalMoveGenerator extends MagicMoveGenerator {
 	public int generateMoves(Board board, int[] moves, int index) {
 		int lastIndex = super.generateMoves(board, moves, index);
 		int j = index;
-		for (int i = 0; i < lastIndex; i++) {
+		// Iterate over the freshly generated pseudo-legal moves [index, lastIndex),
+		// not from 0: the slots below `index` contain stale data from previous fills
+		// and re-running doMove on them would corrupt board state and emit bogus moves.
+		for (int i = index; i < lastIndex; i++) {
 			if (board.doMove(moves[i], true, false)) {
 				moves[j++] = board.getCheck() ? moves[i] | Move.CHECK_MASK : moves[i];
 				board.undoMove();

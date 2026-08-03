@@ -11,7 +11,11 @@ public class Endgame {
 	public static final int SCALE_FACTOR_DRAWISH = 100;
 	public static final int SCALE_FACTOR_DEFAULT = 1000;
 
-	public static final int[] closerSquares = {0, 0, 100, 80, 60, 40, 20, 10};
+	// Bonus for the dominant king being close to the enemy king, indexed by king distance.
+	// Monotonic in the distance: previously index 1 (kings a knight's move apart) was 0
+	// while index 2 was 100, an obvious non-monotonic hole that scored the strongest
+	// opposition configurations (adjacent kings / direct opposition) as worthless.
+	public static final int[] closerSquares = {0, 100, 100, 80, 60, 40, 20, 10};
 
 	private static final int[] toCorners = { //
 			100, 90, 80, 70, 70, 80, 90, 100, //
@@ -110,7 +114,7 @@ public class Endgame {
 		// Other endgames
 		//
 		if (blackMaterial == 0 && (whiteBishops >= 2 || whiteRooks > 0 || whiteQueens > 0) || //
-				whiteMaterial == 0 && (whiteBishops >= 2 || blackRooks > 0 || blackQueens > 0)) {
+				whiteMaterial == 0 && (blackBishops >= 2 || blackRooks > 0 || blackQueens > 0)) {
 			return Endgame.endgameKXK(board, whiteMaterial > blackMaterial, whiteKnights + blackKnights, whiteBishops + blackBishops, whiteRooks + blackRooks, whiteQueens + blackQueens);
 		}
 
@@ -240,13 +244,13 @@ public class Endgame {
 			return Evaluator.NO_VALUE;
 		}
 
-		long dominantKing = board.kings & (whiteDominant ? board.whites : board.blacks);
 		long otherKing = board.kings & (whiteDominant ? board.blacks : board.whites);
 
-		int dominantKingIndex = Long.numberOfTrailingZeros(dominantKing);
-		int pawnIndex = Long.numberOfTrailingZeros(pawn);
-
-		if ((pawnZone & otherKing) != 0 && BitboardUtils.DISTANCE[dominantKingIndex][pawnIndex] >= 1) {
+		// The defending king is in the pawn's drawing zone: KQKP with the pawn on a, c, f or h
+		// and the defending king in front of it is a classic draw. The dominant king's
+		// distance to the pawn is not used here (the previous check was a no-op `>= 1` that
+		// was always true for two distinct squares); the zone presence is the actual signal.
+		if ((pawnZone & otherKing) != 0) {
 			return Evaluator.DRAW;
 		}
 

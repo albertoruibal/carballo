@@ -299,9 +299,10 @@ public class Move {
 				if ((turn ? board.getWhiteKingsideCastling() : board.getBlackKingsideCastling()) && //
 						(toIndex == (fromIndex - 2) || to == board.castlingRooks[turn ? 0 : 2])) {
 					moveType = TYPE_KINGSIDE_CASTLING;
-				}
-				if ((turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) && //
+				} else if ((turn ? board.getWhiteQueensideCastling() : board.getBlackQueensideCastling()) && //
 						(toIndex == (fromIndex + 2) || to == board.castlingRooks[turn ? 1 : 3])) {
+					// Use else-if so a kingside match cannot be overwritten by a queenside
+					// match in unusual Chess960 setups where both conditions could fire.
 					moveType = TYPE_QUEENSIDE_CASTLING;
 				}
 			}

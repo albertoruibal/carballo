@@ -175,6 +175,14 @@ public class SearchParameters {
 		calcTime = Math.min(calcTime, timeAvailable >>> 3); // Never consume more than time / 8
 		calcTime += timeInc;
 
+		// If after the ponderhit the GUI gave us no time data (timeAvailable <= 0 and no
+		// increment), we have no deadline to enforce: keep the previous infinite-style
+		// deadline instead of returning startTime + 0, which would abort the search
+		// immediately and return a barely-searched move.
+		if (calcTime <= 0) {
+			return Long.MAX_VALUE;
+		}
+
 		logger.debug("Thinking for " + calcTime + "Ms");
 		return startTime + calcTime;
 	}

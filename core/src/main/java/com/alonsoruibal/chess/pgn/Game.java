@@ -30,8 +30,23 @@ public class Game {
 		return event;
 	}
 
+	/**
+	 * Strips the PGN "unknown" marker only when the whole value is that marker, so
+	 * legitimate data containing "?" (e.g. "Who? Open" or a date "2020.??.??") is not
+	 * mangled. The previous substring replace removed every "?" from the value.
+	 */
+	private static String cleanUnknown(String value) {
+		if (value == null) {
+			return null;
+		}
+		if ("?".equals(value)) {
+			return null;
+		}
+		return value;
+	}
+
 	public void setEvent(String event) {
-		this.event = event == null ? null : event.replace("?", "");
+		this.event = cleanUnknown(event);
 	}
 
 	public String getSite() {
@@ -39,7 +54,7 @@ public class Game {
 	}
 
 	public void setSite(String site) {
-		this.site = site == null ? null : site.replace("?", "");
+		this.site = cleanUnknown(site);
 	}
 
 	public String getRound() {
@@ -47,7 +62,7 @@ public class Game {
 	}
 
 	public void setRound(String round) {
-		this.round = round == null ? null : round.replace("?", "");
+		this.round = cleanUnknown(round);
 	}
 
 	public String getWhite() {
@@ -91,9 +106,11 @@ public class Game {
 			this.result = "1-0";
 		} else if ("0".equals(result)) {
 			this.result = "0-1";
-		} else if ("=".equals(result) || "1/2-1/2".equals(result)) {
+		} else if ("1/2-1/2".equals(result) || "½-½".equals(result)) {
 			this.result = "½-½";
 		} else {
+			// "*" and any other literal are kept as-is. Do not treat "=" as a result: it
+			// is a NAG shorthand for "equal chances", not a game result.
 			this.result = result;
 		}
 	}
@@ -111,7 +128,10 @@ public class Game {
 	}
 
 	public void setDate(String date) {
-		this.date = date == null ? null : date.replace(".??.??", "").replace("????", "");
+		// Only clear the value when it is the PGN "unknown" date "????.??.??", not when a
+		// partial date like "2020.??.??" legitimately contains "?" (the previous substring
+		// replace turned "2020.??.??" into "2020." with a dangling dot).
+		this.date = "????.??.??".equals(date) ? null : date;
 	}
 
 	public String getEventDate() {
@@ -119,7 +139,7 @@ public class Game {
 	}
 
 	public void setEventDate(String eventDate) {
-		this.eventDate = eventDate == null ? null : eventDate.replace(".??.??", "").replace("????", "");
+		this.eventDate = "????.??.??".equals(eventDate) ? null : eventDate;
 	}
 
 	public Integer getWhiteFideId() {

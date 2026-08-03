@@ -12,9 +12,12 @@ public class UciEngine implements Runnable {
 
 	private Thread thread;
 
-	private boolean uciOk = false;
-	private boolean readyOk = false;
-	private String bestMove = null;
+	// These flags are written by the reader thread and read by the waiting
+	// thread; they must be volatile to guarantee visibility.
+	private volatile boolean uciOk = false;
+	private volatile boolean readyOk = false;
+	private volatile boolean died = false;
+	private volatile String bestMove = null;
 
 	public UciEngine(String command) {
 		this.command = command;
@@ -22,9 +25,7 @@ public class UciEngine implements Runnable {
 	}
 
 	public void open(boolean ownBook) {
-		if (process != null) {
-			process.destroy();
-		}
+		close(); // cleanup any previous process and streams before opening a new one
 
 		try {
 			process = Runtime.getRuntime().exec(command);
@@ -32,7 +33,8 @@ public class UciEngine implements Runnable {
 			InputStreamReader reader = new InputStreamReader(process.getInputStream());
 			scanner = new Scanner(reader);
 
-			thread = new Thread(this);
+			thread = new Thread(this, "UciEngine-reader");
+			thread.setDaemon(true);
 			thread.start();
 
 			sendCommand("uci");
@@ -47,7 +49,27 @@ public class UciEngine implements Runnable {
 	}
 
 	public void close() {
-		process.destroy();
+		if (scanner != null) {
+			scanner.close();
+			scanner = null;
+		}
+		if (pWriter != null) {
+			pWriter.close();
+			pWriter = null;
+		}
+		if (process != null) {
+			process.destroy();
+			// Close the child streams explicitly to release file descriptors.
+			try { process.getInputStream().close(); } catch (Exception ignored) {}
+			try { process.getOutputStream().close(); } catch (Exception ignored) {}
+			try { process.getErrorStream().close(); } catch (Exception ignored) {}
+			process = null;
+		}
+		if (thread != null) {
+			thread.interrupt();
+			thread = null;
+		}
+		died = true;
 	}
 
 	public void run() {
@@ -61,11 +83,14 @@ public class UciEngine implements Runnable {
 					readyOk = true;
 				} else if (line.startsWith("bestmove")) {
 					String[] tokens = line.split(" ");
-					bestMove = tokens[1];
+					// Guard against a malformed "bestmove" line with no move token.
+					bestMove = tokens.length > 1 ? tokens[1] : "";
 				}
 			}
 		} catch (Exception e) {
-
+			// Scanner closed or process died: unblock any waiter so it does not
+			// hang forever waiting for a bestmove that will never come.
+			died = true;
 		}
 	}
 
@@ -117,7 +142,9 @@ public class UciEngine implements Runnable {
 	}
 
 	public void waitUciOk() {
-		while (!uciOk) {
+		// Bound the wait so a dead subprocess does not hang the caller forever.
+		long deadline = System.currentTimeMillis() + 10_000;
+		while (!uciOk && !died && System.currentTimeMillis() < deadline) {
 			try {
 				Thread.sleep(10);
 			} catch (Exception e) {
@@ -126,7 +153,8 @@ public class UciEngine implements Runnable {
 	}
 
 	public void waitReadyOk() {
-		while (!readyOk) {
+		long deadline = System.currentTimeMillis() + 10_000;
+		while (!readyOk && !died && System.currentTimeMillis() < deadline) {
 			try {
 				Thread.sleep(10);
 			} catch (Exception e) {
@@ -135,7 +163,11 @@ public class UciEngine implements Runnable {
 	}
 
 	public String waitBestMove() {
-		while (bestMove == null) {
+		// A generous default so tournament callers do not block indefinitely if
+		// the engine dies without emitting bestmove; callers that need a hard
+		// bound can wrap this.
+		long deadline = System.currentTimeMillis() + 60_000;
+		while (bestMove == null && !died && System.currentTimeMillis() < deadline) {
 			try {
 				Thread.sleep(10);
 			} catch (Exception e) {

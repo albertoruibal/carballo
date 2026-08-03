@@ -7,6 +7,151 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Search: declare `searching`, `stop`, `thinkToTime`, `thinkToNodes` and `thinkToDepth` as
+  `volatile` so the search thread reliably observes updates from the UCI/caller thread
+  (prevents lost visibility of `stop`, torn 64-bit reads on `thinkToTime`, and infinite
+  spins in `SearchEngineThreaded.stop()`).
+- Search: fix null-move verification logic, which was inverted by the `||` short-circuit
+  and skipped verification on deep nodes (where it is most useful) instead applying it
+  on shallow nodes.
+- Search: use the re-probed (non-exclusion) TT entry for `refineEval` when running an
+  excluded search for singular extensions; previously the exclusion entry's score was
+  incorrectly used to refine the static evaluation.
+- Search: run the singular-extension excluded search as a `NODE_NULL` null-window
+  search instead of inheriting the parent node type, avoiding spurious IID and singular
+  recursion in PV nodes.
+- Threaded search: `SearchEngineThreaded.stop()` no longer holds `startStopSearchLock`
+  while sleeping, and now `join()`s the worker thread so the `bestmove` UCI reply is
+  guaranteed to be emitted before `stop()` returns. The search thread is now named and
+  is a daemon so it never blocks JVM shutdown.
+- Evaluation: fix integer overflow in the tapered midgame/endgame blend of
+  `CompleteEvaluator` and `ExperimentalEvaluator`. With an endgame eval of a few
+  thousand centipawns and the default scale factor, the intermediate
+  `(1000 - gamePhase) * e(oe) * scaleFactor` exceeded `Integer.MAX_VALUE` before the
+  final division, silently corrupting the returned value in routine endgame positions.
+  The blend now uses `long` arithmetic.
+- Evaluation: fix integer overflow in the king-safety term. `kingSafety[us]` is an
+  OE-encoded int whose opening component can reach ~80,000,000 for a strong attack;
+  multiplying it by `KING_SAFETY_PONDER[count]` (up to 64) overflowed a 32-bit int
+  before `oeShr` could extract the parts. The king-safety term is now computed in
+  opening units (its endgame component is always 0).
+- Evaluation: recognize KBBK (black with two bishops) as a winning KXK endgame. The
+  black-dominant branch of the KXK dispatch tested `whiteBishops >= 2` (impossible when
+  white has no material) instead of `blackBishops >= 2`, so KBBK fell through to the
+  general evaluator without the corner-drive / king-proximity heuristic.
+- Evaluation: remove the double-counting of pinned pieces in `ExperimentalEvaluator`.
+  `AttacksInfo.pinnedPieces` already detects every absolute pin (bishop- and rook-type),
+  and `evalAttacks` scores them, so the per-piece x-ray scan in the bishop and rook loops
+  was scoring the same pinned rooks/queens a second time.
+- Evaluation: make the `closerSquares` king-proximity table monotonic. The bonus for an
+  adjacent enemy king (distance 1) was 0 while distance 2 was 100, an obvious
+  non-monotonic hole that scored the strongest opposition configurations as worthless.
+- Board: do not increment the 50-move counter on a null move. A null move is not a real
+  chess move; bumping `fiftyMovesRule` for it could turn a genuine 99-halfmove position
+  into a false 100-halfmove draw during null-move search. `moveNumber` still advances so
+  the save/undo history slots stay aligned.
+- Board: emit Shredder/XFEN castling-rights file letters (e.g. `HBhb`) from `getFen()`
+  when `chess960` is enabled, instead of always emitting `KQkq`. The previous output was
+  not spec-compliant and ambiguous for Chess960 positions with two rooks on the same
+  side of the king.
+- Board: fix the SEE (Static Exchange Evaluation) SWAP loop so a non-capturing move's
+  piece is not erroneously added to the attacker set: use `attacks &= ~fromSquare`
+  instead of `^=`, which could let the mover be re-selected and corrupt the score.
+- Move: change the castling-type detection in `Move.getFromString` from two independent
+  `if`s to `if`/`else if`, so a kingside match cannot be overwritten by a queenside match
+  in unusual Chess960 setups where both conditions could fire for the same target.
+- Move generator: fix `LegalMoveGenerator.generateMoves` to iterate the freshly
+  generated pseudo-legal moves `[index, lastIndex)` instead of starting from 0. The
+  previous loop re-ran `doMove` on stale slots below `index` and never processed the new
+  moves correctly when called with a non-zero `index`.
+- AttacksInfo: guard `kingIndex` against a missing king. `Long.numberOfTrailingZeros(0)`
+  returns 64, which would index out of bounds in `getBishopAttacks`/`getRookAttacks`;
+  normal positions always have both kings, but constructed/editor positions can be
+  kingless and previously crashed `AttacksInfo.build`.
+- Transposition table: use modular indexing in the probe and store loops so a key near
+  the end of the table still gets its full `MAX_PROBES` slots. The previous loop was
+  truncated when `startIndex + MAX_PROBES > size`, biasing replacement and losing entries
+  near the table tail.
+- Transposition table: clamp the mate-adjusted score to `±MATE` before storing. With a
+  large `distanceToInitialPly` the adjustment could push a MATE score past `±MATE`,
+  breaking the 16-bit round-trip and producing a negative "mate in N" in UCI output.
+- Transposition table: `clear()` now zeroes `infos` and `evals` in addition to `keys`,
+  so stale eval/score data cannot be read back through a slot whose key happens to be 0.
+- Transposition table: validate the requested size and round it up to a power of two
+  instead of silently producing a too-small (or zero-length) table for non-power-of-two
+  or zero `sizeMb` values.
+- UCI: parse `setoption name <name with spaces> value ...` correctly by joining the
+  name tokens with spaces. The previous code concatenated them without separators, so
+  `Contempt Factor` became `ContemptFactor` and only matched the switch case by accident;
+  the switch now matches the advertised `"Contempt Factor"`.
+- UCI: bounds-check every `tokens[index++]` access (e.g. `wtime`, `btime`, `movestogo`,
+  `depth`, `nodes`, `movetime`, `mate`) and parse numbers defensively so a malformed
+  `go` or `setoption` command no longer crashes the UCI loop with
+  `ArrayIndexOutOfBoundsException`/`NumberFormatException`. The whole command body is
+  wrapped in a `RuntimeException` catch that reports the error via `info string` instead
+  of killing the engine.
+- UCI: null-guard `engine` in `stop` and `ucinewgame` so sending them before `isready`
+  no longer throws a `NullPointerException`.
+- UCI: handle `position moves ...` (without `startpos`/`fen`) as `startpos`, trim the
+  trailing space from `position fen` FEN strings, and validate each move in
+  `position ... moves`: an illegal/unparseable move now reports `info string illegal
+  move` and stops processing instead of silently desynchronizing the board.
+- UCI: terminate the loop on EOF (`readLine() == null`) so the engine exits cleanly
+  when the GUI closes the input stream.
+- UCI: guard a malformed `bestmove` line with no move token in `UciEngine` so it no
+  longer throws `ArrayIndexOutOfBoundsException`.
+- UCI (`UciEngine`): make `uciOk`/`readyOk`/`bestMove`/`died` volatile so the waiting
+  thread reliably sees updates from the reader thread; add a `died` flag set when the
+  reader exits so `waitUciOk`/`waitReadyOk`/`waitBestMove` no longer hang forever if the
+  subprocess dies; bound those waits with timeouts; and `close()` now closes the
+  scanner, writer and process streams (previously leaked file descriptors across
+  repeated open/close cycles). The reader thread is now named and is a daemon.
+- Search parameters: when `ponderhit` arrives without any time data
+  (`timeAvailable <= 0` and no increment), keep the infinite deadline instead of
+  returning `startTime + 0`, which aborted the search immediately and returned a
+  barely-searched move.
+- Opening book (`FileBook`): close the book stream after each lookup. The previous
+  code never closed the `DataInputStream`, leaking a file handle on every book move
+  until GC finalized it. Now uses try-with-resources.
+- Opening book: detect a missing book resource and return no moves instead of throwing
+  a `NullPointerException` that was swallowed by the catch block, making the failure
+  invisible.
+- Opening book: tolerate `DataInputStream.skipBytes` returning fewer bytes than requested
+  (per its contract) by retrying/falling back to a single-byte read, so a short skip
+  can no longer desynchronize the scan and match wrong keys.
+- Opening book: use `double` precision for the weighted random selection. The previous
+  `Float.valueOf(random.nextFloat() * totalWeight).longValue()` lost precision for
+  `totalWeight` above 2^24 (float mantissa width), systematically under-selecting
+  small-weight moves.
+- Opening book: return `Move.NONE` instead of arbitrarily returning `moves.get(0)` when
+  the book has no legal moves or all weights are zero.
+- PGN parser: guard header parsing against lines without quotes (e.g. `[Event]` or
+  `[Event foo]`). The previous `line.substring(1, line.indexOf("\""))` threw
+  `StringIndexOutOfBoundsException` when `indexOf` returned -1, and the outer catch
+  silently dropped the whole game.
+- PGN parser: parse castling written as `0-0`/`0-0-0` (the PGN spec allows both `O-O`
+  and `0-0`) by including `'0'` in `isAlphaNumeric`; previously `0-0` was routed to the
+  glyph branch and never added as a move.
+- PGN parser: parse Elo/FIDE-id headers defensively, returning null on a non-numeric
+  value (e.g. `"?"`, `""`, or a malformed token) instead of throwing
+  `NumberFormatException` and dropping the whole game.
+- PGN parser: do not treat `"="` as a result (it is a NAG shorthand for "equal
+  chances", not a game result); only `1/2-1/2`/`½-½` normalize to `½-½`.
+- PGN (`PgnImportExport.setBoard`): validate each move before applying it; an
+  unparseable or illegal move now stops the replay instead of leaving the board
+  unadvanced and desynchronizing every subsequent move.
+- PGN (`Game` setters): only clear event/site/round/date/eventDate when the whole value
+  is the PGN "unknown" marker, not via substring `replace("?", "")` which mangled
+  legitimate data containing `?` (e.g. `"Who? Open"` or the date `"2020.??.??"` that
+  became `"2020."` with a dangling dot).
+- Logger: route `error()` to `System.err` even in UCI mode (`noLog = true`) so real
+  errors remain visible for debugging without corrupting the UCI stdout protocol
+  stream. Also make `noLog` volatile so the UCI thread's update is visible across
+  threads, and null-guard the message in all log methods.
+- Config: add the correctly-spelled `DEFAULT_BOOK_KNOWLEDGE` constant (the old
+  `DEFAULT_BOOK_KNOWGLEDGE` typo is kept `@Deprecated` for source compatibility).
+
 ## [1.9] - 2026-07-27
 
 ### Changed
