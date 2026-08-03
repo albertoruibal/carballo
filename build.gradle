@@ -9,7 +9,7 @@ allprojects {
     }
 
     group = 'com.carballo'
-    version = (findProperty('version') ?: '1.9')
+    version = (findProperty('version') ?: '1.9').toString() == 'unspecified' ? '1.9' : findProperty('version')
 
     repositories {
         mavenCentral()
