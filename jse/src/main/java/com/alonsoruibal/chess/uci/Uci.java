@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
  * UCI Interface
  */
 public class Uci implements SearchObserver {
-	static final String NAME = "Carballo Chess Engine v1.8";
+	static final String NAME = "Carballo Chess Engine v1.9";
 	static final String AUTHOR = "Alberto Alonso Ruibal";
 
 	Config config;
