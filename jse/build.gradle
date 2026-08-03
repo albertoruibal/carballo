@@ -1,3 +1,5 @@
+import proguard.gradle.ProGuardTask
+
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
@@ -17,7 +19,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
 }
 
-task proguard(type: proguard.gradle.ProGuardTask) {
+tasks.register('proguard', ProGuardTask) {
     dependsOn('jar')
     ext {
         obfuscatedJar = "./carballo-${version}.jar"
@@ -51,7 +53,7 @@ test {
     }
 }
 
-task slowTest(type: Test) {
+tasks.register('slowTest', Test) {
     ignoreFailures = true
     enableAssertions = true
     testLogging.showStandardStreams = true
